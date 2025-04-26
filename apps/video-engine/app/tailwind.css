@@ -4,30 +4,26 @@
 
 html,
 body {
- 
-
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
 }
 
-
-
 @layer base {
   :root {
-    --background: 250 22% 10%;         /* sombre, légèrement violacé */
-    --foreground: 0 0% 100%;           /* texte blanc */
+    --background: 250 22% 10%; /* sombre, légèrement violacé */
+    --foreground: 0 0% 100%; /* texte blanc */
     --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 265 100% 65%;           /* violet électrique */
-    --primary-foreground: 0 0% 100%;   /* texte blanc sur violet */
-    --secondary: 250 16% 20%;          /* gris-violet foncé */
+    --primary: 265 100% 65%; /* violet électrique */
+    --primary-foreground: 0 0% 100%; /* texte blanc sur violet */
+    --secondary: 250 16% 20%; /* gris-violet foncé */
     --secondary-foreground: 0 0% 100%;
     --muted: 250 16% 16%;
     --muted-foreground: 250 10% 60%;
-    --accent: 265 100% 80%;            /* violet clair pour hover */
+    --accent: 265 100% 80%; /* violet clair pour hover */
     --accent-foreground: 265 100% 30%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
@@ -68,8 +64,6 @@ body {
     --chart-5: 340 75% 55%;
   }
 }
-
-
 
 @layer base {
   * {

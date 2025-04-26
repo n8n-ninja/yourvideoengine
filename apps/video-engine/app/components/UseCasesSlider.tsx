@@ -28,8 +28,13 @@ export function UseCasesSlider({
   const [initialOffset, setInitialOffset] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [dragStartX, setDragStartX] = useState(0)
-  const [dragOffset, setDragOffset] = useState(0)
+  const [sliderPosition, setSliderPosition] = useState(0)
   const [sliderWidth, setSliderWidth] = useState(0)
+  const [slideWidth, setSlideWidth] = useState(0)
+  const [currentTranslateX, setCurrentTranslateX] = useState(0)
+  const [dragVelocity, setDragVelocity] = useState(0)
+  const [lastDragX, setLastDragX] = useState(0)
+  const [lastDragTime, setLastDragTime] = useState(0)
 
   // Calculer les dimensions et les indices max
   useEffect(() => {
@@ -48,7 +53,10 @@ export function UseCasesSlider({
 
         // Calculer l'index maximum pour que le dernier élément soit aligné avec la fin
         // Tenir compte que nous voulons exactement 2.5 éléments visibles
-        const calculatedMaxIndex = useCases.length - Math.ceil(visibleCards)
+        const calculatedMaxIndex = Math.max(
+          0,
+          useCases.length - Math.ceil(visibleCards)
+        )
 
         // Calculer l'offset final pour aligner le dernier élément avec la fin du conteneur
         const calculatedFinalOffset = -(totalContentWidth - wrapperWidth)
@@ -57,9 +65,11 @@ export function UseCasesSlider({
         setInitialOffset(0) // Premier élément aligné au début
         setFinalOffset(calculatedFinalOffset) // Dernier élément aligné à la fin
         setSliderWidth(wrapperWidth)
+        setSlideWidth(calculatedCardWidth + gap)
 
-        // Appliquer la position initiale
+        // Appliquer la position initiale si on est au début
         if (currentIndex === 0 && !isDragging) {
+          setCurrentTranslateX(0)
           sliderRef.current.style.transform = `translateX(0px)`
         }
       }
@@ -82,31 +92,12 @@ export function UseCasesSlider({
     setCurrentIndex((prevIndex) => Math.min(maxIndex, prevIndex + 1))
   }
 
-  // Update slider position when index changes or during drag
+  // Update slider position when index changes
   useEffect(() => {
-    if (sliderRef.current) {
-      // Calcul de la position
+    if (sliderRef.current && !isDragging) {
       let position
 
-      if (isDragging) {
-        // Pendant le drag, appliquer le décalage de la souris
-        const basePosition =
-          currentIndex === 0
-            ? initialOffset
-            : currentIndex === maxIndex
-            ? finalOffset
-            : initialOffset -
-              (currentIndex / maxIndex) * (initialOffset - finalOffset)
-
-        position = basePosition + dragOffset
-
-        // Limiter le drag aux bornes du slider
-        if (position > initialOffset + sliderWidth * 0.1) {
-          position = initialOffset + sliderWidth * 0.1
-        } else if (position < finalOffset - sliderWidth * 0.1) {
-          position = finalOffset - sliderWidth * 0.1
-        }
-      } else if (currentIndex === 0) {
+      if (currentIndex === 0) {
         // Premier élément - aligné au début
         position = initialOffset
       } else if (currentIndex === maxIndex) {
@@ -114,10 +105,10 @@ export function UseCasesSlider({
         position = finalOffset
       } else {
         // Éléments intermédiaires - calcul proportionnel
-        const progress = currentIndex / maxIndex
-        position = initialOffset - progress * (initialOffset - finalOffset)
+        position = -currentIndex * slideWidth
       }
 
+      setCurrentTranslateX(position)
       sliderRef.current.style.transform = `translateX(${position}px)`
     }
   }, [
@@ -125,17 +116,22 @@ export function UseCasesSlider({
     initialOffset,
     finalOffset,
     maxIndex,
+    slideWidth,
     isDragging,
-    dragOffset,
-    sliderWidth,
   ])
 
   // Handlers for dragging
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    // Prevent default behavior to avoid text selection during drag
+    e.preventDefault()
+
     setIsDragging(true)
     const clientX = "touches" in e ? e.touches[0].clientX : e.clientX
     setDragStartX(clientX)
-    setDragOffset(0)
+    setLastDragX(clientX)
+    setLastDragTime(Date.now())
+    setDragVelocity(0)
+    setSliderPosition(currentTranslateX)
 
     // Désactiver la transition pendant le drag
     if (sliderRef.current) {
@@ -148,7 +144,37 @@ export function UseCasesSlider({
 
     const clientX = "touches" in e ? e.touches[0].clientX : e.clientX
     const diff = clientX - dragStartX
-    setDragOffset(diff)
+
+    // Calculate velocity
+    const now = Date.now()
+    const elapsed = now - lastDragTime
+    if (elapsed > 0) {
+      const movement = clientX - lastDragX
+      const newVelocity = movement / elapsed // pixels per ms
+      // Use a weighted average to smooth out the velocity
+      setDragVelocity(dragVelocity * 0.7 + newVelocity * 0.3)
+      setLastDragX(clientX)
+      setLastDragTime(now)
+    }
+
+    // Calculate new position based on initial position plus drag distance
+    let newPosition = sliderPosition + diff
+
+    // Apply constraints to prevent dragging beyond boundaries
+    // Add some elasticity to make it feel more natural
+    if (newPosition > initialOffset + sliderWidth * 0.2) {
+      // Slow down the movement when pulling beyond the start
+      newPosition = initialOffset + (newPosition - initialOffset) * 0.2
+    } else if (newPosition < finalOffset - sliderWidth * 0.2) {
+      // Slow down the movement when pulling beyond the end
+      newPosition = finalOffset - (finalOffset - newPosition) * 0.2
+    }
+
+    // Update the slider position directly
+    if (sliderRef.current) {
+      sliderRef.current.style.transform = `translateX(${newPosition}px)`
+      setCurrentTranslateX(newPosition)
+    }
   }
 
   const handleDragEnd = () => {
@@ -156,29 +182,81 @@ export function UseCasesSlider({
 
     // Réactiver la transition
     if (sliderRef.current) {
-      sliderRef.current.style.transition = "transform 500ms ease-in-out"
+      sliderRef.current.style.transition = "transform 300ms ease-out"
     }
 
-    // Déterminer si on doit changer d'index
-    if (dragOffset > 100 && currentIndex > 0) {
-      // Swipe vers la droite - précédent
+    // Calculate distance moved
+    const distance = currentTranslateX - sliderPosition
+    const moveThreshold = slideWidth * 0.15 // Lower threshold (15%) for fast movements
+
+    // Consider both distance moved and velocity
+    const velocityThreshold = 0.5 // Pixels per millisecond
+    const isSignificantVelocity = Math.abs(dragVelocity) > velocityThreshold
+
+    // For fast movements, consider the velocity direction
+    if (isSignificantVelocity) {
+      if (dragVelocity > 0 && currentIndex > 0) {
+        // Fast movement to the right
+        goToPrevious()
+      } else if (dragVelocity < 0 && currentIndex < maxIndex) {
+        // Fast movement to the left
+        goToNext()
+      } else {
+        snapToNearestSlide()
+      }
+    }
+    // For slower movements, consider the distance
+    else if (distance > moveThreshold && currentIndex > 0) {
+      // Moved right enough to go to previous slide
       goToPrevious()
-    } else if (dragOffset < -100 && currentIndex < maxIndex) {
-      // Swipe vers la gauche - suivant
+    } else if (distance < -moveThreshold && currentIndex < maxIndex) {
+      // Moved left enough to go to next slide
       goToNext()
+    } else {
+      snapToNearestSlide()
     }
 
     setIsDragging(false)
-    setDragOffset(0)
+    setDragVelocity(0)
+  }
+
+  // Helper function to snap to the nearest slide
+  const snapToNearestSlide = () => {
+    // Calculate the nearest slide index based on current position
+    const nearestIndex = Math.round(-currentTranslateX / slideWidth)
+    const boundedIndex = Math.max(0, Math.min(maxIndex, nearestIndex))
+
+    // Update index if different
+    if (boundedIndex !== currentIndex) {
+      setCurrentIndex(boundedIndex)
+    } else {
+      // If same index, still need to snap back to proper position
+      let snapPosition
+
+      if (boundedIndex === 0) {
+        snapPosition = initialOffset
+      } else if (boundedIndex === maxIndex) {
+        snapPosition = finalOffset
+      } else {
+        snapPosition = -boundedIndex * slideWidth
+      }
+
+      // Apply the snap position
+      if (sliderRef.current) {
+        sliderRef.current.style.transform = `translateX(${snapPosition}px)`
+        setCurrentTranslateX(snapPosition)
+      }
+    }
   }
 
   // Ajouter et supprimer les event listeners pour le drag
   useEffect(() => {
     if (isDragging) {
-      window.addEventListener("mousemove", handleDragMove)
-      window.addEventListener("touchmove", handleDragMove)
+      window.addEventListener("mousemove", handleDragMove, { passive: false })
+      window.addEventListener("touchmove", handleDragMove, { passive: false })
       window.addEventListener("mouseup", handleDragEnd)
       window.addEventListener("touchend", handleDragEnd)
+      window.addEventListener("mouseleave", handleDragEnd)
     }
 
     return () => {
@@ -186,8 +264,9 @@ export function UseCasesSlider({
       window.removeEventListener("touchmove", handleDragMove)
       window.removeEventListener("mouseup", handleDragEnd)
       window.removeEventListener("touchend", handleDragEnd)
+      window.removeEventListener("mouseleave", handleDragEnd)
     }
-  }, [isDragging])
+  }, [isDragging, sliderPosition, currentTranslateX, dragVelocity])
 
   return (
     <section className="w-full py-16 md:py-24 relative">
@@ -208,6 +287,15 @@ export function UseCasesSlider({
 
       {/* Slider en pleine largeur */}
       <div className="relative w-full overflow-hidden">
+        {/* Main drag handle that covers the entire width */}
+        <button
+          className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing bg-transparent z-[5]"
+          onMouseDown={handleDragStart}
+          onTouchStart={handleDragStart}
+          aria-label="Drag to navigate carousel"
+          type="button"
+        />
+
         {/* Effets de fondu sur les côtés */}
         <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#191923] to-transparent z-10 pointer-events-none"></div>
         <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#191923] to-transparent z-10 pointer-events-none"></div>
@@ -217,27 +305,29 @@ export function UseCasesSlider({
           ref={sliderWrapperRef}
           className="max-w-6xl mx-auto px-6 md:px-12 relative"
         >
-          {/* Slider track - avec no-select pour empêcher la sélection de texte */}
-          <div
-            ref={sliderRef}
-            className="flex gap-6 transition-transform duration-500 ease-in-out select-none cursor-grab active:cursor-grabbing"
-            onMouseDown={handleDragStart}
-            onTouchStart={handleDragStart}
-            role="region"
-            aria-label="Use cases carousel"
-            tabIndex={0}
-          >
-            {useCases.map((useCase) => (
-              <div key={useCase.number} className="w-[40%] flex-shrink-0">
-                <UseCaseCard
-                  number={useCase.number}
-                  name={useCase.name}
-                  title={useCase.title}
-                  intro={useCase.intro}
-                  bullets={useCase.bullets}
-                />
-              </div>
-            ))}
+          {/* Slider container */}
+          <div className="relative">
+            {/* Slider track */}
+            <div
+              ref={sliderRef}
+              className="flex gap-6 transition-transform duration-300 ease-out select-none"
+              aria-roledescription="carousel"
+              aria-label="Use cases carousel"
+            >
+              {useCases.map((useCase) => (
+                <div key={useCase.number} className="w-[40%] flex-shrink-0">
+                  <UseCaseCard
+                    number={useCase.number}
+                    name={useCase.name}
+                    title={useCase.title}
+                    intro={useCase.intro}
+                    bullets={useCase.bullets}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* We don't need the inner drag handle anymore as we're using the full-width one */}
           </div>
 
           {/* Navigation buttons - avec hidden quand inactifs */}
@@ -246,6 +336,7 @@ export function UseCasesSlider({
               onClick={goToPrevious}
               className="absolute top-1/2 -left-4 md:left-0 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-700/90 h-12 w-12 rounded-full flex items-center justify-center text-white z-20 shadow-lg backdrop-blur-sm transition-opacity duration-300"
               aria-label="Previous slide"
+              type="button"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -269,6 +360,7 @@ export function UseCasesSlider({
               onClick={goToNext}
               className="absolute top-1/2 -right-4 md:right-0 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-700/90 h-12 w-12 rounded-full flex items-center justify-center text-white z-20 shadow-lg backdrop-blur-sm transition-opacity duration-300"
               aria-label="Next slide"
+              type="button"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
