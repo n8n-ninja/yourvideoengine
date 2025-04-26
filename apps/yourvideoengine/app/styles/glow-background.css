@@ -1,0 +1,85 @@
+:root {
+  --glow-color1: rgba(126, 87, 255, 0.15);
+  --glow-color2: rgba(206, 89, 226, 0.1);
+  --glow-color3: rgba(83, 200, 255, 0.12);
+}
+
+.glow-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: transparent !important;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  background-color: hsl(250, 22%, 10%);
+}
+
+.glow-background::before,
+.glow-background::after {
+  content: "";
+  position: absolute;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 50%;
+  opacity: 0.6;
+  filter: blur(100px);
+  animation: move 25s infinite alternate ease-in-out;
+}
+
+.glow-background::before {
+  background: radial-gradient(circle, var(--glow-color1), transparent 75%);
+  top: -40vh;
+  left: -30vw;
+  animation-delay: -5s;
+}
+
+.glow-background::after {
+  background: radial-gradient(circle, var(--glow-color2), transparent 75%);
+  bottom: -45vh;
+  right: -35vw;
+}
+
+.glow-background .blob {
+  position: absolute;
+  width: 45vmax;
+  height: 45vmax;
+  background: radial-gradient(circle, var(--glow-color3), transparent 75%);
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  filter: blur(70px);
+  opacity: 0.5;
+  top: 70%;
+  left: 65%;
+  transform: translate(-50%, -50%);
+  animation: transform 30s infinite alternate ease-in-out;
+}
+
+@keyframes move {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(2%, 2%);
+  }
+}
+
+@keyframes transform {
+  0% {
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  }
+  100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+}
