@@ -1,9 +1,8 @@
 export interface WhatWeOfferProps {
-  title: string
   paragraphs: string[]
 }
 
-export function WhatWeOffer({ title, paragraphs }: WhatWeOfferProps) {
+export function WhatWeOffer({ paragraphs }: WhatWeOfferProps) {
   return (
     <section className="w-full py-16 md:py-24 px-6 md:px-12">
       <div className="max-w-6xl mx-auto">
