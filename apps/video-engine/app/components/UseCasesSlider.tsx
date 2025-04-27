@@ -1,6 +1,39 @@
 import { useState, useRef, useEffect } from "react"
 import { UseCaseCard, type UseCaseBullet } from "~/components/UseCaseCard"
 
+// Keyframes pour l'animation de pulsation
+const pulseKeyframes = `
+@keyframes slowPulse {
+  0% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+}
+
+@keyframes slowPulse2 {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(1.07);
+  }
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+}
+`
+
 export interface UseCase {
   number: number
   name: string
@@ -35,14 +68,23 @@ export function UseCasesSlider({
   const [dragVelocity, setDragVelocity] = useState(0)
   const [lastDragX, setLastDragX] = useState(0)
   const [lastDragTime, setLastDragTime] = useState(0)
+  const [glowPosition, setGlowPosition] = useState(0)
+  const [targetGlowPosition, setTargetGlowPosition] = useState(0)
 
   // Calculer les dimensions et les indices max
   useEffect(() => {
     const calculateDimensions = () => {
       if (sliderWrapperRef.current && sliderRef.current) {
         const wrapperWidth = sliderWrapperRef.current.clientWidth
-        const calculatedCardWidth = wrapperWidth * 0.4 // Chaque carte fait 40% de la largeur
-        const gap = 24 // gap-6 = 1.5rem = 24px
+        const isMobile = wrapperWidth < 768 // Détecter les écrans mobiles (< 768px)
+
+        // Ajuster la largeur des cartes en fonction de la taille de l'écran
+        // Sur mobile: 100% de la largeur, sur desktop: 40% comme avant
+        const calculatedCardWidth = isMobile
+          ? wrapperWidth // Une carte qui prend toute la largeur sur mobile
+          : wrapperWidth * 0.4 // Comportement existant sur desktop
+
+        const gap = isMobile ? 0 : 24 // Pas de gap sur mobile, 24px sur desktop
 
         // Largeur totale de tous les éléments avec leurs gaps
         const totalContentWidth =
@@ -52,10 +94,9 @@ export function UseCasesSlider({
         const visibleCards = wrapperWidth / calculatedCardWidth
 
         // Calculer l'index maximum pour que le dernier élément soit aligné avec la fin
-        // Tenir compte que nous voulons exactement 2.5 éléments visibles
         const calculatedMaxIndex = Math.max(
           0,
-          useCases.length - Math.ceil(visibleCards)
+          useCases.length - Math.ceil(isMobile ? 1 : visibleCards) // Sur mobile, une seule carte visible
         )
 
         // Calculer l'offset final pour aligner le dernier élément avec la fin du conteneur
@@ -110,6 +151,9 @@ export function UseCasesSlider({
 
       setCurrentTranslateX(position)
       sliderRef.current.style.transform = `translateX(${position}px)`
+
+      // Mettre à jour la position de la lueur en fonction de la position actuelle
+      updateGlowPosition(currentIndex)
     }
   }, [
     currentIndex,
@@ -119,6 +163,50 @@ export function UseCasesSlider({
     slideWidth,
     isDragging,
   ])
+
+  // Fonction pour mettre à jour la position de la lueur
+  const updateGlowPosition = (index: number) => {
+    // On utilise un pourcentage qui correspond à la position de la carte actuelle
+    // Mais on limite pour que la lueur s'arrête exactement derrière la dernière carte
+    if (maxIndex > 0) {
+      // Calculer la position selon où se trouve la carte dans le slider
+      // Si c'est la première carte, position = 15% (pour centrer sur la première carte)
+      // Si c'est la dernière carte, position = 50% (pour centrer sur la dernière carte)
+      const startPosition = 15 // Position de la première carte
+      const endPosition = 50 // Position de la dernière carte
+
+      // Calcul proportionnel entre la première et la dernière position
+      const positionPercent =
+        startPosition + (index / maxIndex) * (endPosition - startPosition)
+
+      // On définit la position cible, mais pas directement la position actuelle
+      setTargetGlowPosition(positionPercent)
+    } else {
+      setTargetGlowPosition(15) // Centré sur la première carte s'il n'y a qu'une carte
+    }
+  }
+
+  // Effet d'inertie pour la lueur
+  useEffect(() => {
+    // Si la lueur n'est pas en mouvement (pas de drag), on applique l'effet d'inertie
+    if (!isDragging) {
+      // Animation frame pour créer une transition douce
+      const animationFrame = requestAnimationFrame(() => {
+        // Calculer la nouvelle position avec un effet d'inertie (easing)
+        const newPosition =
+          glowPosition + (targetGlowPosition - glowPosition) * 0.06
+
+        // Si on est très proche de la cible, on arrête l'animation
+        if (Math.abs(newPosition - targetGlowPosition) < 0.1) {
+          setGlowPosition(targetGlowPosition)
+        } else {
+          setGlowPosition(newPosition)
+        }
+      })
+
+      return () => cancelAnimationFrame(animationFrame)
+    }
+  }, [glowPosition, targetGlowPosition, isDragging])
 
   // Handlers for dragging
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
@@ -174,6 +262,27 @@ export function UseCasesSlider({
     if (sliderRef.current) {
       sliderRef.current.style.transform = `translateX(${newPosition}px)`
       setCurrentTranslateX(newPosition)
+
+      // Mettre à jour la position de la lueur pendant le drag
+      if (maxIndex > 0 && slideWidth > 0) {
+        // Calculer l'index approximatif pendant le glissement
+        const estimatedIndex = Math.max(
+          0,
+          Math.min(maxIndex, -newPosition / slideWidth)
+        )
+        // Utiliser la même logique que updateGlowPosition
+        const startPosition = 15
+        const endPosition = 50
+        const positionPercent =
+          startPosition +
+          (estimatedIndex / maxIndex) * (endPosition - startPosition)
+
+        // Pendant le drag, on met à jour directement la position cible
+        setTargetGlowPosition(positionPercent)
+
+        // On applique aussi un effet d'inertie, mais plus rapide pendant le drag
+        setGlowPosition(glowPosition + (positionPercent - glowPosition) * 0.2)
+      }
     }
   }
 
@@ -182,7 +291,14 @@ export function UseCasesSlider({
 
     // Réactiver la transition
     if (sliderRef.current) {
-      sliderRef.current.style.transition = "transform 300ms ease-out"
+      // Ajuster la durée de la transition en fonction de la vélocité
+      const velocityAbs = Math.abs(dragVelocity)
+      const baseDuration = 300
+      const velocityFactor = Math.min(velocityAbs * 300, 800) // Réduire l'inertie et la durée max
+      const transitionDuration = baseDuration + velocityFactor
+
+      // Utiliser une courbe qui ralentit plus rapidement
+      sliderRef.current.style.transition = `transform ${transitionDuration}ms cubic-bezier(0.25, 0.8, 0.25, 1)`
     }
 
     // Calculate distance moved
@@ -193,17 +309,18 @@ export function UseCasesSlider({
     const velocityThreshold = 0.5 // Pixels per millisecond
     const isSignificantVelocity = Math.abs(dragVelocity) > velocityThreshold
 
-    // For fast movements, consider the velocity direction
+    // Calculer un décalage supplémentaire basé sur la vélocité pour l'inertie
+    const inertiaOffset = dragVelocity * 200 // Réduire l'amplification de l'effet de la vélocité
+
+    // Pour les mouvements rapides, appliquer l'inertie en fonction de la vélocité
     if (isSignificantVelocity) {
-      if (dragVelocity > 0 && currentIndex > 0) {
-        // Fast movement to the right
-        goToPrevious()
-      } else if (dragVelocity < 0 && currentIndex < maxIndex) {
-        // Fast movement to the left
-        goToNext()
-      } else {
-        snapToNearestSlide()
-      }
+      // Calculer l'index cible basé sur la position actuelle plus l'inertie
+      const targetPosition = currentTranslateX + inertiaOffset
+      const estimatedIndex = Math.round(-targetPosition / slideWidth)
+
+      // Limiter l'index dans les bornes
+      const boundedIndex = Math.max(0, Math.min(maxIndex, estimatedIndex))
+      setCurrentIndex(boundedIndex)
     }
     // For slower movements, consider the distance
     else if (distance > moveThreshold && currentIndex > 0) {
@@ -269,9 +386,12 @@ export function UseCasesSlider({
   }, [isDragging, sliderPosition, currentTranslateX, dragVelocity])
 
   return (
-    <section className="w-full py-16 md:py-24 relative">
+    <section className="w-full py-16 md:py-24 px-6 md:px-12 relative overflow-hidden">
+      {/* Style pour les animations */}
+      <style dangerouslySetInnerHTML={{ __html: pulseKeyframes }} />
+
       {/* Titre et description en largeur limitée */}
-      <div className="max-w-6xl mx-auto px-6 md:px-12 mb-12">
+      <div className="max-w-6xl mx-auto mb-12">
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center">
           {title}
         </h2>
@@ -286,7 +406,50 @@ export function UseCasesSlider({
       </div>
 
       {/* Slider en pleine largeur */}
-      <div className="relative w-full overflow-hidden">
+      <div className="relative w-full pb-12">
+        {/* Effet de lueur de fond qui se déplace */}
+        <div
+          className="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-[1]"
+          aria-hidden="true"
+        >
+          {/* Lueur principale avec touche dorée */}
+          <div
+            className="absolute top-[35%] -translate-y-1/2 w-[50%] aspect-[4/0.75] rounded-full blur-[120px]"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(236,72,153,0.35) 0%, rgba(168,85,247,0.25) 40%, rgba(212,175,55,0.15) 60%, rgba(30,30,80,0) 80%)",
+              left: `${glowPosition}%`,
+              transform: `translate(-50%, -50%)`,
+              animation: "slowPulse 4s ease-in-out infinite",
+            }}
+          />
+
+          {/* Lueur dorée subtile */}
+          <div
+            className="absolute top-[33%] -translate-y-1/2 w-[40%] aspect-[3.5/0.6] rounded-full blur-[90px]"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(212,175,55,0.15) 0%, rgba(255,215,0,0.08) 40%, rgba(30,30,80,0) 70%)",
+              left: `${glowPosition}%`,
+              transform: `translate(-48%, -52%)`,
+              animation: "slowPulse2 6s ease-in-out infinite",
+              mixBlendMode: "soft-light",
+            }}
+          />
+
+          {/* Seconde lueur plus petite et plus intense */}
+          <div
+            className="absolute top-[35%] -translate-y-1/2 w-[35%] aspect-[3/0.7] rounded-full blur-[80px]"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(236,72,153,0.3) 0%, rgba(168,85,247,0.2) 50%, rgba(212,175,55,0.1) 65%, rgba(30,30,80,0) 75%)",
+              left: `${glowPosition}%`,
+              transform: `translate(-50%, -50%)`,
+              animation: "slowPulse2 5s ease-in-out infinite",
+            }}
+          />
+        </div>
+
         {/* Main drag handle that covers the entire width */}
         <button
           className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing bg-transparent z-[5]"
@@ -296,26 +459,26 @@ export function UseCasesSlider({
           type="button"
         />
 
-        {/* Effets de fondu sur les côtés */}
-        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#191923] to-transparent z-10 pointer-events-none"></div>
-        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#191923] to-transparent z-10 pointer-events-none"></div>
+        {/* Effets de fondu sur les côtés - positionnés en dehors du conteneur max-width */}
+        <div className="absolute inset-y-0 left-0 w-[80px] md:w-[150px] bg-gradient-to-r from-[#191923] to-transparent z-10 pointer-events-none -ml-6 md:-ml-12"></div>
+        <div className="absolute inset-y-0 right-0 w-[80px] md:w-[150px] bg-gradient-to-l from-[#191923] to-transparent z-10 pointer-events-none -mr-6 md:-mr-12"></div>
 
-        {/* Conteneur du slider avec padding horizontal et largeur max limitée pour l'alignement */}
-        <div
-          ref={sliderWrapperRef}
-          className="max-w-6xl mx-auto px-6 md:px-12 relative"
-        >
+        {/* Conteneur du slider avec padding ajusté pour aligner avec le bloc supérieur */}
+        <div ref={sliderWrapperRef} className="max-w-6xl mx-auto relative">
           {/* Slider container */}
           <div className="relative">
             {/* Slider track */}
             <div
               ref={sliderRef}
-              className="flex gap-6 transition-transform duration-300 ease-out select-none"
+              className="flex md:gap-6 transition-transform duration-300 ease-out select-none"
               aria-roledescription="carousel"
               aria-label="Use cases carousel"
             >
               {useCases.map((useCase) => (
-                <div key={useCase.number} className="w-[40%] flex-shrink-0">
+                <div
+                  key={useCase.number}
+                  className="w-full md:w-[40%] flex-shrink-0"
+                >
                   <UseCaseCard
                     number={useCase.number}
                     name={useCase.name}
@@ -334,13 +497,13 @@ export function UseCasesSlider({
           {currentIndex > 0 && (
             <button
               onClick={goToPrevious}
-              className="absolute top-1/2 -left-4 md:left-0 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-700/90 h-12 w-12 rounded-full flex items-center justify-center text-white z-20 shadow-lg backdrop-blur-sm transition-opacity duration-300"
+              className="absolute top-1/2 -left-4 md:left-0 -translate-y-1/2 bg-gradient-to-br from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 h-10 w-10 md:h-12 md:w-12 rounded-full flex items-center justify-center text-white z-20 shadow-lg backdrop-blur-sm transition-all duration-300 border border-purple-400/30"
               aria-label="Previous slide"
               type="button"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
+                className="h-4 w-4 md:h-5 md:w-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -358,13 +521,13 @@ export function UseCasesSlider({
           {currentIndex < maxIndex && (
             <button
               onClick={goToNext}
-              className="absolute top-1/2 -right-4 md:right-0 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-700/90 h-12 w-12 rounded-full flex items-center justify-center text-white z-20 shadow-lg backdrop-blur-sm transition-opacity duration-300"
+              className="absolute top-1/2 -right-4 md:right-0 -translate-y-1/2 bg-gradient-to-bl from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 h-10 w-10 md:h-12 md:w-12 rounded-full flex items-center justify-center text-white z-20 shadow-lg backdrop-blur-sm transition-all duration-300 border border-purple-400/30"
               aria-label="Next slide"
               type="button"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
+                className="h-4 w-4 md:h-5 md:w-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -381,8 +544,25 @@ export function UseCasesSlider({
         </div>
       </div>
 
-      {/* Barre de progression au lieu des points */}
-      <div className="max-w-6xl mx-auto px-6 md:px-12">
+      {/* Indicateurs de page pour mobile (points) */}
+      <div className="md:hidden max-w-6xl mx-auto flex justify-center gap-2 mt-4">
+        {useCases.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            className={`h-2 rounded-full transition-all ${
+              index === currentIndex
+                ? "w-6 bg-gradient-to-r from-pink-500 to-purple-500"
+                : "w-2 bg-gray-600"
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
+            type="button"
+          />
+        ))}
+      </div>
+
+      {/* Barre de progression pour desktop */}
+      <div className="hidden md:block max-w-6xl mx-auto">
         <div className="mt-8 relative h-1 bg-gray-700/50 rounded-full overflow-hidden max-w-md mx-auto">
           <div
             className="absolute top-0 left-0 h-full bg-gradient-to-r from-pink-500 to-purple-500 rounded-full transition-all duration-300"

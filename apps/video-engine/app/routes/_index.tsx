@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/node"
+import type { MetaFunction } from "@remix-run/cloudflare"
 import { HeroBanner } from "~/components/HeroBanner"
 import { StatsRotator } from "~/components/StatsRotator"
 import { FiftyFifty } from "~/components/FiftyFifty"
@@ -21,7 +21,7 @@ const useCases: UseCase[] = [
   {
     number: 1,
     name: "Real Estate Video Engine",
-    title: "Turn property listings into stunning video tours — automatically.",
+    title: "Turn property listings into stunning video tours.",
     intro:
       "The real estate market moves fast. With our system, you can instantly transform new listings into personalized, high-conversion video tours — ready to publish across platforms without human bottlenecks.",
     bullets: [
@@ -36,7 +36,7 @@ const useCases: UseCase[] = [
   {
     number: 2,
     name: "Online Course Factory",
-    title: "Scale your education content into a professional video academy.",
+    title: "Scale your education content into a professional  academy.",
     intro:
       "Educational content deserves better than talking-head Zoom recordings. Our system transforms your curriculum into polished, modular video lessons — helping you scale your offers without scaling your workload.",
     bullets: [
@@ -52,8 +52,8 @@ const useCases: UseCase[] = [
   },
   {
     number: 3,
-    name: "Founder Video Presence",
-    title: "Be everywhere without being everywhere — founder clone system.",
+    name: "Founder clone system",
+    title: "Be everywhere without being everywhere.",
     intro:
       "Founders are the face of their brand, but time is limited. Our system clones your presence into dynamic, human-like videos for onboarding, FAQs, updates, and launches — keeping you visible without daily filming.",
     bullets: [
@@ -187,8 +187,7 @@ export default function Index() {
       <UseCasesSlider
         title="Use Cases"
         description={[
-          "We design flexible, tailored systems for different industries and goals.",
-          "Here are a few examples of how custom video automation can be applied — and how it can radically transform content production.",
+          "From real estate to education, AI powered video automation is transforming content creation.",
         ]}
         useCases={useCases}
       />
