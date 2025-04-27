@@ -1,4 +1,4 @@
-import { useState, createContext, useContext } from "react"
+import { useState, createContext, useContext, useRef } from "react"
 import {
   ProjectCard,
   type ProjectHighlight,
@@ -23,7 +23,6 @@ const VideoContext = createContext<VideoContextType>({
 export interface Project {
   title: string
   label: string
-  type: "client" | "intern"
   description: string
   highlights: ProjectHighlight[]
   videos: ProjectVideo[]
@@ -47,32 +46,68 @@ export function SelectedProjects({
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null)
   // State pour gérer le son partagé entre toutes les vidéos (son activé par défaut)
   const [isMuted, setIsMuted] = useState(false)
+  // Refs pour les éléments projet
+  const projectRefs = useRef<(HTMLDivElement | null)[]>([])
+  const sectionRef = useRef<HTMLDivElement>(null)
+
+  // Fonction pour scroller vers un projet spécifique
+  const scrollToProject = (index: number) => {
+    // Calcul simplifié : position de base + index * hauteur de viewport
+    // La position de base est celle du premier projet dans la page
+    const baseOffset = sectionRef.current?.offsetTop || 0
+    const headerOffset = 300 // Offset pour tenir compte du header et de la description
+
+    // Calcul de l'offset : hauteur du header + (index * hauteur viewport)
+    // Ajuster 1.5 à une valeur plus grande ou plus petite selon les besoins
+    const scrollPosition =
+      baseOffset + headerOffset + index * window.innerHeight * 1.0
+
+    window.scrollTo({
+      top: scrollPosition,
+      behavior: "smooth",
+    })
+  }
 
   return (
     <VideoContext.Provider
       value={{ activeVideoId, setActiveVideoId, isMuted, setIsMuted }}
     >
-      <section className="w-full py-16 md:py-24 px-6 md:px-12">
+      <section className="w-full py-16 md:py-24 px-6 md:px-12" ref={sectionRef}>
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center">
-            {title}
-          </h2>
+          {/* En-tête avec titre et description */}
+          <div className="mb-40">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
+              {title}
+            </h2>
 
-          <div className="mb-12 max-w-4xl mx-auto">
-            {description.map((paragraph, index) => (
-              <p key={index} className="text-lg text-center mb-4 text-gray-100">
-                {paragraph}
-              </p>
-            ))}
+            <div className="max-w-4xl mx-auto">
+              {description.map((paragraph, index) => (
+                <p
+                  key={index}
+                  className="text-lg text-center mb-4 text-gray-100"
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
           </div>
 
-          <div className="space-y-12">
+          {/* Container des projets */}
+          <div className="pb-[300vh]">
             {projects.map((project, index) => (
-              <ProjectCardWithContext
+              <div
                 key={index}
-                {...project}
-                imagePosition={index % 2 === 0 ? "right" : "left"}
-              />
+                ref={(el) => (projectRefs.current[index] = el)}
+                className=" md:h-[90vh] md:sticky md:top-[15%] w-full mb-10 pb-10"
+              >
+                <ProjectCardWithContext
+                  {...project}
+                  imagePosition={index % 2 === 0 ? "right" : "left"}
+                  tabPosition={index}
+                  totalTabs={projects.length}
+                  onTabClick={(idx) => scrollToProject(idx)}
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -84,6 +119,9 @@ export function SelectedProjects({
 // Composant intermédiaire qui connecte ProjectCard au contexte
 interface ProjectCardWithContextProps extends Project {
   imagePosition?: "left" | "right"
+  tabPosition?: number
+  totalTabs?: number
+  onTabClick?: (index: number) => void
 }
 
 function ProjectCardWithContext({ ...props }: ProjectCardWithContextProps) {

@@ -13,7 +13,6 @@ export interface ProjectVideo {
 export interface ProjectCardProps {
   title: string
   label: string
-  type: "client" | "intern"
   description: string
   highlights: ProjectHighlight[]
   videos: ProjectVideo[]
@@ -25,12 +24,14 @@ export interface ProjectCardProps {
   activeVideoId?: string | null
   isMuted?: boolean
   onMuteToggle?: () => void
+  tabPosition?: number
+  totalTabs?: number
+  onTabClick?: (index: number) => void
 }
 
 export function ProjectCard({
   title,
   label,
-  type,
   description,
   highlights,
   videos,
@@ -42,6 +43,9 @@ export function ProjectCard({
   activeVideoId,
   isMuted = false,
   onMuteToggle,
+  tabPosition = 0,
+  totalTabs = 1,
+  onTabClick,
 }: ProjectCardProps) {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -201,11 +205,7 @@ export function ProjectCard({
     <div
       className={`w-full h-full flex items-center justify-center bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/60 overflow-hidden shadow-lg relative ${
         videoOrientation === "vertical" ? "aspect-[9/16]" : "aspect-[16/9]"
-      } ${
-        type === "client"
-          ? "shadow-[0_10px_25px_-12px_rgba(236,72,153,0.3)] hover:shadow-[0_15px_30px_-12px_rgba(236,72,153,0.4)]"
-          : "shadow-[0_10px_25px_-12px_rgba(59,130,246,0.3)] hover:shadow-[0_15px_30px_-12px_rgba(59,130,246,0.4)]"
-      } transition-shadow duration-300`}
+      } shadow-[0_10px_25px_-12px_rgba(59,130,246,0.3)] transition-shadow duration-300`}
       onMouseEnter={() => {
         // Si la vidéo n'est pas en train de jouer, on montre toujours les contrôles
         if (!isPlaying) {
@@ -239,13 +239,7 @@ export function ProjectCard({
       }}
     >
       {/* Subtle glow effect around the video */}
-      <div
-        className={`absolute -inset-[1px] rounded-xl opacity-40 pointer-events-none ${
-          type === "client"
-            ? "bg-gradient-to-b from-pink-500/30 to-transparent"
-            : "bg-gradient-to-b from-blue-500/30 to-transparent"
-        }`}
-      ></div>
+      <div className="absolute -inset-[1px] rounded-xl opacity-40 pointer-events-none bg-gradient-to-b from-blue-500/30 to-transparent"></div>
 
       {currentVideo ? (
         <>
@@ -303,11 +297,7 @@ export function ProjectCard({
           >
             {/* Bouton play/pause */}
             <button
-              className={`w-16 h-16 md:w-20 md:h-20 flex items-center justify-center rounded-full text-white transition-transform hover:scale-110 ${
-                type === "client"
-                  ? "bg-pink-500/80 hover:bg-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.5)]"
-                  : "bg-blue-500/80 hover:bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]"
-              }`}
+              className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center rounded-full text-white transition-transform hover:scale-110 bg-blue-500/80 hover:bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]"
               onClick={(e) => {
                 e.stopPropagation()
                 togglePlayPause()
@@ -339,11 +329,7 @@ export function ProjectCard({
             {/* Bouton son on/off - n'apparaît que lorsque la vidéo est en lecture */}
             {isPlaying && (
               <button
-                className={`absolute bottom-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/80 text-white transition-transform hover:scale-110 hover:bg-gray-700 ${
-                  type === "client"
-                    ? "hover:text-pink-300"
-                    : "hover:text-blue-300"
-                }`}
+                className="absolute bottom-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/80 text-white transition-transform hover:scale-110 hover:bg-gray-700 hover:text-blue-300"
                 onClick={toggleMute}
                 aria-label={isMuted ? "Activer le son" : "Couper le son"}
               >
@@ -386,11 +372,7 @@ export function ProjectCard({
             } transition-opacity duration-300`}
           >
             <div
-              className={`h-full ${
-                type === "client"
-                  ? "bg-gradient-to-r from-pink-500 to-purple-500"
-                  : "bg-gradient-to-r from-blue-500 to-indigo-500"
-              }`}
+              className="h-full bg-gradient-to-r from-blue-500 to-indigo-500"
               style={{
                 width: `${
                   videoRef.current
@@ -439,9 +421,7 @@ export function ProjectCard({
           key={index}
           className={`w-3 h-3 rounded-sm transition-all ${
             index === currentVideoIndex
-              ? type === "client"
-                ? "bg-pink-500 scale-125 shadow-[0_0_6px_rgba(236,72,153,0.6)]"
-                : "bg-blue-500 scale-125 shadow-[0_0_6px_rgba(59,130,246,0.6)]"
+              ? "bg-blue-500 scale-125 shadow-[0_0_6px_rgba(59,130,246,0.6)]"
               : "bg-gray-600 hover:bg-gray-500"
           }`}
           onClick={() => changeVideo(index)}
@@ -470,8 +450,8 @@ export function ProjectCard({
             <div className="space-y-3">
               {highlights.map((highlight, index) => (
                 <div key={index} className="flex items-start">
-                  <div className="h-5 w-5 rounded-full bg-pink-500/20 flex-shrink-0 mt-1 mr-3 flex items-center justify-center">
-                    <div className="h-1.5 w-1.5 rounded-full bg-pink-400"></div>
+                  <div className="h-5 w-5 rounded-full bg-blue-500/20 flex-shrink-0 mt-1 mr-3 flex items-center justify-center">
+                    <div className="h-1.5 w-1.5 rounded-full bg-blue-400"></div>
                   </div>
                   <p className="text-gray-300 text-sm">{highlight.text}</p>
                 </div>
@@ -484,7 +464,7 @@ export function ProjectCard({
           <div className="mt-auto pt-8 flex justify-center">
             <div className="inline-flex items-center bg-gray-800/80 rounded-lg px-5 py-3 border border-gray-700/60">
               <div className="text-center">
-                <div className="text-xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+                <div className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
                   {metrics}
                 </div>
                 {metricsLabel && (
@@ -493,10 +473,10 @@ export function ProjectCard({
                   </div>
                 )}
               </div>
-              <div className="h-8 w-8 rounded-full bg-pink-500/20 flex-shrink-0 ml-3 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-full bg-blue-500/20 flex-shrink-0 ml-3 flex items-center justify-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 text-pink-400"
+                  className="h-4 w-4 text-blue-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -533,21 +513,14 @@ export function ProjectCard({
   )
 
   return (
-    <div
-      className={`group bg-gray-800/40 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-700/50 mb-12 last:mb-0 relative mt-7 transition-all duration-500 flex flex-col
-    hover:border-opacity-0 ${
-      type === "client"
-        ? "hover:shadow-[0_0_40px_rgba(236,72,153,0.3)] hover:border-pink-500/80"
-        : "hover:shadow-[0_0_40px_rgba(59,130,246,0.3)] hover:border-blue-500/80"
-    }`}
-    >
+    <div className="group bg-gray-900/95 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-700/50 mb-12 last:mb-0 relative mt-7 transition-all duration-500 flex flex-col md:h-[680px]">
       {/* Fond avec dégradé pour créer un effet de relief */}
       <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
         <div
           className={`absolute inset-0 ${
             imagePosition === "left"
-              ? "bg-gradient-to-r from-gray-900/100 via-gray-900/50 to-gray-900/20"
-              : "bg-gradient-to-l from-gray-900/90 via-gray-900/50 to-gray-900/20"
+              ? "bg-gradient-to-r from-gray-900/100 via-gray-900/95 to-gray-900/90"
+              : "bg-gradient-to-l from-gray-900/100 via-gray-900/95 to-gray-900/90"
           }`}
         ></div>
       </div>
@@ -560,44 +533,34 @@ export function ProjectCard({
         {/* Badge sur mobile */}
         {label && (
           <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10 md:hidden">
-            <div
-              className={`bg-gray-900/90 text-white font-medium px-6 py-2 rounded-full shadow-md text-sm whitespace-nowrap border-2 ${
-                type === "client"
-                  ? "border-pink-500/80 shadow-[0_0_8px_1px_rgba(236,72,153,0.2)] group-hover:shadow-[0_0_12px_2px_rgba(236,72,153,0.3)]"
-                  : "border-blue-500/80 shadow-[0_0_8px_1px_rgba(59,130,246,0.2)] group-hover:shadow-[0_0_12px_2px_rgba(59,130,246,0.3)]"
-              } backdrop-blur-sm transition-all duration-500`}
-            >
+            <div className="bg-gray-900/90 text-white font-medium px-6 py-2 rounded-full shadow-md text-sm whitespace-nowrap border-2 border-blue-500/80 shadow-[0_0_8px_1px_rgba(59,130,246,0.2)] backdrop-blur-sm transition-all duration-500">
               {label}
             </div>
           </div>
         )}
 
-        {/* Badge desktop gauche (quand image à droite) */}
-        {label && imagePosition !== "left" && (
-          <div className="absolute -top-4 left-1/4 transform -translate-x-1/2 z-10 hidden md:block">
+        {/* Badge desktop distribué selon position */}
+        {label && (
+          <div
+            className="absolute -top-[1px] z-10 hidden md:block"
+            style={{
+              left: `${(tabPosition + 0.5) * (100 / totalTabs)}%`,
+              transform: "translateX(-50%) translateY(-97%)",
+            }}
+          >
             <div
-              className={`bg-gray-900/90 text-white font-medium px-6 py-2 rounded-full shadow-md text-sm whitespace-nowrap border-2 ${
-                type === "client"
-                  ? "border-pink-500/80 shadow-[0_0_8px_1px_rgba(236,72,153,0.2)] group-hover:shadow-[0_0_12px_2px_rgba(236,72,153,0.3)]"
-                  : "border-blue-500/80 shadow-[0_0_8px_1px_rgba(59,130,246,0.2)] group-hover:shadow-[0_0_12px_2px_rgba(59,130,246,0.3)]"
-              } backdrop-blur-sm transition-all duration-500`}
+              className="text-white font-medium py-2 rounded-t-lg text-sm whitespace-nowrap border-t border-l border-r border-gray-700/40 flex items-center justify-center w-40 px-3 backdrop-blur-sm bg-gray-900/80 cursor-pointer"
+              onClick={() => onTabClick && onTabClick(tabPosition)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  onTabClick && onTabClick(tabPosition)
+                }
+              }}
+              role="button"
+              tabIndex={0}
             >
-              {label}
-            </div>
-          </div>
-        )}
-
-        {/* Badge desktop droite (quand image à gauche) */}
-        {label && imagePosition === "left" && (
-          <div className="absolute -top-4 right-1/4 transform translate-x-1/2 z-10 hidden md:block">
-            <div
-              className={`bg-gray-900/90 text-white font-medium px-6 py-2 rounded-full shadow-md text-sm whitespace-nowrap border-2 ${
-                type === "client"
-                  ? "border-pink-500/80 shadow-[0_0_8px_1px_rgba(236,72,153,0.2)] group-hover:shadow-[0_0_12px_2px_rgba(236,72,153,0.3)]"
-                  : "border-blue-500/80 shadow-[0_0_8px_1px_rgba(59,130,246,0.2)] group-hover:shadow-[0_0_12px_2px_rgba(59,130,246,0.3)]"
-              } backdrop-blur-sm transition-all duration-500`}
-            >
-              {label}
+              <span className="truncate">{label}</span>
             </div>
           </div>
         )}
@@ -609,7 +572,7 @@ export function ProjectCard({
         </div>
 
         {/* Sur desktop: layout basé sur imagePosition */}
-        <div className="hidden md:flex md:flex-row pt-8 h-full  items-center">
+        <div className="hidden md:flex md:flex-row pt-8 h-full items-center">
           {imagePosition === "left" ? (
             <>
               {videoContent}

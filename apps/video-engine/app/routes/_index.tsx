@@ -136,8 +136,7 @@ const useCases: UseCase[] = [
 const projects: Project[] = [
   {
     title: "Real Estate News Video Engine",
-    label: "Premium Real Estate Agency",
-    type: "client",
+    label: "Real Estate",
     metrics: "6h",
     metricsLabel: "saved per video",
     description:
@@ -180,8 +179,7 @@ const projects: Project[] = [
   },
   {
     title: "Health & Wellness Video Content System",
-    label: "Health Supplements Brand",
-    type: "client",
+    label: "Marketing",
     metrics: "27%",
     metricsLabel: "engagement increase",
     description:
@@ -222,8 +220,7 @@ const projects: Project[] = [
   },
   {
     title: "Automated AI Newsfeed",
-    label: "Internal Project",
-    type: "intern",
+    label: "News",
     metrics: "100%",
     metricsLabel: "automated production",
     description:
@@ -252,8 +249,7 @@ const projects: Project[] = [
   },
   {
     title: "AI Tool Review Factory",
-    label: "AI Product Reviews",
-    type: "intern",
+    label: "Reviews",
     metrics: "100%",
     metricsLabel: "automated production",
     description:
@@ -298,8 +294,7 @@ const projects: Project[] = [
   },
   {
     title: "AI Automation Inspiration Channel",
-    label: "Innovation Lab",
-    type: "intern",
+    label: "Motion",
     metrics: "100%",
     metricsLabel: "automated production",
     description:
@@ -338,8 +333,7 @@ const projects: Project[] = [
   },
   {
     title: "AI Course Amplifier System",
-    label: "Educational Platform",
-    type: "intern",
+    label: "Education",
     metrics: "97%",
     metricsLabel: "time saved",
     description:
@@ -442,6 +436,8 @@ export default function Index() {
         ]}
         projects={projects}
       />
+
+      <div className="h-screen"></div>
     </main>
   )
 }
