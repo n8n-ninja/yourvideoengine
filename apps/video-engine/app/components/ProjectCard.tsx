@@ -251,22 +251,23 @@ export function ProjectCard({
         <>
           {/* Thumbnail personnalisé lorsque la vidéo n'est pas en lecture */}
           {!isPlaying && currentVideo.thumbnail && (
-            <div className="absolute inset-0 z-10">
+            <div className="absolute inset-0 z-20 pointer-events-none">
               <img
                 src={currentVideo.thumbnail}
                 alt={currentVideo.title || "Video thumbnail"}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-xl"
               />
             </div>
           )}
 
           <video
             ref={videoRef}
-            className="w-full h-full object-cover relative z-10"
+            className={`w-full h-full object-cover relative ${
+              isPlaying ? "z-10" : "z-0"
+            }`}
             src={currentVideo.url}
             playsInline
             muted={isMuted}
-            poster={!currentVideo.thumbnail ? undefined : ""}
             onClick={(e) => {
               // La vidéo elle-même ne déclenche pas togglePlayPause directement
               // car cela pourrait interférer avec l'overlay et le bouton
@@ -282,7 +283,7 @@ export function ProjectCard({
 
           {/* Overlay pour les contrôles personnalisés */}
           <div
-            className={`absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-[1px] transition-opacity duration-300 z-20 ${
+            className={`absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-[1px] transition-opacity duration-300 z-30 ${
               !isPlaying || showControls ? "opacity-100" : "opacity-0"
             }`}
             onClick={(e) => {
@@ -335,45 +336,47 @@ export function ProjectCard({
               )}
             </button>
 
-            {/* Bouton son on/off */}
-            <button
-              className={`absolute bottom-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/80 text-white transition-transform hover:scale-110 hover:bg-gray-700 ${
-                type === "client"
-                  ? "hover:text-pink-300"
-                  : "hover:text-blue-300"
-              }`}
-              onClick={toggleMute}
-              aria-label={isMuted ? "Activer le son" : "Couper le son"}
-            >
-              {isMuted ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm13.517 4.134l-1.416-1.416A8.978 8.978 0 0 0 21 12a8.982 8.982 0 0 0-3.304-6.968l1.42-1.42A10.976 10.976 0 0 1 23 12c0 3.223-1.386 6.122-3.594 8.134zm-3.543-3.543l-1.422-1.422A3.993 3.993 0 0 0 16 12c0-1.43-.75-2.68-1.87-3.392l1.425-1.425A5.985 5.985 0 0 1 18 12c0 1.842-.83 3.49-2.137 4.591z" />
-                  <path d="M11 5l-1 1.5l-3.5 2.5H2v6h4.5L10 18l1-1.5v-11z" />
-                  <line
-                    x1="22"
-                    y1="2"
-                    x2="2"
-                    y2="22"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm13.517 4.134l-1.416-1.416A8.978 8.978 0 0 0 21 12a8.982 8.982 0 0 0-3.304-6.968l1.42-1.42A10.976 10.976 0 0 1 23 12c0 3.223-1.386 6.122-3.594 8.134zm-3.543-3.543l-1.422-1.422A3.993 3.993 0 0 0 16 12c0-1.43-.75-2.68-1.87-3.392l1.425-1.425A5.985 5.985 0 0 1 18 12c0 1.842-.83 3.49-2.137 4.591z" />
-                </svg>
-              )}
-            </button>
+            {/* Bouton son on/off - n'apparaît que lorsque la vidéo est en lecture */}
+            {isPlaying && (
+              <button
+                className={`absolute bottom-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/80 text-white transition-transform hover:scale-110 hover:bg-gray-700 ${
+                  type === "client"
+                    ? "hover:text-pink-300"
+                    : "hover:text-blue-300"
+                }`}
+                onClick={toggleMute}
+                aria-label={isMuted ? "Activer le son" : "Couper le son"}
+              >
+                {isMuted ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm13.517 4.134l-1.416-1.416A8.978 8.978 0 0 0 21 12a8.982 8.982 0 0 0-3.304-6.968l1.42-1.42A10.976 10.976 0 0 1 23 12c0 3.223-1.386 6.122-3.594 8.134zm-3.543-3.543l-1.422-1.422A3.993 3.993 0 0 0 16 12c0-1.43-.75-2.68-1.87-3.392l1.425-1.425A5.985 5.985 0 0 1 18 12c0 1.842-.83 3.49-2.137 4.591z" />
+                    <path d="M11 5l-1 1.5l-3.5 2.5H2v6h4.5L10 18l1-1.5v-11z" />
+                    <line
+                      x1="22"
+                      y1="2"
+                      x2="2"
+                      y2="22"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm13.517 4.134l-1.416-1.416A8.978 8.978 0 0 0 21 12a8.982 8.982 0 0 0-3.304-6.968l1.42-1.42A10.976 10.976 0 0 1 23 12c0 3.223-1.386 6.122-3.594 8.134zm-3.543-3.543l-1.422-1.422A3.993 3.993 0 0 0 16 12c0-1.43-.75-2.68-1.87-3.392l1.425-1.425A5.985 5.985 0 0 1 18 12c0 1.842-.83 3.49-2.137 4.591z" />
+                  </svg>
+                )}
+              </button>
+            )}
           </div>
 
           {/* Barre de progression au bas de la vidéo */}
@@ -451,70 +454,76 @@ export function ProjectCard({
 
   // Contenu texte pour la description du projet
   const textContent = (
-    <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col">
-      <div className="mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold">{title}</h2>
-      </div>
+    <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col h-full">
+      <div className="flex flex-col h-full">
+        <div className="flex-shrink-0">
+          <div className="mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold">{title}</h2>
+          </div>
 
-      <p className="text-gray-300 mb-6">{description}</p>
+          <p className="text-gray-300 mb-6">{description}</p>
 
-      <div>
-        <h3 className="text-lg font-medium mb-4 text-gray-200">Highlights :</h3>
-        <div className="space-y-3">
-          {highlights.map((highlight, index) => (
-            <div key={index} className="flex items-start">
-              <div className="h-5 w-5 rounded-full bg-pink-500/20 flex-shrink-0 mt-1 mr-3 flex items-center justify-center">
-                <div className="h-1.5 w-1.5 rounded-full bg-pink-400"></div>
-              </div>
-              <p className="text-gray-300 text-sm">{highlight.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {metrics && (
-        <div className="mt-6">
-          <div className="inline-flex items-center bg-gray-800/80 rounded-lg px-4 py-3 border border-gray-700/60">
-            <div className="mr-3">
-              <div className="text-xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
-                {metrics}
-              </div>
-              {metricsLabel && (
-                <div className="text-xs text-gray-400 mt-0.5">
-                  {metricsLabel}
+          <div>
+            <h3 className="text-lg font-medium mb-4 text-gray-200">
+              Highlights :
+            </h3>
+            <div className="space-y-3">
+              {highlights.map((highlight, index) => (
+                <div key={index} className="flex items-start">
+                  <div className="h-5 w-5 rounded-full bg-pink-500/20 flex-shrink-0 mt-1 mr-3 flex items-center justify-center">
+                    <div className="h-1.5 w-1.5 rounded-full bg-pink-400"></div>
+                  </div>
+                  <p className="text-gray-300 text-sm">{highlight.text}</p>
                 </div>
-              )}
-            </div>
-            <div className="h-8 w-8 rounded-full bg-pink-500/20 flex-shrink-0 flex items-center justify-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 text-pink-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                />
-              </svg>
+              ))}
             </div>
           </div>
         </div>
-      )}
+
+        {metrics && (
+          <div className="mt-auto pt-8 flex justify-center">
+            <div className="inline-flex items-center bg-gray-800/80 rounded-lg px-5 py-3 border border-gray-700/60">
+              <div className="text-center">
+                <div className="text-xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+                  {metrics}
+                </div>
+                {metricsLabel && (
+                  <div className="text-xs text-gray-400 mt-0.5">
+                    {metricsLabel}
+                  </div>
+                )}
+              </div>
+              <div className="h-8 w-8 rounded-full bg-pink-500/20 flex-shrink-0 ml-3 flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-pink-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 
   // Contenu vidéo avec navigation
   const videoContent = (
-    <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col items-center">
+    <div className="w-full md:w-1/2 p-5 md:p-7 flex flex-col items-center">
       <div
         className={
           videoOrientation === "vertical"
-            ? "w-[85%] sm:w-[75%] md:w-[65%] lg:w-[60%] mx-auto max-w-[400px] min-w-[280px]"
-            : "w-full max-w-[900px]"
+            ? "w-[85%] sm:w-[75%] md:w-[70%] lg:w-[60%] mx-auto max-w-[400px] min-w-[250px]"
+            : "w-[90%] md:w-full max-w-[900px]"
         }
       >
         {videoPlayer}
@@ -525,18 +534,32 @@ export function ProjectCard({
 
   return (
     <div
-      className={`group bg-gray-800/40 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-700/50 mb-12 last:mb-0 relative mt-7 transition-all duration-500 
+      className={`group bg-gray-800/40 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-700/50 mb-12 last:mb-0 relative mt-7 transition-all duration-500 flex flex-col
     hover:border-opacity-0 ${
       type === "client"
-        ? "hover:shadow-[0_0_40px_rgba(236,72,153,0.3)] hover:border-pink-500/80 "
-        : "hover:shadow-[0_0_40px_rgba(59,130,246,0.3)] hover:border-blue-500/80 0 "
+        ? "hover:shadow-[0_0_40px_rgba(236,72,153,0.3)] hover:border-pink-500/80"
+        : "hover:shadow-[0_0_40px_rgba(59,130,246,0.3)] hover:border-blue-500/80"
     }`}
     >
+      {/* Fond avec dégradé pour créer un effet de relief */}
+      <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+        <div
+          className={`absolute inset-0 ${
+            imagePosition === "left"
+              ? "bg-gradient-to-r from-gray-900/100 via-gray-900/50 to-gray-900/20"
+              : "bg-gradient-to-l from-gray-900/90 via-gray-900/50 to-gray-900/20"
+          }`}
+        ></div>
+      </div>
+
       {/* Pour s'assurer que le contenu soit toujours au-dessus des effets visuels */}
-      <div style={{ position: "relative", zIndex: 5 }}>
+      <div
+        style={{ position: "relative", zIndex: 5 }}
+        className="h-full flex flex-col"
+      >
         {/* Badge sur mobile */}
         {label && (
-          <div className="absolute -top-4 left-1/4 transform -translate-x-1/2 z-10 md:hidden">
+          <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10 md:hidden">
             <div
               className={`bg-gray-900/90 text-white font-medium px-6 py-2 rounded-full shadow-md text-sm whitespace-nowrap border-2 ${
                 type === "client"
@@ -580,13 +603,13 @@ export function ProjectCard({
         )}
 
         {/* Sur mobile: toujours texte puis vidéo */}
-        <div className="md:hidden flex flex-col pt-8">
+        <div className="md:hidden flex flex-col pt-8 h-full">
           {textContent}
           {videoContent}
         </div>
 
         {/* Sur desktop: layout basé sur imagePosition */}
-        <div className="hidden md:flex md:flex-row pt-8">
+        <div className="hidden md:flex md:flex-row pt-8 h-full  items-center">
           {imagePosition === "left" ? (
             <>
               {videoContent}
