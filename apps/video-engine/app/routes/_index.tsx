@@ -5,6 +5,8 @@ import { FiftyFifty } from "~/components/FiftyFifty"
 import { WhatWeCanBuild } from "~/components/WhatWeCanBuild"
 import { UseCasesSlider, type UseCase } from "~/components/UseCasesSlider"
 import { SelectedProjects, type Project } from "~/components/SelectedProjects"
+import { Pricing } from "~/components/Pricing"
+import { Testimonials } from "~/components/Testimonials"
 
 export const meta: MetaFunction = () => {
   return [
@@ -437,7 +439,61 @@ export default function Index() {
         projects={projects}
       />
 
-      <div className="h-screen"></div>
+      <Pricing
+        title="Pricing"
+        description={[
+          "Every system we build is unique and so is its investment.",
+        ]}
+        ctaLabel="Tell us about your project"
+        ctaHref="/contact"
+        setupTitle="Setup Fee"
+        setupDescription="A one-time investment to create your tailored video engine."
+        setupItems={[
+          "Custom system architecture design",
+          "Development and integration",
+          "Initial setup and configuration",
+          "Onboarding and training",
+        ]}
+        monthlyTitle="Monthly Plan"
+        monthlyDescription="Ongoing support to keep your system running smoothly."
+        monthlyItems={[
+          "System hosting and infrastructure",
+          "Monitoring and maintenance",
+          "Technical support",
+          "Minor updates and improvements",
+        ]}
+        footerText="Our solutions are crafted for serious businesses and creators ready to invest in high-quality, time-saving automation."
+      />
+
+      <Testimonials
+        title="What Our Clients Say"
+        description={[
+          "Discover how our video automation solutions have transformed their lives.",
+        ]}
+        testimonials={[
+          {
+            quote:
+              "The custom video system developed for our real estate agency has completely revolutionized our content strategy. We're now able to publish stunning property videos in a fraction of the time, giving us a major edge over competitors.",
+            author: "Alexandra Martin",
+            role: "Marketing Director",
+            company: "Premier Properties",
+          },
+          {
+            quote:
+              "As an online educator, I was spending 70% of my time on video production rather than curriculum development. This AI video system has flipped that ratio, letting me focus on what truly matters - creating exceptional learning experiences.",
+            author: "Michael Chen",
+            role: "Founder",
+            company: "TechEd Academy",
+          },
+          {
+            quote:
+              "Our product launch videos used to take weeks to produce. Now we can create professional, branded videos for each feature release in just hours. The ROI has been incredible, both in time saved and increased engagement.",
+            author: "Sarah Johnson",
+            role: "Product Lead",
+            company: "Innovate Solutions",
+          },
+        ]}
+      />
     </main>
   )
 }
