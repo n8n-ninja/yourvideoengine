@@ -27,9 +27,30 @@ export default {
           "0%, 100%": { backgroundPosition: "0% 50%" },
           "50%": { backgroundPosition: "100% 50%" },
         },
+        "pulse-slow": {
+          "0%, 100%": { opacity: "0.5" },
+          "50%": { opacity: "0.2" },
+        },
+        "pulse-slow-delayed": {
+          "0%, 100%": { opacity: "0.3" },
+          "50%": { opacity: "0.1" },
+        },
+        float: {
+          "0%": { transform: "translateY(0) scale(1)" },
+          "50%": { transform: "translateY(-20px) scale(1.05)" },
+          "100%": { transform: "translateY(0) scale(1)" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "200% 0" },
+          "100%": { backgroundPosition: "-200% 0" },
+        },
       },
       animation: {
         "border-flow": "border-flow 8s ease infinite",
+        "pulse-slow": "pulse-slow 8s ease-in-out infinite",
+        "pulse-slow-delayed": "pulse-slow-delayed 8s ease-in-out infinite 3s",
+        float: "float 12s ease-in-out infinite",
+        shimmer: "shimmer 8s linear infinite",
       },
       colors: {
         background: "hsl(var(--background))",

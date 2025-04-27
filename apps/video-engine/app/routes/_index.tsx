@@ -7,7 +7,10 @@ import { UseCasesSlider, type UseCase } from "~/components/UseCasesSlider"
 import { SelectedProjects, type Project } from "~/components/SelectedProjects"
 import { Pricing } from "~/components/Pricing"
 import { Testimonials } from "~/components/Testimonials"
-
+import { FAQ } from "~/components/FAQ"
+import { TechnologyExpertise } from "~/components/TechnologyExpertise"
+import { WhoWeAre } from "~/components/WhoWeAre"
+import { FinalCTA } from "~/components/FinalCTA"
 export const meta: MetaFunction = () => {
   return [
     { title: "Tailored AI Video Automation System" },
@@ -468,7 +471,7 @@ export default function Index() {
       <Testimonials
         title="What Our Clients Say"
         description={[
-          "Discover how our video automation solutions have transformed their lives.",
+          "Discover how our video automation solutions have transformed workflows and boosted productivity for businesses across industries.",
         ]}
         testimonials={[
           {
@@ -493,6 +496,154 @@ export default function Index() {
             company: "Innovate Solutions",
           },
         ]}
+      />
+
+      <TechnologyExpertise
+        title="Technology & Expertise"
+        description={[
+          "Each system is crafted using the right tools for your needs.",
+        ]}
+        categories={[
+          {
+            title: "Core Technologies We Use",
+            description:
+              "The foundation of every system we build relies on these powerful tools and platforms.",
+            items: [
+              { name: "Video Editing", category: "category" },
+              { name: "Remotion", category: "video" },
+              { name: "Json2Video", category: "video" },
+              { name: "Creatomate", category: "video" },
+
+              { name: "AI Research & Text Generation", category: "category" },
+              { name: "OpenAI", category: "ai-research" },
+              { name: "Perplexity AI", category: "ai-research" },
+              { name: "DeepSeek", category: "ai-research" },
+
+              { name: "AI Content Generation", category: "category" },
+              { name: "HeyGen", category: "content" },
+              { name: "Runway", category: "content" },
+              { name: "MidJourney", category: "content" },
+              { name: "Sora", category: "content" },
+              { name: "Flux", category: "content" },
+              { name: "ElevenLabs", category: "content" },
+
+              { name: "Publishing", category: "category" },
+              { name: "Matricool", category: "publishing" },
+              { name: "Blotato", category: "publishing" },
+              { name: "Postiz", category: "publishing" },
+
+              { name: "Infrastructure", category: "category" },
+              { name: "AWS", category: "infra" },
+              { name: "Cloudflare", category: "infra" },
+            ],
+          },
+          {
+            title: "Seamless Integrations",
+            description:
+              "We build systems that fit into your existing workflows and connect with your favorite tools.",
+            items: [
+              { name: "Trello" },
+              { name: "Google Workspace" },
+              { name: "WordPress" },
+              { name: "Pipedrive" },
+              { name: "Zoho" },
+              { name: "HubSpot" },
+              { name: "Slack" },
+              { name: "Notion" },
+              { name: "Airtable" },
+              { name: "Mailchimp" },
+              { name: "N8n" },
+              { name: "Make" },
+            ],
+          },
+          {
+            title: "Content Distribution Channels",
+            description:
+              "Get your videos out to the world through all the platforms that matter to your audience.",
+            items: [
+              { name: "YouTube" },
+              { name: "TikTok" },
+              { name: "Instagram" },
+              { name: "LinkedIn" },
+              { name: "Twitter" },
+              { name: "Facebook" },
+            ],
+          },
+        ]}
+      />
+
+      <WhoWeAre
+        title="Who We Are"
+        description={[
+          "A team of senior professionals combining technical expertise, creative strategy, and AI innovation.",
+        ]}
+        team={[
+          {
+            name: "Manu",
+            role: "Senior Engineer",
+            location: "Switzerland",
+            description:
+              "Manu brings 20 years of experience in software development, AI automation, and advanced video production workflows. He specializes in building robust, scalable systems that combine efficiency, creativity, and precision — with a focus on smart automation that serves, not replaces, human creativity.",
+          },
+          {
+            name: "Thais",
+            role: "Business Strategist & AI Consultant",
+            location: "Brazil",
+            description:
+              "Thais is a marketing expert and AI strategist with a strong background in content creation, branding, and prompt engineering. She designs strategies that bridge technology and storytelling, helping brands harness AI-driven workflows without losing authenticity or strategic depth.",
+          },
+        ]}
+      />
+
+      <FAQ
+        title="Frequently Asked Questions"
+        description={[
+          "Everything you need to know about our video automation systems.",
+        ]}
+        faqs={[
+          {
+            question: "How much does it cost?",
+            answer:
+              "Every system we build is tailored to your specific needs and goals. After sharing a few details about your project, you'll receive a personalized estimate covering the setup and monthly plan.",
+          },
+          {
+            question: "What's included in the monthly plan?",
+            answer:
+              "The monthly plan covers hosting, monitoring, maintenance, and support — ensuring your system remains stable and fully operational. Major upgrades or new developments are handled through separate quotes.",
+          },
+          {
+            question: "What happens if I want to evolve my system later?",
+            answer:
+              "If you need new features, expansions, or structural changes, we'll define a custom roadmap and quote accordingly. You keep full control over how your system evolves over time.",
+          },
+          {
+            question: "Can I update content myself once the system is live?",
+            answer:
+              "Yes — most systems are designed with simple, intuitive interfaces to trigger new content creation or updates without needing technical skills. You focus on the creative input; we handle the technical complexity.",
+          },
+          {
+            question: "How long does it take to build my system?",
+            answer:
+              "Most systems are delivered within 3 to 6 weeks after kickoff, depending on the scope and complexity of the project.",
+          },
+          {
+            question:
+              "Are third-party service costs (like HeyGen, OpenAI, ElevenLabs) included?",
+            answer:
+              "It depends on the setup. If you already have active subscriptions, we can connect your system to them. If not, we can use our own access where possible, or recommend the best approach based on your needs.",
+          },
+          {
+            question: "Is the system fully automated?",
+            answer:
+              "In most cases, no. We automate repetitive and time-consuming tasks to save you time, reduce costs, and let you focus where your creativity and expertise create the most value. Key steps are usually kept under your control to maintain quality, authenticity, and strategic alignment.",
+          },
+        ]}
+      />
+
+      <FinalCTA
+        title="Ready to transform your content creation?"
+        ctaText="Tell us about your project"
+        ctaHref="/contact"
       />
     </main>
   )
