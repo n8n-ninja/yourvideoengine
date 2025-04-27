@@ -28,7 +28,7 @@ export function Pricing({
   footerText,
 }: PricingProps) {
   return (
-    <section className="w-full py-16 md:py-24 px-6 md:px-12">
+    <section className="w-full py-16 md:py-24 px-6 md:px-12 md:-mt-20">
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-4xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">{title}</h2>

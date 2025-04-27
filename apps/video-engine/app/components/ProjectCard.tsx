@@ -203,9 +203,9 @@ export function ProjectCard({
   // Créer le player vidéo
   const videoPlayer = (
     <div
-      className={`w-full h-full flex items-center justify-center bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/60 overflow-hidden shadow-lg relative ${
+      className={`w-full h-full flex items-center justify-center bg-gray-800/50 backdrop-blur-sm rounded-xl border border-pink-500/60 overflow-hidden shadow-lg relative ${
         videoOrientation === "vertical" ? "aspect-[9/16]" : "aspect-[16/9]"
-      } shadow-[0_10px_25px_-12px_rgba(59,130,246,0.3)] transition-shadow duration-300`}
+      } shadow-[0_10px_25px_-5px_rgba(236,72,153,0.5)] transition-all duration-300 group hover:border-pink-500/80 hover:shadow-[0_8px_32px_-5px_rgba(236,72,153,0.7)]`}
       onMouseEnter={() => {
         // Si la vidéo n'est pas en train de jouer, on montre toujours les contrôles
         if (!isPlaying) {
@@ -238,8 +238,10 @@ export function ProjectCard({
         }
       }}
     >
-      {/* Subtle glow effect around the video */}
-      <div className="absolute -inset-[1px] rounded-xl opacity-40 pointer-events-none bg-gradient-to-b from-blue-500/30 to-transparent"></div>
+      {/* Glow effect around the video - always visible but intensifies on hover */}
+      <div className="absolute -inset-[1px] rounded-xl pointer-events-none bg-gradient-to-b from-pink-500/50 to-purple-500/30 opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
+      <div className="absolute -inset-[2px] rounded-xl pointer-events-none bg-gradient-to-tr from-pink-400/20 via-pink-400/30 to-pink-600/40 opacity-70 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
+      <div className="absolute -inset-[3px] rounded-xl pointer-events-none bg-gradient-to-r from-pink-500/20 to-purple-500/20 opacity-50 group-hover:opacity-80 transition-opacity duration-300 blur-md"></div>
 
       {currentVideo ? (
         <>
@@ -297,7 +299,7 @@ export function ProjectCard({
           >
             {/* Bouton play/pause */}
             <button
-              className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center rounded-full text-white transition-transform hover:scale-110 bg-blue-500/80 hover:bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+              className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center rounded-full text-white transition-transform hover:scale-110 bg-pink-500/80 hover:bg-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.5)]"
               onClick={(e) => {
                 e.stopPropagation()
                 togglePlayPause()
@@ -372,7 +374,7 @@ export function ProjectCard({
             } transition-opacity duration-300`}
           >
             <div
-              className="h-full bg-gradient-to-r from-blue-500 to-indigo-500"
+              className="h-full bg-gradient-to-r from-pink-500 to-purple-500"
               style={{
                 width: `${
                   videoRef.current
@@ -421,7 +423,7 @@ export function ProjectCard({
           key={index}
           className={`w-3 h-3 rounded-sm transition-all ${
             index === currentVideoIndex
-              ? "bg-blue-500 scale-125 shadow-[0_0_6px_rgba(59,130,246,0.6)]"
+              ? "bg-pink-500 scale-125 shadow-[0_0_6px_rgba(236,72,153,0.6)]"
               : "bg-gray-600 hover:bg-gray-500"
           }`}
           onClick={() => changeVideo(index)}
@@ -436,47 +438,31 @@ export function ProjectCard({
   const textContent = (
     <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col h-full">
       <div className="flex flex-col h-full">
-        <div className="flex-shrink-0">
-          <div className="mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold">{title}</h2>
-          </div>
-
-          <p className="text-gray-300 mb-6">{description}</p>
-
-          <div>
-            <h3 className="text-lg font-medium mb-4 text-gray-200">
-              Highlights :
-            </h3>
-            <div className="space-y-3">
-              {highlights.map((highlight, index) => (
-                <div key={index} className="flex items-start">
-                  <div className="h-5 w-5 rounded-full bg-blue-500/20 flex-shrink-0 mt-1 mr-3 flex items-center justify-center">
-                    <div className="h-1.5 w-1.5 rounded-full bg-blue-400"></div>
-                  </div>
-                  <p className="text-gray-300 text-sm">{highlight.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="mb-6">
+          <h3 className="text-xl md:text-2xl font-bold mb-4 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent transition-transform duration-300">
+            {title}
+          </h3>
         </div>
 
+        <p className="text-gray-300">{description}</p>
+
         {metrics && (
-          <div className="mt-auto pt-8 flex justify-center">
-            <div className="inline-flex items-center bg-gray-800/80 rounded-lg px-5 py-3 border border-gray-700/60">
+          <div className="my-8 flex justify-center">
+            <div className="inline-flex items-center bg-gray-800/80 rounded-lg px-6 py-4 border border-pink-500/40 shadow-lg shadow-pink-500/20 transition-all duration-300 hover:shadow-pink-500/30 hover:border-pink-500/60">
               <div className="text-center">
-                <div className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+                <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
                   {metrics}
                 </div>
                 {metricsLabel && (
-                  <div className="text-xs text-gray-400 mt-0.5">
+                  <div className="text-sm text-gray-300 mt-1">
                     {metricsLabel}
                   </div>
                 )}
               </div>
-              <div className="h-8 w-8 rounded-full bg-blue-500/20 flex-shrink-0 ml-3 flex items-center justify-center">
+              <div className="h-10 w-10 rounded-full bg-pink-500/20 flex-shrink-0 ml-4 flex items-center justify-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 text-blue-400"
+                  className="h-5 w-5 text-pink-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -492,6 +478,22 @@ export function ProjectCard({
             </div>
           </div>
         )}
+
+        <div>
+          <h3 className="text-lg font-medium mb-4 text-gray-200">
+            Highlights:
+          </h3>
+          <div className="space-y-3">
+            {highlights.map((highlight, index) => (
+              <div key={index} className="flex items-start">
+                <div className="h-5 w-5 rounded-full bg-blue-500/20 flex-shrink-0 mt-1 mr-3 flex items-center justify-center">
+                  <div className="h-1.5 w-1.5 rounded-full bg-blue-400"></div>
+                </div>
+                <p className="text-gray-300 text-sm">{highlight.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -513,7 +515,7 @@ export function ProjectCard({
   )
 
   return (
-    <div className="group bg-gray-900/95 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-700/50 mb-12 last:mb-0 relative mt-7 transition-all duration-500 flex flex-col md:h-[680px]">
+    <div className="group bg-gray-900/95 backdrop-blur-sm rounded-2xl  border border-gray-700/50 mb-12 last:mb-0 relative mt-7 transition-all duration-500 flex flex-col md:h-[680px]">
       {/* Fond avec dégradé pour créer un effet de relief */}
       <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
         <div
@@ -533,7 +535,7 @@ export function ProjectCard({
         {/* Badge sur mobile */}
         {label && (
           <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10 md:hidden">
-            <div className="bg-gray-900/90 text-white font-medium px-6 py-2 rounded-full shadow-md text-sm whitespace-nowrap border-2 border-blue-500/80 shadow-[0_0_8px_1px_rgba(59,130,246,0.2)] backdrop-blur-sm transition-all duration-500">
+            <div className="bg-gray-900 text-white font-medium px-6 py-2 rounded-full text-sm whitespace-nowrap border-2 border-blue-500/80">
               {label}
             </div>
           </div>
@@ -549,7 +551,7 @@ export function ProjectCard({
             }}
           >
             <div
-              className="text-white font-medium py-2 rounded-t-lg text-sm whitespace-nowrap border-t border-l border-r border-gray-700/40 flex items-center justify-center w-40 px-3 backdrop-blur-sm bg-gray-900/80 cursor-pointer"
+              className="text-white font-medium py-2 rounded-t-lg text-sm whitespace-nowrap border-t border-l border-r border-gray-700/40 flex items-center justify-center w-40 px-3 bg-gray-900 cursor-pointer"
               onClick={() => onTabClick && onTabClick(tabPosition)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {

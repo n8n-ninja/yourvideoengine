@@ -72,7 +72,10 @@ export function SelectedProjects({
     <VideoContext.Provider
       value={{ activeVideoId, setActiveVideoId, isMuted, setIsMuted }}
     >
-      <section className="w-full py-16 md:py-24 px-6 md:px-12" ref={sectionRef}>
+      <section
+        className="w-full py-16 md:py-24 px-6 md:px-12 relative"
+        ref={sectionRef}
+      >
         <div className="max-w-6xl mx-auto">
           {/* En-tête avec titre et description */}
           <div className="mb-40">
@@ -93,12 +96,12 @@ export function SelectedProjects({
           </div>
 
           {/* Container des projets */}
-          <div className="pb-[10px] -mb-44">
+          <div className="pb-[10px] -mb-44 relative">
             {projects.map((project, index) => (
               <div
                 key={index}
                 ref={(el) => (projectRefs.current[index] = el)}
-                className=" md:h-[80vh] md:sticky md:top-[15%] w-full mb-10 pb-10"
+                className=" md:h-[90vh] md:sticky md:top-[15%] w-full mb-10 pb-10"
               >
                 <ProjectCardWithContext
                   {...project}

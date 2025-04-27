@@ -16,6 +16,7 @@ import { WhoWeAre } from "~/components/WhoWeAre"
 import { FinalCTA } from "~/components/FinalCTA"
 import { FormattedText } from "~/components/FormattedText"
 import { HighlightBox } from "~/components/ui/highlight-box"
+import { useEffect, useRef } from "react"
 
 export const meta: MetaFunction = () => {
   return [
@@ -146,18 +147,6 @@ const projects: Project[] = [
         thumbnail:
           "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80",
       },
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-02743.mp4",
-        title: "Real Estate News Demo 2",
-        thumbnail:
-          "https://images.unsplash.com/photo-1628744448840-55bdb2497bd4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-      },
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-26-77742.mp4",
-        title: "Real Estate News Demo 3",
-        thumbnail:
-          "https://images.unsplash.com/photo-1628745277866-8b306a277de7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-      },
     ],
     videoOrientation: "vertical",
   },
@@ -187,18 +176,6 @@ const projects: Project[] = [
         thumbnail:
           "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
       },
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-07093.mp4",
-        title: "Wellness Video Demo 2",
-      },
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-02743.mp4",
-        title: "Wellness Video Demo 3",
-      },
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-26-77742.mp4",
-        title: "Wellness Video Demo 4",
-      },
     ],
     videoOrientation: "vertical",
   },
@@ -223,10 +200,6 @@ const projects: Project[] = [
         title: "AI Newsfeed Demo 1",
         thumbnail:
           "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-      },
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-07093.mp4",
-        title: "AI Newsfeed Demo 2",
       },
     ],
     videoOrientation: "vertical",
@@ -256,22 +229,6 @@ const projects: Project[] = [
         title: "AI Tool Review Demo 1",
         thumbnail:
           "https://images.unsplash.com/photo-1633412802994-5c058f151b66?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-      },
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-26-77742.mp4",
-        title: "AI Tool Review Demo 2",
-      },
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-02743.mp4",
-        title: "AI Tool Review Demo 3",
-      },
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-07093.mp4",
-        title: "AI Tool Review Demo 4",
-      },
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-26-77742.mp4",
-        title: "AI Tool Review Demo 5",
       },
     ],
     videoOrientation: "vertical",
@@ -304,14 +261,6 @@ const projects: Project[] = [
         thumbnail:
           "https://images.unsplash.com/photo-1617791160536-598cf32026fb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1064&q=80",
       },
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-02743.mp4",
-        title: "Inspiration Channel Demo 2",
-      },
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-07093.mp4",
-        title: "Inspiration Channel Demo 3",
-      },
     ],
     videoOrientation: "vertical",
   },
@@ -338,14 +287,6 @@ const projects: Project[] = [
         title: "Course Amplifier Demo 1",
         thumbnail:
           "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-      },
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-07093.mp4",
-        title: "Course Amplifier Demo 2",
-      },
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-26-77742.mp4",
-        title: "Course Amplifier Demo 3",
       },
     ],
     videoOrientation: "horizontal",
@@ -435,8 +376,102 @@ const serviceCategories: ServiceCategoryData[] = [
 ]
 
 export default function Index() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const glowRef = useRef<HTMLDivElement>(null)
+  const useCaseMarkerRef = useRef<HTMLDivElement>(null)
+  const technologyMarkerRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const section = sectionRef.current
+    const glow = glowRef.current
+    const useCaseMarker = useCaseMarkerRef.current
+    const technologyMarker = technologyMarkerRef.current
+
+    if (!section || !glow) return
+
+    const handleScroll = () => {
+      const rect = section.getBoundingClientRect()
+      const windowHeight = window.innerHeight
+      const documentHeight = document.documentElement.scrollHeight
+
+      // Normalized scroll position (0 to 1)
+      const scrollProgress = window.scrollY / (documentHeight - windowHeight)
+
+      console.log(scrollProgress * windowHeight)
+
+      // Sinusoidal horizontal movement with 3 complete cycles (6π for 3 cycles)
+      const horizontalPosition =
+        50 + Math.sin(scrollProgress * Math.PI * 6) * 45
+
+      // Update the glow position
+      glow.style.top = `${scrollProgress * windowHeight * 0.8}px`
+      glow.style.left = `${horizontalPosition}%`
+
+      // Gestion de l'opacité du glow avec transitions en douceur
+      let opacity = 0.8
+
+      // Vérifier la position par rapport au marqueur useCaseMarker
+      const useCaseMarkerRect = useCaseMarker!.getBoundingClientRect()
+      const distanceToUseCaseMarker = useCaseMarkerRect.top - windowHeight
+
+      // Vérifier la position par rapport au marqueur technologyMarker
+      const technologyMarkerRect = technologyMarker!.getBoundingClientRect()
+      const distanceToTechnologyMarker = technologyMarkerRect.top - windowHeight
+
+      // Transition en douceur - distances de transition (en pixels)
+      const fadeDistance = 300
+
+      // Fade out avant useCaseMarker
+      if (
+        distanceToUseCaseMarker < fadeDistance &&
+        distanceToUseCaseMarker > 0
+      ) {
+        // Transition graduelle de 0.8 à 0
+        opacity = 0.8 * (distanceToUseCaseMarker / fadeDistance)
+      }
+      // Zone où le glow est invisible
+      else if (distanceToUseCaseMarker <= 0 && distanceToTechnologyMarker > 0) {
+        opacity = 0
+      }
+      // Fade in après technologyMarker
+      else if (
+        distanceToTechnologyMarker <= 0 &&
+        distanceToTechnologyMarker > -fadeDistance
+      ) {
+        // Transition graduelle de 0 à 0.8 (corrigée)
+        const progress = Math.abs(distanceToTechnologyMarker) / fadeDistance
+        opacity = 0.8 * Math.min(1, progress)
+        console.log("Fade-in progress:", progress, "Opacity:", opacity)
+      }
+
+      glow.style.opacity = opacity.toString()
+    }
+
+    // Initial call to set position when component mounts
+    handleScroll()
+
+    // Add scroll event listener
+    window.addEventListener("scroll", handleScroll, { passive: true })
+
+    // Clean up
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
+
   return (
-    <main className="min-h-screen text-foreground">
+    <main ref={sectionRef} className="min-h-screen text-foreground">
+      {/* Animated glow effect */}
+      <div
+        ref={glowRef}
+        className="fixed pointer-events-none w-[50vw] h-[40vw] rounded-full blur-[120px] bg-gradient-to-r from-pink-500/30 via-purple-500/35 to-blue-500/25 z-0"
+        style={{
+          opacity: 0.8,
+          top: 0,
+          left: "50%",
+          transform: "translateX(-50%)",
+        }}
+      />
+
       <HeroBanner
         title="Tailored AI Video Automation System"
         subtitle="Streamline your video production with a custom AI-powered engine."
@@ -496,6 +531,9 @@ export default function Index() {
         ]}
         categories={serviceCategories}
       />
+
+      {/* Marker div pour le fade-out du glow */}
+      <div ref={useCaseMarkerRef} className="h-1 w-full"></div>
 
       <UseCasesSlider
         title="Use Cases"
@@ -568,6 +606,9 @@ export default function Index() {
           },
         ]}
       />
+
+      {/* Marker div pour le ftechnologyMarkerRefade-out du glow */}
+      <div ref={technologyMarkerRef}></div>
 
       <TechnologyExpertise
         title="Technology & Expertise"
