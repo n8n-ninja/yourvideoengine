@@ -459,10 +459,6 @@ export function UseCasesSlider({
           type="button"
         />
 
-        {/* Effets de fondu sur les côtés - positionnés en dehors du conteneur max-width */}
-        <div className="absolute inset-y-0 left-0 w-[80px] md:w-[150px] bg-gradient-to-r from-[#191923] to-transparent z-10 pointer-events-none -ml-6 md:-ml-12"></div>
-        <div className="absolute inset-y-0 right-0 w-[80px] md:w-[150px] bg-gradient-to-l from-[#191923] to-transparent z-10 pointer-events-none -mr-6 md:-mr-12"></div>
-
         {/* Conteneur du slider avec padding ajusté pour aligner avec le bloc supérieur */}
         <div ref={sliderWrapperRef} className="max-w-6xl mx-auto relative">
           {/* Slider container */}
@@ -483,7 +479,6 @@ export function UseCasesSlider({
                     number={useCase.number}
                     name={useCase.name}
                     title={useCase.title}
-                    intro={useCase.intro}
                     bullets={useCase.bullets}
                   />
                 </div>

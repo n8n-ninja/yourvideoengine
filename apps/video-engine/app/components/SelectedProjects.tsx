@@ -98,7 +98,7 @@ export function SelectedProjects({
               <div
                 key={index}
                 ref={(el) => (projectRefs.current[index] = el)}
-                className=" md:h-[60vh] md:sticky md:top-[15%] w-full mb-10 pb-10"
+                className=" md:h-[80vh] md:sticky md:top-[15%] w-full mb-10 pb-10"
               >
                 <ProjectCardWithContext
                   {...project}

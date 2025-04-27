@@ -1,19 +1,17 @@
 import React from "react"
 
 export interface FiftyFiftyProps {
-  title?: string
-  paragraphs: string[]
   imagePosition?: "left" | "right"
   colorTheme?: "blue" | "purple"
   imageContent?: React.ReactNode
+  children: React.ReactNode
 }
 
 export function FiftyFifty({
-  title,
-  paragraphs,
   imagePosition = "right",
   colorTheme = "purple",
   imageContent,
+  children,
 }: FiftyFiftyProps) {
   // Déterminer les classes de dégradé en fonction du colorTheme
   const gradientClasses = {
@@ -68,19 +66,8 @@ export function FiftyFifty({
 
   // Créer les sections de texte et d'image
   const textContent = (
-    <div className="w-full md:w-1/2 p-8 md:p-10">
-      {title && (
-        <h2 className="text-2xl md:text-3xl font-bold mb-6 text-left">
-          {title}
-        </h2>
-      )}
-      <div className="prose prose-lg text-left">
-        {paragraphs.map((paragraph, index) => (
-          <p key={index} className="text-lg text-left mb-6 text-gray-100">
-            {paragraph}
-          </p>
-        ))}
-      </div>
+    <div className="w-full md:w-1/2 p-8 md:p-10 prose prose-lg text-left">
+      {children}
     </div>
   )
 

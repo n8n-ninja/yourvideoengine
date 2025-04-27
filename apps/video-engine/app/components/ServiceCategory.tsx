@@ -14,15 +14,16 @@ export interface ServiceCategoryProps {
 export function ServiceCategory({
   title,
   services,
-  colorClass = "from-purple-500 to-pink-500",
+  colorClass = "from-blue-500 to-purple-500",
 }: ServiceCategoryProps) {
   return (
     <div className="mb-14">
-      <h2 className="text-2xl font-bold mb-8 relative text-center">
-        <span className="relative z-10 inline-block pb-4">{title}</span>
+      <h2 className="text-2xl mb-8 relative text-center">
         <span
-          className={`absolute left-1/2 -translate-x-1/2 bottom-0 h-[5px] w-36 bg-gradient-to-r ${colorClass} rounded-full opacity-70`}
-        ></span>
+          className={`relative z-10 inline-block pb-4 opacity-50 font-light bg-gradient-to-r ${colorClass} bg-clip-text text-transparent`}
+        >
+          {title}
+        </span>
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

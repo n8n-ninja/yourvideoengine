@@ -1,83 +1,97 @@
 import { ServiceCategory, type Service } from "~/components/ServiceCategory"
+import { useEffect, useRef } from "react"
+
+export interface ServiceCategoryData {
+  title: string
+  services: Service[]
+  colorClass: string
+}
 
 export interface WhatWeCanBuildProps {
   title: string
   description: string[]
+  categories: ServiceCategoryData[]
 }
 
-export function WhatWeCanBuild({ title, description }: WhatWeCanBuildProps) {
-  const researchServices: Service[] = [
-    {
-      title: "Trending topic discovery",
-      description:
-        "Identify trending themes and conversations inside your industry to generate relevant, high-performing ideas.",
-    },
-    {
-      title: "Information research",
-      description:
-        "Use AI-driven and human-validated methods to gather key insights and data for your content.",
-    },
-    {
-      title: "Script generation",
-      description:
-        "Automatically draft and refine scripts for different formats — short videos, educational pieces, promotional content...",
-    },
-  ]
+export function WhatWeCanBuild({
+  title,
+  description,
+  categories,
+}: WhatWeCanBuildProps) {
+  const sectionRef = useRef<HTMLElement>(null)
+  const glowRef = useRef<HTMLDivElement>(null)
 
-  const videoCreationServices: Service[] = [
-    {
-      title: "AI video and voice cloning",
-      description:
-        "Create realistic clones for consistent video and voice outputs without the need for constant filming.",
-    },
-    {
-      title: "AI-generated images and videos",
-      description:
-        "Produce supporting visuals using advanced AI models (images, B-roll, dynamic elements).",
-    },
-    {
-      title: "Automated B-roll ",
-      description:
-        "Automatically find, match, or generate complementary footage to enrich your video production.",
-    },
-    {
-      title: "Captions and subtitle generation",
-      description:
-        "Auto-generate captions and subtitles in multiple languages for accessibility and reach.",
-    },
-    {
-      title: "Motion design",
-      description:
-        "Collaborate with top-tier motion designers to bring life, energy, and emotion to your videos when needed — always aligned with your creative direction.",
-    },
-    {
-      title: "Visual branding integration",
-      description:
-        "Apply your brand identity consistently across all outputs: logos, colors, typography, intro/outro animations, and more.",
-    },
-  ]
+  useEffect(() => {
+    const section = sectionRef.current
+    const glow = glowRef.current
 
-  const publishingServices: Service[] = [
-    {
-      title: "Automated video editing",
-      description:
-        "Implement smart assembly systems to automatically edit and finalize videos based on custom templates and rules.",
-    },
-    {
-      title: "Cross-platform publishing",
-      description:
-        "Distribute content automatically across platforms like YouTube, TikTok, Instagram, LinkedIn, and more — formatted for each.",
-    },
-    {
-      title: "Content repurposing",
-      description:
-        "Extract blog posts, social media snippets, or newsletters from video content to maximize impact.",
-    },
-  ]
+    if (!section || !glow) return
+
+    const handleScroll = () => {
+      const rect = section.getBoundingClientRect()
+      const height = window.innerHeight
+
+      // Calculate how far we've scrolled through the section
+      // Adjusted to start earlier (-0.3 instead of -0.2)
+      const scrollProgress = 1 - rect.bottom / (rect.height + height)
+
+      // Only activate when section is visible (between -0.3 and 1.2)
+      if (scrollProgress >= -0.3 && scrollProgress <= 1.2) {
+        // Calculate opacity - fade in then fade out
+        // 0 to 0.5: fade in, 0.5 to 1: fade out
+        // Modified to fade in faster (0.3 instead of 0.5)
+        const normalizedProgress = Math.min(Math.max(scrollProgress, 0), 1)
+        const opacityFactor =
+          normalizedProgress <= 0.3
+            ? normalizedProgress / 0.3
+            : normalizedProgress >= 0.8
+            ? (1 - normalizedProgress) / 0.2
+            : 1
+
+        // Calculate horizontal position (left to right to left)
+        // Start from the left (0 + offset) instead of right
+        // Use cosine instead of sine to start from left
+        const leftPos = Math.cos(normalizedProgress * Math.PI * 1.5) * 40 + 40
+
+        // Calculate vertical position (top to bottom)
+        const topPos = normalizedProgress * 100
+
+        // Apply styles
+        glow.style.opacity = (0.7 * Math.min(opacityFactor, 1)).toString()
+        glow.style.left = `${leftPos}%`
+        glow.style.top = `${topPos}%`
+        glow.style.transform = `scale(${0.8 + opacityFactor * 0.4})`
+      } else {
+        // Hide when not in view
+        glow.style.opacity = "0"
+      }
+    }
+
+    // Initial call to set position when component mounts
+    handleScroll()
+
+    // Add scroll event listener
+    window.addEventListener("scroll", handleScroll, { passive: true })
+
+    // Clean up
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
 
   return (
-    <section className="w-full py-16 md:py-24 px-6 md:px-12">
-      <div className="max-w-6xl mx-auto">
+    <section
+      ref={sectionRef}
+      className="w-full py-16 md:py-24 px-6 md:px-12 relative"
+    >
+      {/* Animated glow effect */}
+      <div
+        ref={glowRef}
+        className="absolute pointer-events-none w-[40vw] h-[40vw] rounded-full blur-[100px] bg-gradient-to-r from-pink-500/20 via-purple-500/30 to-blue-500/20 transition-opacity duration-300"
+        style={{ opacity: 0, top: "0%", left: "0%", transform: "scale(1)" }}
+      />
+
+      <div className="max-w-6xl mx-auto relative z-10">
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center">
           {title}
         </h2>
@@ -90,24 +104,15 @@ export function WhatWeCanBuild({ title, description }: WhatWeCanBuildProps) {
           ))}
         </div>
 
-        <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-8 md:p-12 shadow-lg border border-gray-700/50">
-          <ServiceCategory
-            title="Automated Research & Scriptwriting"
-            services={researchServices}
-            colorClass="from-blue-500 to-purple-500"
-          />
-
-          <ServiceCategory
-            title="Automated Video Creation"
-            services={videoCreationServices}
-            colorClass="from-pink-500 to-purple-500"
-          />
-
-          <ServiceCategory
-            title="Publishing & Scaling"
-            services={publishingServices}
-            colorClass="from-purple-500 to-blue-500"
-          />
+        <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-8 md:p-12 shadow-lg border border-gray-700/50 relative z-10">
+          {categories.map((category, index) => (
+            <ServiceCategory
+              key={index}
+              title={category.title}
+              services={category.services}
+              colorClass={category.colorClass}
+            />
+          ))}
         </div>
       </div>
     </section>

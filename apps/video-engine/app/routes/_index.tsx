@@ -2,7 +2,10 @@ import type { MetaFunction } from "@remix-run/cloudflare"
 import { HeroBanner } from "~/components/HeroBanner"
 import { StatsRotator } from "~/components/StatsRotator"
 import { FiftyFifty } from "~/components/FiftyFifty"
-import { WhatWeCanBuild } from "~/components/WhatWeCanBuild"
+import {
+  WhatWeCanBuild,
+  type ServiceCategoryData,
+} from "~/components/WhatWeCanBuild"
 import { UseCasesSlider, type UseCase } from "~/components/UseCasesSlider"
 import { SelectedProjects, type Project } from "~/components/SelectedProjects"
 import { Pricing } from "~/components/Pricing"
@@ -11,6 +14,9 @@ import { FAQ } from "~/components/FAQ"
 import { TechnologyExpertise } from "~/components/TechnologyExpertise"
 import { WhoWeAre } from "~/components/WhoWeAre"
 import { FinalCTA } from "~/components/FinalCTA"
+import { FormattedText } from "~/components/FormattedText"
+import { HighlightBox } from "~/components/ui/highlight-box"
+
 export const meta: MetaFunction = () => {
   return [
     { title: "Tailored AI Video Automation System" },
@@ -28,111 +34,84 @@ const useCases: UseCase[] = [
     number: 1,
     name: "Real Estate Video Engine",
     title: "Turn property listings into stunning video tours.",
-    intro:
-      "The real estate market moves fast. With our system, you can instantly transform new listings into personalized, high-conversion video tours — ready to publish across platforms without human bottlenecks.",
+    intro: "Transform listings into high-conversion video tours.",
     bullets: [
-      { text: "Automated video generation from listing details and photos." },
-      { text: "Dynamic voiceovers or avatar presentations for each property." },
-      { text: "Branded intros, outros, and agent-specific customizations." },
-      {
-        text: "Cross-posting to YouTube, TikTok, Instagram, and agency websites.",
-      },
+      { text: "Automated video generation from listing details." },
+      { text: "Dynamic voiceovers or avatar presentations." },
+      { text: "Branded intros, outros, and customizations." },
+      { text: "Cross-posting to multiple platforms." },
     ],
   },
   {
     number: 2,
     name: "Online Course Factory",
-    title: "Scale your education content into a professional  academy.",
-    intro:
-      "Educational content deserves better than talking-head Zoom recordings. Our system transforms your curriculum into polished, modular video lessons — helping you scale your offers without scaling your workload.",
+    title: "Scale your education content into a professional academy.",
+    intro: "Transform curriculum into polished, modular video lessons.",
     bullets: [
-      { text: "Automated script generation from course outlines and notes." },
-      { text: "Avatar or voiceover video lessons aligned with your brand." },
-      {
-        text: "Modular editing with motion design for premium user experience.",
-      },
-      {
-        text: "Ready-to-publish lesson sequences for your learning platforms.",
-      },
+      { text: "Automated script generation from course outlines." },
+      { text: "Avatar or voiceover video lessons with your branding." },
+      { text: "Modular editing with premium motion design." },
+      { text: "Ready-to-publish content for learning platforms." },
     ],
   },
   {
     number: 3,
-    name: "Founder clone system",
+    name: "Founder Clone System",
     title: "Be everywhere without being everywhere.",
-    intro:
-      "Founders are the face of their brand, but time is limited. Our system clones your presence into dynamic, human-like videos for onboarding, FAQs, updates, and launches — keeping you visible without daily filming.",
+    intro: "Clone your presence for videos without constant filming.",
     bullets: [
-      { text: "AI-powered video clones for routine communication." },
-      { text: "Personalized FAQ and announcement videos on-demand." },
-      { text: "Seamless branding and style continuity across messages." },
-      {
-        text: "Scheduling and publishing automation to stay active effortlessly.",
-      },
+      { text: "AI-powered video clones for routine communications." },
+      { text: "On-demand FAQ and announcement videos." },
+      { text: "Consistent branding across all messages." },
+      { text: "Automated scheduling and publishing." },
     ],
   },
   {
     number: 4,
     name: "Weekly Authority Broadcast",
     title: "Publish a weekly expert show without weekly effort.",
-    intro:
-      "Consistency builds authority — but it's exhausting. Our system produces a branded, ready-to-publish expert series each week, based on your ideas and positioning, without draining your energy.",
+    intro: "Produce consistent expert content without the exhaustion.",
     bullets: [
-      {
-        text: "Automated script suggestions from market trends and brand themes.",
-      },
-      { text: "Video avatar or voiceover for expert delivery." },
-      { text: "Branded editing with professional motion design." },
-      {
-        text: "Automatic scheduling and distribution across YouTube, LinkedIn, and podcasts.",
-      },
+      { text: "Automated scripts from market trends and brand themes." },
+      { text: "Professional avatar or voiceover delivery." },
+      { text: "Branded editing with motion design elements." },
+      { text: "Automatic distribution to YouTube, LinkedIn, and podcasts." },
     ],
   },
   {
     number: 5,
     name: "Product Launch Video Machine",
-    title: "Turn every new product feature into a complete video campaign.",
-    intro:
-      "New products deserve more than rushed launch videos. Our system transforms your feature rollouts into structured, multi-format video campaigns — faster, smoother, and fully branded.",
+    title: "Turn product features into complete video campaigns.",
+    intro: "Transform feature rollouts into multi-format video campaigns.",
     bullets: [
-      {
-        text: "Rapid video production for feature releases, updates, and announcements.",
-      },
-      { text: "Pre-designed launch templates customized for your brand." },
-      {
-        text: "AI-generated teasers, demos, and tutorials from simple briefs.",
-      },
-      { text: "Full multichannel publishing and campaign tracking." },
+      { text: "Rapid video production for releases and updates." },
+      { text: "Custom templates aligned with your brand." },
+      { text: "AI-generated teasers, demos, and tutorials." },
+      { text: "Multichannel publishing with tracking." },
     ],
   },
   {
     number: 6,
-    name: "Membership / Community Video Hub",
-    title: "Fuel your private community with fresh, automated video content.",
-    intro:
-      "Member communities thrive on consistent value. Our system automates video content creation and publishing for your membership programs — keeping your audience engaged without exhausting your team.",
+    name: "Membership Video Hub",
+    title: "Fuel your community with fresh, automated content.",
+    intro: "Keep members engaged without exhausting your team.",
     bullets: [
-      { text: "Weekly lesson or update video production on autopilot." },
-      { text: "Personalized member spotlights and special announcements." },
-      { text: "Automated video editing and branding for community tone." },
-      {
-        text: "Scheduled publishing inside your private hubs (Skool, Circle, Discord).",
-      },
+      { text: "Weekly content production on autopilot." },
+      { text: "Personalized member spotlights and announcements." },
+      { text: "Branded video editing for community tone." },
+      { text: "Direct publishing to Skool, Circle, or Discord." },
     ],
   },
   {
     number: 7,
     name: "Franchise Video Replication",
-    title: "Expand your reach with localized branded videos at scale.",
-    intro:
-      "Franchise and multi-location brands need consistent messaging with local flavor. Our system replicates branded videos with location-specific adaptations — fast, accurate, and fully automated.",
+    title: "Localized branded videos at scale.",
+    intro: "Replicate videos with location-specific adaptations.",
     bullets: [
-      { text: "Central brand templates adapted automatically per region." },
-      { text: "Location-specific intros, addresses, offers, and CTAs." },
-      { text: "AI-assisted video voiceover in multiple languages." },
-      {
-        text: "Simultaneous publishing to local social accounts and websites.",
-      },
+      { text: "Templates adapted automatically per region." },
+      { text: "Location-specific intros, offers, and CTAs." },
+      { text: "AI voiceovers in multiple languages." },
+      { text: "Simultaneous publishing to all local channels." },
     ],
   },
 ]
@@ -373,6 +352,88 @@ const projects: Project[] = [
   },
 ]
 
+// Données pour WhatWeCanBuild
+const serviceCategories: ServiceCategoryData[] = [
+  {
+    title: "Automated Research & Scriptwriting",
+    colorClass: "from-blue-500 to-purple-500",
+    services: [
+      {
+        title: "Trending topic discovery",
+        description:
+          "Identify trending themes and conversations inside your industry to generate relevant, high-performing ideas.",
+      },
+      {
+        title: "Information research",
+        description:
+          "Use AI-driven and human-validated methods to gather key insights and data for your content.",
+      },
+      {
+        title: "Script generation",
+        description:
+          "Automatically draft and refine scripts for different formats — short videos, educational pieces, promotional content...",
+      },
+    ],
+  },
+  {
+    title: "Automated Video Creation",
+    colorClass: "from-pink-500 to-purple-500",
+    services: [
+      {
+        title: "AI video and voice cloning",
+        description:
+          "Create realistic clones for consistent video and voice outputs without the need for constant filming.",
+      },
+      {
+        title: "AI-generated images and videos",
+        description:
+          "Produce supporting visuals using advanced AI models (images, B-roll, dynamic elements).",
+      },
+      {
+        title: "Automated B-roll",
+        description:
+          "Automatically find, match, or generate complementary footage to enrich your video production.",
+      },
+      {
+        title: "Captions and subtitle generation",
+        description:
+          "Auto-generate captions and subtitles in multiple languages for accessibility and reach.",
+      },
+      {
+        title: "Motion design",
+        description:
+          "Collaborate with top-tier motion designers to bring life, energy, and emotion to your videos when needed — always aligned with your creative direction.",
+      },
+      {
+        title: "Visual branding integration",
+        description:
+          "Apply your brand identity consistently across all outputs: logos, colors, typography, intro/outro animations, and more.",
+      },
+    ],
+  },
+  {
+    title: "Automated Publishing & Scaling",
+    colorClass: "from-purple-500 to-blue-500",
+    services: [
+      {
+        title: "Automated video editing",
+        description:
+          "Implement smart assembly systems to automatically edit and finalize videos based on custom templates and rules.",
+      },
+      {
+        title: "Cross-platform publishing",
+        description:
+          "Distribute content automatically across platforms like YouTube, TikTok, Instagram, LinkedIn, and more — formatted for each.",
+      },
+      {
+        title: "Content repurposing",
+        description:
+          "Extract blog posts, social media snippets, or newsletters from video content to maximize impact.",
+      },
+    ],
+  },
+]
+
 export default function Index() {
   return (
     <main className="min-h-screen text-foreground">
@@ -385,15 +446,17 @@ export default function Index() {
         }}
       />
 
-      <FiftyFifty
-        title="What We Offer"
-        paragraphs={[
-          "Each system we build is designed specifically for you, based on your goals, your content style, and your existing workflows.",
-          "We craft robust, intelligent engines that automate what can be automated — so you can focus on where your creativity brings the most value.",
-        ]}
-        imagePosition="right"
-        colorTheme="purple"
-      />
+      <FiftyFifty imagePosition="right" colorTheme="purple">
+        <h2 className="text-2xl md:text-3xl font-bold mb-6 text-left">
+          What We Offer
+        </h2>
+        <div className="text-lg text-left mb-6 text-gray-100">
+          <FormattedText text="Each system we build is designed **specifically for you**, based on your goals, content style, and existing workflows." />
+        </div>
+        <div className="text-lg text-left mb-6 text-gray-100">
+          <FormattedText text="We craft robust, **intelligent engines** that automate what can be automated so you can focus on where your creativity brings the most value." />
+        </div>
+      </FiftyFifty>
 
       <StatsRotator
         stats={[
@@ -406,24 +469,32 @@ export default function Index() {
         intervalMs={5000}
       />
 
-      <FiftyFifty
-        title="Why Smart Video Automation Matters"
-        paragraphs={[
-          "Video is no longer optional — it's the core of communication today.",
-          "But producing high-quality, frequent content is time-consuming, expensive, and operationally heavy.",
-          "Thanks to recent advances in AI (video generation, voice cloning, script writing, sound design, image creation...), it's now possible to automate much of the heavy lifting.",
-          "At the same time, human creativity remains irreplaceable to create content that truly connects and stands out.",
-          "Our systems automate repetitive tasks and streamline production, freeing up your resources for what matters most: creativity, strategy, and authentic impact.",
-        ]}
-        imagePosition="left"
-        colorTheme="blue"
-      />
+      <FiftyFifty imagePosition="left" colorTheme="blue">
+        <h2 className="text-2xl md:text-3xl font-bold mb-6 text-left">
+          Video Automation Matters
+        </h2>
+        <p className="text-lg text-left mb-6 text-gray-100">
+          <FormattedText text="Video is the core of communication." />
+        </p>
+        <p className="text-lg text-left mb-6 text-gray-100">
+          <FormattedText text="But producing high-quality, frequent content is **time-consuming,** expensive, and operationally heavy. Thanks to recent advances in AI (video generation, voice cloning, script writing, sound design, image creation...), it's now possible to **automate much of the heavy lifting**." />
+        </p>
+        <p className="text-lg text-left mb-6 text-gray-100">
+          <FormattedText text="At the same time, **human creativity remains irreplaceable** to create content that truly connects and stands out." />
+        </p>
+        <HighlightBox>
+          <p className="text-lg text-left text-gray-100">
+            <FormattedText text="Our systems automate repetitive tasks and streamline production, **so you save time.**" />
+          </p>
+        </HighlightBox>
+      </FiftyFifty>
 
       <WhatWeCanBuild
         title="What We Can Build For You"
         description={[
-          "We design tailored production engines by assembling the right building blocks for your needs.",
+          "We design tailored production engines by assembling the right building blocks.",
         ]}
+        categories={serviceCategories}
       />
 
       <UseCasesSlider

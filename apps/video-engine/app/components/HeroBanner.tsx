@@ -15,9 +15,9 @@ export interface HeroBannerProps {
 export function HeroBanner({ title, subtitle, primaryCta }: HeroBannerProps) {
   return (
     <section
-      className={`w-full min-h-[50vh] flex flex-col items-center justify-center text-center px-6 md:px-12`}
+      className={`w-full flex flex-col items-center justify-center text-center px-6 md:px-12`}
     >
-      <div className="max-w-3xl mx-auto py-16 md:py-20">
+      <div className="max-w-3xl mx-auto py-16 md:py-40">
         <h1 className="relative text-4xl md:text-6xl font-bold mb-8 leading-tight">
           <span className="absolute inset-0 bg-gradient-to-r from-white via-pink-300 to-white bg-clip-text text-transparent blur-[0.5px]">
             {title}

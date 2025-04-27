@@ -6,7 +6,6 @@ export interface UseCaseCardProps {
   number: number
   name: string
   title: string
-  intro: string
   bullets: UseCaseBullet[]
 }
 
@@ -14,7 +13,6 @@ export function UseCaseCard({
   number,
   name,
   title,
-  intro,
   bullets,
 }: UseCaseCardProps) {
   return (
@@ -26,14 +24,16 @@ export function UseCaseCard({
       </div>
 
       <div className="mb-2 text-center">
-        <h3 className="text-md text-gray-400 font-medium">{name}</h3>
+        <h3 className="text-xl md:text-2xl font-bold  bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent transition-transform duration-300 text-center">
+          {name}
+        </h3>
       </div>
 
-      <h2 className="text-xl md:text-2xl font-bold mb-4 text-white text-center">
+      <h2 className="text-xl mb-8 md:text-2xl font-bold mt-6 text-white text-center">
         {title}
       </h2>
 
-      <p className="text-gray-300 mb-6 flex-grow">{intro}</p>
+      {/* <p className="text-gray-300 mb-6 flex-grow text-center">{intro}</p> */}
 
       <div className="space-y-3">
         {bullets.map((bullet, index) => (
