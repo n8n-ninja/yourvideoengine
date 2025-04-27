@@ -123,11 +123,11 @@ export function TechnologyExpertise({
 
                         {/* Colonne 2: Les outils */}
                         <div className="md:w-3/4">
-                          <div className="flex  gap-3">
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
                             {subcategory.items.map((item, itemIndex) => (
                               <div
                                 key={itemIndex}
-                                className="bg-gray-900/40 backdrop-blur-md border border-gray-800/40 rounded-lg p-3 flex flex-col items-center justify-center hover:border-blue-700/40 transition-colors duration-300 hover:bg-gray-900/50 w-[calc(16.666%-0.5rem)]"
+                                className="bg-gray-900/40 backdrop-blur-md border border-gray-800/40 rounded-lg p-3 flex flex-col items-center justify-center hover:border-blue-700/40 transition-colors duration-300 hover:bg-gray-900/50"
                               >
                                 <div className="w-10 h-10 mb-2 flex items-center justify-center bg-blue-900/30 rounded-lg">
                                   {/* Placeholder icon */}
@@ -199,7 +199,7 @@ export function TechnologyExpertise({
                           production workflow, from specialized APIs to
                           intuitive user interfaces.
                         </p>
-                        <div className="mt-3 flex">
+                        <div className="mt-3 flex flex-wrap ">
                           <span className="inline-flex items-center rounded-md bg-pink-800/30 px-3 py-1 text-sm font-medium text-pink-200 mr-2">
                             Custom APIs
                           </span>

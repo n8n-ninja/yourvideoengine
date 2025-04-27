@@ -44,9 +44,7 @@ export function FinalCTA({
           </span>
         </h2>
         <div className="flex gap-8 justify-center mt-8">
-          <FancyButton href={ctaHref} className="text-lg py-4 px-10">
-            {ctaText}
-          </FancyButton>
+          <FancyButton href={ctaHref}>{ctaText}</FancyButton>
         </div>
       </div>
     </section>
