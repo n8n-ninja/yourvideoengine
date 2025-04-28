@@ -1,8 +1,9 @@
 import { FancyButton } from "~/components/ui/fancy-button"
+import { SectionTitle } from "~/components/SectionTitle"
 
 export interface PricingProps {
   title: string
-  description: string[]
+  description: string
   ctaLabel: string
   ctaHref: string
   setupTitle: string
@@ -28,18 +29,10 @@ export function Pricing({
   footerText,
 }: PricingProps) {
   return (
-    <section className="w-full py-16 md:py-24 px-6 md:px-12 md:-mt-20">
+    <section className="w-full py-16 md:py-24 px-6 md:px-12 md:-mt-80">
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-4xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">{title}</h2>
-
-          <div className="mb-10">
-            {description.map((paragraph, index) => (
-              <p key={index} className="text-lg mb-4 text-gray-100">
-                {paragraph}
-              </p>
-            ))}
-          </div>
+          <SectionTitle title={title} subtitle={description} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">

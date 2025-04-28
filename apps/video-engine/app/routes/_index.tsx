@@ -34,85 +34,87 @@ const useCases: UseCase[] = [
   {
     number: 1,
     name: "Real Estate Video Engine",
-    title: "Turn property listings into stunning video tours.",
-    intro: "Transform listings into high-conversion video tours.",
+    title: "Turn listings into high-conversion video tours.",
+    intro: "Instantly transform property details into branded video showcases.",
     bullets: [
-      { text: "Automated video generation from listing details." },
-      { text: "Dynamic voiceovers or avatar presentations." },
-      { text: "Branded intros, outros, and customizations." },
-      { text: "Cross-posting to multiple platforms." },
+      { text: "Automated video creation from listing data and photos." },
+      { text: "Dynamic voiceovers or avatar-driven presentations." },
+      { text: "Branded intros, outros, and agent personalization." },
+      { text: "Cross-posting to YouTube, TikTok, Instagram, and more." },
     ],
   },
   {
     number: 2,
-    name: "Online Course Factory",
-    title: "Scale your education content into a professional academy.",
-    intro: "Transform curriculum into polished, modular video lessons.",
+    name: "Online Course Video Factory",
+    title: "Upgrade your courses into cinematic learning experiences.",
+    intro: "Transform your curriculum into polished, modular video lessons.",
     bullets: [
-      { text: "Automated script generation from course outlines." },
-      { text: "Avatar or voiceover video lessons with your branding." },
-      { text: "Modular editing with premium motion design." },
-      { text: "Ready-to-publish content for learning platforms." },
+      { text: "AI-generated scripts from outlines and notes." },
+      { text: "Avatar or voiceover lessons branded to your identity." },
+      { text: "Premium modular editing with motion design." },
+      { text: "Ready-to-publish sequences for learning platforms." },
     ],
   },
   {
     number: 3,
     name: "Founder Clone System",
-    title: "Be everywhere without being everywhere.",
-    intro: "Clone your presence for videos without constant filming.",
+    title: "Scale your presence without scaling your time.",
+    intro: "Deliver personal updates, onboarding, and announcements at scale.",
     bullets: [
-      { text: "AI-powered video clones for routine communications." },
-      { text: "On-demand FAQ and announcement videos." },
-      { text: "Consistent branding across all messages." },
-      { text: "Automated scheduling and publishing." },
+      { text: "AI-powered video clones for routine communication." },
+      { text: "Personalized FAQ, onboarding, and update videos." },
+      { text: "Consistent style and branding across outputs." },
+      { text: "Automated scheduling and multi-channel publishing." },
     ],
   },
   {
     number: 4,
-    name: "Weekly Authority Broadcast",
-    title: "Publish a weekly expert show without weekly effort.",
-    intro: "Produce consistent expert content without the exhaustion.",
+    name: "Weekly Authority Series",
+    title: "Publish expert videos every week without the workload.",
+    intro: "Launch a consistent, branded expert show powered by automation.",
     bullets: [
-      { text: "Automated scripts from market trends and brand themes." },
+      { text: "Trend-based script generation aligned with your brand." },
       { text: "Professional avatar or voiceover delivery." },
-      { text: "Branded editing with motion design elements." },
-      { text: "Automatic distribution to YouTube, LinkedIn, and podcasts." },
+      { text: "Branded editing with motion graphics and sound design." },
+      {
+        text: "Scheduled publishing to YouTube, LinkedIn, and podcast platforms.",
+      },
     ],
   },
   {
     number: 5,
     name: "Product Launch Video Machine",
-    title: "Turn product features into complete video campaigns.",
-    intro: "Transform feature rollouts into multi-format video campaigns.",
+    title: "Turn every feature into a full video campaign.",
+    intro: "Transform product updates into structured, branded video releases.",
     bullets: [
-      { text: "Rapid video production for releases and updates." },
-      { text: "Custom templates aligned with your brand." },
-      { text: "AI-generated teasers, demos, and tutorials." },
-      { text: "Multichannel publishing with tracking." },
+      { text: "Rapid production for launches, updates, and demos." },
+      { text: "Custom video templates aligned with your brand." },
+      { text: "AI-generated teasers, promos, and tutorials." },
+      { text: "Automated publishing across marketing channels." },
     ],
   },
   {
     number: 6,
-    name: "Membership Video Hub",
-    title: "Fuel your community with fresh, automated content.",
-    intro: "Keep members engaged without exhausting your team.",
+    name: "Community Video Hub",
+    title: "Fuel your private community with automated content.",
+    intro: "Deliver consistent value to members with zero manual work.",
     bullets: [
-      { text: "Weekly content production on autopilot." },
-      { text: "Personalized member spotlights and announcements." },
-      { text: "Branded video editing for community tone." },
-      { text: "Direct publishing to Skool, Circle, or Discord." },
+      { text: "Weekly lessons, updates, or spotlights on autopilot." },
+      { text: "Personalized announcements and highlights." },
+      { text: "Branded editing tailored to your community tone." },
+      { text: "Direct publishing." },
     ],
   },
   {
     number: 7,
     name: "Franchise Video Replication",
-    title: "Localized branded videos at scale.",
-    intro: "Replicate videos with location-specific adaptations.",
+    title: "Localize branded videos at scale, automatically.",
+    intro: "Adapt your messaging for every location without extra effort.",
     bullets: [
-      { text: "Templates adapted automatically per region." },
-      { text: "Location-specific intros, offers, and CTAs." },
-      { text: "AI voiceovers in multiple languages." },
-      { text: "Simultaneous publishing to all local channels." },
+      { text: "Templates adapted dynamically for each franchise." },
+      { text: "Custom intros, addresses, offers, and CTAs per region." },
+      { text: "Multilingual voiceovers generated by AI." },
+      { text: "Simultaneous publishing to all local accounts." },
     ],
   },
 ]
@@ -371,6 +373,16 @@ const serviceCategories: ServiceCategoryData[] = [
         description:
           "Extract blog posts, social media snippets, or newsletters from video content to maximize impact.",
       },
+      {
+        title: "Analytics tracking",
+        description:
+          "Monitor performance metrics, engagement data, and audience insights across all platforms to optimize your content strategy.",
+      },
+      {
+        title: "Traduction",
+        description:
+          "Automatically translate your video content into multiple languages to reach global audiences.",
+      },
     ],
   },
 ]
@@ -389,7 +401,6 @@ export default function Index() {
     if (!section || !glow) return
 
     const handleScroll = () => {
-      const rect = section.getBoundingClientRect()
       const windowHeight = window.innerHeight
       const documentHeight = document.documentElement.scrollHeight
 
@@ -463,7 +474,7 @@ export default function Index() {
       {/* Animated glow effect */}
       <div
         ref={glowRef}
-        className="fixed pointer-events-none w-[50vw] h-[40vw] rounded-full blur-[120px] bg-gradient-to-r from-pink-500/30 via-purple-500/35 to-blue-500/25 z-0"
+        className="fixed pointer-events-none max-w-[600px] max-h-[500px] w-[50vw] h-[40vw] rounded-full blur-[120px] bg-gradient-to-r from-pink-500/30 via-purple-500/35 to-blue-500/25 z-0"
         style={{
           opacity: 0.8,
           top: 0,
@@ -526,9 +537,9 @@ export default function Index() {
 
       <WhatWeCanBuild
         title="What We Can Build For You"
-        description={[
-          "We design tailored production engines by assembling the right building blocks.",
-        ]}
+        description={
+          "We design tailored production engines by assembling the right building blocks."
+        }
         categories={serviceCategories}
       />
 
@@ -537,25 +548,25 @@ export default function Index() {
 
       <UseCasesSlider
         title="Use Cases"
-        description={[
-          "From real estate to education, AI powered video automation is transforming content creation.",
-        ]}
+        description={
+          "From real estate to education, AI powered video automation is transforming content creation."
+        }
         useCases={useCases}
       />
 
       <SelectedProjects
         title="Selected Projects"
-        description={[
-          "Here are a few examples of custom systems we've built for clients or for our own use.",
-        ]}
+        description={
+          "Here are a few examples of custom systems we've built for clients or for our own use."
+        }
         projects={projects}
       />
 
       <Pricing
         title="Pricing"
-        description={[
-          "Every system we build is unique and so is its investment.",
-        ]}
+        description={
+          "Every system we build is unique and so is its investment."
+        }
         ctaLabel="Tell us about your project"
         ctaHref="/contact"
         setupTitle="Setup Fee"
@@ -579,9 +590,9 @@ export default function Index() {
 
       <Testimonials
         title="What Our Clients Say"
-        description={[
-          "Discover how our video automation solutions have transformed workflows and boosted productivity for businesses across industries.",
-        ]}
+        description={
+          "Discover how our video automation solutions have transformed their lives and businesses."
+        }
         testimonials={[
           {
             quote:
@@ -612,9 +623,9 @@ export default function Index() {
 
       <TechnologyExpertise
         title="Technology & Expertise"
-        description={[
-          "Each system is crafted using the right tools for your needs.",
-        ]}
+        description={
+          "Each system is crafted using the right tools for your needs."
+        }
         categories={[
           {
             title: "Core Technologies We Use",
@@ -686,9 +697,9 @@ export default function Index() {
 
       <WhoWeAre
         title="Who We Are"
-        description={[
-          "A team of senior professionals combining technical expertise, creative strategy, and AI innovation.",
-        ]}
+        description={
+          "A team of senior professionals combining technical expertise, creative strategy, and AI innovation."
+        }
         team={[
           {
             name: "Manu",
@@ -709,9 +720,9 @@ export default function Index() {
 
       <FAQ
         title="Frequently Asked Questions"
-        description={[
-          "Everything you need to know about our video automation systems.",
-        ]}
+        description={
+          "Everything you need to know about our video automation systems."
+        }
         faqs={[
           {
             question: "How much does it cost?",

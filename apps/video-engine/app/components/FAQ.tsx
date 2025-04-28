@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { SectionTitle } from "~/components/SectionTitle"
 
 export interface FAQItem {
   question: string
@@ -7,7 +8,8 @@ export interface FAQItem {
 
 export interface FAQProps {
   title: string
-  description: string[]
+  description: string
+
   faqs: FAQItem[]
 }
 
@@ -34,14 +36,7 @@ export function FAQ({ title, description, faqs }: FAQProps) {
     <section className="w-full py-16 md:py-24 px-6 md:px-12">
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-4xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">{title}</h2>
-          <div className="mb-10">
-            {description.map((paragraph, index) => (
-              <p key={index} className="text-lg mb-4 text-gray-100">
-                {paragraph}
-              </p>
-            ))}
-          </div>
+          <SectionTitle title={title} subtitle={description} />
         </div>
 
         <div className="space-y-4 max-w-4xl mx-auto">

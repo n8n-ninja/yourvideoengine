@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { UseCaseCard, type UseCaseBullet } from "~/components/UseCaseCard"
+import { SectionTitle } from "~/components/SectionTitle"
 
 // Keyframes pour l'animation de pulsation
 const pulseKeyframes = `
@@ -44,7 +45,7 @@ export interface UseCase {
 
 export interface UseCasesSliderProps {
   title: string
-  description: string[]
+  description: string
   useCases: UseCase[]
 }
 
@@ -84,7 +85,7 @@ export function UseCasesSlider({
           ? wrapperWidth // Une carte qui prend toute la largeur sur mobile
           : wrapperWidth * 0.4 // Comportement existant sur desktop
 
-        const gap = isMobile ? 0 : 24 // Pas de gap sur mobile, 24px sur desktop
+        const gap = isMobile ? 12 : 24 // Pas de gap sur mobile, 24px sur desktop
 
         // Largeur totale de tous les éléments avec leurs gaps
         const totalContentWidth =
@@ -392,34 +393,24 @@ export function UseCasesSlider({
 
       {/* Titre et description en largeur limitée */}
       <div className="max-w-6xl mx-auto mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center">
-          {title}
-        </h2>
-
-        <div className="mb-12 max-w-4xl mx-auto">
-          {description.map((paragraph, index) => (
-            <p key={index} className="text-lg text-center mb-4 text-gray-100">
-              {paragraph}
-            </p>
-          ))}
-        </div>
+        <SectionTitle title={title} subtitle={description} />
       </div>
 
       {/* Slider en pleine largeur */}
       <div className="relative w-full pb-12">
         {/* Effet de lueur de fond qui se déplace */}
         <div
-          className="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-[1]"
+          className="absolute -top-[50px]  inset-0 w-full h-full overflow-visible pointer-events-none z-[1]"
           aria-hidden="true"
         >
           {/* Lueur principale avec touche dorée */}
           <div
-            className="absolute top-[35%] -translate-y-1/2 w-[50%] aspect-[4/0.75] rounded-full blur-[120px]"
+            className="absolute w-[100%] h-[100%] max-w-[800px] max-h-[800px] rounded-full blur-[120px]"
             style={{
               background:
                 "radial-gradient(circle, rgba(236,72,153,0.35) 0%, rgba(168,85,247,0.25) 40%, rgba(212,175,55,0.15) 60%, rgba(30,30,80,0) 80%)",
               left: `${glowPosition}%`,
-              transform: `translate(-50%, -50%)`,
+
               animation: "slowPulse 4s ease-in-out infinite",
             }}
           />
@@ -466,7 +457,7 @@ export function UseCasesSlider({
             {/* Slider track */}
             <div
               ref={sliderRef}
-              className="flex md:gap-6 transition-transform duration-300 ease-out select-none"
+              className="flex gap-3 md:gap-6 transition-transform duration-300 ease-out select-none"
               aria-roledescription="carousel"
               aria-label="Use cases carousel"
             >

@@ -29,7 +29,7 @@ export function UseCaseCard({
         </h3>
       </div>
 
-      <h2 className="text-xl mb-8 md:text-2xl font-bold mt-6 text-white text-center">
+      <h2 className="text-xl mb-8 md:text-2xl font-bold mt-6 text-white text-center text-balance">
         {title}
       </h2>
 

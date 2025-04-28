@@ -4,6 +4,7 @@ import {
   type ProjectHighlight,
   type ProjectVideo,
 } from "~/components/ProjectCard"
+import { SectionTitle } from "~/components/SectionTitle"
 
 // Contexte pour la gestion globale des vidéos
 interface VideoContextType {
@@ -33,7 +34,7 @@ export interface Project {
 
 export interface SelectedProjectsProps {
   title: string
-  description: string[]
+  description: string
   projects: Project[]
 }
 
@@ -79,20 +80,7 @@ export function SelectedProjects({
         <div className="max-w-6xl mx-auto">
           {/* En-tête avec titre et description */}
           <div className="mb-40">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-              {title}
-            </h2>
-
-            <div className="max-w-4xl mx-auto">
-              {description.map((paragraph, index) => (
-                <p
-                  key={index}
-                  className="text-lg text-center mb-4 text-gray-100"
-                >
-                  {paragraph}
-                </p>
-              ))}
-            </div>
+            <SectionTitle title={title} subtitle={description} />
           </div>
 
           {/* Container des projets */}

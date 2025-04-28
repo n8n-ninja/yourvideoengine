@@ -1,3 +1,5 @@
+import { SectionTitle } from "~/components/SectionTitle"
+
 export interface TechItem {
   name: string
   icon?: string // URL de l'icône ou nom d'icône
@@ -12,7 +14,7 @@ export interface TechCategory {
 
 export interface TechnologyExpertiseProps {
   title: string
-  description: string[]
+  description: string
   categories: TechCategory[]
 }
 
@@ -74,14 +76,7 @@ export function TechnologyExpertise({
     <section className="w-full py-16 md:py-24 px-6 md:px-12">
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-4xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">{title}</h2>
-          <div className="mb-10">
-            {description.map((paragraph, index) => (
-              <p key={index} className="text-lg mb-4 text-gray-100">
-                {paragraph}
-              </p>
-            ))}
-          </div>
+          <SectionTitle title={title} subtitle={description} />
         </div>
 
         <div className="space-y-16">

@@ -1,3 +1,5 @@
+import { SectionTitle } from "~/components/SectionTitle"
+
 export interface TeamMember {
   name: string
   role: string
@@ -7,38 +9,19 @@ export interface TeamMember {
 
 export interface WhoWeAreProps {
   title: string
-  description: string[]
+  description: string
   team: TeamMember[]
 }
 
 export function WhoWeAre({ title, description, team }: WhoWeAreProps) {
-  // Assurons-nous d'avoir exactement 2 membres de l'équipe (Manu et Thais)
-  const manu = team[0] || {
-    name: "Manu",
-    role: "Senior Engineer",
-    location: "Switzerland",
-    description: "",
-  }
-
-  const thais = team[1] || {
-    name: "Thais",
-    role: "Business Strategist & AI Consultant",
-    location: "Brazil",
-    description: "",
-  }
+  const manu = team[0]
+  const thais = team[1]
 
   return (
     <section className="w-full py-16 md:py-24 px-6 md:px-12 bg-gradient-to-b from-purple-950/20 to-blue-950/10">
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-4xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">{title}</h2>
-          <div className="mb-10">
-            {description.map((paragraph, index) => (
-              <p key={index} className="text-lg mb-4 text-gray-100">
-                {paragraph}
-              </p>
-            ))}
-          </div>
+          <SectionTitle title={title} subtitle={description} />
         </div>
 
         {/* Deux cartes côte à côte */}
