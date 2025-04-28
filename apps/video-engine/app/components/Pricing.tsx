@@ -1,17 +1,19 @@
 import { FancyButton } from "~/components/ui/fancy-button"
 import { SectionTitle } from "~/components/SectionTitle"
 
+interface FeePlan {
+  title: string
+  description: string
+  items: string[]
+}
+
 export interface PricingProps {
   title: string
   description: string
   ctaLabel: string
   ctaHref: string
-  setupTitle: string
-  setupDescription: string
-  setupItems: string[]
-  monthlyTitle: string
-  monthlyDescription: string
-  monthlyItems: string[]
+  setupFee: FeePlan
+  monthlyFee: FeePlan
   footerText: string
 }
 
@@ -20,12 +22,8 @@ export function Pricing({
   description,
   ctaLabel,
   ctaHref,
-  setupTitle,
-  setupDescription,
-  setupItems,
-  monthlyTitle,
-  monthlyDescription,
-  monthlyItems,
+  setupFee,
+  monthlyFee,
   footerText,
 }: PricingProps) {
   return (
@@ -38,12 +36,12 @@ export function Pricing({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
           <div className="bg-gradient-to-br from-purple-900/40 to-pink-800/30 backdrop-blur-md border border-purple-800/40 rounded-xl p-8 shadow-lg hover:shadow-purple-900/20 transition-all duration-300">
             <h3 className="text-2xl md:text-3xl font-semibold mb-4 bg-gradient-to-r from-purple-400 to-pink-300 bg-clip-text text-transparent">
-              {setupTitle}
+              {setupFee.title}
             </h3>
-            <p className="mb-4 text-gray-300">{setupDescription}</p>
+            <p className="mb-4 text-gray-300">{setupFee.description}</p>
             <div className="h-px w-full bg-gradient-to-r from-purple-500/50 to-pink-500/50 my-6"></div>
             <ul className="space-y-3 text-gray-300">
-              {setupItems.map((item, index) => (
+              {setupFee.items.map((item, index) => (
                 <li key={index} className="flex items-start">
                   <span className="mr-2 text-pink-400">•</span> {item}
                 </li>
@@ -53,12 +51,12 @@ export function Pricing({
 
           <div className="bg-gradient-to-br from-blue-900/40 to-cyan-800/30 backdrop-blur-md border border-blue-800/40 rounded-xl p-8 shadow-lg hover:shadow-blue-900/20 transition-all duration-300">
             <h3 className="text-2xl md:text-3xl font-semibold mb-4 bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-              {monthlyTitle}
+              {monthlyFee.title}
             </h3>
-            <p className="mb-4 text-gray-300">{monthlyDescription}</p>
+            <p className="mb-4 text-gray-300">{monthlyFee.description}</p>
             <div className="h-px w-full bg-gradient-to-r from-blue-500/50 to-cyan-500/50 my-6"></div>
             <ul className="space-y-3 text-gray-300">
-              {monthlyItems.map((item, index) => (
+              {monthlyFee.items.map((item, index) => (
                 <li key={index} className="flex items-start">
                   <span className="mr-2 text-blue-400">•</span> {item}
                 </li>

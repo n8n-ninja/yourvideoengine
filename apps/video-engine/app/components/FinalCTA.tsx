@@ -29,7 +29,7 @@ export function FinalCTA({
   }, [])
 
   return (
-    <section className="relative w-full py-40 bg-transparent overflow-hidden">
+    <section className="relative w-full pt-40 pb-72 bg-transparent overflow-hidden">
       <div className="relative max-w-8xl mx-auto px-4 sm:px-6 text-center z-10">
         <div
           className="h-[1px] w-[50%] mx-auto mb-16 relative"
@@ -38,7 +38,7 @@ export function FinalCTA({
               "linear-gradient(90deg, rgba(59, 130, 246, 0) 0%, rgba(59, 130, 246, 1) 20%, rgba(168, 85, 247, ) 50%, rgba(236, 72, 153, 0.8) 80%, rgba(236, 72, 153, 0) 100%)",
           }}
         />
-        <h2 className="text-5xl font-bold mt-32 mb-20">
+        <h2 className="text-5xl font-bold  mb-20">
           <span className=" bg-gradient-to-r from-white via-pink-300 to-white bg-clip-text text-transparent blur-[0.5px]">
             {title}
           </span>

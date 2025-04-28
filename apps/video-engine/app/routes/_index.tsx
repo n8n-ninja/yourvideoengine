@@ -2,11 +2,8 @@ import type { MetaFunction } from "@remix-run/cloudflare"
 import { HeroBanner } from "~/components/HeroBanner"
 import { StatsRotator } from "~/components/StatsRotator"
 import { FiftyFifty } from "~/components/FiftyFifty"
-import {
-  WhatWeCanBuild,
-  type ServiceCategoryData,
-} from "~/components/WhatWeCanBuild"
-import { UseCasesSlider, type UseCase } from "~/components/UseCasesSlider"
+import { WhatWeCanBuild } from "~/components/WhatWeCanBuild"
+import { UseCasesSlider } from "~/components/UseCasesSlider"
 import { SelectedProjects, type Project } from "~/components/SelectedProjects"
 import { Pricing } from "~/components/Pricing"
 import { Testimonials } from "~/components/Testimonials"
@@ -16,757 +13,138 @@ import { WhoWeAre } from "~/components/WhoWeAre"
 import { FinalCTA } from "~/components/FinalCTA"
 import { FormattedText } from "~/components/FormattedText"
 import { HighlightBox } from "~/components/ui/highlight-box"
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
+import { BackgroundGlow } from "~/components/BackgroundGlow"
+import homeContent from "~/data/home-content.json"
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Tailored AI Video Automation System" },
+    { title: homeContent.meta.title },
     {
       name: "description",
-      content:
-        "Streamline your video production with a custom AI-powered engine.",
+      content: homeContent.meta.description,
     },
   ]
 }
 
-// Définir les use cases
-const useCases: UseCase[] = [
-  {
-    number: 1,
-    name: "Real Estate Video Engine",
-    title: "Turn listings into high-conversion video tours.",
-    intro: "Instantly transform property details into branded video showcases.",
-    bullets: [
-      { text: "Automated video creation from listing data and photos." },
-      { text: "Dynamic voiceovers or avatar-driven presentations." },
-      { text: "Branded intros, outros, and agent personalization." },
-      { text: "Cross-posting to YouTube, TikTok, Instagram, and more." },
-    ],
-  },
-  {
-    number: 2,
-    name: "Online Course Video Factory",
-    title: "Upgrade your courses into cinematic learning experiences.",
-    intro: "Transform your curriculum into polished, modular video lessons.",
-    bullets: [
-      { text: "AI-generated scripts from outlines and notes." },
-      { text: "Avatar or voiceover lessons branded to your identity." },
-      { text: "Premium modular editing with motion design." },
-      { text: "Ready-to-publish sequences for learning platforms." },
-    ],
-  },
-  {
-    number: 3,
-    name: "Founder Clone System",
-    title: "Scale your presence without scaling your time.",
-    intro: "Deliver personal updates, onboarding, and announcements at scale.",
-    bullets: [
-      { text: "AI-powered video clones for routine communication." },
-      { text: "Personalized FAQ, onboarding, and update videos." },
-      { text: "Consistent style and branding across outputs." },
-      { text: "Automated scheduling and multi-channel publishing." },
-    ],
-  },
-  {
-    number: 4,
-    name: "Weekly Authority Series",
-    title: "Publish expert videos every week without the workload.",
-    intro: "Launch a consistent, branded expert show powered by automation.",
-    bullets: [
-      { text: "Trend-based script generation aligned with your brand." },
-      { text: "Professional avatar or voiceover delivery." },
-      { text: "Branded editing with motion graphics and sound design." },
-      {
-        text: "Scheduled publishing to YouTube, LinkedIn, and podcast platforms.",
-      },
-    ],
-  },
-  {
-    number: 5,
-    name: "Product Launch Video Machine",
-    title: "Turn every feature into a full video campaign.",
-    intro: "Transform product updates into structured, branded video releases.",
-    bullets: [
-      { text: "Rapid production for launches, updates, and demos." },
-      { text: "Custom video templates aligned with your brand." },
-      { text: "AI-generated teasers, promos, and tutorials." },
-      { text: "Automated publishing across marketing channels." },
-    ],
-  },
-  {
-    number: 6,
-    name: "Community Video Hub",
-    title: "Fuel your private community with automated content.",
-    intro: "Deliver consistent value to members with zero manual work.",
-    bullets: [
-      { text: "Weekly lessons, updates, or spotlights on autopilot." },
-      { text: "Personalized announcements and highlights." },
-      { text: "Branded editing tailored to your community tone." },
-      { text: "Direct publishing." },
-    ],
-  },
-  {
-    number: 7,
-    name: "Franchise Video Replication",
-    title: "Localize branded videos at scale, automatically.",
-    intro: "Adapt your messaging for every location without extra effort.",
-    bullets: [
-      { text: "Templates adapted dynamically for each franchise." },
-      { text: "Custom intros, addresses, offers, and CTAs per region." },
-      { text: "Multilingual voiceovers generated by AI." },
-      { text: "Simultaneous publishing to all local accounts." },
-    ],
-  },
-]
-
-// Définir les projets
-const projects: Project[] = [
-  {
-    title: "Real Estate News Video Engine",
-    label: "Real Estate",
-    metrics: "6h",
-    metricsLabel: "saved per video",
-    description:
-      "Built a custom video production system combining intelligent automation with human creative control. Agents submit key story elements via a form, validate the AI-generated script, and receive a fully produced, branded video ready to engage their audience.",
-    highlights: [
-      {
-        text: "Smart intake form capturing key story elements and agent preferences.",
-      },
-      {
-        text: "AI-assisted script writing with human validation for quality and authenticity.",
-      },
-      {
-        text: "Automated video creation including avatar presentation, captions, thematic b-roll, and branding.",
-      },
-      {
-        text: "Fast turnaround for publishing real estate news, updates, and market insights.",
-      },
-    ],
-    videos: [
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-07093.mp4",
-        title: "Real Estate News Demo 1",
-        thumbnail:
-          "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80",
-      },
-    ],
-    videoOrientation: "vertical",
-  },
-  {
-    title: "Health & Wellness Video Content System",
-    label: "Marketing",
-    metrics: "27%",
-    metricsLabel: "engagement increase",
-    description:
-      "Designed a custom video production system generating trend-driven, educational short videos for the wellness industry. From ideation to final editing, each video aligns perfectly with the brand's voice and audience expectations.",
-    highlights: [
-      {
-        text: "Trend mining and content ideation based on audience interests and product positioning.",
-      },
-      {
-        text: "Scriptwriting aligned with brand voice and educational storytelling.",
-      },
-      { text: "Intelligent b-roll matching from curated visual libraries." },
-      {
-        text: "Automated video assembly with branded style, captions, and distribution.",
-      },
-    ],
-    videos: [
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-26-77742.mp4",
-        title: "Wellness Video Demo 1",
-        thumbnail:
-          "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-      },
-    ],
-    videoOrientation: "vertical",
-  },
-  {
-    title: "Automated AI Newsfeed",
-    label: "News",
-    metrics: "100%",
-    metricsLabel: "automated production",
-    description:
-      "Built a daily content engine combining automated research, visual hook creation, script writing, and AI voice cloning to publish high-quality AI news videos — fully autonomously.",
-    highlights: [
-      { text: "Automated trending topic research via Perplexity AI." },
-      { text: "Visual hook creation for each video to maximize attention." },
-      {
-        text: "Script writing and voice cloning for natural, brand-aligned delivery.",
-      },
-      { text: "Full video generation and daily publishing." },
-    ],
-    videos: [
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-02743.mp4",
-        title: "AI Newsfeed Demo 1",
-        thumbnail:
-          "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-      },
-    ],
-    videoOrientation: "vertical",
-  },
-  {
-    title: "AI Tool Review Factory",
-    label: "Reviews",
-    metrics: "100%",
-    metricsLabel: "automated production",
-    description:
-      "Developed a smart system for creating structured AI tool reviews. Tools are hand-selected, analyzed via web research, and transformed into ready-to-publish video reviews with clear narratives and branded styling.",
-    highlights: [
-      {
-        text: "Human curation of featured tools based on strategic and market relevance.",
-      },
-      { text: "Web research-assisted feature analysis and value extraction." },
-      {
-        text: "Smart script writing focused on strengths, weaknesses, and benefits.",
-      },
-      {
-        text: "Cross-platform video generation with branded style and captions.",
-      },
-    ],
-    videos: [
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-07093.mp4",
-        title: "AI Tool Review Demo 1",
-        thumbnail:
-          "https://images.unsplash.com/photo-1633412802994-5c058f151b66?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-      },
-    ],
-    videoOrientation: "vertical",
-  },
-  {
-    title: "AI Automation Inspiration Channel",
-    label: "Motion",
-    metrics: "100%",
-    metricsLabel: "automated production",
-    description:
-      "Built an automated video engine crafting premium motion design content around AI automation ideas. Each video combines smart script generation, advanced motion design, and immersive soundscapes — offering full creative experiences without avatars or voiceovers.",
-    highlights: [
-      {
-        text: "Automated script writing based on scenario ideation and storytelling.",
-      },
-      {
-        text: "Advanced motion design with dynamic typography, iconography, and brand elements.",
-      },
-      {
-        text: "Premium sound design to build emotional resonance and atmosphere.",
-      },
-      {
-        text: "Fully autonomous video assembly with premium aesthetic standards.",
-      },
-    ],
-    videos: [
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-26-77742.mp4",
-        title: "Inspiration Channel Demo 1",
-        thumbnail:
-          "https://images.unsplash.com/photo-1617791160536-598cf32026fb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1064&q=80",
-      },
-    ],
-    videoOrientation: "vertical",
-  },
-  {
-    title: "AI Course Amplifier System",
-    label: "Education",
-    metrics: "97%",
-    metricsLabel: "time saved",
-    description:
-      "Created a system that automates course content amplification — from video uploads and thumbnail generation to SEO-optimized descriptions and multichannel promotional workflows — maximizing reach without manual effort.",
-    highlights: [
-      { text: "Automated video upload to learning platforms or YouTube." },
-      { text: "Smart thumbnail generation aligned with course branding." },
-      {
-        text: "AI-assisted title, description, and SEO copywriting for each lesson.",
-      },
-      {
-        text: "Automated posting and repurposing across social media and blogs.",
-      },
-    ],
-    videos: [
-      {
-        url: "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-02743.mp4",
-        title: "Course Amplifier Demo 1",
-        thumbnail:
-          "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-      },
-    ],
-    videoOrientation: "horizontal",
-  },
-]
-
-// Données pour WhatWeCanBuild
-const serviceCategories: ServiceCategoryData[] = [
-  {
-    title: "Automated Research & Scriptwriting",
-    colorClass: "from-blue-500 to-purple-500",
-    services: [
-      {
-        title: "Trending topic discovery",
-        description:
-          "Identify trending themes and conversations inside your industry to generate relevant, high-performing ideas.",
-      },
-      {
-        title: "Information research",
-        description:
-          "Use AI-driven and human-validated methods to gather key insights and data for your content.",
-      },
-      {
-        title: "Script generation",
-        description:
-          "Automatically draft and refine scripts for different formats — short videos, educational pieces, promotional content...",
-      },
-    ],
-  },
-  {
-    title: "Automated Video Creation",
-    colorClass: "from-pink-500 to-purple-500",
-    services: [
-      {
-        title: "AI video and voice cloning",
-        description:
-          "Create realistic clones for consistent video and voice outputs without the need for constant filming.",
-      },
-      {
-        title: "AI-generated images and videos",
-        description:
-          "Produce supporting visuals using advanced AI models (images, B-roll, dynamic elements).",
-      },
-      {
-        title: "Automated B-roll",
-        description:
-          "Automatically find, match, or generate complementary footage to enrich your video production.",
-      },
-      {
-        title: "Captions and subtitle generation",
-        description:
-          "Auto-generate captions and subtitles in multiple languages for accessibility and reach.",
-      },
-      {
-        title: "Motion design",
-        description:
-          "Collaborate with top-tier motion designers to bring life, energy, and emotion to your videos when needed — always aligned with your creative direction.",
-      },
-      {
-        title: "Visual branding integration",
-        description:
-          "Apply your brand identity consistently across all outputs: logos, colors, typography, intro/outro animations, and more.",
-      },
-    ],
-  },
-  {
-    title: "Automated Publishing & Scaling",
-    colorClass: "from-purple-500 to-blue-500",
-    services: [
-      {
-        title: "Automated video editing",
-        description:
-          "Implement smart assembly systems to automatically edit and finalize videos based on custom templates and rules.",
-      },
-      {
-        title: "Cross-platform publishing",
-        description:
-          "Distribute content automatically across platforms like YouTube, TikTok, Instagram, LinkedIn, and more — formatted for each.",
-      },
-      {
-        title: "Content repurposing",
-        description:
-          "Extract blog posts, social media snippets, or newsletters from video content to maximize impact.",
-      },
-      {
-        title: "Analytics tracking",
-        description:
-          "Monitor performance metrics, engagement data, and audience insights across all platforms to optimize your content strategy.",
-      },
-      {
-        title: "Traduction",
-        description:
-          "Automatically translate your video content into multiple languages to reach global audiences.",
-      },
-    ],
-  },
-]
+const projects = homeContent.selectedProjects.projects.map(
+  (project): Project => ({
+    ...project,
+    videoOrientation: project.videoOrientation as "vertical" | "horizontal",
+  })
+)
 
 export default function Index() {
   const sectionRef = useRef<HTMLElement>(null)
-  const glowRef = useRef<HTMLDivElement>(null)
   const useCaseMarkerRef = useRef<HTMLDivElement>(null)
   const technologyMarkerRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const section = sectionRef.current
-    const glow = glowRef.current
-    const useCaseMarker = useCaseMarkerRef.current
-    const technologyMarker = technologyMarkerRef.current
-
-    if (!section || !glow) return
-
-    const handleScroll = () => {
-      const windowHeight = window.innerHeight
-      const documentHeight = document.documentElement.scrollHeight
-
-      // Normalized scroll position (0 to 1)
-      const scrollProgress = window.scrollY / (documentHeight - windowHeight)
-
-      console.log(scrollProgress * windowHeight)
-
-      // Sinusoidal horizontal movement with 3 complete cycles (6π for 3 cycles)
-      const horizontalPosition =
-        50 + Math.sin(scrollProgress * Math.PI * 6) * 45
-
-      // Update the glow position
-      glow.style.top = `${scrollProgress * windowHeight * 0.8}px`
-      glow.style.left = `${horizontalPosition}%`
-
-      // Gestion de l'opacité du glow avec transitions en douceur
-      let opacity = 0.8
-
-      // Vérifier la position par rapport au marqueur useCaseMarker
-      const useCaseMarkerRect = useCaseMarker!.getBoundingClientRect()
-      const distanceToUseCaseMarker = useCaseMarkerRect.top - windowHeight
-
-      // Vérifier la position par rapport au marqueur technologyMarker
-      const technologyMarkerRect = technologyMarker!.getBoundingClientRect()
-      const distanceToTechnologyMarker = technologyMarkerRect.top - windowHeight
-
-      // Transition en douceur - distances de transition (en pixels)
-      const fadeDistance = 300
-
-      // Fade out avant useCaseMarker
-      if (
-        distanceToUseCaseMarker < fadeDistance &&
-        distanceToUseCaseMarker > 0
-      ) {
-        // Transition graduelle de 0.8 à 0
-        opacity = 0.8 * (distanceToUseCaseMarker / fadeDistance)
-      }
-      // Zone où le glow est invisible
-      else if (distanceToUseCaseMarker <= 0 && distanceToTechnologyMarker > 0) {
-        opacity = 0
-      }
-      // Fade in après technologyMarker
-      else if (
-        distanceToTechnologyMarker <= 0 &&
-        distanceToTechnologyMarker > -fadeDistance
-      ) {
-        // Transition graduelle de 0 à 0.8 (corrigée)
-        const progress = Math.abs(distanceToTechnologyMarker) / fadeDistance
-        opacity = 0.8 * Math.min(1, progress)
-        console.log("Fade-in progress:", progress, "Opacity:", opacity)
-      }
-
-      glow.style.opacity = opacity.toString()
-    }
-
-    // Initial call to set position when component mounts
-    handleScroll()
-
-    // Add scroll event listener
-    window.addEventListener("scroll", handleScroll, { passive: true })
-
-    // Clean up
-    return () => {
-      window.removeEventListener("scroll", handleScroll)
-    }
-  }, [])
 
   return (
     <main ref={sectionRef} className="min-h-screen text-foreground">
-      {/* Animated glow effect */}
-      <div
-        ref={glowRef}
-        className="fixed pointer-events-none max-w-[600px] max-h-[500px] w-[50vw] h-[40vw] rounded-full blur-[120px] bg-gradient-to-r from-pink-500/30 via-purple-500/35 to-blue-500/25 z-0"
-        style={{
-          opacity: 0.8,
-          top: 0,
-          left: "50%",
-          transform: "translateX(-50%)",
-        }}
+      <BackgroundGlow
+        sectionRef={sectionRef}
+        useCaseMarkerRef={useCaseMarkerRef}
+        technologyMarkerRef={technologyMarkerRef}
       />
 
       <HeroBanner
-        title="Tailored AI Video Automation System"
-        subtitle="Streamline your video production with a custom AI-powered engine."
-        primaryCta={{
-          text: "Tell us about your project",
-          href: "/contact",
-        }}
+        title={homeContent.hero.title}
+        subtitle={homeContent.hero.subtitle}
+        primaryCta={homeContent.hero.primaryCta}
       />
 
       <FiftyFifty imagePosition="right" colorTheme="purple">
         <h2 className="text-2xl md:text-3xl font-bold mb-6 text-left">
-          What We Offer
+          {homeContent.whatWeOffer.title}
         </h2>
-        <div className="text-lg text-left mb-6 text-gray-100">
-          <FormattedText text="Each system we build is designed **specifically for you**, based on your goals, content style, and existing workflows." />
-        </div>
-        <div className="text-lg text-left mb-6 text-gray-100">
-          <FormattedText text="We craft robust, **intelligent engines** that automate what can be automated so you can focus on where your creativity brings the most value." />
-        </div>
+        {homeContent.whatWeOffer.paragraphs.map((paragraph, index) => (
+          <div key={index} className="text-lg text-left mb-6 text-gray-100">
+            <FormattedText text={paragraph} />
+          </div>
+        ))}
       </FiftyFifty>
 
-      <StatsRotator
-        stats={[
-          "91% of businesses use video as a marketing tool today. (Wyzowl, 2024)",
-          "78% of people watch videos online every week. (HubSpot)",
-          "Companies that use video marketing grow revenue 49% faster than non-video users. (WordStream)",
-          "92% of mobile video consumers share videos with others. (Insivia)",
-          "Video content is 12 times more likely to be shared than text and images combined. (SmallBizTrends)",
-        ]}
-        intervalMs={5000}
-      />
+      <StatsRotator stats={homeContent.stats} intervalMs={5000} />
 
       <FiftyFifty imagePosition="left" colorTheme="blue">
         <h2 className="text-2xl md:text-3xl font-bold mb-6 text-left">
-          Video Automation Matters
+          {homeContent.videoAutomation.title}
         </h2>
-        <p className="text-lg text-left mb-6 text-gray-100">
-          <FormattedText text="Video is the core of communication." />
-        </p>
-        <p className="text-lg text-left mb-6 text-gray-100">
-          <FormattedText text="But producing high-quality, frequent content is **time-consuming,** expensive, and operationally heavy. Thanks to recent advances in AI (video generation, voice cloning, script writing, sound design, image creation...), it's now possible to **automate much of the heavy lifting**." />
-        </p>
-        <p className="text-lg text-left mb-6 text-gray-100">
-          <FormattedText text="At the same time, **human creativity remains irreplaceable** to create content that truly connects and stands out." />
-        </p>
+        {homeContent.videoAutomation.paragraphs.map((paragraph, index) => (
+          <p key={index} className="text-lg text-left mb-6 text-gray-100">
+            <FormattedText text={paragraph} />
+          </p>
+        ))}
         <HighlightBox>
           <p className="text-lg text-left text-gray-100">
-            <FormattedText text="Our systems automate repetitive tasks and streamline production, **so you save time.**" />
+            <FormattedText text={homeContent.videoAutomation.highlight} />
           </p>
         </HighlightBox>
       </FiftyFifty>
 
       <WhatWeCanBuild
-        title="What We Can Build For You"
-        description={
-          "We design tailored production engines by assembling the right building blocks."
-        }
-        categories={serviceCategories}
+        title={homeContent.whatWeCanBuild.title}
+        description={homeContent.whatWeCanBuild.description}
+        categories={homeContent.whatWeCanBuild.categories}
       />
 
       {/* Marker div pour le fade-out du glow */}
       <div ref={useCaseMarkerRef} className="h-1 w-full"></div>
 
       <UseCasesSlider
-        title="Use Cases"
-        description={
-          "From real estate to education, AI powered video automation is transforming content creation."
-        }
-        useCases={useCases}
+        title={homeContent.useCases.title}
+        description={homeContent.useCases.description}
+        useCases={homeContent.useCases.items}
       />
 
       <SelectedProjects
-        title="Selected Projects"
-        description={
-          "Here are a few examples of custom systems we've built for clients or for our own use."
-        }
+        title={homeContent.selectedProjects.title}
+        description={homeContent.selectedProjects.description}
         projects={projects}
       />
 
       <Pricing
-        title="Pricing"
-        description={
-          "Every system we build is unique and so is its investment."
-        }
-        ctaLabel="Tell us about your project"
-        ctaHref="/contact"
-        setupTitle="Setup Fee"
-        setupDescription="A one-time investment to create your tailored video engine."
-        setupItems={[
-          "Custom system architecture design",
-          "Development and integration",
-          "Initial setup and configuration",
-          "Onboarding and training",
-        ]}
-        monthlyTitle="Monthly Plan"
-        monthlyDescription="Ongoing support to keep your system running smoothly."
-        monthlyItems={[
-          "System hosting and infrastructure",
-          "Monitoring and maintenance",
-          "Technical support",
-          "Minor updates and improvements",
-        ]}
-        footerText="Our solutions are crafted for serious businesses and creators ready to invest in high-quality, time-saving automation."
+        title={homeContent.pricing.title}
+        description={homeContent.pricing.description}
+        ctaLabel={homeContent.pricing.ctaLabel}
+        ctaHref={homeContent.pricing.ctaHref}
+        setupFee={homeContent.pricing.setupFee}
+        monthlyFee={homeContent.pricing.monthlyFee}
+        footerText={homeContent.pricing.footerText}
       />
 
       <Testimonials
-        title="What Our Clients Say"
-        description={
-          "Discover how our video automation solutions have transformed their lives and businesses."
-        }
-        testimonials={[
-          {
-            quote:
-              "The custom video system developed for our real estate agency has completely revolutionized our content strategy. We're now able to publish stunning property videos in a fraction of the time, giving us a major edge over competitors.",
-            author: "Alexandra Martin",
-            role: "Marketing Director",
-            company: "Premier Properties",
-          },
-          {
-            quote:
-              "As an online educator, I was spending 70% of my time on video production rather than curriculum development. This AI video system has flipped that ratio, letting me focus on what truly matters - creating exceptional learning experiences.",
-            author: "Michael Chen",
-            role: "Founder",
-            company: "TechEd Academy",
-          },
-          {
-            quote:
-              "Our product launch videos used to take weeks to produce. Now we can create professional, branded videos for each feature release in just hours. The ROI has been incredible, both in time saved and increased engagement.",
-            author: "Sarah Johnson",
-            role: "Product Lead",
-            company: "Innovate Solutions",
-          },
-        ]}
+        title={homeContent.testimonials.title}
+        description={homeContent.testimonials.description}
+        testimonials={homeContent.testimonials.items}
       />
 
-      {/* Marker div pour le ftechnologyMarkerRefade-out du glow */}
+      {/* Marker div pour le fade-in du glow */}
       <div ref={technologyMarkerRef}></div>
 
       <TechnologyExpertise
-        title="Technology & Expertise"
-        description={
-          "Each system is crafted using the right tools for your needs."
-        }
-        categories={[
-          {
-            title: "Core Technologies We Use",
-            description:
-              "The foundation of every system we build relies on these powerful tools and platforms.",
-            items: [
-              { name: "Video Editing", category: "category" },
-              { name: "Remotion", category: "video" },
-              { name: "Json2Video", category: "video" },
-              { name: "Creatomate", category: "video" },
-
-              { name: "AI Research & Text Generation", category: "category" },
-              { name: "OpenAI", category: "ai-research" },
-              { name: "Perplexity AI", category: "ai-research" },
-              { name: "DeepSeek", category: "ai-research" },
-
-              { name: "AI Content Generation", category: "category" },
-              { name: "HeyGen", category: "content" },
-              { name: "Runway", category: "content" },
-              { name: "MidJourney", category: "content" },
-              { name: "Sora", category: "content" },
-              { name: "Flux", category: "content" },
-              { name: "ElevenLabs", category: "content" },
-
-              { name: "Publishing", category: "category" },
-              { name: "Matricool", category: "publishing" },
-              { name: "Blotato", category: "publishing" },
-              { name: "Postiz", category: "publishing" },
-
-              { name: "Infrastructure", category: "category" },
-              { name: "AWS", category: "infra" },
-              { name: "Cloudflare", category: "infra" },
-            ],
-          },
-          {
-            title: "Seamless Integrations",
-            description:
-              "We build systems that fit into your existing workflows and connect with your favorite tools.",
-            items: [
-              { name: "Trello" },
-              { name: "Google Workspace" },
-              { name: "WordPress" },
-              { name: "Pipedrive" },
-              { name: "Zoho" },
-              { name: "HubSpot" },
-              { name: "Slack" },
-              { name: "Notion" },
-              { name: "Airtable" },
-              { name: "Mailchimp" },
-              { name: "N8n" },
-              { name: "Make" },
-            ],
-          },
-          {
-            title: "Content Distribution Channels",
-            description:
-              "Get your videos out to the world through all the platforms that matter to your audience.",
-            items: [
-              { name: "YouTube" },
-              { name: "TikTok" },
-              { name: "Instagram" },
-              { name: "LinkedIn" },
-              { name: "Twitter" },
-              { name: "Facebook" },
-            ],
-          },
-        ]}
+        title={homeContent.technologyExpertise.title}
+        description={homeContent.technologyExpertise.description}
+        categories={homeContent.technologyExpertise.categories}
+        customDevelopment={homeContent.technologyExpertise.customDevelopment}
       />
 
       <WhoWeAre
-        title="Who We Are"
-        description={
-          "A team of senior professionals combining technical expertise, creative strategy, and AI innovation."
-        }
-        team={[
-          {
-            name: "Manu",
-            role: "Senior Engineer",
-            location: "Switzerland",
-            description:
-              "Manu brings 20 years of experience in software development, AI automation, and advanced video production workflows. He specializes in building robust, scalable systems that combine efficiency, creativity, and precision — with a focus on smart automation that serves, not replaces, human creativity.",
-          },
-          {
-            name: "Thais",
-            role: "Business Strategist & AI Consultant",
-            location: "Brazil",
-            description:
-              "Thais is a marketing expert and AI strategist with a strong background in content creation, branding, and prompt engineering. She designs strategies that bridge technology and storytelling, helping brands harness AI-driven workflows without losing authenticity or strategic depth.",
-          },
-        ]}
+        title={homeContent.whoWeAre.title}
+        description={homeContent.whoWeAre.description}
+        team={homeContent.whoWeAre.team}
       />
 
       <FAQ
-        title="Frequently Asked Questions"
-        description={
-          "Everything you need to know about our video automation systems."
-        }
-        faqs={[
-          {
-            question: "How much does it cost?",
-            answer:
-              "Every system we build is tailored to your specific needs and goals. After sharing a few details about your project, you'll receive a personalized estimate covering the setup and monthly plan.",
-          },
-          {
-            question: "What's included in the monthly plan?",
-            answer:
-              "The monthly plan covers hosting, monitoring, maintenance, and support — ensuring your system remains stable and fully operational. Major upgrades or new developments are handled through separate quotes.",
-          },
-          {
-            question: "What happens if I want to evolve my system later?",
-            answer:
-              "If you need new features, expansions, or structural changes, we'll define a custom roadmap and quote accordingly. You keep full control over how your system evolves over time.",
-          },
-          {
-            question: "Can I update content myself once the system is live?",
-            answer:
-              "Yes — most systems are designed with simple, intuitive interfaces to trigger new content creation or updates without needing technical skills. You focus on the creative input; we handle the technical complexity.",
-          },
-          {
-            question: "How long does it take to build my system?",
-            answer:
-              "Most systems are delivered within 3 to 6 weeks after kickoff, depending on the scope and complexity of the project.",
-          },
-          {
-            question:
-              "Are third-party service costs (like HeyGen, OpenAI, ElevenLabs) included?",
-            answer:
-              "It depends on the setup. If you already have active subscriptions, we can connect your system to them. If not, we can use our own access where possible, or recommend the best approach based on your needs.",
-          },
-          {
-            question: "Is the system fully automated?",
-            answer:
-              "In most cases, no. We automate repetitive and time-consuming tasks to save you time, reduce costs, and let you focus where your creativity and expertise create the most value. Key steps are usually kept under your control to maintain quality, authenticity, and strategic alignment.",
-          },
-        ]}
+        title={homeContent.faq.title}
+        description={homeContent.faq.description}
+        faqs={homeContent.faq.items}
       />
 
       <FinalCTA
-        title="Ready to transform your content creation?"
-        ctaText="Tell us about your project"
-        ctaHref="/contact"
+        title={homeContent.finalCta.title}
+        ctaText={homeContent.finalCta.ctaText}
+        ctaHref={homeContent.finalCta.ctaHref}
       />
     </main>
   )
