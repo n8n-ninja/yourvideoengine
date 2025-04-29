@@ -1,24 +1,24 @@
 import type { MetaFunction } from "@remix-run/cloudflare"
-import { LoginForm } from "~/components/login-form"
-import { LogoutButton } from "~/components/LogoutButton"
-import homeContent from "~/data/home-content.json"
+import { useUser } from "~/hooks/use-user"
 
 export const meta: MetaFunction = () => {
   return [
-    { title: homeContent.meta.title },
+    { title: "Dashboard - YourVideoEngine" },
     {
       name: "description",
-      content: homeContent.meta.description,
+      content: "YourVideoEngine Dashboard",
     },
   ]
 }
 
 export default function Index() {
+  const user = useUser()
+
   return (
-    <main className="min-h-screen">
-      <h1>Welcome to Client Studio</h1>
-      <LoginForm />
-      <LogoutButton />
-    </main>
+    <div className="p-8">
+      <pre className="bg-gray-100 p-4 rounded overflow-auto">
+        {JSON.stringify(user, null, 2)}
+      </pre>
+    </div>
   )
 }

@@ -1,5 +1,3 @@
-import { LoaderFunctionArgs, json, redirect } from "@remix-run/cloudflare"
-import { jwtDecode } from "jwt-decode" // install: npm install jwt-decode
 import type { MetaFunction } from "@remix-run/cloudflare"
 import { useEffect } from "react"
 import { useNavigate } from "@remix-run/react"
@@ -29,31 +27,31 @@ export default function Index() {
     }
 
     try {
-      //     // Attention ici : pas besoin de serveur pour décoder, juste parser JWT
       const payload = JSON.parse(atob(access_token.split(".")[1])) as {
         email: string
+        user_metadata: {
+          client_slug: string
+        }
       }
 
-      console.log(payload)
-      //     const userEmail = payload.email || ""
+      const isProd = window.location.hostname !== "localhost"
+      let redirectUrl = ""
 
-      //     let clientUrl = "https://default-client.yourvideoengine.com"
+      if (isProd) {
+        redirectUrl = `https://${payload.user_metadata.client_slug}.studio.yourvideoengine.com`
+      } else {
+        redirectUrl = "http://localhost:4000"
+      }
 
-      //     if (userEmail.endsWith("@clienta.com")) {
-      //       clientUrl = "https://clienta.yourvideoengine.com"
-      //     } else if (userEmail.endsWith("@clientb.com")) {
-      //       clientUrl = "https://clientb.yourvideoengine.com"
-      //     }
+      // Construire l'URL finale avec les paramètres
+      const finalRedirectUrl = `${redirectUrl}/?access_token=${encodeURIComponent(
+        access_token
+      )}&refresh_token=${encodeURIComponent(refresh_token || "")}&expires_in=${
+        expires_in || ""
+      }&type=${type || ""}`
 
-      //     // Construire l'URL finale
-      //     const finalRedirectUrl = `${clientUrl}/after-auth?access_token=${encodeURIComponent(
-      //       access_token
-      //     )}&refresh_token=${encodeURIComponent(refresh_token || "")}&expires_in=${
-      //       expires_in || ""
-      //     }&type=${type || ""}`
-
-      //     // Rediriger proprement
-      //     window.location.href = finalRedirectUrl
+      // Rediriger
+      window.location.href = finalRedirectUrl
     } catch (error) {
       console.error("Failed to parse access_token", error)
     }
