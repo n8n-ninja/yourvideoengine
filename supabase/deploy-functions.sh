@@ -2,8 +2,8 @@
 
 # Configuration
 SERVER="root@91.107.237.123"
-SERVER_PASS="bAp7rxaiecaEpxMsiUsu"
-FUNCTIONS_DIR="./supabase/functions"
+SSH_KEY="$HOME/.ssh/supabase-deploy"
+FUNCTIONS_DIR="./functions"
 CONTAINER_NAME="supabase-edge-functions-o04gswcwkwco4c00oosgcgkw"
 CONTAINER_FUNCTIONS_PATH="/home/deno/functions"
 
@@ -11,7 +11,7 @@ echo "🚀 Déploiement des Edge Functions..."
 
 # Vérifier la structure du serveur
 echo "🔍 Vérification de la structure du serveur..."
-sshpass -p "$SERVER_PASS" ssh -o StrictHostKeyChecking=no $SERVER "docker exec $CONTAINER_NAME ls -la /var/lib/edge-runtime || echo 'Container non accessible'"
+ssh -i "$SSH_KEY" $SERVER "docker exec $CONTAINER_NAME ls -la /var/lib/edge-runtime || echo 'Container non accessible'"
 
 # Déployer chaque fonction
 for function_file in $FUNCTIONS_DIR/*.ts; do
@@ -22,13 +22,13 @@ for function_file in $FUNCTIONS_DIR/*.ts; do
         
         echo "  Copie du fichier dans le conteneur..."
         # Créer un dossier temporaire sur le serveur
-        sshpass -p "$SERVER_PASS" ssh -o StrictHostKeyChecking=no $SERVER "mkdir -p /tmp/edge-functions/$function_name"
+        ssh -i "$SSH_KEY" $SERVER "mkdir -p /tmp/edge-functions/$function_name"
         
         # Copier le fichier vers le serveur
-        sshpass -p "$SERVER_PASS" scp -o StrictHostKeyChecking=no "$function_file" "$SERVER:/tmp/edge-functions/$function_name/index.ts"
+        scp -i "$SSH_KEY" "$function_file" "$SERVER:/tmp/edge-functions/$function_name/index.ts"
         
         # Copier dans le conteneur et nettoyer
-        sshpass -p "$SERVER_PASS" ssh -o StrictHostKeyChecking=no $SERVER "
+        ssh -i "$SSH_KEY" $SERVER "
             docker exec $CONTAINER_NAME mkdir -p $CONTAINER_FUNCTIONS_PATH/$function_name &&
             docker cp /tmp/edge-functions/$function_name/index.ts $CONTAINER_NAME:$CONTAINER_FUNCTIONS_PATH/$function_name/index.ts &&
             rm -rf /tmp/edge-functions/$function_name
@@ -44,7 +44,7 @@ for function_file in $FUNCTIONS_DIR/*.ts; do
 done
 
 echo "🔄 Redémarrage du service Edge Functions..."
-sshpass -p "$SERVER_PASS" ssh -o StrictHostKeyChecking=no $SERVER "docker restart $CONTAINER_NAME"
+ssh -i "$SSH_KEY" $SERVER "docker restart $CONTAINER_NAME"
 
 echo "🎉 Déploiement terminé!"
 echo "⚠️  Note: Il peut falloir quelques secondes pour que les changements soient appliqués"
@@ -52,4 +52,4 @@ echo "📝 Les fonctions devraient être accessibles via: https://db.yourvideoen
 
 # Vérifier que les fichiers sont bien en place
 echo "🔍 Vérification de l'installation..."
-sshpass -p "$SERVER_PASS" ssh -o StrictHostKeyChecking=no $SERVER "docker exec $CONTAINER_NAME ls -la $CONTAINER_FUNCTIONS_PATH" 
+ssh -i "$SSH_KEY" $SERVER "docker exec $CONTAINER_NAME ls -la $CONTAINER_FUNCTIONS_PATH" 

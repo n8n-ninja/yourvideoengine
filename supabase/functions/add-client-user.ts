@@ -123,7 +123,7 @@ serve(async (req) => {
         const supabase = createClient(supabaseUrl, supabaseKey);
 
         const { data, error } = await supabase.rpc("add_client_user", {
-            slug,
+            slug_param: slug,
             user_id,
         });
 
