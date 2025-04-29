@@ -3,7 +3,7 @@
 # Script pour créer un nouveau projet Remix depuis un starter
 
 # -- CONFIGURATION DE BASE --
-STARTER_DIR="starters/remix-landing-page"
+STARTER_DIR="starters/landing-page"
 APPS_DIR="apps"
 
 # -- FONCTION PRINCIPALE --
@@ -27,11 +27,13 @@ fi
 echo "🚀 Creating new app from starter..."
 cp -R "$STARTER_DIR" "$DEST_DIR"
 
-# Remplacer __APP_NAME__ par le vrai nom dans wrangler.template.toml
-if [ -f "$STARTER_DIR/wrangler.template.toml" ]; then
-  sed "s/__APP_NAME__/$APP_NAME/g" "$STARTER_DIR/wrangler.template.toml" > "$DEST_DIR/wrangler.toml"
+
+# Modifier le wrangler.jsonc pour changer le nom aussi
+if [ -f "$DEST_DIR/wrangler.jsonc" ]; then
+  echo "✏️  Updating wrangler.jsonc name..."
+  sed -i '' "s/\"name\": \".*\"/\"name\": \"$APP_NAME\"/" "$DEST_DIR/wrangler.jsonc"
 else
-  echo "⚠️  wrangler.template.toml not found in starter. Skipping wrangler config."
+  echo "⚠️  wrangler.jsonc not found. Skipping wrangler.jsonc update."
 fi
 
 # Modifier le package.json pour changer le name
