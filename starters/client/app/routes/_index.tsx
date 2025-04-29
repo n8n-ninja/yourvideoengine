@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/cloudflare"
-import { SignUpForm } from "~/components/SignUpForm"
+import { LoginForm } from "~/components/login-form"
 import { LogoutButton } from "~/components/LogoutButton"
 import homeContent from "~/data/home-content.json"
 
@@ -17,7 +17,7 @@ export default function Index() {
   return (
     <main className="min-h-screen">
       <h1>Welcome to Client Studio</h1>
-      <SignUpForm />
+      <LoginForm />
       <LogoutButton />
     </main>
   )
