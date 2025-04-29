@@ -8,8 +8,8 @@ export const sessionStorage = createCookieSessionStorage({
     httpOnly: true,
     path: "/",
     sameSite: "lax",
-    secrets: [process.env.SESSION_SECRET || "default-secret-key"],
-    secure: process.env.NODE_ENV === "production",
+    secrets: ["your-video-engine-secret-key"],
+    secure: true, // toujours true car Cloudflare Pages est toujours en HTTPS
   },
 })
 

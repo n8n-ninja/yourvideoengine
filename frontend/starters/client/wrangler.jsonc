@@ -4,12 +4,12 @@
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "landing-page-starter",
+  "name": "client-studio-starter",
   "compatibility_date": "2025-04-26",
   "pages_build_output_dir": "./build/client",
   "observability": {
     "enabled": true
-  }
+  },
   /**
    * Smart Placement
    * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
@@ -27,7 +27,11 @@
    * Environment Variables
    * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
    */
-  // "vars": { "MY_VARIABLE": "production_value" },
+  "vars": {
+    "VITE_SUPABASE_URL": "https://db.yourvideoengine.com/",
+    "VITE_SUPABASE_ANON_KEY": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc0NTg1MTAyMCwiZXhwIjo0OTAxNTI0NjIwLCJyb2xlIjoiYW5vbiJ9.q3mknKkq9kO7YaXWZmO910Q_PeUurERvNYP0ti7s_Fc"
+  }
+
   /**
    * Note: Use secrets to store sensitive data.
    * https://developers.cloudflare.com/workers/configuration/secrets/
