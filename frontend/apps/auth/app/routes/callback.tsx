@@ -29,7 +29,7 @@ export default function Index() {
     try {
       const payload = JSON.parse(atob(access_token.split(".")[1])) as {
         email: string
-        user_metadata: {
+        app_metadata: {
           client_slug: string
         }
       }
@@ -38,7 +38,7 @@ export default function Index() {
       let redirectUrl = ""
 
       if (isProd) {
-        redirectUrl = `https://${payload.user_metadata.client_slug}.studio.yourvideoengine.com`
+        redirectUrl = `https://${payload.app_metadata.client_slug}.client.yourvideoengine.com`
       } else {
         redirectUrl = "http://localhost:4000"
       }

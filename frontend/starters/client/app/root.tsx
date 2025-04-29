@@ -66,7 +66,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     url.hostname === "localhost" || url.hostname === "127.0.0.1"
   const redirectUrl = isLocalhost
     ? "http://localhost:3000"
-    : "https://connect.yourvideoengine.com"
+    : "https://auth.yourvideoengine.com"
 
   return redirect(redirectUrl)
 }

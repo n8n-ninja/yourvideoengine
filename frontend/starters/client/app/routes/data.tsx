@@ -1,6 +1,7 @@
 import type { LoaderFunction, MetaFunction } from "@remix-run/cloudflare"
 import { useLoaderData } from "@remix-run/react"
 import { supabase } from "~/lib/supabaseClient"
+import type { User } from "@supabase/supabase-js"
 
 export const meta: MetaFunction = () => {
   return [
@@ -20,25 +21,28 @@ type ManubData = {
 }
 
 export const loader: LoaderFunction = async () => {
-  console.log("Fetching data from Supabase...")
+  // Récupérer l'utilisateur depuis la session
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
   const { data, error } = await supabase
-    .from("manub_data")
+    .from(`${user?.app_metadata.client_slug}_data`)
     .select("*")
-    .order("created_at", { ascending: false })
 
   if (error) {
     console.error("Supabase error:", error)
     throw new Error(`Error fetching data: ${error.message}`)
   }
 
-  console.log("Data received:", data)
-  return { data }
+  return { data, user }
 }
 
 export default function Data() {
-  const { data } = useLoaderData<{ data: ManubData[] }>()
-
-  console.log("Component data:", data)
+  const { data, user } = useLoaderData<{
+    data: ManubData[]
+    user: User
+  }>()
 
   if (!data || data.length === 0) {
     return (
@@ -85,7 +89,7 @@ export default function Data() {
       <div className="mt-8">
         <h2 className="text-xl font-bold mb-4">Debug Information</h2>
         <pre className="bg-gray-100 p-4 rounded overflow-auto">
-          {JSON.stringify(data, null, 2)}
+          {JSON.stringify({ data, user }, null, 2)}
         </pre>
       </div>
     </div>
