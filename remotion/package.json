@@ -1,0 +1,40 @@
+{
+  "name": "12_n8n_blacksmith_shorts",
+  "version": "1.0.0",
+  "description": "My Remotion video",
+  "repository": {},
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@remotion/cli": "4.0.289",
+    "@remotion/google-fonts": "^4.0.289",
+    "@remotion/lambda": "4.0.289",
+    "@remotion/zod-types": "4.0.289",
+    "@types/express": "^5.0.1",
+    "express": "^5.1.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "remotion": "4.0.289",
+    "zod": "3.22.3"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.289",
+    "@types/react": "19.0.0",
+    "@types/web": "0.0.166",
+    "eslint": "9.19.0",
+    "prettier": "3.3.3",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths-webpack-plugin": "^4.2.0",
+    "typescript": "5.8.2"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion bundle",
+    "upgrade": "remotion upgrade",
+    "lint": "eslint src && tsc",
+    "api": "ts-node src/api.ts"
+  },
+  "sideEffects": [
+    "*.css"
+  ]
+}
