@@ -30,8 +30,8 @@ cp -R "$STARTER_DIR" "$DEST_DIR"
 
 # Modifier le wrangler.jsonc pour changer le nom aussi
 if [ -f "$DEST_DIR/wrangler.jsonc" ]; then
-  echo "✏️  Updating wrangler.jsonc name..."
-  sed -i '' "s/\"name\": \".*\"/\"name\": \"$APP_NAME\"/" "$DEST_DIR/wrangler.jsonc"
+    echo "✏️  Updating wrangler.jsonc name to vid_client_$APP_NAME..."
+  sed -i '' "s/\"name\": \".*\"/\"name\": \"vid_client_$APP_NAME\"/" "$DEST_DIR/wrangler.jsonc"
 else
   echo "⚠️  wrangler.jsonc not found. Skipping wrangler.jsonc update."
 fi
