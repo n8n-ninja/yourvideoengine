@@ -1,0 +1,7 @@
+packages:
+  - auth
+  - clients/apps/*
+  - clients/starters/*
+  - frontend
+  - remotion
+  - supabase
