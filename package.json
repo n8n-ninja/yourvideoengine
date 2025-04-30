@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "gopush": "bash scripts/gopush.sh",
     "new": "bash scripts/new-app.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
