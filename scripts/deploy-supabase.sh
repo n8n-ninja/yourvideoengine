@@ -3,7 +3,7 @@
 # Configuration
 SERVER="root@91.107.237.123"
 SSH_KEY="$HOME/.ssh/supabase-deploy"
-FUNCTIONS_DIR="./functions"
+FUNCTIONS_DIR="../supabase/functions"
 CONTAINER_NAME="supabase-edge-functions-o04gswcwkwco4c00oosgcgkw"
 CONTAINER_FUNCTIONS_PATH="/home/deno/functions"
 

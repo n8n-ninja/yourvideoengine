@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "gopush": "bash scripts/gopush.sh",
+    "deploysupabase": "bash scripts/deploy-supabase.sh",
+    "deployauth": "pnpm --filter auth run deploy",
+    "deployfrontend": "pnpm --filter frontend run deploy",
     "new": "bash scripts/new-app.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

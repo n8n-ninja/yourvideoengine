@@ -1,5 +1,5 @@
 {
-  "name": "video-engine",
+  "name": "frontend",
   "private": true,
   "sideEffects": false,
   "type": "module",

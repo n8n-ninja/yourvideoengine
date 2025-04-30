@@ -3,7 +3,7 @@
 # Script pour créer un nouveau projet Remix depuis un starter
 
 # -- CONFIGURATION DE BASE --
-STARTER_DIR="starters/landing-page"
+STARTER_DIR="clients/starters/client"
 APPS_DIR="apps"
 
 # -- FONCTION PRINCIPALE --
