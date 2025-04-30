@@ -3,7 +3,7 @@
 # Script pour créer un nouveau projet Remix depuis un starter
 
 # -- CONFIGURATION DE BASE --
-STARTER_DIR="starters/client"
+STARTER_DIR="starters/clientstudio"
 APPS_DIR="clientstudios"
 
 # -- FONCTION PRINCIPALE --

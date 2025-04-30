@@ -13,7 +13,7 @@ echo "🚀 Déploiement des Edge Functions..."
 echo "🔍 Vérification de la structure du serveur..."
 ssh -i "$SSH_KEY" $SERVER "docker exec $CONTAINER_NAME ls -la /var/lib/edge-runtime || echo 'Container non accessible'"
 
-# Déployer chaque fonction
+# Déployer chaque fonctionp
 for function_file in $FUNCTIONS_DIR/*.ts; do
     if [ -f "$function_file" ]; then
         filename=$(basename "$function_file")
