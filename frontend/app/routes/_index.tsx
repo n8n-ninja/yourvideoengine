@@ -1,5 +1,6 @@
 import type { MetaFunction } from "@remix-run/cloudflare"
 import { HeroBanner } from "~/components/HeroBanner"
+import { Scene3D } from "~/components/Scene3D/Scene3D"
 import { StatsRotator } from "~/components/StatsRotator"
 import { FiftyFifty } from "~/components/FiftyFifty"
 import { WhatWeCanBuild } from "~/components/WhatWeCanBuild"
@@ -41,6 +42,9 @@ export default function Index() {
 
   return (
     <main ref={sectionRef} className="min-h-screen text-foreground">
+      <div className="fixed top-0 left-0 w-full h-full z-[-1]">
+        <Scene3D />
+      </div>
       <BackgroundGlow
         sectionRef={sectionRef}
         useCaseMarkerRef={useCaseMarkerRef}
