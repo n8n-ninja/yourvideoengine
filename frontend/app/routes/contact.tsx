@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/cloudflare"
-import { Form, Link } from "@remix-run/react"
+import { Form, Link, useNavigate } from "@remix-run/react"
 import { useState } from "react"
 import { GlowyTitle } from "~/components/ui/glowy-title"
 import { FancyButton } from "~/components/ui/fancy-button"
@@ -15,7 +15,70 @@ export const meta: MetaFunction = () => {
 }
 
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    mainGoal: "",
+    profile: "",
+    videoTypes: [] as string[],
+    production: [] as string[],
+    vision: "",
+    name: "",
+    email: "",
+  })
   const [showOtherVideoType, setShowOtherVideoType] = useState(false)
+  const [errors, setErrors] = useState<{ [key: string]: string }>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [globalError, setGlobalError] = useState("")
+  const navigate = useNavigate()
+
+  const handleInputChange = (name: string, value: string | string[]) => {
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const validate = () => {
+    const newErrors: { [key: string]: string } = {}
+    if (!formData.mainGoal) newErrors.mainGoal = "This field is required. 1"
+    if (!formData.profile) newErrors.profile = "This field is required. 2"
+    if (!formData.videoTypes || formData.videoTypes.length === 0)
+      newErrors.videoTypes = "At least one type is required. 3"
+    if (!formData.production || formData.production.length === 0)
+      newErrors.production = "At least one option is required. 4"
+    if (!formData.vision) newErrors.vision = "This field is required. 5"
+    if (!formData.name) newErrors.name = "This field is required. 6"
+    if (!formData.email) newErrors.email = "This field is required. 7"
+    return newErrors
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log("isSubmitting", isSubmitting)
+    if (isSubmitting) return
+
+    const validationErrors = validate()
+    setErrors(validationErrors)
+
+    console.log("eee", validationErrors)
+    if (Object.keys(validationErrors).length > 0) return
+    setIsSubmitting(true)
+    console.log("eee2", isSubmitting)
+    try {
+      const response = await fetch(
+        "https://n8n.the-aitelier.com/webhook/your-video-engine/submit-form",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      )
+      if (!response.ok) throw new Error("Erreur lors de l'envoi du formulaire.")
+      navigate("/confirmation")
+    } catch (err) {
+      setGlobalError(
+        "Une erreur est survenue lors de l'envoi. Veuillez réessayer."
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">
@@ -32,9 +95,14 @@ export default function Contact() {
         Let&apos;s create something amazing together
       </GlowyTitle>
 
-      <Form method="post" className="space-y-8">
+      <Form method="post" className="space-y-8" onSubmit={handleSubmit}>
+        {globalError && (
+          <div className="text-red-500 text-center mb-4">{globalError}</div>
+        )}
         {/* Main Goal */}
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700/30">
+        <div
+          className={`bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700/30 transition-all duration-500 transform`}
+        >
           <label
             htmlFor="mainGoal"
             className="block text-lg font-medium text-gray-300 mb-3"
@@ -83,6 +151,7 @@ export default function Contact() {
                   required
                   className="sr-only peer"
                   aria-label={option.label}
+                  onChange={() => handleInputChange("mainGoal", option.value)}
                 />
                 <label
                   htmlFor={`mainGoal-${option.value}`}
@@ -94,10 +163,15 @@ export default function Contact() {
               </div>
             ))}
           </div>
+          {errors.mainGoal && (
+            <p className="text-red-500 text-sm mt-2">{errors.mainGoal}</p>
+          )}
         </div>
 
         {/* Profile Type */}
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700/30">
+        <div
+          className={`bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700/30 transition-all duration-500 transform`}
+        >
           <label
             htmlFor="profile"
             className="block text-lg font-medium text-gray-300 mb-3"
@@ -126,6 +200,7 @@ export default function Contact() {
                   required
                   className="sr-only peer"
                   aria-label={option.label}
+                  onChange={() => handleInputChange("profile", option.value)}
                 />
                 <label
                   htmlFor={`profile-${option.value}`}
@@ -137,10 +212,15 @@ export default function Contact() {
               </div>
             ))}
           </div>
+          {errors.profile && (
+            <p className="text-red-500 text-sm mt-2">{errors.profile}</p>
+          )}
         </div>
 
         {/* Video Types */}
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700/30">
+        <div
+          className={`bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700/30 transition-all duration-500 transform`}
+        >
           <label
             htmlFor="videoTypes"
             className="block text-lg font-medium text-gray-300 mb-3"
@@ -161,7 +241,11 @@ export default function Contact() {
               },
               { emoji: "📈", value: "news", label: "News & updates" },
               { emoji: "📱", value: "short-form", label: "TikToks / Reels" },
-              { emoji: "🎤", value: "reviews", label: "Reviews / interviews" },
+              {
+                emoji: "🎤",
+                value: "reviews",
+                label: "Reviews / interviews",
+              },
               { emoji: "✨", value: "other", label: "Other" },
             ].map((type) => (
               <div key={type.value} className="flex items-center">
@@ -170,10 +254,15 @@ export default function Contact() {
                   id={`videoType-${type.value}`}
                   name="videoTypes"
                   value={type.value}
-                  onChange={(e) =>
-                    type.value === "other" &&
-                    setShowOtherVideoType(e.target.checked)
-                  }
+                  onChange={(e) => {
+                    const newValue = e.target.checked
+                      ? [...formData.videoTypes, type.value]
+                      : formData.videoTypes.filter((v) => v !== type.value)
+                    handleInputChange("videoTypes", newValue)
+                    if (type.value === "other") {
+                      setShowOtherVideoType(e.target.checked)
+                    }
+                  }}
                   className="sr-only peer"
                   aria-label={type.label}
                 />
@@ -195,10 +284,15 @@ export default function Contact() {
               className="w-full mt-3 px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
           )}
+          {errors.videoTypes && (
+            <p className="text-red-500 text-sm mt-2">{errors.videoTypes}</p>
+          )}
         </div>
 
         {/* Current Production */}
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700/30">
+        <div
+          className={`bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700/30 transition-all duration-500 transform`}
+        >
           <label
             htmlFor="production"
             className="block text-lg font-medium text-gray-300 mb-3"
@@ -216,7 +310,11 @@ export default function Contact() {
               { emoji: "🎥", value: "shoot", label: "I shoot video" },
               { emoji: "✂️", value: "edit", label: "I edit manually" },
               { emoji: "🤖", value: "ai", label: "I use AI tools" },
-              { emoji: "🚫", value: "none", label: "I don't make videos yet" },
+              {
+                emoji: "🚫",
+                value: "none",
+                label: "I don't make videos yet",
+              },
             ].map((option) => (
               <div key={option.value} className="flex items-center">
                 <input
@@ -224,6 +322,12 @@ export default function Contact() {
                   id={`production-${option.value}`}
                   name="production"
                   value={option.value}
+                  onChange={(e) => {
+                    const newValue = e.target.checked
+                      ? [...formData.production, option.value]
+                      : formData.production.filter((v) => v !== option.value)
+                    handleInputChange("production", newValue)
+                  }}
                   className="sr-only peer"
                   aria-label={option.label}
                 />
@@ -237,32 +341,40 @@ export default function Contact() {
               </div>
             ))}
           </div>
+          {errors.production && (
+            <p className="text-red-500 text-sm mt-2">{errors.production}</p>
+          )}
         </div>
 
-        {/* Video System Vision */}
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700/30">
+        {/* Vision */}
+        <div
+          className={`bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700/30 transition-all duration-500 transform`}
+        >
           <label
             htmlFor="vision"
-            className="block text-lg font-medium text-gray-300 mb-2"
+            className="block text-lg font-medium text-gray-300 mb-3"
           >
-            5. What kind of video system are you imagining?
+            5. What is your vision for the video?
           </label>
           <textarea
             id="vision"
             name="vision"
-            rows={3}
-            placeholder="Tell us in your own words what you'd love to build or automate."
-            className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+            required
+            className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            onChange={(e) => handleInputChange("vision", e.target.value)}
           />
+          {errors.vision && (
+            <p className="text-red-500 text-sm mt-2">{errors.vision}</p>
+          )}
         </div>
 
-        {/* Name */}
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700/30">
+        {/* Name and Email */}
+        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700/30 transition-all duration-500 transform">
           <label
             htmlFor="name"
             className="block text-lg font-medium text-gray-300 mb-2"
           >
-            What is your name?
+            And finally, what is your name?
           </label>
           <input
             type="text"
@@ -270,13 +382,14 @@ export default function Contact() {
             name="name"
             required
             className="w-full mb-7 px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            onChange={(e) => handleInputChange("name", e.target.value)}
           />
 
           <label
             htmlFor="email"
             className="block text-lg font-medium text-gray-300 mb-2"
           >
-            What is your email?
+            and email?
           </label>
           <input
             type="email"
@@ -284,12 +397,30 @@ export default function Contact() {
             name="email"
             required
             className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            onChange={(e) => handleInputChange("email", e.target.value)}
           />
+          {errors.name && (
+            <p className="text-red-500 text-sm mt-2">{errors.name}</p>
+          )}
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-2">{errors.email}</p>
+          )}
         </div>
 
         <div className="mt-12">
-          <FancyButton type="submit" className="w-full text-lg">
-            Submit your project
+          <FancyButton
+            type="submit"
+            className="w-full text-lg"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin opacity-70"></span>
+                <span>ENVOI…</span>
+              </span>
+            ) : (
+              "Submit your project"
+            )}
           </FancyButton>
         </div>
       </Form>
