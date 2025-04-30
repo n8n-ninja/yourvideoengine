@@ -42,7 +42,7 @@ export default function Index() {
 
   return (
     <main ref={sectionRef} className="min-h-screen text-foreground">
-      <div className="fixed top-0 left-0 w-full h-full z-[-1]">
+      <div className="fixed top-0 left-0 w-screen h-screen z-[-1]">
         <Scene3D />
       </div>
       <BackgroundGlow

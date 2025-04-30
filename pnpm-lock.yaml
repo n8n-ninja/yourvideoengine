@@ -170,6 +170,9 @@ importers:
       three:
         specifier: 0.155.0
         version: 0.155.0
+      zustand:
+        specifier: ^5.0.3
+        version: 5.0.3(@types/react@18.3.20)(react@18.3.1)
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20250426.0
@@ -7019,6 +7022,24 @@ packages:
       react: '>=16.8'
     peerDependenciesMeta:
       react:
+        optional: true
+
+  zustand@5.0.3:
+    resolution: {integrity: sha512-14fwWQtU3pH4dE0dOpdMiWjddcH+QzKIgk1cl8epwSE7yag43k/AD/m4L6+K7DytAOr9gGBe3/EXj9g7cdostg==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      immer: '>=9.0.6'
+      react: '>=18.0.0'
+      use-sync-external-store: '>=1.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
         optional: true
 
   zwitch@2.0.4:
@@ -14900,6 +14921,11 @@ snapshots:
 
   zustand@3.7.2(react@18.3.1):
     optionalDependencies:
+      react: 18.3.1
+
+  zustand@5.0.3(@types/react@18.3.20)(react@18.3.1):
+    optionalDependencies:
+      '@types/react': 18.3.20
       react: 18.3.1
 
   zwitch@2.0.4: {}
