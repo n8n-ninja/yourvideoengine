@@ -82,7 +82,7 @@ export function FiftyFifty({
   return (
     <section className="w-full py-16 md:py-24 px-6 md:px-12">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-700/50 overflow-hidden">
+        <div className="bg-gray-800/60 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-700/50 overflow-hidden">
           <div className="flex flex-col md:flex-row">
             {imagePosition === "left" ? (
               <>

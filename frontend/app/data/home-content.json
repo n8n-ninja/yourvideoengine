@@ -40,7 +40,6 @@
     "categories": [
       {
         "title": "Automated Research & Scriptwriting",
-        "colorClass": "from-blue-500 to-purple-500",
         "services": [
           {
             "title": "Trending topic discovery",
@@ -58,7 +57,6 @@
       },
       {
         "title": "Automated Video Creation",
-        "colorClass": "from-pink-500 to-purple-500",
         "services": [
           {
             "title": "AI video and voice cloning",
@@ -88,7 +86,6 @@
       },
       {
         "title": "Automated Publishing & Scaling",
-        "colorClass": "from-purple-500 to-blue-500",
         "services": [
           {
             "title": "Automated video editing",

@@ -4,7 +4,6 @@ import { SectionTitle } from "~/components/SectionTitle"
 export interface ServiceCategoryData {
   title: string
   services: Service[]
-  colorClass: string
 }
 
 export interface WhatWeCanBuildProps {
@@ -23,13 +22,12 @@ export function WhatWeCanBuild({
       <div className="max-w-6xl mx-auto relative z-10">
         <SectionTitle title={title} subtitle={description} />
 
-        <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-8 md:p-12 shadow-lg border border-gray-700/50 relative z-10">
+        <div className="bg-gray-800/30 backdrop-blur-lg rounded-2xl p-8 md:p-12 shadow-lg border border-gray-700/50 relative z-10">
           {categories.map((category, index) => (
             <ServiceCategory
               key={index}
               title={category.title}
               services={category.services}
-              colorClass={category.colorClass}
             />
           ))}
         </div>
