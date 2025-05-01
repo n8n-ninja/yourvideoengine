@@ -229,9 +229,9 @@
         ],
         "videos": [
           {
-            "url": "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-07093.mp4",
-            "title": "Real Estate News Demo 1",
-            "thumbnail": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80"
+            "url": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/shawheen.mp4",
+            "title": "Real Estate Video Demo",
+            "thumbnail": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/shawheen.jpg"
           }
         ],
         "videoOrientation": "vertical"
@@ -258,9 +258,9 @@
         ],
         "videos": [
           {
-            "url": "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-26-77742.mp4",
+            "url": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/cou.mp4",
             "title": "Wellness Video Demo 1",
-            "thumbnail": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+            "thumbnail": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/cou.jpg"
           }
         ],
         "videoOrientation": "vertical"
@@ -283,9 +283,9 @@
         ],
         "videos": [
           {
-            "url": "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-02743.mp4",
+            "url": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/ai-news-today.mp4",
             "title": "AI Newsfeed Demo 1",
-            "thumbnail": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+            "thumbnail": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/ai-news-today.jpg"
           }
         ],
         "videoOrientation": "vertical"
@@ -312,9 +312,9 @@
         ],
         "videos": [
           {
-            "url": "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-07093.mp4",
+            "url": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/ai-tool.mp4",
             "title": "AI Tool Review Demo 1",
-            "thumbnail": "https://images.unsplash.com/photo-1633412802994-5c058f151b66?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+            "thumbnail": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/ai-tool.jpg"
           }
         ],
         "videoOrientation": "vertical"
@@ -341,9 +341,9 @@
         ],
         "videos": [
           {
-            "url": "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-26-77742.mp4",
+            "url": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/motion.mp4",
             "title": "Inspiration Channel Demo 1",
-            "thumbnail": "https://images.unsplash.com/photo-1617791160536-598cf32026fb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1064&q=80"
+            "thumbnail": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/motion.jpg"
           }
         ],
         "videoOrientation": "vertical"
@@ -370,12 +370,12 @@
         ],
         "videos": [
           {
-            "url": "https://assets.json2video.com/clients/Xbircb8Q6d/renders/2025-04-25-02743.mp4",
+            "url": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/repurpose.mp4",
             "title": "Course Amplifier Demo 1",
-            "thumbnail": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+            "thumbnail": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/repurpose.jpg"
           }
         ],
-        "videoOrientation": "horizontal"
+        "videoOrientation": "vertical"
       }
     ]
   },

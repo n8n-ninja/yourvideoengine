@@ -5,7 +5,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react"
-import type { LinksFunction } from "@remix-run/node"
+import type { LinksFunction } from "@remix-run/cloudflare"
 
 import styles from "./tailwind.css?url"
 import glowStyles from "./styles/glow-background.css?url"
