@@ -4,16 +4,11 @@ import { useLoader } from "@react-three/fiber"
 import { TextureLoader, EquirectangularReflectionMapping } from "three"
 import { useCubeStore } from "./cubeStore"
 import { useState, useEffect } from "react"
-import { useScroll, useSpring, useTransform } from "framer-motion"
-import { useRef } from "react"
-
 import {
   RoundedBox,
-  Environment,
   MeshTransmissionMaterial,
   Billboard,
 } from "@react-three/drei"
-import { EffectComposer, Bloom } from "@react-three/postprocessing"
 import { useRef, useMemo } from "react"
 import * as THREE from "three"
 import { OrbitControls } from "@react-three/drei"
@@ -284,18 +279,14 @@ const getRandomPosition = () => {
 }
 
 const GradientCube = ({
-  cubeId,
-  poseIndex = 0,
+  cubeId = 0,
   color = "#F8C734",
   emoji = "🎬",
-  scrollProgress,
+  scrollProgress = 0,
 }) => {
   const meshRef = useRef()
   const groupRef = useRef()
   const emojiTexture = useMemo(() => createEmojiTexture(emoji), [emoji])
-  const timeOffset = useRef(Math.random() * Math.PI * 2)
-
-  const cubes = useCubeStore((state) => state.cubes)
 
   let t = scrollProgress
 
@@ -309,7 +300,7 @@ const GradientCube = ({
   }, [])
 
   useFrame(() => {
-    const self = groupRef.current
+    const self = groupRef.current as any
     if (!self) return
 
     const t = scrollProgress // entre 0 et 1
@@ -330,7 +321,7 @@ const GradientCube = ({
     self.position.lerp(interpolatedPos, 0.1)
 
     // Interpolation rotation
-    const lerpRot = (a, b) => a + (b - a) * alpha
+    const lerpRot = (a: number, b: number) => a + (b - a) * alpha
     self.rotation.x +=
       (lerpRot(currentPose.rotation[0], nextPose.rotation[0]) -
         self.rotation.x) *
@@ -436,14 +427,6 @@ export const Scene3D = () => {
         }}
         camera={{ position: [3, 3, 3] }}
       >
-        {/* Environment map pour les reflets */}
-        {/* <Environment
-          preset="night"
-          blur={89}
-          background={false}
-          scene={undefined}
-        /> */}
-
         <CustomEnvironment />
 
         {poses[0].map((_, i) => (
@@ -454,15 +437,6 @@ export const Scene3D = () => {
             emoji={["🎬", "✂️", "🧠", "🎤", "🎭", "⏱", "📤"][i]}
           />
         ))}
-
-        {/* <EffectComposer>
-          <Bloom
-            intensity={0.5}
-            luminanceThreshold={0.1}
-            luminanceSmoothing={0.2}
-            kernelSize={1}
-          />
-        </EffectComposer> */}
 
         <OrbitControls />
       </Canvas>

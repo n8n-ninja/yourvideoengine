@@ -42,9 +42,16 @@ export default function Index() {
 
   return (
     <main ref={sectionRef} className="min-h-screen text-foreground">
-      <div className="fixed top-0 left-0 w-screen h-screen z-[-1]">
+      <div className="fixed top-0 left-0 w-screen h-screen z-[-1] hidden lg:block">
         <Scene3D />
       </div>
+
+      <div
+        style={{
+          backgroundImage: 'url("bg-mobile.png")',
+        }}
+        className="bg-cover opacity-30 bg-center fixed top-0 left-0 w-screen h-screen z-[-1] block lg:hidden"
+      ></div>
       <BackgroundGlow
         sectionRef={sectionRef}
         useCaseMarkerRef={useCaseMarkerRef}
