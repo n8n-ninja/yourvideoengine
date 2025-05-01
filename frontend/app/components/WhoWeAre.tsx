@@ -31,10 +31,12 @@ export function WhoWeAre({ title, description, team }: WhoWeAreProps) {
             <div className="p-8 md:p-10">
               {/* Photo en haut */}
               <div className="flex justify-center mb-8">
-                <div className="w-32 h-32 bg-gradient-to-br from-blue-600/30 to-blue-800/40 rounded-full flex items-center justify-center border-2 border-blue-400/30 shadow-lg group-hover:shadow-blue-500/30 group-hover:scale-105 transition-all duration-500">
-                  <span className="text-4xl font-bold text-blue-200 group-hover:text-blue-100 transition-colors duration-300">
-                    {manu.name.charAt(0)}
-                  </span>
+                <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-blue-400/30 shadow-lg group-hover:shadow-blue-500/30 group-hover:scale-105 transition-all duration-500">
+                  <img
+                    src="manu.jpg"
+                    alt={manu.name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
 
@@ -62,10 +64,12 @@ export function WhoWeAre({ title, description, team }: WhoWeAreProps) {
             <div className="p-8 md:p-10">
               {/* Photo en haut */}
               <div className="flex justify-center mb-8">
-                <div className="w-32 h-32 bg-gradient-to-br from-pink-600/30 to-pink-800/40 rounded-full flex items-center justify-center border-2 border-pink-400/30 shadow-lg group-hover:shadow-pink-500/30 group-hover:scale-105 transition-all duration-500">
-                  <span className="text-4xl font-bold text-pink-200 group-hover:text-pink-100 transition-colors duration-300">
-                    {thais.name.charAt(0)}
-                  </span>
+                <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-pink-400/30 shadow-lg group-hover:shadow-pink-500/30 group-hover:scale-105 transition-all duration-500">
+                  <img
+                    src="thais.png"
+                    alt={thais.name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
 
