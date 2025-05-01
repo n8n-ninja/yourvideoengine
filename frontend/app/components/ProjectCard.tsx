@@ -498,6 +498,25 @@ export function ProjectCard({
     </div>
   )
 
+  const videoPlayerMobile = (
+    <div className="w-full md:w-1/2 p-5 md:p-7 flex flex-col items-center">
+      <video
+        ref={videoRef}
+        className={`w-full rounded-2xl border border-pink-500/60 h-full object-cover relative shadow-[0_10px_25px_-5px_rgba(236,72,153,0.5)] transition-all duration-300 group-hover:border-pink-500/80 group-hover:shadow-[0_8px_32px_-5px_rgba(236,72,153,0.7)] ${
+          isPlaying ? "z-10" : "z-0"
+        }`}
+        src={currentVideo.url}
+        poster={currentVideo.thumbnail}
+        playsInline
+        controls
+        muted={isMuted}
+      >
+        <track kind="captions" src="" label="Français" />
+        Votre navigateur ne supporte pas la lecture de vidéos.
+      </video>
+    </div>
+  )
+
   // Contenu vidéo avec navigation
   const videoContent = (
     <div className="w-full md:w-1/2 p-5 md:p-7 flex flex-col items-center">
@@ -508,8 +527,10 @@ export function ProjectCard({
             : "w-[90%] md:w-full max-w-[900px]"
         }
       >
-        {videoPlayer}
+        <div className="hidden md:block">{videoPlayer}</div>
+        <div className="md:hidden">{videoPlayerMobile}</div>
       </div>
+
       {videos.length > 1 && videoNavigation}
     </div>
   )
