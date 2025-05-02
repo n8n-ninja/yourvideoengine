@@ -1,17 +1,20 @@
 // app/components/Scene3D/Scene3D.tsx
-import { Canvas, useFrame } from "@react-three/fiber"
-import { useLoader } from "@react-three/fiber"
-import { TextureLoader, EquirectangularReflectionMapping } from "three"
+import { Canvas, useFrame, useLoader } from "@react-three/fiber"
+import {
+  TextureLoader,
+  EquirectangularReflectionMapping,
+  Mesh,
+  Group,
+} from "three"
 import { useCubeStore } from "./cubeStore"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import {
   RoundedBox,
   MeshTransmissionMaterial,
   Billboard,
+  OrbitControls,
 } from "@react-three/drei"
-import { useRef, useMemo } from "react"
 import * as THREE from "three"
-import { OrbitControls } from "@react-three/drei"
 
 type CubePose = {
   position: [number, number, number]
@@ -269,38 +272,32 @@ const createEmojiTexture = (emoji: string) => {
   return texture
 }
 
-// Fonction pour créer une position cible aléatoire
-const getRandomPosition = () => {
-  return [
-    (Math.random() - 0.5) * 5,
-    (Math.random() - 0.5) * 5,
-    (Math.random() - 0.5) * 5,
-  ]
-}
-
 const GradientCube = ({
-  cubeId = 0,
-  color = "#F8C734",
-  emoji = "🎬",
-  scrollProgress = 0,
+  cubeId,
+  emoji,
+  scrollProgress,
+}: {
+  cubeId: number
+  emoji: string
+  scrollProgress: number
 }) => {
-  const meshRef = useRef()
-  const groupRef = useRef()
+  const color = "#ff9a9e"
+  const meshRef = useRef<Mesh>(null!)
+  const groupRef = useRef<Group>(null!)
   const emojiTexture = useMemo(() => createEmojiTexture(emoji), [emoji])
 
-  let t = scrollProgress
-
   useEffect(() => {
-    if (groupRef.current) {
-      useCubeStore.getState().addCube(groupRef.current)
+    const group = groupRef.current
+    if (group) {
+      useCubeStore.getState().addCube(group)
       return () => {
-        useCubeStore.getState().removeCube(groupRef.current)
+        useCubeStore.getState().removeCube(group)
       }
     }
   }, [])
 
   useFrame(() => {
-    const self = groupRef.current as any
+    const self = groupRef.current
     if (!self) return
 
     const t = scrollProgress // entre 0 et 1
@@ -335,6 +332,10 @@ const GradientCube = ({
         self.rotation.z) *
       0.1
   })
+
+  useEffect(() => {
+    console.log(Boolean(groupRef.current))
+  }, [])
 
   return (
     <group ref={groupRef}>

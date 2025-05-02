@@ -20,7 +20,24 @@ module.exports = {
     es6: true,
   },
   ignorePatterns: ["!**/.server", "!**/.client"],
-
+  rules: {
+    "react/no-unknown-property": [
+      "error",
+      {
+        ignore: [
+          "map",
+          "side",
+          "alphaTest",
+          "depthTest",
+          "depthWrite",
+          "args",
+          "attach",
+          "object",
+          "color",
+        ],
+      },
+    ],
+  },
   // Base config
   extends: ["eslint:recommended"],
 
@@ -81,4 +98,4 @@ module.exports = {
       },
     },
   ],
-};
+}
