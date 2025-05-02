@@ -16,13 +16,9 @@ import {
 } from "@react-three/drei"
 import * as THREE from "three"
 
-type CubePose = {
-  position: [number, number, number]
-  rotation: [number, number, number]
-}[]
-export const poses: CubePose[] = [
-  // Pose 0 — Éparpillement organique
-  [
+// Define named formations for better control and reusability
+export const formations = {
+  organic: [
     { position: [-7, 2, 2], rotation: [0, 0, 0] },
     { position: [3, -1.5, -2], rotation: [0.1, 0.2, 0] },
     { position: [2, 2.5, -2], rotation: [0.2, -0.1, 0.1] },
@@ -31,8 +27,7 @@ export const poses: CubePose[] = [
     { position: [-2.2, -4, -1.5], rotation: [-0.1, 0, 0.1] },
     { position: [2.5, 0.5, -1.5], rotation: [0, 0.1, 0] },
   ],
-  // Pose 1 — Grille modulaire plane
-  [
+  grid: [
     { position: [-2, 0, 0], rotation: [0, 0, 0] },
     { position: [-1, 0, 0], rotation: [0, 0, 0] },
     { position: [0, 0, 0], rotation: [0, 0, 0] },
@@ -41,18 +36,7 @@ export const poses: CubePose[] = [
     { position: [-1, 1, 0], rotation: [0, 0, 0] },
     { position: [1, 1, 0], rotation: [0, 0, 0] },
   ],
-  // Pose 1 — Grille modulaire plane
-  [
-    { position: [-2, 0, 0], rotation: [0, 0, 0] },
-    { position: [-1, 0, 0], rotation: [0, 0, 0] },
-    { position: [0, 0, 0], rotation: [0, 0, 0] },
-    { position: [1, 0, 0], rotation: [0, 0, 0] },
-    { position: [2, 0, 0], rotation: [0, 0, 0] },
-    { position: [-1, 1, 0], rotation: [0, 0, 0] },
-    { position: [1, 1, 0], rotation: [0, 0, 0] },
-  ],
-  // Pose 1 — Grille modulaire plane
-  [
+  alternateGrid: [
     { position: [-2, 0, 0], rotation: [0, 0, 0] },
     { position: [-1, 0, 1], rotation: [0, 0, 0] },
     { position: [0, 0, 0], rotation: [0, 0, 0] },
@@ -61,8 +45,7 @@ export const poses: CubePose[] = [
     { position: [-1, 1, 0], rotation: [0, 0, 0] },
     { position: [1, 1, 0], rotation: [0, 0, 0] },
   ],
-  // Pose 1 — Grille modulaire plane
-  [
+  alternateGridFinal: [
     { position: [-2, 0, 0], rotation: [0, 0, 0] },
     { position: [-1, 0, 1], rotation: [0, 0, 0] },
     { position: [0, 0, 0], rotation: [0, 0, 0] },
@@ -71,8 +54,7 @@ export const poses: CubePose[] = [
     { position: [-1, 0, 0], rotation: [0, 0, 0] },
     { position: [1, 0, 0], rotation: [0, 0, 0] },
   ],
-  // Pose 3 — Vitrine dynamique (plus visible)
-  [
+  showcase: [
     { position: [15.5, 1.2, 0], rotation: [0, 0.2, 0] },
     { position: [-10.2, -0.8, 10], rotation: [0, -0.2, 0] },
     { position: [10, 10, 0], rotation: [0.1, 0.3, -0.1] },
@@ -81,92 +63,7 @@ export const poses: CubePose[] = [
     { position: [-10.5, 0.8, 8.2], rotation: [0.2, -0.2, 0] },
     { position: [1.8, -20.3, -0.8], rotation: [-0.2, 0.2, 0.2] },
   ],
-  // Pose 3 — Vitrine dynamique (plus visible)
-  [
-    { position: [15.5, 1.2, 0], rotation: [0, 0.2, 0] },
-    { position: [-10.2, -0.8, 10], rotation: [0, -0.2, 0] },
-    { position: [10, 10, 0], rotation: [0.1, 0.3, -0.1] },
-    { position: [19.2, -1.2, 0.4], rotation: [-0.1, 0.1, 0.1] },
-    { position: [10, 0.5, -0.1], rotation: [0, 0, 0.2] },
-    { position: [-10.5, 0.8, 8.2], rotation: [0.2, -0.2, 0] },
-    { position: [1.8, -20.3, -0.8], rotation: [-0.2, 0.2, 0.2] },
-  ],
-  // Pose 3 — Vitrine dynamique (plus visible)
-  [
-    { position: [15.5, 1.2, 0], rotation: [0, 0.2, 0] },
-    { position: [-10.2, -0.8, 10], rotation: [0, -0.2, 0] },
-    { position: [10, 10, 0], rotation: [0.1, 0.3, -0.1] },
-    { position: [19.2, -1.2, 0.4], rotation: [-0.1, 0.1, 0.1] },
-    { position: [10, 0.5, -0.1], rotation: [0, 0, 0.2] },
-    { position: [-10.5, 0.8, 8.2], rotation: [0.2, -0.2, 0] },
-    { position: [1.8, -20.3, -0.8], rotation: [-0.2, 0.2, 0.2] },
-  ],
-
-  // Pose 3 — Vitrine dynamique (plus visible)
-  [
-    { position: [15.5, 1.2, 0], rotation: [0, 0.2, 0] },
-    { position: [-10.2, -0.8, 10], rotation: [0, -0.2, 0] },
-    { position: [10, 10, 0], rotation: [0.1, 0.3, -0.1] },
-    { position: [19.2, -1.2, 0.4], rotation: [-0.1, 0.1, 0.1] },
-    { position: [10, 0.5, -0.1], rotation: [0, 0, 0.2] },
-    { position: [-10.5, 0.8, 8.2], rotation: [0.2, -0.2, 0] },
-    { position: [1.8, -20.3, -0.8], rotation: [-0.2, 0.2, 0.2] },
-  ],
-
-  // Pose 3 — Vitrine dynamique (plus visible)
-  [
-    { position: [15.5, 1.2, 0], rotation: [0, 0.2, 0] },
-    { position: [-10.2, -0.8, 10], rotation: [0, -0.2, 0] },
-    { position: [10, 10, 0], rotation: [0.1, 0.3, -0.1] },
-    { position: [19.2, -1.2, 0.4], rotation: [-0.1, 0.1, 0.1] },
-    { position: [10, 0.5, -0.1], rotation: [0, 0, 0.2] },
-    { position: [-10.5, 0.8, 8.2], rotation: [0.2, -0.2, 0] },
-    { position: [1.8, -20.3, -0.8], rotation: [-0.2, 0.2, 0.2] },
-  ],
-
-  // Pose 3 — Vitrine dynamique (plus visible)
-  [
-    { position: [15.5, 1.2, 0], rotation: [0, 0.2, 0] },
-    { position: [-10.2, -0.8, 10], rotation: [0, -0.2, 0] },
-    { position: [10, 10, 0], rotation: [0.1, 0.3, -0.1] },
-    { position: [19.2, -1.2, 0.4], rotation: [-0.1, 0.1, 0.1] },
-    { position: [10, 0.5, -0.1], rotation: [0, 0, 0.2] },
-    { position: [-10.5, 0.8, 8.2], rotation: [0.2, -0.2, 0] },
-    { position: [1.8, -20.3, -0.8], rotation: [-0.2, 0.2, 0.2] },
-  ],
-
-  // Pose 3 — Vitrine dynamique (plus visible)
-  [
-    { position: [15.5, 1.2, 0], rotation: [0, 0.2, 0] },
-    { position: [-10.2, -0.8, 10], rotation: [0, -0.2, 0] },
-    { position: [10, 10, 0], rotation: [0.1, 0.3, -0.1] },
-    { position: [19.2, -1.2, 0.4], rotation: [-0.1, 0.1, 0.1] },
-    { position: [10, 0.5, -0.1], rotation: [0, 0, 0.2] },
-    { position: [-10.5, 0.8, 8.2], rotation: [0.2, -0.2, 0] },
-    { position: [1.8, -20.3, -0.8], rotation: [-0.2, 0.2, 0.2] },
-  ],
-  // Pose 3 — Vitrine dynamique (plus visible)
-  [
-    { position: [15.5, 1.2, 0], rotation: [0, 0.2, 0] },
-    { position: [-10.2, -0.8, 10], rotation: [0, -0.2, 0] },
-    { position: [10, 10, 0], rotation: [0.1, 0.3, -0.1] },
-    { position: [19.2, -1.2, 0.4], rotation: [-0.1, 0.1, 0.1] },
-    { position: [10, 0.5, -0.1], rotation: [0, 0, 0.2] },
-    { position: [-10.5, 0.8, 8.2], rotation: [0.2, -0.2, 0] },
-    { position: [1.8, -20.3, -0.8], rotation: [-0.2, 0.2, 0.2] },
-  ],
-  // Pose 3 — Vitrine dynamique (plus visible)
-  [
-    { position: [15.5, 1.2, 0], rotation: [0, 0.2, 0] },
-    { position: [-10.2, -0.8, 10], rotation: [0, -0.2, 0] },
-    { position: [10, 10, 0], rotation: [0.1, 0.3, -0.1] },
-    { position: [19.2, -1.2, 0.4], rotation: [-0.1, 0.1, 0.1] },
-    { position: [10, 0.5, -0.1], rotation: [0, 0, 0.2] },
-    { position: [-10.5, 0.8, 8.2], rotation: [0.2, -0.2, 0] },
-    { position: [1.8, -20.3, -0.8], rotation: [-0.2, 0.2, 0.2] },
-  ],
-  // Pose 2 — Cercle dans l’espace
-  [
+  circle: [
     { position: [2, 0, 0], rotation: [0, 0, 0] },
     { position: [1.4, 0, 1.4], rotation: [0, 0.5, 0] },
     { position: [0, 0, 2], rotation: [0, 1.0, 0] },
@@ -175,28 +72,7 @@ export const poses: CubePose[] = [
     { position: [-1.4, 0, -1.4], rotation: [0, 2.5, 0] },
     { position: [1.4, 0, -1.4], rotation: [0, 3.0, 0] },
   ],
-  // Pose 2 — Cercle dans l’espace
-  [
-    { position: [2, 0, 0], rotation: [0, 0, 0] },
-    { position: [1.4, 0, 1.4], rotation: [0, 0.5, 0] },
-    { position: [0, 0, 2], rotation: [0, 1.0, 0] },
-    { position: [-1.4, 0, 1.4], rotation: [0, 1.5, 0] },
-    { position: [-2, 0, 0], rotation: [0, 2.0, 0] },
-    { position: [-1.4, 0, -1.4], rotation: [0, 2.5, 0] },
-    { position: [1.4, 0, -1.4], rotation: [0, 3.0, 0] },
-  ],
-  // Pose 2 — Cercle dans l’espace
-  [
-    { position: [2, 0, 0], rotation: [0, 0, 0] },
-    { position: [1.4, 0, 1.4], rotation: [0, 0.5, 0] },
-    { position: [0, 0, 2], rotation: [0, 1.0, 0] },
-    { position: [-1.4, 0, 1.4], rotation: [0, 1.5, 0] },
-    { position: [-2, 0, 0], rotation: [0, 2.0, 0] },
-    { position: [-1.4, 0, -1.4], rotation: [0, 2.5, 0] },
-    { position: [1.4, 0, -1.4], rotation: [0, 3.0, 0] },
-  ],
-  // Pose 4 — Colonne verticale
-  [
+  column: [
     { position: [0, 3, 0], rotation: [0, 0, 0] },
     { position: [0, 2, 0], rotation: [0, 0, 0] },
     { position: [0, 1, 0], rotation: [0, 0, 0] },
@@ -205,53 +81,31 @@ export const poses: CubePose[] = [
     { position: [0, -2, 0], rotation: [0, 0, 0] },
     { position: [0, -3, 0], rotation: [0, 0, 0] },
   ],
-  // Pose 4 — Colonne verticale
-  [
-    { position: [0, 3, 0], rotation: [0, 0, 0] },
-    { position: [0, 2, 0], rotation: [0, 0, 0] },
-    { position: [0, 1, 0], rotation: [0, 0, 0] },
-    { position: [0, 0, 0], rotation: [0, 0, 0] },
-    { position: [0, -1, 0], rotation: [0, 0, 0] },
-    { position: [0, -2, 0], rotation: [0, 0, 0] },
-    { position: [0, -3, 0], rotation: [0, 0, 0] },
-  ],
-  // Pose 4 — Colonne verticale
-  [
-    { position: [0, 3, 0], rotation: [0, 0, 0] },
-    { position: [0, 2, 0], rotation: [0, 0, 0] },
-    { position: [0, 1, 0], rotation: [0, 0, 0] },
-    { position: [0, 0, 0], rotation: [0, 0, 0] },
-    { position: [0, -1, 0], rotation: [0, 0, 0] },
-    { position: [0, -2, 0], rotation: [0, 0, 0] },
-    { position: [0, -3, 0], rotation: [0, 0, 0] },
-  ],
-  // Pose 6 — Arche verticale
-  [
+  arch: [
     { position: [-2.5, -1, 0], rotation: [0, 0, 0] },
     { position: [-1.5, 0.5, 0], rotation: [0, 0.1, 0] },
     { position: [-0.5, 1.5, 0], rotation: [0, 0.2, 0] },
     { position: [0.5, 1.5, 0], rotation: [0, -0.2, 0] },
     { position: [1.5, 0.5, 0], rotation: [0, -0.1, 0] },
     { position: [2.5, -1, 0], rotation: [0, 0, 0] },
-    { position: [-2, -2.3, 0], rotation: [0, 0, 0.2] }, // centre bas
+    { position: [-2, -2.3, 0], rotation: [0, 0, 0.2] },
   ],
-  // Pose 6 — Arche verticale
-  [
-    { position: [-2.5, -1, 0], rotation: [0, 0, 0] },
-    { position: [-1.5, 0.5, 0], rotation: [0, 0.1, 0] },
-    { position: [-0.5, 1.5, 0], rotation: [0, 0.2, 0] },
-    { position: [0.5, 1.5, 0], rotation: [0, -0.2, 0] },
-    { position: [1.5, 0.5, 0], rotation: [0, -0.1, 0] },
-    { position: [2.5, -1, 0], rotation: [0, 0, 0] },
-    { position: [-2, -2.3, 0], rotation: [0, 0, 0.2] }, // centre bas
-  ],
-]
+}
+
+// Type definitions for better type safety
+export type FormationName = keyof typeof formations
+
+export type FormationTrigger = {
+  elementRef: React.RefObject<HTMLDivElement>
+  formation: FormationName
+}
 
 const CustomEnvironment = () => {
   const texture = useLoader(TextureLoader, "/hdri/aesthetic.jpg")
   texture.mapping = EquirectangularReflectionMapping
   return <primitive attach="environment" object={texture} />
 }
+
 // Fonction pour créer une texture avec un emoji
 const createEmojiTexture = (emoji: string) => {
   const canvas = document.createElement("canvas")
@@ -275,11 +129,15 @@ const createEmojiTexture = (emoji: string) => {
 const GradientCube = ({
   cubeId,
   emoji,
-  scrollProgress,
+  currentFormation,
+  targetFormation,
+  transitionProgress,
 }: {
   cubeId: number
   emoji: string
-  scrollProgress: number
+  currentFormation: FormationName
+  targetFormation: FormationName
+  transitionProgress: number
 }) => {
   const color = "#ff9a9e"
   const meshRef = useRef<Mesh>(null!)
@@ -300,61 +158,53 @@ const GradientCube = ({
     const self = groupRef.current
     if (!self) return
 
-    const t = scrollProgress // entre 0 et 1
-    const max = poses.length - 1
-    const floatIndex = t * max
-    const base = Math.floor(floatIndex)
-    const next = Math.min(base + 1, max)
-    const alpha = floatIndex - base
-
-    const currentPose = poses[base]?.[cubeId]
-    const nextPose = poses[next]?.[cubeId]
-    if (!currentPose || !nextPose) return
+    const currentPose = formations[currentFormation]?.[cubeId]
+    const targetPose = formations[targetFormation]?.[cubeId]
+    if (!currentPose || !targetPose) return
 
     // Interpolation position
     const interpolatedPos = new THREE.Vector3()
       .fromArray(currentPose.position)
-      .lerp(new THREE.Vector3().fromArray(nextPose.position), alpha)
+      .lerp(
+        new THREE.Vector3().fromArray(targetPose.position),
+        transitionProgress
+      )
     self.position.lerp(interpolatedPos, 0.1)
 
     // Interpolation rotation
-    const lerpRot = (a: number, b: number) => a + (b - a) * alpha
+    const lerpRot = (a: number, b: number) => a + (b - a) * transitionProgress
     self.rotation.x +=
-      (lerpRot(currentPose.rotation[0], nextPose.rotation[0]) -
+      (lerpRot(currentPose.rotation[0], targetPose.rotation[0]) -
         self.rotation.x) *
       0.1
     self.rotation.y +=
-      (lerpRot(currentPose.rotation[1], nextPose.rotation[1]) -
+      (lerpRot(currentPose.rotation[1], targetPose.rotation[1]) -
         self.rotation.y) *
       0.1
     self.rotation.z +=
-      (lerpRot(currentPose.rotation[2], nextPose.rotation[2]) -
+      (lerpRot(currentPose.rotation[2], targetPose.rotation[2]) -
         self.rotation.z) *
       0.1
   })
-
-  useEffect(() => {
-    console.log(Boolean(groupRef.current))
-  }, [])
 
   return (
     <group ref={groupRef}>
       <RoundedBox ref={meshRef} args={[1, 1, 1]} radius={0.1} smoothness={2}>
         <MeshTransmissionMaterial
-          thickness={0.2} // Plus fin pour un rendu plus clair
-          chromaticAberration={0.1} // Réduction drastique pour limiter l'effet flou coloré
+          thickness={0.2}
+          chromaticAberration={0.1}
           anisotropy={0.5}
-          envMapIntensity={1.5} // Plus subtil
+          envMapIntensity={1.5}
           clearcoat={1}
-          clearcoatRoughness={0.1} // Un peu de douceur dans les reflets
+          clearcoatRoughness={0.1}
           iridescence={0.3}
           iridescenceIOR={1.3}
           ior={1.1}
-          distortion={0.05} // Légère touche artistique
+          distortion={0.05}
           distortionScale={0.1}
           temporalDistortion={0}
           metalness={0.1}
-          roughness={0.05} // Presque pas de grain
+          roughness={0.05}
           transmission={0.98}
           color={color}
           opacity={0.95}
@@ -387,30 +237,142 @@ const GradientCube = ({
   )
 }
 
-export const Scene3D = () => {
-  const [opacity, setOpacity] = useState(0)
+type Scene3DProps = {
+  formationTriggers: FormationTrigger[]
+  transitionDuration?: number // Now used for smoothing factor rather than explicit duration
+  defaultFormation?: FormationName
+  emojis?: string[]
+}
 
+export const Scene3D = ({
+  formationTriggers,
+  defaultFormation = "organic",
+  emojis = ["🎬", "✂️", "🧠", "🎤", "🎭", "⏱", "📤"],
+}: Scene3DProps) => {
+  const [opacity, setOpacity] = useState(0)
+  const [currentFormation, setCurrentFormation] =
+    useState<FormationName>(defaultFormation)
+  const [targetFormation, setTargetFormation] =
+    useState<FormationName>(defaultFormation)
+  const [transitionProgress, setTransitionProgress] = useState(1)
+
+  // Store valid triggers (those with refs that exist in DOM)
+  const [validTriggers, setValidTriggers] = useState<
+    Array<{
+      elementRef: React.RefObject<HTMLDivElement>
+      formation: FormationName
+      topPosition: number
+    }>
+  >([])
+
+  // Setup for tracking scroll position
   useEffect(() => {
     const timeout = setTimeout(() => {
       setOpacity(1)
-    }, 600) // attend 1 seconde
+    }, 600)
 
     return () => clearTimeout(timeout)
   }, [])
-  const [scrollProgress, setScrollProgress] = useState(0)
 
+  // Calculate trigger positions and update on resize
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY
-      const docHeight = document.body.scrollHeight - window.innerHeight
-      const progress = docHeight > 0 ? scrollTop / docHeight : 0
-      setScrollProgress(progress)
+    const calculateTriggerPositions = () => {
+      const validTriggersList = formationTriggers
+        .filter((trigger) => trigger.elementRef.current !== null)
+        .map((trigger) => ({
+          elementRef: trigger.elementRef,
+          formation: trigger.formation,
+          topPosition:
+            trigger.elementRef.current!.getBoundingClientRect().top +
+            window.scrollY,
+        }))
+        .sort((a, b) => a.topPosition - b.topPosition) // Sort by position in document
+
+      setValidTriggers(validTriggersList)
     }
 
-    handleScroll() // initial call
+    // Initial calculation
+    calculateTriggerPositions()
+
+    // Recalculate on window resize
+    window.addEventListener("resize", calculateTriggerPositions)
+
+    return () => {
+      window.removeEventListener("resize", calculateTriggerPositions)
+    }
+  }, [formationTriggers])
+
+  // Handle scrolling
+  useEffect(() => {
+    const handleScroll = () => {
+      // Return early if we don't have at least 2 triggers to interpolate between
+      if (validTriggers.length < 2) {
+        if (validTriggers.length === 1) {
+          setCurrentFormation(validTriggers[0].formation)
+          setTargetFormation(validTriggers[0].formation)
+          setTransitionProgress(1)
+        }
+        return
+      }
+
+      const currentScrollPosition = window.scrollY
+
+      // Find which section we're currently in
+      let currentSectionIndex = 0
+
+      // Find the last trigger that we've scrolled past
+      for (let i = 0; i < validTriggers.length - 1; i++) {
+        if (currentScrollPosition >= validTriggers[i].topPosition) {
+          currentSectionIndex = i
+        } else {
+          break
+        }
+      }
+
+      // If we're before the first trigger
+      if (currentScrollPosition < validTriggers[0].topPosition) {
+        setCurrentFormation(validTriggers[0].formation)
+        setTargetFormation(validTriggers[0].formation)
+        setTransitionProgress(1)
+        return
+      }
+
+      // If we're after the last trigger
+      if (currentSectionIndex === validTriggers.length - 1) {
+        setCurrentFormation(validTriggers[validTriggers.length - 1].formation)
+        setTargetFormation(validTriggers[validTriggers.length - 1].formation)
+        setTransitionProgress(1)
+        return
+      }
+
+      // Calculate progress between the current and next trigger
+      const currentTrigger = validTriggers[currentSectionIndex]
+      const nextTrigger = validTriggers[currentSectionIndex + 1]
+
+      const sectionLength = nextTrigger.topPosition - currentTrigger.topPosition
+      const scrollPositionInSection =
+        currentScrollPosition - currentTrigger.topPosition
+
+      // Calculate progress as a value between 0 and 1
+      const rawProgress =
+        sectionLength > 0 ? scrollPositionInSection / sectionLength : 0
+      const progress = Math.max(0, Math.min(1, rawProgress))
+
+      setCurrentFormation(currentTrigger.formation)
+      setTargetFormation(nextTrigger.formation)
+      setTransitionProgress(progress)
+    }
+
+    // Initial calculation
+    handleScroll()
+
+    // Add scroll listener
     window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [validTriggers])
 
   return (
     <div
@@ -430,12 +392,14 @@ export const Scene3D = () => {
       >
         <CustomEnvironment />
 
-        {poses[0].map((_, i) => (
+        {formations[currentFormation]?.map((_, i) => (
           <GradientCube
             key={i}
             cubeId={i}
-            scrollProgress={scrollProgress}
-            emoji={["🎬", "✂️", "🧠", "🎤", "🎭", "⏱", "📤"][i]}
+            currentFormation={currentFormation}
+            targetFormation={targetFormation}
+            transitionProgress={transitionProgress}
+            emoji={emojis[i] || "⚡"}
           />
         ))}
 

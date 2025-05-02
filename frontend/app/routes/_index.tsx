@@ -18,6 +18,10 @@ import { BackgroundGlow } from "~/components/BackgroundGlow"
 import homeContent from "~/data/home-content.json"
 
 const Scene3D = lazy(() => import("~/components/Scene3D/Scene3D"))
+import type {
+  FormationName,
+  FormationTrigger,
+} from "~/components/Scene3D/Scene3D"
 
 export const meta: MetaFunction = () => {
   return [
@@ -41,11 +45,38 @@ export default function Index() {
   const useCaseMarkerRef = useRef<HTMLDivElement>(null)
   const technologyMarkerRef = useRef<HTMLDivElement>(null)
 
+  const section1Ref = useRef<HTMLDivElement>(null)
+  const section2Ref = useRef<HTMLDivElement>(null)
+  const section3Ref = useRef<HTMLDivElement>(null)
+  const section4Ref = useRef<HTMLDivElement>(null)
+  const section5Ref = useRef<HTMLDivElement>(null)
+  const section6Ref = useRef<HTMLDivElement>(null)
+  const section7Ref = useRef<HTMLDivElement>(null)
+  const section8Ref = useRef<HTMLDivElement>(null)
+
+  const formationTriggers: FormationTrigger[] = [
+    { elementRef: section1Ref, formation: "organic" as FormationName },
+    { elementRef: section2Ref, formation: "grid" as FormationName },
+    { elementRef: section3Ref, formation: "alternateGrid" as FormationName },
+    {
+      elementRef: section4Ref,
+      formation: "alternateGridFinal" as FormationName,
+    },
+    { elementRef: section5Ref, formation: "showcase" as FormationName },
+    { elementRef: section6Ref, formation: "circle" as FormationName },
+    { elementRef: section7Ref, formation: "column" as FormationName },
+
+    { elementRef: section8Ref, formation: "arch" as FormationName },
+  ]
+
   return (
     <main ref={sectionRef} className="min-h-screen text-foreground">
       <div className="fixed top-0 left-0 w-screen h-screen z-[-1] hidden lg:block">
         <Suspense>
-          <Scene3D />
+          <Scene3D
+            formationTriggers={formationTriggers}
+            transitionDuration={800}
+          />
         </Suspense>
       </div>
 
@@ -67,7 +98,9 @@ export default function Index() {
         primaryCta={homeContent.hero.primaryCta}
       />
 
-      <section className="py-16 md:py-24 flex flex-col gap-24">
+      <div ref={section1Ref}></div>
+
+      <section className="py-16 md:py-24 flex flex-col gap-12">
         <WhatWeOffer>
           <h2 className="text-2xl md:text-3xl font-bold mb-6 text-left">
             {homeContent.whatWeOffer.title}
@@ -78,6 +111,8 @@ export default function Index() {
             </div>
           ))}
         </WhatWeOffer>
+
+        <div ref={section2Ref}></div>
 
         <ValueProposition highlightText={homeContent.videoAutomation.highlight}>
           <h2 className="text-2xl md:text-3xl font-bold mb-6 text-left">
@@ -91,11 +126,15 @@ export default function Index() {
         </ValueProposition>
       </section>
 
+      <div ref={section3Ref}></div>
+
       <WhatWeCanBuild
         title={homeContent.whatWeCanBuild.title}
         description={homeContent.whatWeCanBuild.description}
         categories={homeContent.whatWeCanBuild.categories}
       />
+
+      <div className="absolute -mt-[600px]" ref={section4Ref}></div>
 
       {/* Marker div pour le fade-out du glow */}
       <div ref={useCaseMarkerRef} className="h-1 w-full"></div>
@@ -108,11 +147,15 @@ export default function Index() {
 
       <StatsRotator stats={homeContent.stats} intervalMs={5000} />
 
+      <div ref={section5Ref}></div>
+
       <SelectedProjects
         title={homeContent.selectedProjects.title}
         description={homeContent.selectedProjects.description}
         projects={projects}
       />
+
+      <div ref={section6Ref}></div>
 
       <Pricing
         title={homeContent.pricing.title}
@@ -123,6 +166,8 @@ export default function Index() {
         monthlyFee={homeContent.pricing.monthlyFee}
         footerText={homeContent.pricing.footerText}
       />
+
+      <div className="absolute mt-[500px]" ref={section7Ref}></div>
 
       <Testimonials
         title={homeContent.testimonials.title}
@@ -151,6 +196,8 @@ export default function Index() {
         description={homeContent.faq.description}
         faqs={homeContent.faq.items}
       />
+
+      <div ref={section8Ref}></div>
 
       <FinalCTA
         title={homeContent.finalCta.title}
