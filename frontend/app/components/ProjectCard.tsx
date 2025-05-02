@@ -262,7 +262,6 @@ export function ProjectCard({
               isPlaying ? "z-10" : "z-0"
             }`}
             src={currentVideo.url}
-            playsInline
             muted={isMuted}
             onClick={(e) => {
               // La vidéo elle-même ne déclenche pas togglePlayPause directement

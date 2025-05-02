@@ -3,6 +3,7 @@ import { Form, Link, useNavigate } from "@remix-run/react"
 import { useState } from "react"
 import { GlowyTitle } from "~/components/ui/glowy-title"
 import { FancyButton } from "~/components/ui/fancy-button"
+import * as gtag from "~/utils/gtags.client"
 
 export const meta: MetaFunction = () => {
   return [
@@ -53,16 +54,22 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("isSubmitting", isSubmitting)
+
     if (isSubmitting) return
 
     const validationErrors = validate()
     setErrors(validationErrors)
 
-    console.log("eee", validationErrors)
     if (Object.keys(validationErrors).length > 0) return
+
     setIsSubmitting(true)
-    console.log("eee2", isSubmitting)
+
+    gtag.event({
+      action: "submit_form",
+      category: "Contact",
+      label: formData.industry + " " + formData.profile,
+    })
+
     try {
       const response = await fetch(
         "https://n8n.the-aitelier.com/webhook/your-video-engine/submit-form",

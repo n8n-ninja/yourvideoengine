@@ -443,3 +443,5 @@ export const Scene3D = () => {
     </div>
   )
 }
+
+export default Scene3D

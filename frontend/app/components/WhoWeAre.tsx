@@ -33,7 +33,7 @@ export function WhoWeAre({ title, description, team }: WhoWeAreProps) {
               <div className="flex justify-center mb-8">
                 <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-blue-400/30 shadow-lg group-hover:shadow-blue-500/30 group-hover:scale-105 transition-all duration-500">
                   <img
-                    src="manu.jpg"
+                    src="manu.webp"
                     alt={manu.name}
                     className="w-full h-full object-cover"
                   />
@@ -66,7 +66,7 @@ export function WhoWeAre({ title, description, team }: WhoWeAreProps) {
               <div className="flex justify-center mb-8">
                 <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-pink-400/30 shadow-lg group-hover:shadow-pink-500/30 group-hover:scale-105 transition-all duration-500">
                   <img
-                    src="thais.png"
+                    src="thais.webp"
                     alt={thais.name}
                     className="w-full h-full object-cover"
                   />

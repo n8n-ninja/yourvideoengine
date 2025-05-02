@@ -1,8 +1,7 @@
 import type { MetaFunction } from "@remix-run/cloudflare"
 import { HeroBanner } from "~/components/HeroBanner"
 import { StatsRotator } from "~/components/StatsRotator"
-import { WhatWeOffer } from "~/components/WhatWeOffer"
-import { ValueProposition } from "~/components/ValueProposition"
+import { FiftyFifty } from "~/components/FiftyFifty"
 import { WhatWeCanBuild } from "~/components/WhatWeCanBuild"
 import { UseCasesSlider } from "~/components/UseCasesSlider"
 import { SelectedProjects, type Project } from "~/components/SelectedProjects"
@@ -13,6 +12,7 @@ import { TechnologyExpertise } from "~/components/TechnologyExpertise"
 import { WhoWeAre } from "~/components/WhoWeAre"
 import { FinalCTA } from "~/components/FinalCTA"
 import { FormattedText } from "~/components/FormattedText"
+import { HighlightBox } from "~/components/ui/highlight-box"
 import { useRef, lazy, Suspense } from "react"
 import { BackgroundGlow } from "~/components/BackgroundGlow"
 import homeContent from "~/data/home-content.json"
@@ -44,14 +44,12 @@ export default function Index() {
   return (
     <main ref={sectionRef} className="min-h-screen text-foreground">
       <div className="fixed top-0 left-0 w-screen h-screen z-[-1] hidden lg:block">
-        <Suspense>
-          <Scene3D />
-        </Suspense>
+        <Scene3D />
       </div>
 
       <div
         style={{
-          backgroundImage: 'url("bg-mobile.webp")',
+          backgroundImage: 'url("bg-mobile.png")',
         }}
         className="bg-cover opacity-30 bg-center fixed top-0 left-0 w-screen h-screen z-[-1] block lg:hidden"
       ></div>
@@ -67,29 +65,34 @@ export default function Index() {
         primaryCta={homeContent.hero.primaryCta}
       />
 
-      <section className="py-16 md:py-24 flex flex-col gap-24">
-        <WhatWeOffer>
-          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-left">
-            {homeContent.whatWeOffer.title}
-          </h2>
-          {homeContent.whatWeOffer.paragraphs.map((paragraph, index) => (
-            <div key={index} className="text-lg text-left mb-6 text-gray-100">
-              <FormattedText text={paragraph} />
-            </div>
-          ))}
-        </WhatWeOffer>
+      <FiftyFifty imagePosition="right" colorTheme="purple">
+        <h2 className="text-2xl md:text-3xl font-bold mb-6 text-left">
+          {homeContent.whatWeOffer.title}
+        </h2>
+        {homeContent.whatWeOffer.paragraphs.map((paragraph, index) => (
+          <div key={index} className="text-lg text-left mb-6 text-gray-100">
+            <FormattedText text={paragraph} />
+          </div>
+        ))}
+      </FiftyFifty>
 
-        <ValueProposition highlightText={homeContent.videoAutomation.highlight}>
-          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-left">
-            {homeContent.videoAutomation.title}
-          </h2>
-          {homeContent.videoAutomation.paragraphs.map((paragraph, index) => (
-            <p key={index} className="text-lg text-left mb-6 text-gray-100">
-              <FormattedText text={paragraph} />
-            </p>
-          ))}
-        </ValueProposition>
-      </section>
+      <StatsRotator stats={homeContent.stats} intervalMs={5000} />
+
+      <FiftyFifty imagePosition="left" colorTheme="blue">
+        <h2 className="text-2xl md:text-3xl font-bold mb-6 text-left">
+          {homeContent.videoAutomation.title}
+        </h2>
+        {homeContent.videoAutomation.paragraphs.map((paragraph, index) => (
+          <p key={index} className="text-lg text-left mb-6 text-gray-100">
+            <FormattedText text={paragraph} />
+          </p>
+        ))}
+        <HighlightBox>
+          <p className="text-lg text-left text-gray-100">
+            <FormattedText text={homeContent.videoAutomation.highlight} />
+          </p>
+        </HighlightBox>
+      </FiftyFifty>
 
       <WhatWeCanBuild
         title={homeContent.whatWeCanBuild.title}
@@ -105,8 +108,6 @@ export default function Index() {
         description={homeContent.useCases.description}
         useCases={homeContent.useCases.items}
       />
-
-      <StatsRotator stats={homeContent.stats} intervalMs={5000} />
 
       <SelectedProjects
         title={homeContent.selectedProjects.title}
