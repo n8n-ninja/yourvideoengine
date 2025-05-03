@@ -50,7 +50,7 @@ export function ProjectCard({
 
   // Contenu texte pour la description du projet
   const textContent = (
-    <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col h-full">
+    <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col h-full ">
       <div className="flex flex-col h-full">
         <div className="mb-6">
           <h3 className="text-xl md:text-2xl font-bold mb-4 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent transition-transform duration-300">
@@ -62,32 +62,17 @@ export function ProjectCard({
 
         {metrics && (
           <div className="my-8 flex justify-center">
-            <div className="inline-flex items-center bg-gray-800/80 rounded-lg px-6 py-4 border border-pink-500/40 shadow-lg shadow-pink-500/20 transition-all duration-300 hover:shadow-pink-500/30 hover:border-pink-500/60">
-              <div className="text-center">
-                <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
+            <div className="inline-flex items-center bg-gradient-to-br from-pink-500/20 to-pink-700/20 rounded-2xl px-8 py-6 border-2 border-pink-500/40 shadow-xl shadow-pink-500/30 transition-all duration-300 hover:shadow-pink-500/40 hover:border-pink-500/60 backdrop-blur-sm transform hover:-translate-y-0.5 relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-pink-700/5 rounded-2xl blur-xl"></div>
+              <div className="text-center relative">
+                <div className="text-3xl md:text-4xl font-bold text-pink-400 drop-shadow-[0_2px_2px_rgba(236,72,153,0.3)]">
                   {metrics}
                 </div>
                 {metricsLabel && (
-                  <div className="text-sm text-gray-300 mt-1">
+                  <div className="text-sm font-medium text-pink-300 mt-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-400/20">
                     {metricsLabel}
                   </div>
                 )}
-              </div>
-              <div className="h-10 w-10 rounded-full bg-pink-500/20 flex-shrink-0 ml-4 flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-pink-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                  />
-                </svg>
               </div>
             </div>
           </div>
@@ -113,7 +98,7 @@ export function ProjectCard({
   )
 
   const videoPlayerMobile = (
-    <div className="w-full  p-5 md:p-7 flex flex-col items-center">
+    <div className="w-full p-5 md:p-2 flex flex-col items-center">
       <video
         ref={videoRef}
         className={`w-full rounded-2xl border border-pink-500/60 h-full object-cover relative shadow-[0_10px_25px_-5px_rgba(236,72,153,0.5)] transition-all duration-300 group-hover:border-pink-500/80 group-hover:shadow-[0_8px_32px_-5px_rgba(236,72,153,0.7)]`}
@@ -123,8 +108,7 @@ export function ProjectCard({
         controls
         muted={isMuted}
       >
-        <track kind="captions" src="" label="Français" />
-        Votre navigateur ne supporte pas la lecture de vidéos.
+        <track kind="captions" src="" label="EN" />
       </video>
     </div>
   )
@@ -145,7 +129,7 @@ export function ProjectCard({
   )
 
   return (
-    <div className="group bg-gray-900/95 backdrop-blur-sm rounded-2xl  border border-gray-700/50 mb-12 last:mb-0 relative mt-7 transition-all duration-500 flex flex-col md:h-[680px]">
+    <div className="group bg-gray-900/95 backdrop-blur-sm rounded-2xl  border border-gray-700/50 mb-12 last:mb-0 relative mt-7 transition-all duration-500 flex flex-col md:h-[680px] shadow-[0_0_50px_-12px_rgba(236,72,153,0.9)]">
       {/* Fond avec dégradé pour créer un effet de relief */}
       <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
         <div
@@ -181,7 +165,7 @@ export function ProjectCard({
             }}
           >
             <div
-              className="text-white font-medium py-2 rounded-t-lg text-sm whitespace-nowrap border-t border-l border-r border-gray-700/40 flex items-center justify-center w-40 px-3 bg-gray-900 cursor-pointer"
+              className="font-medium py-2 rounded-t-lg text-sm whitespace-nowrap border-t border-l border-r border-gray-700/40 flex items-center justify-center w-40 px-3 bg-gray-900 cursor-pointer"
               onClick={() => onTabClick && onTabClick(tabPosition)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
@@ -192,7 +176,7 @@ export function ProjectCard({
               role="button"
               tabIndex={0}
             >
-              <span className="truncate">{label}</span>
+              <span className="truncate ">{label}</span>
             </div>
           </div>
         )}

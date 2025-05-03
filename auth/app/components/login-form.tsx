@@ -21,17 +21,30 @@ export function LoginForm({
     setIsLoading(true)
     setMessage("")
 
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/callback`,
-      },
-    })
+    try {
+      // Send OTP but specify not to create a new user
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/callback`,
+          shouldCreateUser: false, // Prevent creating new users
+        },
+      })
 
-    if (error) {
-      setMessage(error.message)
-    } else {
-      setMessage("Check your email for confirmation link!")
+      if (error) {
+        // When shouldCreateUser is false and user doesn't exist,
+        // Supabase returns an error with message containing "user not found"
+        if (error.message.toLowerCase().includes("user not found")) {
+          setMessage("No account exists with this email address")
+        } else {
+          setMessage(error.message)
+        }
+      } else {
+        setMessage("Check your email for confirmation link!")
+      }
+    } catch (error: unknown) {
+      setMessage("An error occurred. Please try again.")
+      console.error(error)
     }
 
     setIsLoading(false)
@@ -41,7 +54,7 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="w-[400px]">
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Connect to Client Studio!</CardTitle>
+          <CardTitle className="text-xl">Connect to your engine</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignUp}>
@@ -76,7 +89,8 @@ export function LoginForm({
                     <p
                       className={cn(
                         "text-sm text-center",
-                        message.includes("error")
+                        message.includes("error") ||
+                          message.includes("No account")
                           ? "text-red-500"
                           : "text-green-500"
                       )}

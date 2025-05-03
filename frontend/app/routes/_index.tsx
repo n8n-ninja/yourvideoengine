@@ -198,7 +198,7 @@ export default function Index() {
         footerText={homeContent.pricing.footerText}
       />
 
-      <div ref={section6Ref}></div>
+      <div ref={section6eRef}></div>
 
       <Testimonials
         title={homeContent.testimonials.title}
