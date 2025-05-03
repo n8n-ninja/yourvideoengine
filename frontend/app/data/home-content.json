@@ -231,7 +231,7 @@
           {
             "url": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/shawheen.mp4",
             "title": "Real Estate Video Demo",
-            "thumbnail": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/shawheen.jpg"
+            "thumbnail": "video-thumbnails/shawheen.webp"
           }
         ],
         "videoOrientation": "vertical"
@@ -260,7 +260,7 @@
           {
             "url": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/cou.mp4",
             "title": "Wellness Video Demo 1",
-            "thumbnail": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/cou.jpg"
+            "thumbnail": "video-thumbnails/cou.webp"
           }
         ],
         "videoOrientation": "vertical"
@@ -285,7 +285,7 @@
           {
             "url": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/ai-news-today.mp4",
             "title": "AI Newsfeed Demo 1",
-            "thumbnail": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/ai-news-today.jpg"
+            "thumbnail": "video-thumbnails/ai-news-today.webp"
           }
         ],
         "videoOrientation": "vertical"
@@ -314,7 +314,7 @@
           {
             "url": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/ai-tool.mp4",
             "title": "AI Tool Review Demo 1",
-            "thumbnail": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/ai-tool.jpg"
+            "thumbnail": "video-thumbnails/ai-tool.webp"
           }
         ],
         "videoOrientation": "vertical"
@@ -343,7 +343,7 @@
           {
             "url": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/motion.mp4",
             "title": "Inspiration Channel Demo 1",
-            "thumbnail": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/motion.jpg"
+            "thumbnail": "video-thumbnails/motion.webp"
           }
         ],
         "videoOrientation": "vertical"
@@ -372,7 +372,7 @@
           {
             "url": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/repurpose.mp4",
             "title": "Course Amplifier Demo 1",
-            "thumbnail": "https://your-video-engine.s3.eu-west-1.amazonaws.com/website-videos/repurpose.jpg"
+            "thumbnail": "video-thumbnails/repurpose.webp"
           }
         ],
         "videoOrientation": "vertical"

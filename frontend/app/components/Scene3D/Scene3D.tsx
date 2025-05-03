@@ -12,7 +12,6 @@ import {
   RoundedBox,
   MeshTransmissionMaterial,
   Billboard,
-  OrbitControls,
 } from "@react-three/drei"
 import * as THREE from "three"
 
@@ -103,27 +102,10 @@ export type FormationTrigger = {
 const CustomEnvironment = () => {
   const texture = useLoader(TextureLoader, "/hdri/aesthetic.jpg")
   texture.mapping = EquirectangularReflectionMapping
+  texture.generateMipmaps = false
+  texture.minFilter = THREE.LinearFilter
+  texture.magFilter = THREE.LinearFilter
   return <primitive attach="environment" object={texture} />
-}
-
-// Fonction pour créer une texture avec un emoji
-const createEmojiTexture = (emoji: string) => {
-  const canvas = document.createElement("canvas")
-  canvas.width = 256
-  canvas.height = 256
-  const ctx = canvas.getContext("2d")
-  if (ctx) {
-    ctx.fillStyle = "transparent"
-    ctx.fillRect(0, 0, 256, 256)
-    ctx.fillStyle = "white"
-    ctx.font = "250px Arial"
-    ctx.textAlign = "center"
-    ctx.textBaseline = "middle"
-    ctx.fillText(emoji, 128, 150)
-  }
-  const texture = new THREE.CanvasTexture(canvas)
-  texture.needsUpdate = true
-  return texture
 }
 
 const GradientCube = ({
@@ -142,7 +124,29 @@ const GradientCube = ({
   const color = "#ff9a9e"
   const meshRef = useRef<Mesh>(null!)
   const groupRef = useRef<Group>(null!)
-  const emojiTexture = useMemo(() => createEmojiTexture(emoji), [emoji])
+
+  // Cache emoji textures with lower resolution
+  const emojiTexture = useMemo(() => {
+    const canvas = document.createElement("canvas")
+    canvas.width = 128 // Reduced from 256
+    canvas.height = 128 // Reduced from 256
+    const ctx = canvas.getContext("2d")
+    if (ctx) {
+      ctx.fillStyle = "transparent"
+      ctx.fillRect(0, 0, 128, 128)
+      ctx.fillStyle = "white"
+      ctx.font = "125px Arial" // Reduced from 250px
+      ctx.textAlign = "center"
+      ctx.textBaseline = "middle"
+      ctx.fillText(emoji, 64, 75)
+    }
+    const texture = new THREE.CanvasTexture(canvas)
+    texture.needsUpdate = true
+    texture.generateMipmaps = false
+    texture.minFilter = THREE.LinearFilter
+    texture.magFilter = THREE.LinearFilter
+    return texture
+  }, [emoji])
 
   useEffect(() => {
     const group = groupRef.current
@@ -193,8 +197,7 @@ const GradientCube = ({
         <MeshTransmissionMaterial
           thickness={0.2}
           chromaticAberration={0.1}
-          anisotropy={0.5}
-          envMapIntensity={1.5}
+          envMapIntensity={1}
           clearcoat={1}
           clearcoatRoughness={0.1}
           iridescence={0.3}
@@ -212,6 +215,7 @@ const GradientCube = ({
           reflectivity={0.1}
           attenuationDistance={1.2}
           attenuationColor={color}
+          samples={1}
         />
       </RoundedBox>
 
@@ -226,10 +230,10 @@ const GradientCube = ({
           <planeGeometry args={[1, 1]} />
           <meshBasicMaterial
             map={emojiTexture}
-            side={THREE.DoubleSide}
+            side={THREE.FrontSide}
             alphaTest={0.1}
             depthTest={true}
-            depthWrite={true}
+            depthWrite={false}
           />
         </mesh>
       </Billboard>
@@ -389,6 +393,14 @@ export const Scene3D = ({
           background: "transparent",
         }}
         camera={{ position: [3, 3, 3] }}
+        dpr={[1, 2]} // Limit pixel ratio to improve performance
+        performance={{ min: 0.5 }} // Enable adaptive performance
+        gl={{
+          powerPreference: "high-performance",
+          antialias: true, // Disable antialiasing for performance
+          precision: "mediump", // Use medium precision
+          alpha: true,
+        }}
       >
         <CustomEnvironment />
 
@@ -402,8 +414,6 @@ export const Scene3D = ({
             emoji={emojis[i] || "⚡"}
           />
         ))}
-
-        <OrbitControls />
       </Canvas>
     </div>
   )

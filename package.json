@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "gopush": "bash scripts/gopush.sh",
+    "p": "bash scripts/gopush.sh",
     "ds": "bash scripts/deploy-supabase.sh",
     "da": "pnpm --filter auth run deploy",
     "df": "pnpm --filter frontend run deploy",
+    "f": "pnpm --filter frontend run dev",
     "newclient": "bash scripts/new-client.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
