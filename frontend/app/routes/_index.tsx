@@ -13,9 +13,10 @@ import { TechnologyExpertise } from "~/components/TechnologyExpertise"
 import { WhoWeAre } from "~/components/WhoWeAre"
 import { FinalCTA } from "~/components/FinalCTA"
 import { FormattedText } from "~/components/FormattedText"
-import { useRef, lazy, Suspense } from "react"
+import { useRef, lazy, Suspense, useState, useEffect } from "react"
 import { BackgroundGlow } from "~/components/BackgroundGlow"
 import homeContent from "~/data/home-content.json"
+import { PerformanceMonitor } from "~/components/Performance/PerformanceMonitor"
 
 const Scene3D = lazy(() => import("~/components/Scene3D/Scene3D"))
 import type {
@@ -44,6 +45,27 @@ export default function Index() {
   const sectionRef = useRef<HTMLElement>(null)
   const useCaseMarkerRef = useRef<HTMLDivElement>(null)
   const technologyMarkerRef = useRef<HTMLDivElement>(null)
+  const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(true)
+
+  // Synchroniser l'état des stats avec le mode développement
+  useEffect(() => {
+    // Désactiver les stats en production si nécessaire
+    if (process.env.NODE_ENV === "production") {
+      setShowPerformanceMonitor(false)
+    }
+
+    // Raccourci clavier global pour activer/désactiver le moniteur
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.altKey || e.metaKey) && e.key.toLowerCase() === "p") {
+        setShowPerformanceMonitor((prev) => !prev)
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [])
 
   const section1Ref = useRef<HTMLDivElement>(null)
   const section2Ref = useRef<HTMLDivElement>(null)
@@ -73,12 +95,19 @@ export default function Index() {
     <main ref={sectionRef} className="min-h-screen text-foreground">
       <div className="fixed top-0 left-0 w-screen h-screen z-[-1] hidden lg:block">
         <Suspense>
-          <Scene3D
-            formationTriggers={formationTriggers}
-            transitionDuration={800}
-          />
+          <Scene3D formationTriggers={formationTriggers} smoothFactor={0.1} />
         </Suspense>
       </div>
+
+      {/* Moniteur de performance indépendant */}
+      {showPerformanceMonitor && (
+        <PerformanceMonitor
+          defaultShowStats={true}
+          defaultShowDetailedPerf={false}
+          position="top-right"
+          targetCanvasId="scene3d-canvas"
+        />
+      )}
 
       <div
         style={{
@@ -86,6 +115,7 @@ export default function Index() {
         }}
         className="bg-cover opacity-30 bg-center fixed top-0 left-0 w-screen h-screen z-[-1] block lg:hidden"
       ></div>
+
       <BackgroundGlow
         sectionRef={sectionRef}
         useCaseMarkerRef={useCaseMarkerRef}

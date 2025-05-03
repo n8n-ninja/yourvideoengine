@@ -1,6 +1,6 @@
 import React from "react"
 import { FiftyFifty } from "./FiftyFifty"
-import { HighlightBox } from "~/components/ui/highlight-box"
+import { HighlightBox } from "~/components/highlight-box"
 import { FormattedText } from "./FormattedText"
 
 interface ValuePropositionProps {

@@ -1,4 +1,4 @@
-import { FancyButton } from "~/components/ui/fancy-button"
+import { FancyButton } from "~/components/fancy-button"
 import { useEffect, useRef } from "react"
 
 interface FinalCTAProps {

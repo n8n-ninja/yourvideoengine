@@ -1,4 +1,4 @@
-import { FancyButton } from "~/components/ui/fancy-button"
+import { FancyButton } from "~/components/fancy-button"
 
 export interface HeroBannerCta {
   text: string

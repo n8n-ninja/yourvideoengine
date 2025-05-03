@@ -1,4 +1,4 @@
-import { GlowyTitle } from "~/components/ui/glowy-title"
+import { GlowyTitle } from "~/components/glowy-title"
 import { Link } from "@remix-run/react"
 
 export default function Confirmation() {

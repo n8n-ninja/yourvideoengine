@@ -1,5 +1,4 @@
 import { Object3D } from "three"
-import { UseSpringProps } from "@react-spring/three"
 
 declare module "@react-spring/three" {
   interface WithAnimated {

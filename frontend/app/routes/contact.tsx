@@ -1,8 +1,8 @@
 import type { MetaFunction } from "@remix-run/cloudflare"
 import { Form, Link, useNavigate } from "@remix-run/react"
 import { useState } from "react"
-import { GlowyTitle } from "~/components/ui/glowy-title"
-import { FancyButton } from "~/components/ui/fancy-button"
+import { GlowyTitle } from "~/components/glowy-title"
+import { FancyButton } from "~/components/fancy-button"
 import * as gtag from "~/utils/gtags.client"
 
 export const meta: MetaFunction = () => {

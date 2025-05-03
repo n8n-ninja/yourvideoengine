@@ -6,7 +6,6 @@ import {
   Mesh,
   Group,
 } from "three"
-import { useCubeStore } from "./cubeStore"
 import { useState, useEffect, useRef, useMemo } from "react"
 import {
   RoundedBox,
@@ -109,21 +108,14 @@ const CustomEnvironment = () => {
 }
 
 const GradientCube = ({
-  cubeId,
   emoji,
-  currentFormation,
-  targetFormation,
-  transitionProgress,
+  groupRef,
 }: {
-  cubeId: number
   emoji: string
-  currentFormation: FormationName
-  targetFormation: FormationName
-  transitionProgress: number
+  groupRef: React.RefObject<Group>
 }) => {
   const color = "#ff9a9e"
   const meshRef = useRef<Mesh>(null!)
-  const groupRef = useRef<Group>(null!)
 
   // Cache emoji textures with lower resolution
   const emojiTexture = useMemo(() => {
@@ -147,49 +139,6 @@ const GradientCube = ({
     texture.magFilter = THREE.LinearFilter
     return texture
   }, [emoji])
-
-  useEffect(() => {
-    const group = groupRef.current
-    if (group) {
-      useCubeStore.getState().addCube(group)
-      return () => {
-        useCubeStore.getState().removeCube(group)
-      }
-    }
-  }, [])
-
-  useFrame(() => {
-    const self = groupRef.current
-    if (!self) return
-
-    const currentPose = formations[currentFormation]?.[cubeId]
-    const targetPose = formations[targetFormation]?.[cubeId]
-    if (!currentPose || !targetPose) return
-
-    // Interpolation position
-    const interpolatedPos = new THREE.Vector3()
-      .fromArray(currentPose.position)
-      .lerp(
-        new THREE.Vector3().fromArray(targetPose.position),
-        transitionProgress
-      )
-    self.position.lerp(interpolatedPos, 0.1)
-
-    // Interpolation rotation
-    const lerpRot = (a: number, b: number) => a + (b - a) * transitionProgress
-    self.rotation.x +=
-      (lerpRot(currentPose.rotation[0], targetPose.rotation[0]) -
-        self.rotation.x) *
-      0.1
-    self.rotation.y +=
-      (lerpRot(currentPose.rotation[1], targetPose.rotation[1]) -
-        self.rotation.y) *
-      0.1
-    self.rotation.z +=
-      (lerpRot(currentPose.rotation[2], targetPose.rotation[2]) -
-        self.rotation.z) *
-      0.1
-  })
 
   return (
     <group ref={groupRef}>
@@ -241,15 +190,68 @@ const GradientCube = ({
   )
 }
 
+// New component to handle all cube animations in a single useFrame call
+const CubeAnimator = ({
+  cubeRefs,
+  currentFormation,
+  targetFormation,
+  transitionProgress,
+  smoothFactor = 0.1,
+}: {
+  cubeRefs: React.RefObject<Group>[]
+  currentFormation: FormationName
+  targetFormation: FormationName
+  transitionProgress: number
+  smoothFactor?: number
+}) => {
+  useFrame(() => {
+    cubeRefs.forEach((ref, cubeId) => {
+      const self = ref.current
+      if (!self) return
+
+      const currentPose = formations[currentFormation]?.[cubeId]
+      const targetPose = formations[targetFormation]?.[cubeId]
+      if (!currentPose || !targetPose) return
+
+      // Interpolation position
+      const interpolatedPos = new THREE.Vector3()
+        .fromArray(currentPose.position)
+        .lerp(
+          new THREE.Vector3().fromArray(targetPose.position),
+          transitionProgress
+        )
+      self.position.lerp(interpolatedPos, smoothFactor)
+
+      // Interpolation rotation
+      const lerpRot = (a: number, b: number) => a + (b - a) * transitionProgress
+      self.rotation.x +=
+        (lerpRot(currentPose.rotation[0], targetPose.rotation[0]) -
+          self.rotation.x) *
+        smoothFactor
+      self.rotation.y +=
+        (lerpRot(currentPose.rotation[1], targetPose.rotation[1]) -
+          self.rotation.y) *
+        smoothFactor
+      self.rotation.z +=
+        (lerpRot(currentPose.rotation[2], targetPose.rotation[2]) -
+          self.rotation.z) *
+        smoothFactor
+    })
+  })
+
+  return null
+}
+
 type Scene3DProps = {
   formationTriggers: FormationTrigger[]
-  transitionDuration?: number // Now used for smoothing factor rather than explicit duration
+  smoothFactor?: number
   defaultFormation?: FormationName
   emojis?: string[]
 }
 
 export const Scene3D = ({
   formationTriggers,
+  smoothFactor = 0.1,
   defaultFormation = "organic",
   emojis = ["🎬", "✂️", "🧠", "🎤", "🎭", "⏱", "📤"],
 }: Scene3DProps) => {
@@ -259,6 +261,20 @@ export const Scene3D = ({
   const [targetFormation, setTargetFormation] =
     useState<FormationName>(defaultFormation)
   const [transitionProgress, setTransitionProgress] = useState(1)
+
+  // Create an array of refs outside of the callback
+  const ref1 = useRef<Group>(null!)
+  const ref2 = useRef<Group>(null!)
+  const ref3 = useRef<Group>(null!)
+  const ref4 = useRef<Group>(null!)
+  const ref5 = useRef<Group>(null!)
+  const ref6 = useRef<Group>(null!)
+  const ref7 = useRef<Group>(null!)
+
+  // Use the individual refs in the array
+  const cubeRefs = useMemo(() => {
+    return [ref1, ref2, ref3, ref4, ref5, ref6, ref7]
+  }, [])
 
   // Store valid triggers (those with refs that exist in DOM)
   const [validTriggers, setValidTriggers] = useState<
@@ -397,20 +413,27 @@ export const Scene3D = ({
         performance={{ min: 0.5 }} // Enable adaptive performance
         gl={{
           powerPreference: "high-performance",
-          antialias: true, // Disable antialiasing for performance
+          antialias: true,
           precision: "mediump", // Use medium precision
           alpha: true,
         }}
+        id="scene3d-canvas" // Ajout d'un ID pour que PerformanceMonitor puisse cibler ce canvas
       >
         <CustomEnvironment />
+
+        {/* Single animation controller for all cubes */}
+        <CubeAnimator
+          cubeRefs={cubeRefs}
+          currentFormation={currentFormation}
+          targetFormation={targetFormation}
+          transitionProgress={transitionProgress}
+          smoothFactor={smoothFactor}
+        />
 
         {formations[currentFormation]?.map((_, i) => (
           <GradientCube
             key={i}
-            cubeId={i}
-            currentFormation={currentFormation}
-            targetFormation={targetFormation}
-            transitionProgress={transitionProgress}
+            groupRef={cubeRefs[i]}
             emoji={emojis[i] || "⚡"}
           />
         ))}
