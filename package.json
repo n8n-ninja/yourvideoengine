@@ -10,8 +10,7 @@
     "f": "pnpm --filter frontend run dev",
     "da": "pnpm --filter auth run deploy",
     "a": "pnpm --filter auth run dev",
-    "newclient": "bash scripts/new-client.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "newclient": "bash scripts/new-client.sh"
   },
   "keywords": [],
   "author": "",
