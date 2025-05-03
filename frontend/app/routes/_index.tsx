@@ -73,6 +73,7 @@ export default function Index() {
   const section4Ref = useRef<HTMLDivElement>(null)
   const section5Ref = useRef<HTMLDivElement>(null)
   const section6Ref = useRef<HTMLDivElement>(null)
+  const section6eRef = useRef<HTMLDivElement>(null)
   const section7Ref = useRef<HTMLDivElement>(null)
   const section8Ref = useRef<HTMLDivElement>(null)
 
@@ -86,6 +87,7 @@ export default function Index() {
     },
     { elementRef: section5Ref, formation: "showcase" as FormationName },
     { elementRef: section6Ref, formation: "circle" as FormationName },
+    { elementRef: section6eRef, formation: "circle" as FormationName },
     { elementRef: section7Ref, formation: "column" as FormationName },
 
     { elementRef: section8Ref, formation: "arch" as FormationName },
@@ -166,7 +168,6 @@ export default function Index() {
 
       <div className="absolute -mt-[600px]" ref={section4Ref}></div>
 
-      {/* Marker div pour le fade-out du glow */}
       <div ref={useCaseMarkerRef} className="h-1 w-full"></div>
 
       <UseCasesSlider
@@ -197,13 +198,15 @@ export default function Index() {
         footerText={homeContent.pricing.footerText}
       />
 
-      <div className="absolute mt-[500px]" ref={section7Ref}></div>
+      <div ref={section6Ref}></div>
 
       <Testimonials
         title={homeContent.testimonials.title}
         description={homeContent.testimonials.description}
         testimonials={homeContent.testimonials.items}
       />
+
+      <div className="absolute -mt-[500px]" ref={section7Ref}></div>
 
       {/* Marker div pour le fade-in du glow */}
       <div ref={technologyMarkerRef}></div>
@@ -221,13 +224,13 @@ export default function Index() {
         team={homeContent.whoWeAre.team}
       />
 
+      <div ref={section8Ref}></div>
+
       <FAQ
         title={homeContent.faq.title}
         description={homeContent.faq.description}
         faqs={homeContent.faq.items}
       />
-
-      <div ref={section8Ref}></div>
 
       <FinalCTA
         title={homeContent.finalCta.title}
