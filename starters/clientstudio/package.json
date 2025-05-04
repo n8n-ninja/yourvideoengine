@@ -6,7 +6,7 @@
   "scripts": {
     "build": "remix vite:build",
     "deploy": "pnpm run build && wrangler pages deploy",
-    "dev": "remix vite:dev --port 4000",
+    "dev": "remix vite:dev --host client1.studio.yourvideoengine.local --port 4000",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "wrangler pages dev ./build/client",
     "typecheck": "tsc",
@@ -24,6 +24,7 @@
     "@remix-run/cloudflare": "^2.16.5",
     "@remix-run/cloudflare-pages": "^2.16.5",
     "@remix-run/react": "^2.16.5",
+    "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

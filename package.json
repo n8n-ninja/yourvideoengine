@@ -10,6 +10,7 @@
     "f": "pnpm --filter frontend run dev",
     "da": "pnpm --filter auth run deploy",
     "a": "pnpm --filter auth run dev",
+    "c": "pnpm --filter clientstudio run dev",
     "newclient": "bash scripts/new-client.sh"
   },
   "keywords": [],

@@ -25,4 +25,12 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
+  server: {
+    host: true,
+    port: 4000,
+    strictPort: true,
+    hmr: {
+      host: "localhost",
+    },
+  },
 })

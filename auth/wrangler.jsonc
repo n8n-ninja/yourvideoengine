@@ -4,7 +4,7 @@
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "your-video-engine-auth",
+  "name": "your-video-engine-connect",
   "compatibility_date": "2025-04-29",
   "pages_build_output_dir": "./build/client",
   "observability": {

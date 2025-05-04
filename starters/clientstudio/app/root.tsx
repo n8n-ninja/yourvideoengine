@@ -6,14 +6,14 @@ import {
   ScrollRestoration,
 } from "@remix-run/react"
 import type { LinksFunction, LoaderFunction } from "@remix-run/cloudflare"
-import { json, redirect } from "@remix-run/cloudflare"
-import { authenticateWithToken, getSession } from "~/lib/auth.server"
-import { supabase } from "~/lib/supabaseClient"
+import { redirect } from "@remix-run/cloudflare"
+import { createSupabaseServerClient } from "~/lib/supabase.server"
 import { AppSidebar } from "~/components/app-sidebar"
 import { SidebarProvider, SidebarInset } from "~/components/ui/sidebar"
+import { verifyClientAccess } from "~/lib/verifyAccess"
 import styles from "./tailwind.css?url"
+import { getRedirectUrl } from "~/utils/get-redirect-url"
 
-// Add route ID for useRouteLoaderData
 export const id = "root"
 
 export const links: LinksFunction = () => [
@@ -31,44 +31,31 @@ export const links: LinksFunction = () => [
 ]
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const url = new URL(request.url)
-  const accessToken = url.searchParams.get("access_token")
-
-  if (accessToken) {
-    const response = await authenticateWithToken(request)
-    if (response) {
-      return response
-    }
-  }
+  const redirectUrl = getRedirectUrl()
+  const response = new Response()
+  const supabase = createSupabaseServerClient(request, response)
 
   try {
-    const session = await getSession(request)
-    const userId = session.get("userId")
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
-    if (userId) {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser()
-
-      if (error || !user) {
-        throw error || new Error("No user found")
-      }
-
-      return json({ user })
+    if (!user) {
+      return redirect(redirectUrl)
     }
+
+    const hasAccess = await verifyClientAccess(request, user.id)
+
+    if (!hasAccess) {
+      return redirect(redirectUrl)
+    }
+
+    return new Response(JSON.stringify({ user }), {
+      headers: { "Content-Type": "application/json" },
+    })
   } catch (error) {
-    // En cas d'erreur, rediriger vers l'authentification
+    return redirect(redirectUrl)
   }
-
-  // Redirection vers la page d'authentification
-  const isLocalhost =
-    url.hostname === "localhost" || url.hostname === "127.0.0.1"
-  const redirectUrl = isLocalhost
-    ? "http://localhost:3000"
-    : "https://auth.yourvideoengine.com"
-
-  return redirect(redirectUrl)
 }
 
 export default function App() {
