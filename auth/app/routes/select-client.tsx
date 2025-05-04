@@ -1,53 +1,52 @@
+// app/routes/select-client.tsx
+
 import { LoaderFunctionArgs, redirect } from "@remix-run/cloudflare"
-import { createSupabaseServerClient } from "~/lib/supabase.server"
-
-interface Client {
-  id: string
-  name: string
-  slug: string
-}
-
-const isProd = process.env.NODE_ENV === "production"
+import { useLoaderData } from "@remix-run/react"
+import { initSupabaseServerClient } from "~/lib/supabase.server"
+import { type Client } from "@monorepo/shared"
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const response = new Response()
-  const supabase = createSupabaseServerClient(request, response)
+  const { getUser, getClientsForUser } = initSupabaseServerClient(request)
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  console.log("select-client")
 
-  if (!user || !user.id) {
-    return redirect("/", { headers: response.headers })
+  const user = await getUser()
+
+  if (!user) return redirect("/")
+
+  const clients = await getClientsForUser(user.id)
+
+  if (clients.length === 1 && clients[0]) {
+    console.log("redirecting to", clients[0].slug)
+    // return redirect(`/${clients[0].slug}`)
   }
 
-  const { data, error } = await supabase
-    .from("client_users")
-    .select("client_id, clients:client_id(id, name, slug)")
-    .eq("user_id", user.id)
+  return { clients }
+}
 
-  if (error) {
-    console.error("🔴 Error fetching clients:", error.message)
-    return new Response("Unable to fetch clients", { status: 500 })
-  }
+export default function Index() {
+  const { clients } = useLoaderData<{ clients: Client[] }>()
 
-  const clients: Client[] = data.map((row) => row.clients as Client)
+  console.log(clients)
 
-  if (clients.length === 1) {
-    const client = clients[0]
-    const redirectUrl = isProd
-      ? `https://${client.slug}.studio.yourvideoengine.com`
-      : `http://${client.slug}.studio.yourvideoengine.local:4000`
-
-    return redirect(redirectUrl, { headers: response.headers })
-  }
-
-  return new Response(JSON.stringify({ clients }), {
-    headers: {
-      ...Object.fromEntries(response.headers),
-      "Content-Type": "application/json",
-    },
-  })
+  return (
+    <main className="min-h-screen flex items-center justify-center">
+      <div className="flex flex-col gap-6">
+        <h1 className="text-2xl font-bold text-center">Select a client</h1>
+        <div className="flex flex-col gap-2">
+          {clients.map((client) => (
+            <a
+              key={client.id}
+              href={`/${client.slug}`}
+              className="px-4 py-2 border rounded hover:bg-gray-100"
+            >
+              {client.name}
+            </a>
+          ))}
+        </div>
+      </div>
+    </main>
+  )
 }
 
 export const config = {

@@ -1,0 +1,27 @@
+{
+  "name": "@monorepo/shared",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    },
+    "./index.server": {
+      "import": "./dist/index.server.js"
+    },
+    "./index.client": {
+      "import": "./dist/index.client.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.49.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3"
+  }
+}

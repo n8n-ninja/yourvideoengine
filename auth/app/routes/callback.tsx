@@ -1,4 +1,5 @@
 // app/routes/callback.tsx
+
 import { useEffect } from "react"
 
 export default function Callback() {
@@ -11,10 +12,9 @@ export default function Callback() {
 
     if (access_token && refresh_token) {
       const redirectUrl = new URL("/set-session", window.location.origin)
+
       redirectUrl.searchParams.set("access_token", access_token)
       redirectUrl.searchParams.set("refresh_token", refresh_token)
-
-      console.log(redirectUrl.toString())
 
       window.location.replace(redirectUrl.toString())
     } else {

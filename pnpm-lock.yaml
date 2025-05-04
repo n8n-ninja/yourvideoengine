@@ -10,6 +10,9 @@ importers:
 
   auth:
     dependencies:
+      '@monorepo/shared':
+        specifier: workspace:^
+        version: link:../packages/shared
       '@radix-ui/react-label':
         specifier: ^2.1.4
         version: 2.1.4(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -243,6 +246,15 @@ importers:
       wrangler:
         specifier: 4.13.2
         version: 4.13.2(@cloudflare/workers-types@4.20250430.0)
+
+  packages/shared:
+    dependencies:
+      '@supabase/ssr':
+        specifier: ^0.6.1
+        version: 0.6.1(@supabase/supabase-js@2.49.4)
+      '@supabase/supabase-js':
+        specifier: ^2.49.4
+        version: 2.49.4
 
   remotion:
     dependencies:

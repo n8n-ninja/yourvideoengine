@@ -1,19 +1,14 @@
-import { LoaderFunctionArgs } from "@remix-run/cloudflare"
-import { createSupabaseServerClient } from "~/lib/supabase.server"
+// app/routes/logout.tsx
+
+import { LoaderFunctionArgs, redirect } from "@remix-run/cloudflare"
+import { initSupabaseServerClient } from "~/lib/supabase.server"
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const response = new Response()
-  const supabase = createSupabaseServerClient(request, response)
+  const supabase = initSupabaseServerClient(request)
 
   await supabase.auth.signOut()
 
-  // Optionnel : rediriger vers la landing page d'auth
-  response.headers.set("Location", "/")
-
-  return new Response(null, {
-    status: 302,
-    headers: response.headers,
-  })
+  return redirect("/")
 }
 
 export const config = {
