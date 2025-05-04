@@ -3,7 +3,14 @@
 import { LoaderFunctionArgs, redirect } from "@remix-run/cloudflare"
 import { useLoaderData } from "@remix-run/react"
 import { initSupabaseServerClient } from "~/lib/supabase.server"
-import { type Client } from "@monorepo/shared"
+import { getClientUrl } from "@monorepo/shared/index.server"
+
+interface Client {
+  id: string
+  name: string
+  slug: string
+  url: string
+}
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { getUser, getClientsForUser } = initSupabaseServerClient(request)
@@ -14,11 +21,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   if (!user) return redirect("/")
 
-  const clients = await getClientsForUser(user.id)
+  const clients = (await getClientsForUser(user.id)).map((client) => ({
+    ...client,
+    url: getClientUrl(client.slug),
+  }))
 
   if (clients.length === 1 && clients[0]) {
-    console.log("redirecting to", clients[0].slug)
-    // return redirect(`/${clients[0].slug}`)
+    const clientUrl = getClientUrl(clients[0].slug)
+    console.log("redirecting to", clientUrl)
+    // return redirect(clientUrl)
   }
 
   return { clients }
@@ -37,7 +48,7 @@ export default function Index() {
           {clients.map((client) => (
             <a
               key={client.id}
-              href={`/${client.slug}`}
+              href={client.url}
               className="px-4 py-2 border rounded hover:bg-gray-100"
             >
               {client.name}

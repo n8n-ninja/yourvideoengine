@@ -4,7 +4,7 @@ import { LoaderFunctionArgs, redirect } from "@remix-run/cloudflare"
 import { initSupabaseServerClient } from "~/lib/supabase.server"
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const supabase = initSupabaseServerClient(request)
+  const { supabase } = initSupabaseServerClient(request)
 
   await supabase.auth.signOut()
 

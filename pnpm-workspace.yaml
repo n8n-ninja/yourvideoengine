@@ -1,6 +1,6 @@
 packages:
   - auth
-  - clientstudios/*
+  - studios/*
   - starters/*
   - frontend
   - remotion

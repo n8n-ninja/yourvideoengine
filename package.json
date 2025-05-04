@@ -5,13 +5,13 @@
   "main": "index.js",
   "scripts": {
     "p": "bash scripts/gopush.sh",
-    "ds": "bash scripts/deploy-supabase.sh",
-    "df": "pnpm --filter frontend run deploy",
-    "f": "pnpm --filter frontend run dev",
-    "da": "pnpm --filter auth run deploy",
-    "a": "pnpm --filter auth run dev",
-    "c": "pnpm --filter clientstudio run dev",
-    "newclient": "bash scripts/new-client.sh"
+    "fr": "pnpm --filter frontend run dev",
+    "dfr": "pnpm --filter frontend run deploy",
+    "co": "pnpm --filter connect run dev",
+    "dco": "pnpm --filter connect run deploy",
+    "cl": "pnpm --filter clientstudio run dev",
+    "newclient": "bash scripts/new-client.sh",
+    "sc": "./scripts/start-client.js"
   },
   "keywords": [],
   "author": "",

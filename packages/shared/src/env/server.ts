@@ -3,6 +3,7 @@ export const domain = isProd ? ".yourvideoengine.com" : ".yourvideoengine.local"
 export const protocol = isProd ? "https://" : "http://"
 
 export const getClientUrl = (slug: string) =>
-  `${protocol}${slug}.studio.${domain}`
+  `${protocol}${slug}.studio${domain}${!isProd ? ":4000" : ""}`
 
-export const getConnectUrl = () => `${protocol}connect.${domain}`
+export const getConnectUrl = () =>
+  `${protocol}connect.${domain}${!isProd ? ":3000" : ""}`
