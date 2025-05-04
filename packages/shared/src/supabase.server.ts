@@ -65,13 +65,12 @@ export const createSupabaseServerClient = (
     request: Request,
   ): Promise<boolean> => {
    
-    const user = await getUser()  
+     const user = await getUser()  
   
     const clientSlug = getClientSlug(request)
-    console.log("*****")
-    console.log(user)
-    console.log(clientSlug)
-    console.log("*****")
+
+
+
 
     if (!user || !user.id  || !clientSlug) return false
   
@@ -91,8 +90,9 @@ export const createSupabaseServerClient = (
   }
   
 
+
   return {
-    supabase,
+     supabase,
     getUser,
     getClientsForUser,
     verifyClientAccess,
