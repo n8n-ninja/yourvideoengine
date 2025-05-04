@@ -4,14 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "p": "bash scripts/gopush.sh",
-    "fr": "pnpm --filter frontend run dev",
-    "dfr": "pnpm --filter frontend run deploy",
-    "co": "pnpm --filter connect run dev",
-    "dco": "pnpm --filter connect run deploy",
-    "cl": "pnpm --filter clientstudio run dev",
-    "newclient": "bash scripts/new-client.sh",
-    "sc": "./scripts/start-client.js"
+    "p": "./scripts/push.js",
+    "d": "./scripts/deploy.js",
+    "s": "./scripts/start.js"
   },
   "keywords": [],
   "author": "",
