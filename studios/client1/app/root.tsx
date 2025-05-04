@@ -7,10 +7,9 @@ import {
 } from "@remix-run/react"
 import type { LinksFunction, LoaderFunction } from "@remix-run/cloudflare"
 import { redirect } from "@remix-run/cloudflare"
-import { createSupabaseServerClient } from "~/lib/supabase.server"
+import { initSupabaseServerClient } from "~/lib/supabase.server"
 import { AppSidebar } from "~/components/app-sidebar"
 import { SidebarProvider, SidebarInset } from "~/components/ui/sidebar"
-import { verifyClientAccess } from "~/lib/verifyAccess"
 import styles from "./tailwind.css?url"
 import { getRedirectUrl } from "~/utils/get-redirect-url"
 
@@ -33,20 +32,18 @@ export const links: LinksFunction = () => [
 export const loader: LoaderFunction = async ({ request }) => {
   const redirectUrl = getRedirectUrl()
   const response = new Response()
-  const supabase = createSupabaseServerClient(request, response)
+  const { getUser, verifyClientAccess } = initSupabaseServerClient(
+    request,
+    response
+  )
 
   try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+    const user = await getUser()
+    const hasAccess = await verifyClientAccess(request)
 
-    if (!user) {
-      return redirect(redirectUrl)
-    }
+    console.log(hasAccess)
 
-    const hasAccess = await verifyClientAccess(request, user.id)
-
-    if (!hasAccess) {
+    if (!user || !hasAccess) {
       return redirect(redirectUrl)
     }
 
@@ -54,7 +51,8 @@ export const loader: LoaderFunction = async ({ request }) => {
       headers: { "Content-Type": "application/json" },
     })
   } catch (error) {
-    return redirect(redirectUrl)
+    console.log(error)
+    // return redirect(redirectUrl)
   }
 }
 

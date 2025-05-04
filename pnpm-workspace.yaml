@@ -1,8 +1,6 @@
 packages:
-  - auth
-  - studios/*
-  - starters/*
+  - connect
   - frontend
   - remotion
-  - supabase
+  - studios/*
   - packages/*

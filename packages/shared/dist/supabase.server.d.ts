@@ -6,6 +6,7 @@ export declare const createSupabaseServerClient: (request: Request, response: Re
     supabase: SupabaseClient;
     getUser: () => Promise<any>;
     getClientsForUser: (userId: string) => Promise<any[]>;
+    verifyClientAccess: (reqest: Request) => Promise<boolean>;
     response: Response;
 };
 //# sourceMappingURL=supabase.server.d.ts.map
