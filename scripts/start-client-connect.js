@@ -9,7 +9,7 @@ if (!client) {
   process.exit(1)
 }
 
-console.log(`🚀 Starting 'connect' and client '${client}' in parallel\n`)
+console.log(`🚀 Starting shared watch, 'connect', and client '${client}' in parallel\n`)
 
 const start = (name, command) => {
   const proc = spawn("pnpm", command, {
@@ -22,5 +22,6 @@ const start = (name, command) => {
   })
 }
 
+start("shared", ["--filter", "@monorepo/shared", "run", "dev"])
 start("connect", ["--filter", "connect", "run", "dev"])
 start(client, ["--filter", client, "run", "dev"])

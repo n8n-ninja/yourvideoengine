@@ -1,47 +1,117 @@
-# Welcome to Remix + Cloudflare!
+# Your Video Engine
 
-- 📖 [Remix docs](https://remix.run/docs)
-- 📖 [Remix Cloudflare docs](https://remix.run/guides/vite#cloudflare)
+**Your Video Engine** is a modular monorepo architecture built to support dozens of client projects, each with isolated frontends and a shared core of logic and tools.
+Each client gets its own Remix-based frontend for full safety and deploy independence, while the shared logic lives in a central package, avoiding code duplication and simplifying updates.
 
-## Development
+---
 
-Run the dev server:
+## 🧠 Architecture Overview
 
-```sh
-npm run dev
+```
+/
+├── scripts/              → Utility CLI scripts (deploy, launch client, etc.)
+├── packages/
+│   └── shared/           → Shared codebase: types, Supabase helpers, env tools
+├── studios/
+│   ├── client1/          → Independent Remix app for client1
+│   ├── client2/          → ...
+│   └── ...
+├── connect/              → Central authentication/login project (connect.${domain})
+├── remotion/             → Video rendering engine (Remotion, optional)
+├── frontend/             → Public landing page or marketing site
+└── pnpm-workspace.yaml   → Monorepo configuration
 ```
 
-To run Wrangler:
+## 🌍 Local and Production URLs
 
-```sh
-npm run build
-npm run start
+**Production URLs:**
+
+- Frontend: https://yourvideoengine.com
+- Connect: https://connect.yourvideoengine.com/
+- Clients: https://client1.studio.yourvideoengine.com
+
+**Local Development URLs:**
+
+- Frontend: http://frontend.local:5000
+- Connect: http://connect.local:3000
+- Client1: http://client1.local:4000
+
+---
+
+## 🚀 Dev Shortcuts
+
+These commands are defined via scripts in `scripts/` and aliased via `package.json`.
+
+### ▶️ Start a studio (client frontend)
+
+```bash
+pnpm sc client1
 ```
 
-## Typegen
+> Starts the dev server for `/studios/client1`.
+> Replace `client1` with your desired client slug.
 
-Generate types for your Cloudflare bindings in `wrangler.toml`:
+---
 
-```sh
-npm run typegen
+### 🚀 Deploy a project
+
+```bash
+pnpm d client1
 ```
 
-You will need to rerun typegen whenever you make changes to `wrangler.toml`.
+> Deploys a specific project (e.g. `connect`, `client1`, etc.)
 
-## Deployment
+---
 
-First, build your app for production:
+### 🔁 Git add / commit / push
 
-```sh
-npm run build
+```bash
+pnpm p "my commit message"
 ```
 
-Then, deploy your app to Cloudflare Pages:
+> Adds everything, commits with your message and pushes.
+> If no message is given, defaults to current date.
 
-```sh
-npm run deploy
+---
+
+## 📦 `@monorepo/shared` package
+
+This is the heart of your architecture. It contains:
+
+- ✅ Supabase server/client helpers (with cookie/session support)
+- 🌐 Environment resolution (`getClientUrl`, `getConnectUrl`)
+- 🧠 Shared types (`Database`, `Client`, etc.)
+- 🧪 Testable and runtime-separated (`index.client.ts`, `index.server.ts`)
+- 🌍 Cross-runtime compatible (Node + Edge)
+
+### Build the shared package
+
+```bash
+pnpm --filter @monorepo/shared build
 ```
 
-## Styling
+> This generates a compiled `dist/` folder from `src/`.
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
+---
+
+## 🛠️ Notes
+
+- Uses **PNPM** as package manager
+- **Remix** with `runtime: edge` where possible
+- All **environment-aware** logic is runtime-safe (no `process.env` on client)
+- Clear separation of server vs client files via `.server.ts` / `.client.ts`
+- Uses **Vite** with **TypeScript paths** like `@monorepo/*` and `~/*`
+- **ESLint and Prettier** compatible across all packages
+
+---
+
+## ✅ Why This Setup?
+
+This architecture enables you to:
+
+- Develop, build and deploy multiple client apps without risk of conflict
+- Share logic between apps in a safe, type-checked way
+- Scale to 10–100+ clients with minimal overhead
+- Avoid redeveloping things like auth or Supabase config
+
+> "Build once. Scale safely."
