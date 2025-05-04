@@ -11,10 +11,10 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "~/components/ui/sidebar"
-import type { RootLoaderData } from "~/root"
+import type { LoaderData } from "~/root"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user, logoutUrl } = useLoaderData<RootLoaderData>()
+  const { user, logoutUrl } = useLoaderData<LoaderData>()
 
   return (
     <Sidebar {...props}>

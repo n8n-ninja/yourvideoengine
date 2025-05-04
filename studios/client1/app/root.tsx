@@ -20,6 +20,7 @@ type LoaderData = {
   logoutUrl: string
   user: { email: string }
 }
+export type { LoaderData }
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
