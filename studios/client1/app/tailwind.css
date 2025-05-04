@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  @apply bg-[#120C1E] text-white;
-}
-
 @layer base {
   :root {
     --background: 270 30% 5%;
@@ -27,6 +22,12 @@ body {
     --destructive-foreground: 0 0% 98%;
     --border: 270 35% 25%;
     --radius: 0.5rem;
+    --sidebar-background: 270 35% 12%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 320 100% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 320 100% 65%;
+    --sidebar-accent-foreground: 0 0% 98%;
   }
 }
 

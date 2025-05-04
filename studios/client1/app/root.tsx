@@ -9,7 +9,7 @@ import type { LinksFunction, LoaderFunction } from "@remix-run/cloudflare"
 import { redirect } from "@remix-run/cloudflare"
 import { initSupabaseServerClient } from "~/lib/supabase.server"
 import { AppSidebar } from "~/components/app-sidebar"
-import { SidebarProvider, SidebarInset } from "~/components/ui/sidebar"
+import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar"
 import styles from "./tailwind.css?url"
 import { getRedirectUrl } from "~/utils/get-redirect-url"
 import { getConnectUrl } from "@monorepo/shared/index.server"
@@ -75,10 +75,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
+
       <body>
         <SidebarProvider>
           <AppSidebar />
-          <SidebarInset>{children}</SidebarInset>
+          <div className="flex flex-col flex-grow m-4 rounded-xl border">
+            <div className="flew-grow p-4 border-b">
+              <SidebarTrigger />
+            </div>
+
+            <main>{children}</main>
+          </div>
         </SidebarProvider>
         <ScrollRestoration />
         <Scripts />

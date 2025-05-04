@@ -7,9 +7,14 @@
     "p": "./scripts/push.js",
     "d": "./scripts/deploy.js",
     "s": "./scripts/start.js",
-    "sc": "./scripts/start-client-connect.js"
+    "sc": "./scripts/start-client-connect.js",
+    "create-table": "node scripts/create-table.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@supabase/supabase-js": "^2.49.4",
+    "dotenv": "^16.5.0"
+  }
 }

@@ -6,4 +6,4 @@ export const getClientUrl = (slug: string) =>
   `${protocol}${slug}.studio${domain}${!isProd ? ":4000" : ""}`
 
 export const getConnectUrl = () =>
-  `${protocol}connect.${domain}${!isProd ? ":3000" : ""}`
+  `${protocol}connect${domain}${!isProd ? ":3000" : ""}`

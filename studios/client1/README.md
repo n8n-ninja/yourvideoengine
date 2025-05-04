@@ -16,9 +16,9 @@ Each client gets its own Remix-based frontend for full safety and deploy indepen
 │   ├── client1/          → Independent Remix app for client1
 │   ├── client2/          → ...
 │   └── ...
-├── connect/              → Central authentication/login project (connect.${domain})
-├── remotion/             → Video rendering engine (Remotion, optional)
-├── frontend/             → Public landing page or marketing site
+├── connect/              → Central authentication/login project
+├── remotion/             → Video rendering engine
+├── frontend/             → Public landing page
 └── pnpm-workspace.yaml   → Monorepo configuration
 ```
 
@@ -27,7 +27,7 @@ Each client gets its own Remix-based frontend for full safety and deploy indepen
 **Production URLs:**
 
 - Frontend: https://yourvideoengine.com
-- Connect: https://connect.yourvideoengine.com/
+- Connect: https://connect.yourvideoengine.com
 - Clients: https://client1.studio.yourvideoengine.com
 
 **Local Development URLs:**
@@ -50,6 +50,7 @@ pnpm sc client1
 
 > Starts the dev server for `/studios/client1`.
 > Replace `client1` with your desired client slug.
+> This will start the client, the connect project and watch the shared scripts.
 
 ---
 

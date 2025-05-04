@@ -10,6 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  SidebarGroup,
 } from "~/components/ui/sidebar"
 import type { LoaderData } from "~/root"
 
@@ -22,24 +23,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <h1 className="text-xl font-bold p-4">Your Video Engine</h1>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <a href="/" className="flex items-center gap-2">
-                <LayoutDashboard className="h-4 w-4" />
-                Dashboard
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <a href="/data" className="flex items-center gap-2">
-                <Database className="h-4 w-4" />
-                Data
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <SidebarGroup>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a href="/" className="flex items-center gap-2">
+                  <LayoutDashboard className="h-4 w-4" />
+                  Dashboard
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a href="/data" className="flex items-center gap-2">
+                  <Database className="h-4 w-4" />
+                  Data
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
       <div className="border-t p-3 flex flex-col items-start gap-2">
         <p className="text-sm text-muted-foreground">{user.email}</p>
