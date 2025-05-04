@@ -12,8 +12,14 @@ import { AppSidebar } from "~/components/app-sidebar"
 import { SidebarProvider, SidebarInset } from "~/components/ui/sidebar"
 import styles from "./tailwind.css?url"
 import { getRedirectUrl } from "~/utils/get-redirect-url"
+import { getConnectUrl } from "@monorepo/shared/index.server"
 
 export const id = "root"
+
+type LoaderData = {
+  logoutUrl: string
+  user: { email: string }
+}
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -29,34 +35,37 @@ export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
 ]
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = async ({
+  request,
+}): Promise<LoaderData> => {
   const redirectUrl = getRedirectUrl()
   const response = new Response()
   const { getUser, verifyClientAccess } = initSupabaseServerClient(
     request,
-    response
+    response,
   )
 
   try {
     const user = await getUser()
     const hasAccess = await verifyClientAccess(request)
 
-    console.log(hasAccess)
-
     if (!user || !hasAccess) {
-      return redirect(redirectUrl)
+      throw redirect(redirectUrl)
     }
 
-    return new Response(JSON.stringify({ user }), {
-      headers: { "Content-Type": "application/json" },
-    })
+    return {
+      user,
+      logoutUrl: `${getConnectUrl()}/logout`,
+    }
   } catch (error) {
     console.log(error)
-    // return redirect(redirectUrl)
+    throw redirect(redirectUrl)
   }
 }
 
-export default function App() {
+export type RootLoaderData = Awaited<ReturnType<typeof loader>>
+
+export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -68,13 +77,15 @@ export default function App() {
       <body>
         <SidebarProvider>
           <AppSidebar />
-          <SidebarInset>
-            <Outlet />
-          </SidebarInset>
+          <SidebarInset>{children}</SidebarInset>
         </SidebarProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
     </html>
   )
+}
+
+export default function App() {
+  return <Outlet />
 }

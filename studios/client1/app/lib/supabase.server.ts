@@ -7,7 +7,7 @@ const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY!
 
 export const initSupabaseServerClient = (
   request: Request,
-  response: Response = new Response()
+  response: Response = new Response(),
 ) => {
   return createSupabaseServerClient(request, response, {
     supabaseUrl,

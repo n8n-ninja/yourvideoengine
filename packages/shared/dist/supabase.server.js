@@ -38,10 +38,6 @@ export const createSupabaseServerClient = (request, response, { supabaseUrl, sup
     const verifyClientAccess = async (request) => {
         const user = await getUser();
         const clientSlug = getClientSlug(request);
-        console.log("*****");
-        console.log(user);
-        console.log(clientSlug);
-        console.log("*****");
         if (!user || !user.id || !clientSlug)
             return false;
         const { data, error } = await supabase

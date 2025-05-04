@@ -6,7 +6,8 @@
   "scripts": {
     "p": "./scripts/push.js",
     "d": "./scripts/deploy.js",
-    "s": "./scripts/start.js"
+    "s": "./scripts/start.js",
+    "sc": "./scripts/start-client-connect.js"
   },
   "keywords": [],
   "author": "",

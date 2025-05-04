@@ -1,5 +1,7 @@
 import * as React from "react"
-import { LogoutButton } from "~/components/LogoutButton"
+import { LayoutDashboard, Database, LogOut } from "lucide-react"
+import { useLoaderData, Link } from "@remix-run/react"
+import { Button } from "~/components/ui/button"
 import {
   Sidebar,
   SidebarContent,
@@ -9,13 +11,15 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "~/components/ui/sidebar"
-import { LayoutDashboard, Database } from "lucide-react"
+import type { RootLoaderData } from "~/root"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user, logoutUrl } = useLoaderData<RootLoaderData>()
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <h1 className="text-xl font-bold p-4">YourVideoEngine</h1>
+        <h1 className="text-xl font-bold p-4">Your Video Engine</h1>
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
@@ -37,9 +41,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
-      <div className="mt-auto p-4 border-t">
-        <LogoutButton />
+      <div className="border-t p-3 flex flex-col items-start gap-2">
+        <p className="text-sm text-muted-foreground">{user.email}</p>
+
+        <Button asChild>
+          <Link to={logoutUrl} type="submit" className="w-full">
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Link>
+        </Button>
       </div>
+
       <SidebarRail />
     </Sidebar>
   )
