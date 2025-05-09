@@ -4,7 +4,6 @@ import { theme } from "./theme"
 import { ThemeProvider } from "@theme/ThemeProvider"
 import * as Layout from "@/components/layout/index"
 import { TextElectric } from "@components/TextElectric"
-import { LoopingBackgroundVideo } from "@components/VideoLoop"
 
 // === Schema ===
 
@@ -29,14 +28,6 @@ export const DemoShortsComposition: React.FC<
           fontFamily: theme.fonts.body,
         }}
       >
-        <LoopingBackgroundVideo
-          src="video/background-forge.mp4"
-          durationPerLoop={86}
-        />
-
-        {/* Background Music */}
-        <Audio src={staticFile("music/forge-music.mp3")} volume={0.5} />
-
         {/* Intro */}
         <Sequence durationInFrames={90}>
           <Layout.Center>

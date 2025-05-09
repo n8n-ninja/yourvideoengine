@@ -4,7 +4,7 @@ npx remotion lambda functions deploy --disk 10240 --timeout 900
 
 ## Deploy Site
 
-npx remotion lambda sites create src/index.ts --site-name=blacksmith-shorts
+npx remotion lambda sites create src/index.ts --site-name=yourvideoengine
 
 ## Run render
 

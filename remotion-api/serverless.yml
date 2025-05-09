@@ -1,0 +1,42 @@
+service: remotion-api
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  timeout: 29
+  deploymentBucket:
+    name: manu-remotion-deployments
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            - logs:TagResource
+            - lambda:InvokeFunction
+            - lambda:GetFunction
+            - s3:*
+            - ssm:*
+          Resource: "*"
+
+functions:
+  renderVideo:
+    handler: handler.renderVideo
+    events:
+      - http:
+          path: render
+          method: post
+
+  getStatus:
+    handler: handler.getStatus
+    events:
+      - http:
+          path: status
+          method: get
+          request:
+            parameters:
+              querystrings:
+                renderId: true
