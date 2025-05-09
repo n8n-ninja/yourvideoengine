@@ -44,7 +44,9 @@ app.post("/mp3", async (req, res) => {
       writer.on("error", reject)
     })
 
-    execSync(`ffmpeg -i ${videoPath} -vn -ar 16000 -ac 1 -f mp3 ${audioPath}`)
+    execSync(
+      `ffmpeg -y -i ${videoPath} -vn -ar 16000 -ac 1 -f mp3 ${audioPath}`,
+    )
 
     res.setHeader("Content-Type", "audio/mpeg")
     fs.createReadStream(audioPath).pipe(res)
@@ -82,7 +84,9 @@ app.post("/captions", async (req, res) => {
       writer.on("error", reject)
     })
 
-    execSync(`ffmpeg -i ${videoPath} -vn -ar 16000 -ac 1 -f mp3 ${audioPath}`)
+    execSync(
+      `ffmpeg -y -i ${videoPath} -vn -ar 16000 -ac 1 -f mp3 ${audioPath}`,
+    )
 
     // For Whisper, we use srt or verbose_json, never text directly
     const whisperFormat = format === "verbose_json" ? "verbose_json" : "srt"
