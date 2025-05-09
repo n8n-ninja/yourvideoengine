@@ -4,11 +4,11 @@ import { getInputProps } from "remotion"
 import {
   BlacksmithComposition,
   BlacksmithSchema,
-} from "@/_compositions/BlacksmithShorts/Composition"
+} from "@/compositions/BlacksmithShorts/Composition"
 import {
   DemoShortsComposition,
   DemoShortsSchema,
-} from "@/_compositions/DemoShorts/Composition"
+} from "@/compositions/DemoShorts/Composition"
 
 type InputProps = {
   durationInFrames?: number

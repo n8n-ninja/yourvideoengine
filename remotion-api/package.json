@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "main": "handler.js",
   "dependencies": {
-    "@remotion/lambda": "4.0.293"
+    "@remotion/lambda": "4.0.298"
   }
 }
