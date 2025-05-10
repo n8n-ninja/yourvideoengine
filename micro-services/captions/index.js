@@ -52,7 +52,10 @@ app.post("/mp3", async (req, res) => {
     fs.createReadStream(audioPath).pipe(res)
   } catch (error) {
     console.error(error)
-    res.status(500).send(error.message || "Error")
+    res.status(500).json({
+      error: error.message || "Error",
+      stack: error.stack,
+    })
   }
 })
 
@@ -115,7 +118,10 @@ app.post("/captions", async (req, res) => {
     res.send(transcript)
   } catch (error) {
     console.error(error)
-    res.status(500).send(error.message || "Error")
+    res.status(500).json({
+      error: error.message || "Error",
+      stack: error.stack,
+    })
   }
 })
 
