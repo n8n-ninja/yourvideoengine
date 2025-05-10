@@ -91,6 +91,9 @@ app.post("/captions", async (req, res) => {
     })
 
     if (cleaningPrompt) {
+      const basePrompt =
+        "You are a subtitle cleaning assistant. Your job is to clean and improve subtitles, strictly respecting the original subtitle format (SRT or JSON), but applying the following user rules:"
+      const fullPrompt = `${basePrompt}\n${cleaningPrompt}`
       let transcriptText = transcript
       if (format === "verbose_json" && transcript.text) {
         transcriptText = transcript.text
@@ -98,7 +101,7 @@ app.post("/captions", async (req, res) => {
       const gptResponse = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
-          { role: "system", content: cleaningPrompt },
+          { role: "system", content: fullPrompt },
           { role: "user", content: transcriptText },
         ],
       })

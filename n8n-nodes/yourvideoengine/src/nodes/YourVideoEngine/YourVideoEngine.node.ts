@@ -9,6 +9,9 @@ const API_BASE_URL = "http://n04sg488kwcss8ow04kk4c8k.91.107.237.123.sslip.io"
 const API_TOKEN = "Bearer sk_live_2b87210c8f3e4d3e9a23a09d5cf7d144"
 
 export class YourVideoEngine implements INodeType {
+  constructor() {
+    console.log("YourVideoEngine node loaded")
+  }
   description: INodeTypeDescription = {
     displayName: "YourVideoEngine",
     name: "yourVideoEngine",
@@ -62,6 +65,43 @@ export class YourVideoEngine implements INodeType {
         description: "URL of the video to process.",
         required: true,
       },
+      {
+        displayName: "Format",
+        name: "format",
+        type: "options",
+        options: [
+          { name: "SRT", value: "srt" },
+          { name: "JSON", value: "json" },
+        ],
+        default: "srt",
+        description: "Format of the subtitles.",
+        displayOptions: {
+          show: {
+            resource: ["video"],
+            operation: ["getSubtitles"],
+          },
+        },
+      },
+      {
+        displayName: "Cleaning Prompt",
+        name: "cleaning_prompt",
+        type: "string",
+        typeOptions: {
+          rows: 4,
+        },
+        default: "",
+        placeholder:
+          "Instructions pour nettoyer ou contraindre la génération des sous-titres...",
+        description:
+          "Instructions facultatives pour le nettoyage ou la génération des sous-titres (ex: noms de marque, style, etc)",
+        required: false,
+        displayOptions: {
+          show: {
+            resource: ["video"],
+            operation: ["getSubtitles"],
+          },
+        },
+      },
     ],
   }
 
@@ -75,19 +115,29 @@ export class YourVideoEngine implements INodeType {
 
       if (resource === "video") {
         if (operation === "getSubtitles") {
+          const format = this.getNodeParameter("format", i) as string
+          const cleaningPrompt = this.getNodeParameter(
+            "cleaning_prompt",
+            i,
+            "",
+          ) as string
+          const body: Record<string, unknown> = {
+            url: videoUrl,
+            format,
+          }
+          if (cleaningPrompt) {
+            body.cleaning_prompt = cleaningPrompt
+          }
           const response = await this.helpers.httpRequest({
             method: "POST",
             url: `${API_BASE_URL}/captions`,
             headers: {
               Authorization: API_TOKEN,
             },
-            body: {
-              url: videoUrl,
-              format: "text",
-            },
+            body,
             json: true,
           })
-          returnData.push({ json: { srt: response, videoUrl } })
+          returnData.push({ json: { [format]: response, videoUrl } })
         } else if (operation === "getAudio") {
           const response = await this.helpers.httpRequest({
             method: "POST",
@@ -98,9 +148,18 @@ export class YourVideoEngine implements INodeType {
             body: {
               url: videoUrl,
             },
-            json: true,
+            encoding: "arraybuffer",
           })
-          returnData.push({ json: { mp3: response, videoUrl } })
+          returnData.push({
+            json: { videoUrl },
+            binary: {
+              audio: {
+                data: Buffer.from(response).toString("base64"),
+                mimeType: "audio/mpeg",
+                fileName: "audio.mp3",
+              },
+            },
+          })
         }
       }
     }
