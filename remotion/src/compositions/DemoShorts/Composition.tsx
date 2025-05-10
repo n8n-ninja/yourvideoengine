@@ -1,4 +1,4 @@
-import { AbsoluteFill, staticFile, Sequence, Audio } from "remotion"
+import { AbsoluteFill, Sequence } from "remotion"
 import { z } from "zod"
 import { theme } from "./theme"
 import { ThemeProvider } from "@theme/ThemeProvider"

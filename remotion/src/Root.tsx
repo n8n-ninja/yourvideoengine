@@ -9,6 +9,10 @@ import {
   DemoShortsComposition,
   DemoShortsSchema,
 } from "@/compositions/DemoShorts/Composition"
+import {
+  CaptionsComposition,
+  CaptionsSchema,
+} from "@/compositions/Captions/Composition"
 
 type InputProps = {
   durationInFrames?: number
@@ -70,6 +74,24 @@ export const RemotionRoot: React.FC = () => {
               node: "Shopify",
             },
           ],
+        }}
+      />
+      <Composition
+        id="Captions"
+        component={CaptionsComposition}
+        durationInFrames={300}
+        fps={30}
+        width={1080}
+        height={1920}
+        schema={CaptionsSchema}
+        defaultProps={{
+          videoUrl:
+            "https://files2.heygen.ai/aws_pacific/avatar_tmp/57ec360eba014be689b1992950c520f7/873be32229784da083ceac3b7eebefe0.mp4?Expires=1747395461&Signature=KBw-prseIuyekM~u~pN1vD3c~qJ2wDKe8ivG7bW3yolHza4AUh--MNHy3IuHpSEW12B5Ig4CWHnJlrnLhgWJJjHVV3d-uAfrkD3bzsslVx64AhpUtw2f2bAT-VXBaNN2hbQw7ZkZRflgiDTuuLT1PY~6hb1--g5ZMk4CfU0ENlYy4w~JvwagQfyYBc2Mdp0lhRp2NSrRzSoWZfEuUZSz825GWAQ51O6P09F8nRYn18rhBKktJ8Qx~LI1fuZkEmeMKHkBMiEMRlSyrQpfzqhCSZoqeImVUPT-0~YhR0U0jqklBJF5zaNWSGwDdpJW94NgSj-AgyyYVWmU~OQnIwzWXA__&Key-Pair-Id=K38HBHX5LX3X2H",
+          srt: `1\n00:00:00,000 --> 00:00:04,000\nI take Zest Colostrum gummies because the peach flavor actually makes me want to take them.\n\n2\n00:00:04,000 --> 00:00:07,000\nTwo a day for gut repair, immunity, and energy.\n\n3\n00:00:07,000 --> 00:00:09,000\nIt's the easiest switch I've made.`,
+          style: {
+            // color: "#fff",
+            // backgroundColor: "rgba(0,0,0,0.7)",
+          },
         }}
       />
     </>

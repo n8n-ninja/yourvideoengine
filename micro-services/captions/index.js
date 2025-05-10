@@ -125,6 +125,36 @@ app.post("/captions", async (req, res) => {
   }
 })
 
+/**
+ * 📝 /captions-word-by-word
+ * Transcribes audio word by word using Deepgram API
+ */
+app.post("/captions-word-by-word", async (req, res) => {
+  const audioUrl = req.body.url
+  if (!audioUrl) return res.status(400).send("Missing url")
+
+  try {
+    const response = await axios.post(
+      "https://api.deepgram.com/v1/listen?language=en&model=nova-3",
+      { url: audioUrl },
+      {
+        headers: {
+          Authorization: "Token 955ff624d0af44bf5ef57c78cf15448422c5d32a",
+          "Content-Type": "application/json",
+        },
+      },
+    )
+    res.setHeader("Content-Type", "application/json")
+    res.send(response.data)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({
+      error: error.message || "Error",
+      stack: error.stack,
+    })
+  }
+})
+
 app.listen(port, () => {
   console.log(`🚀 extract-and-caption running on port ${port}`)
 })

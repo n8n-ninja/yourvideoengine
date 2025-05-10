@@ -12,8 +12,8 @@ import { AudioWithFade } from "@/components/AudioWithFade"
 import { ImageWithTitle } from "@/components/ImageWithTitle"
 import { HeroHammer } from "@/components/HeroHammer"
 import { SerpentineLine } from "./SerpentineLine"
-import { ForgeVideo } from "@/_compositions/BlacksmithShorts/ForgeVideo"
-import { SmokeTransition } from "@/_compositions/BlacksmithShorts/SmokeTransition"
+import { ForgeVideo } from "@/compositions/BlacksmithShorts/ForgeVideo"
+import { SmokeTransition } from "@/compositions/BlacksmithShorts/SmokeTransition"
 
 // === Schema ===
 export const BlacksmithSchema = z.object({

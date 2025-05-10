@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "handler.js",
   "dependencies": {
+    "@remotion/captions": "4.0.298",
     "@remotion/lambda": "4.0.298"
   }
 }
