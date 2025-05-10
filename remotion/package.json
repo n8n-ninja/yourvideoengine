@@ -9,7 +9,6 @@
     "@remotion/cli": "4.0.298",
     "@remotion/google-fonts": "4.0.298",
     "@remotion/lambda": "4.0.298",
-    "@remotion/media-utils": "^4.0.300",
     "@remotion/zod-types": "4.0.298",
     "@types/express": "^5.0.1",
     "express": "^5.1.0",
