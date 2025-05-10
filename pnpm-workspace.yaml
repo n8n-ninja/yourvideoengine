@@ -5,3 +5,4 @@ packages:
   - remotion-api
   - studios/*
   - packages/*
+  - n8n-nodes/*

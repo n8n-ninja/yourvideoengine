@@ -62,12 +62,8 @@ app.post("/mp3", async (req, res) => {
  */
 app.post("/captions", async (req, res) => {
   const videoUrl = req.body.url
-  let format =
-    req.body.format === "json"
-      ? "verbose_json"
-      : req.body.format === "text"
-        ? "text"
-        : "srt"
+  const requestedFormat = req.body.format
+  const format = requestedFormat === "json" ? "verbose_json" : "srt"
   const cleaningPrompt = req.body.cleaning_prompt
 
   if (!videoUrl) return res.status(400).send("Missing url")
@@ -88,18 +84,15 @@ app.post("/captions", async (req, res) => {
       `ffmpeg -y -i ${videoPath} -vn -ar 16000 -ac 1 -f mp3 ${audioPath}`,
     )
 
-    // For Whisper, we use srt or verbose_json, never text directly
-    const whisperFormat = format === "verbose_json" ? "verbose_json" : "srt"
     let transcript = await openai.audio.transcriptions.create({
       file: fs.createReadStream(audioPath),
       model: "whisper-1",
-      response_format: whisperFormat,
+      response_format: format,
     })
 
-    // If cleaningPrompt is provided, clean the text with GPT
     if (cleaningPrompt) {
       let transcriptText = transcript
-      if (whisperFormat === "verbose_json" && transcript.text) {
+      if (format === "verbose_json" && transcript.text) {
         transcriptText = transcript.text
       }
       const gptResponse = await openai.chat.completions.create({
@@ -110,24 +103,6 @@ app.post("/captions", async (req, res) => {
         ],
       })
       transcript = gptResponse.choices[0].message.content
-    }
-
-    // If format == text, do a LLM post-processing to get pure text
-    // Prompt to get pure text from subtitles
-    const pureTextPrompt =
-      "Transform these subtitles into continuous text, without timecodes, formatting, or comments. Only the spoken text, well written."
-    if (format === "text") {
-      const gptTextResponse = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: pureTextPrompt },
-          { role: "user", content: transcript },
-        ],
-      })
-      transcript = gptTextResponse.choices[0].message.content
-      res.setHeader("Content-Type", "text/plain")
-      res.send(transcript)
-      return
     }
 
     res.setHeader(
