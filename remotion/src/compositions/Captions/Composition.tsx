@@ -48,12 +48,44 @@ export const CaptionsSchema = z.object({
   borderRadius: z.number().optional(),
   uppercase: z.boolean().optional(),
   fontWeight: z.enum(["light", "regular", "bold", "black"]).optional(),
-  textShadow: z.boolean().optional(),
-  textShadowColor: z.string().optional(),
+  textOutline: z
+    .object({
+      color: z.string().optional(),
+      width: z.number().optional(),
+      shadowColor: z.string().optional(),
+      shadowSpread: z.number().optional(),
+      shadowBlur: z.number().optional(),
+    })
+    .optional(),
   animationType: z.enum(["none", "bump", "grow", "lift"]).optional(),
   highlightColor: z.string().optional(),
   combineTokensWithinMilliseconds: z.number().optional(),
   verticalAlign: z.enum(["top", "center", "bottom"]).optional(),
+
+  phraseInAnimation: z.string().optional(),
+  phraseOutAnimation: z.string().optional(),
+  phraseAnimationDuration: z.number().optional(),
+  karaoke: z.boolean().optional(),
+  karaokeColor: z.string().optional(),
+  wordSpacing: z.string().optional(),
+  letterSpacing: z.string().optional(),
+  lineSpacing: z.string().optional(),
+  textAlign: z.enum(["left", "center", "right", "justify"]).optional(),
+  backgroundGradient: z.string().optional(),
+  backgroundBlur: z.string().optional(),
+  boxBorderColor: z.string().optional(),
+  boxBorderWidth: z.string().optional(),
+  boxShadow: z.string().optional(),
+  transitionDuration: z.string().optional(),
+  transitionEasing: z.string().optional(),
+  typewriter: z.boolean().optional(),
+  typewriterSpeed: z.number().optional(),
+  bounce: z.boolean().optional(),
+  wave: z.boolean().optional(),
+  margin: z.string().optional(),
+  boxWidth: z.string().optional(),
+  fullWidth: z.boolean().optional(),
+  boxHeight: z.union([z.string(), z.number()]).optional(),
 })
 
 export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
@@ -71,12 +103,35 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
   borderRadius,
   uppercase,
   fontWeight,
-  textShadow,
-  textShadowColor,
+  textOutline,
   animationType = "bump",
   highlightColor,
   combineTokensWithinMilliseconds = 1400,
   verticalAlign = "center",
+  phraseInAnimation,
+  phraseOutAnimation,
+  phraseAnimationDuration,
+  karaoke,
+  karaokeColor,
+  wordSpacing,
+  letterSpacing,
+  lineSpacing,
+  textAlign,
+  backgroundGradient,
+  backgroundBlur,
+  boxBorderColor,
+  boxBorderWidth,
+  boxShadow,
+  transitionDuration,
+  transitionEasing,
+  typewriter,
+  typewriterSpeed,
+  bounce,
+  wave,
+  margin,
+  boxWidth,
+  fullWidth,
+  boxHeight,
 }) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
@@ -105,45 +160,63 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
   const videoWidth = width ?? meta?.width ?? 1080
   const videoHeight = height ?? meta?.height ?? 1920
 
-  const containerStyle = {
-    position: "absolute" as const,
-    top: `${top || 75}%`,
-    left: 0,
-    width: "100%",
-    textAlign: "center" as const,
-    transform:
-      verticalAlign === "center"
-        ? "translateY(-50%)"
-        : verticalAlign === "bottom"
-          ? "translateY(-100%)"
-          : "translateY(0%)",
-  }
-
-  const fontFamilyCss = fontFamily
-    ? `${fontFamily}, sans-serif`
-    : "Arial, sans-serif"
-
   const defaultStyle = {
-    fontFamily: fontFamilyCss,
+    fontFamily: fontFamily ? `${fontFamily}, sans-serif` : "Arial, sans-serif",
     color: color,
     fontSize: fontSize || 90,
     backgroundColor: backgroundColor,
     padding: padding || "0.2em 0.6em",
     borderRadius: borderRadius ?? 18,
-    textAlign: "center" as const,
-    margin: "auto",
+    textAlign: textAlign || "center",
     display: "inline-block" as const,
-    maxWidth: "80%",
-    lineHeight: 1.4,
+    width: fullWidth ? "100%" : boxWidth || undefined,
+    maxWidth: fullWidth ? undefined : boxWidth ? undefined : "80%",
+    lineHeight: lineSpacing || 1.4,
     textWrap: "balance" as const,
     wordBreak: "break-word" as const,
     whiteSpace: "pre-wrap" as const,
     fontWeight: fontWeight
       ? { light: 300, regular: 500, bold: 700, black: 900 }[fontWeight] || 300
       : 300,
-    ...(textShadow
+    ...(() => {
+      if (!textOutline) return {}
+      const outlineColor = textOutline.color || "#000"
+      const outlineWidth = textOutline.width ?? 2
+      // Contour net (stroke)
+      const outlineShadows = [
+        `${outlineWidth}px 0 ${outlineColor}`,
+        `0 ${outlineWidth}px ${outlineColor}`,
+        `-${outlineWidth}px 0 ${outlineColor}`,
+        `0 -${outlineWidth}px ${outlineColor}`,
+      ]
+      // Ombre portée
+      let shadow = ""
+      if (textOutline.shadowColor) {
+        const spread = textOutline.shadowSpread ?? 2
+        const blur = textOutline.shadowBlur ?? 8
+        shadow = `0 2px ${blur}px ${textOutline.shadowColor}, 0 1px ${spread}px ${textOutline.shadowColor}`
+      }
+      return {
+        textShadow: [...outlineShadows, shadow].filter(Boolean).join(", "),
+      }
+    })(),
+    ...(wordSpacing ? { wordSpacing } : {}),
+    ...(letterSpacing ? { letterSpacing } : {}),
+    ...(backgroundGradient ? { background: backgroundGradient } : {}),
+    ...(backgroundBlur ? { backdropFilter: `blur(${backgroundBlur})` } : {}),
+    ...(boxBorderColor
+      ? { borderColor: boxBorderColor, borderStyle: "solid" }
+      : {}),
+    ...(boxBorderWidth ? { borderWidth: boxBorderWidth } : {}),
+    ...(boxShadow ? { boxShadow } : {}),
+    ...(margin ? { margin } : {}),
+    ...(boxHeight
       ? {
-          textShadow: `0 2px 13px ${textShadowColor || "rgba(0,0,0,1)"}, 0 1px 8px ${textShadowColor || "rgba(0,0,0,1)"}`,
+          height: boxHeight,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column" as const,
         }
       : {}),
   }
@@ -173,9 +246,79 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
   // Détermine si au moins un mot est affiché (pour masquer le container si aucun mot)
   let shouldShowContainer = false
   if (activePage) {
-    shouldShowContainer = activePage.tokens.some(
-      (token) => currentMs >= token.fromMs && currentMs < token.toMs,
-    )
+    const animDurationMs = (phraseAnimationDuration || 0.1) * 1000
+    const phraseEnd = activePage.startMs + activePage.durationMs
+    // Affiche la boîte tant que la phrase n'est pas terminée OU tant que l'animation de sortie n'est pas terminée
+    shouldShowContainer =
+      (currentMs >= activePage.startMs && currentMs < phraseEnd) ||
+      (phraseOutAnimation &&
+        currentMs >= phraseEnd &&
+        currentMs < phraseEnd + animDurationMs)
+  }
+
+  // Ajout styles avancés sur le container
+  const containerStyle = {
+    position: "absolute" as const,
+    top: `${top || 75}%`,
+    left: 0,
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: textAlign || ("center" as const),
+    transform:
+      verticalAlign === "center"
+        ? "translateY(-50%)"
+        : verticalAlign === "bottom"
+          ? "translateY(-100%)"
+          : "translateY(0%)",
+  }
+
+  // Animation d'entrée/sortie de la phrase
+  const phraseIn = phraseInAnimation || null
+  const phraseOut = phraseOutAnimation || null
+  const animDuration = phraseAnimationDuration || 0.1 // secondes
+
+  const phraseStart = activePage?.startMs ?? 0
+  const phraseEnd = (activePage?.startMs ?? 0) + (activePage?.durationMs ?? 0)
+  const phraseInEnd = phraseStart + animDuration * 1000
+  const phraseOutStart = phraseEnd - animDuration * 1000
+
+  let animStyle = {}
+  if (activePage) {
+    if (phraseIn && currentMs < phraseInEnd) {
+      // Animation d'entrée
+      const progress = Math.max(
+        0,
+        Math.min(1, (currentMs - phraseStart) / (phraseInEnd - phraseStart)),
+      )
+      if (phraseIn === "fade") animStyle = { opacity: progress }
+      if (phraseIn === "slide-up")
+        animStyle = {
+          opacity: progress,
+          transform: `translateY(${(1 - progress) * 40}px)`,
+        }
+    } else if (phraseOut && currentMs > phraseOutStart) {
+      // Animation de sortie
+      const progress = Math.max(
+        0,
+        Math.min(
+          1,
+          1 - (currentMs - phraseOutStart) / (phraseEnd - phraseOutStart),
+        ),
+      )
+      if (phraseOut === "fade") animStyle = { opacity: progress }
+      if (phraseOut === "slide-up")
+        animStyle = {
+          opacity: progress,
+          transform: `translateY(-${(1 - progress) * 40}px)`,
+        }
+      if (phraseOut === "slide-down")
+        animStyle = {
+          opacity: progress,
+          transform: `translateY(${(1 - progress) * 40}px)`,
+        }
+    }
   }
 
   return (
@@ -189,7 +332,7 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
       <Video src={videoUrl} style={{ width: "100%", height: "100%" }} />
       <div style={containerStyle}>
         {activePage && shouldShowContainer && (
-          <div style={defaultStyle}>
+          <div style={{ ...defaultStyle, ...animStyle }}>
             {activePage.tokens.map((token, i) => {
               const isActive =
                 currentMs >= token.fromMs && currentMs < token.toMs
@@ -252,6 +395,9 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
                     display: "inline-block",
                     transform: `scale(${scale}) translateY(${translateY}%)`,
                     color: wordColor,
+                    ...(wordSpacing && i !== activePage.tokens.length - 1
+                      ? { marginRight: wordSpacing }
+                      : {}),
                   }}
                 >
                   {word}
