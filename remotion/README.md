@@ -34,15 +34,7 @@ cat response.json
 
 ## curl
 
-curl -X POST https://vn4gjkafoc.execute-api.us-east-1.amazonaws.com/ \
- -H "Content-Type: application/json" \
- -d '{
-"serveUrl": "https://remotionlambda-useast1-xw8v2xhmyv.s3.us-east-1.amazonaws.com/sites/yourvideoengine/index.html",
-"composition": "Captions",
-"inputProps": {
-"text": "dernier test ok ?"
-}
-}'
+w
 
 ## notes
 
