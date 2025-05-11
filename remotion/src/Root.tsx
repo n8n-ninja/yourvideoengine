@@ -90,7 +90,13 @@ export const RemotionRoot: React.FC = () => {
           textShadow: true,
           borderRadius: 18,
           fontWeight: "black" as const,
+          color: "#fff",
+          colors: ["#F8C734", "#E89F19", "#D87700"],
+          highlightColor: "#F8C734",
           uppercase: true,
+          fontSize: 60,
+          combineTokensWithinMilliseconds: 1400,
+          animationType: "grow",
           videoUrl:
             "https://files2.heygen.ai/aws_pacific/avatar_tmp/57ec360eba014be689b1992950c520f7/873be32229784da083ceac3b7eebefe0.mp4?Expires=1747395461&Signature=KBw-prseIuyekM~u~pN1vD3c~qJ2wDKe8ivG7bW3yolHza4AUh--MNHy3IuHpSEW12B5Ig4CWHnJlrnLhgWJJjHVV3d-uAfrkD3bzsslVx64AhpUtw2f2bAT-VXBaNN2hbQw7ZkZRflgiDTuuLT1PY~6hb1--g5ZMk4CfU0ENlYy4w~JvwagQfyYBc2Mdp0lhRp2NSrRzSoWZfEuUZSz825GWAQ51O6P09F8nRYn18rhBKktJ8Qx~LI1fuZkEmeMKHkBMiEMRlSyrQpfzqhCSZoqeImVUPT-0~YhR0U0jqklBJF5zaNWSGwDdpJW94NgSj-AgyyYVWmU~OQnIwzWXA__&Key-Pair-Id=K38HBHX5LX3X2H",
           words: [
@@ -180,7 +186,6 @@ export const RemotionRoot: React.FC = () => {
             },
             { word: "made", start: 8.559999, end: 8.72, confidence: 0.995906 },
           ],
-          color: "",
           backgroundColor: "rgba(0,0,0,0.4)",
         }}
       />
