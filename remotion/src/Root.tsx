@@ -86,18 +86,20 @@ export const RemotionRoot: React.FC = () => {
         schema={CaptionsSchema}
         defaultProps={{
           fontFamily: "Montserrat" as const,
-          padding: "0.6em 0.6em",
+          padding: "0.6em 2em",
           fontWeight: "black" as const,
           color: "#fff",
           colors: ["#F8C734", "#E89F19", "#D87700"],
           highlightColor: "#F8C734",
           uppercase: true,
           fontSize: 60,
-          combineTokensWithinMilliseconds: 1000,
+
+          combineTokensWithinMilliseconds: 0,
+          backgroundColor: "rgba(0,0,0,0.4)",
           letterSpacing: "0.15em",
           textAlign: "center",
           margin: "30px",
-          boxWidth: "80%",
+          boxWidth: "auto",
           textOutline: {
             color: "black",
             width: 0,
@@ -105,9 +107,7 @@ export const RemotionRoot: React.FC = () => {
             shadowSpread: 10,
             shadowBlur: 30,
           },
-          phraseInAnimation: "slide-up",
-          phraseOutAnimation: "slide-down",
-          phraseAnimationDuration: 0.05,
+
           top: 100.1,
           verticalAlign: "bottom",
           wave: true,

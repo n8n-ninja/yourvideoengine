@@ -61,12 +61,9 @@ export const CaptionsSchema = z.object({
   highlightColor: z.string().optional(),
   combineTokensWithinMilliseconds: z.number().optional(),
   verticalAlign: z.enum(["top", "center", "bottom"]).optional(),
-
   phraseInAnimation: z.string().optional(),
   phraseOutAnimation: z.string().optional(),
   phraseAnimationDuration: z.number().optional(),
-  karaoke: z.boolean().optional(),
-  karaokeColor: z.string().optional(),
   wordSpacing: z.string().optional(),
   letterSpacing: z.string().optional(),
   lineSpacing: z.string().optional(),
@@ -78,10 +75,6 @@ export const CaptionsSchema = z.object({
   boxShadow: z.string().optional(),
   transitionDuration: z.string().optional(),
   transitionEasing: z.string().optional(),
-  typewriter: z.boolean().optional(),
-  typewriterSpeed: z.number().optional(),
-  bounce: z.boolean().optional(),
-  wave: z.boolean().optional(),
   margin: z.string().optional(),
   boxWidth: z.string().optional(),
   fullWidth: z.boolean().optional(),
@@ -111,8 +104,6 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
   phraseInAnimation,
   phraseOutAnimation,
   phraseAnimationDuration,
-  karaoke,
-  karaokeColor,
   wordSpacing,
   letterSpacing,
   lineSpacing,
@@ -124,10 +115,6 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
   boxShadow,
   transitionDuration,
   transitionEasing,
-  typewriter,
-  typewriterSpeed,
-  bounce,
-  wave,
   margin,
   boxWidth,
   fullWidth,
@@ -251,7 +238,7 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
     // Affiche la boîte tant que la phrase n'est pas terminée OU tant que l'animation de sortie n'est pas terminée
     shouldShowContainer =
       (currentMs >= activePage.startMs && currentMs < phraseEnd) ||
-      (phraseOutAnimation &&
+      (!!phraseOutAnimation &&
         currentMs >= phraseEnd &&
         currentMs < phraseEnd + animDurationMs)
   }
@@ -320,6 +307,11 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
         }
     }
   }
+
+  // Définir la transition personnalisée pour les mots
+  const transitionDurationValue = transitionDuration || "0.12s"
+  const transitionEasingValue = transitionEasing || "cubic-bezier(0.4,0,0.2,1)"
+  const wordTransition = `opacity ${transitionDurationValue}, transform ${transitionDurationValue} ${transitionEasingValue}, color ${transitionDurationValue} ${transitionEasingValue}`
 
   return (
     <AbsoluteFill
@@ -390,8 +382,7 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
                   key={`${activePageIndex}-${i}`}
                   style={{
                     opacity: 1,
-                    transition:
-                      "opacity 0.2s, transform 0.12s cubic-bezier(0.4,0,0.2,1), color 0.12s cubic-bezier(0.4,0,0.2,1)",
+                    transition: wordTransition,
                     display: "inline-block",
                     transform: `scale(${scale}) translateY(${translateY}%)`,
                     color: wordColor,
