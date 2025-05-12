@@ -1,0 +1,27 @@
+{
+  "name": "n8n-nodes-yourvideoengine",
+  "version": "0.1.0",
+  "description": "Custom n8n node: Hello World",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src --ext .ts",
+    "d": "sh ./deploy.sh"
+  },
+  "keywords": [
+    "n8n",
+    "n8n-nodes"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "n8n-workflow": "^1.0.0",
+    "n8n-core": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "eslint": "^8.0.0"
+  }
+}

@@ -204,6 +204,23 @@ export class YVEVideoCaptions implements INodeType {
         },
       },
       {
+        displayName: "Highlight Color",
+        name: "highlightColor",
+        type: "string",
+        default: "",
+        typeOptions: {
+          colorPicker: true,
+        },
+        description: "Color for the highlighted/active word.",
+        required: false,
+        displayOptions: {
+          show: {
+            resource: ["video"],
+            operation: ["captionWordByWord"],
+          },
+        },
+      },
+      {
         displayName: "Font Weight",
         name: "fontWeight",
         type: "options",
@@ -454,18 +471,6 @@ export class YVEVideoCaptions implements INodeType {
             required: false,
           },
           {
-            displayName: "Highlight Color",
-            name: "highlightColor",
-            type: "string",
-            default: "",
-            typeOptions: {
-              colorPicker: true,
-            },
-            description: "Color for the highlighted/active word.",
-            required: false,
-          },
-
-          {
             displayName: "Transition Duration (CSS)",
             name: "transitionDuration",
             type: "string",
@@ -696,30 +701,15 @@ export class YVEVideoCaptions implements INodeType {
         {},
       ) as any
 
-      // Main parameters (always visible)
-      const color = this.getNodeParameter("color", i, "#fff") as string
-      const fontSize = this.getNodeParameter("fontSize", i, 90) as number
-      const fontFamily = this.getNodeParameter(
-        "fontFamily",
-        i,
-        "Montserrat",
-      ) as string
-      const fontWeight = this.getNodeParameter(
-        "fontWeight",
-        i,
-        "black",
-      ) as string
-      const animationType = this.getNodeParameter(
-        "animationType",
-        i,
-        "bump",
-      ) as string
-      const top = this.getNodeParameter("top", i, 75) as number
-      const uppercase = this.getNodeParameter("uppercase", i, false) as boolean
-
-      // Extract advanced options (with fallback)
-      const getAdv = (key: string, fallback: any) =>
-        style && style[key] !== undefined ? style[key] : fallback
+      // Main parameters (toujours visibles, sans fallback)
+      const color = this.getNodeParameter("color", i)
+      const highlightColor = this.getNodeParameter("highlightColor", i)
+      const fontSize = this.getNodeParameter("fontSize", i)
+      const fontFamily = this.getNodeParameter("fontFamily", i)
+      const fontWeight = this.getNodeParameter("fontWeight", i)
+      const animationType = this.getNodeParameter("animationType", i)
+      const top = this.getNodeParameter("top", i)
+      const uppercase = this.getNodeParameter("uppercase", i)
 
       let wordsArr = []
       if (resource === "video") {
@@ -768,64 +758,28 @@ export class YVEVideoCaptions implements INodeType {
               )
             }
 
+            // inputProps: on ne passe que les props définies
             const inputProps: any = {
               videoUrl,
               words: wordsArr,
-              color,
-              fontSize,
-              fontFamily,
-              fontWeight,
-              animationType,
-              top,
-              uppercase,
-              // Advanced
-              colors: (getAdv("colors", "") as string)
-                .split(",")
-                .map((c: string) => c.trim())
-                .filter(Boolean),
-              backgroundColor: getAdv("backgroundColor", "rgba(0,0,0,0.7)"),
-              backgroundGradient: getAdv("backgroundGradient", ""),
-              backgroundBlur: getAdv("backgroundBlur", ""),
-              padding: getAdv("padding", "0.2em 0.6em"),
-              borderRadius: getAdv("borderRadius", 18),
-              boxBorderColor: getAdv("boxBorderColor", ""),
-              boxBorderWidth: getAdv("boxBorderWidth", ""),
-              boxShadow: getAdv("boxShadow", ""),
-              margin: getAdv("margin", ""),
-              boxWidth: getAdv("boxWidth", ""),
-              fullWidth: getAdv("fullWidth", false),
-              boxHeight: getAdv("boxHeight", ""),
-              lineSpacing: getAdv("lineSpacing", ""),
-              wordSpacing: getAdv("wordSpacing", ""),
-              letterSpacing: getAdv("letterSpacing", ""),
-              textAlign: getAdv("textAlign", "center"),
-              verticalAlign: getAdv("verticalAlign", "center"),
-              highlightColor: getAdv("highlightColor", ""),
-              combineTokensWithinMilliseconds: getAdv(
-                "combineTokensWithinMilliseconds",
-                1400,
-              ),
-              transitionDuration: getAdv("transitionDuration", "0.12s"),
-              transitionEasing: getAdv(
-                "transitionEasing",
-                "cubic-bezier(0.4,0,0.2,1)",
-              ),
-              phraseInAnimation: getAdv("phraseInAnimation", ""),
-              phraseOutAnimation: getAdv("phraseOutAnimation", ""),
-              phraseAnimationDuration: getAdv("phraseAnimationDuration", 0.1),
-              textOutline: (() => {
-                const outline = getAdv("textOutline", {})
-                if (
-                  outline &&
-                  outline.outline &&
-                  Array.isArray(outline.outline) &&
-                  outline.outline.length > 0
-                ) {
-                  return outline.outline[0]
-                }
-                return undefined
-              })(),
             }
+            if (color !== undefined) inputProps.color = color
+            if (fontSize !== undefined) inputProps.fontSize = fontSize
+            if (fontFamily !== undefined) inputProps.fontFamily = fontFamily
+            if (fontWeight !== undefined) inputProps.fontWeight = fontWeight
+            if (animationType !== undefined)
+              inputProps.animationType = animationType
+            if (top !== undefined) inputProps.top = top
+            if (uppercase !== undefined) inputProps.uppercase = uppercase
+            if (highlightColor !== undefined)
+              inputProps.highlightColor = highlightColor
+
+            // Pour le style (collection)
+            Object.entries(style || {}).forEach(([key, value]) => {
+              if (value !== undefined && value !== "") {
+                inputProps[key] = value
+              }
+            })
 
             const remotionPayload = {
               serveUrl:
