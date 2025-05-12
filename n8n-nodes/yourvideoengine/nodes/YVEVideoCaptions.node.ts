@@ -326,6 +326,20 @@ export class YVEVideoCaptions implements INodeType {
           },
         },
       },
+      {
+        displayName: "Active Word Style (JSON)",
+        name: "activeWordStyle",
+        type: "json",
+        default: "{}",
+        description:
+          'Custom JSON for the active word (e.g. {"textShadow":"2px 2px 8px #F2E905","fontWeight":"bold"})',
+        required: false,
+        displayOptions: {
+          show: {
+            operation: ["addCaptionsToVideo"],
+          },
+        },
+      },
       // Regroupe toutes les options de style dans une seule collection
       {
         displayName: "Optional Style",
@@ -520,6 +534,11 @@ export class YVEVideoCaptions implements INodeType {
         // Style params
         const boxStyleStr = this.getNodeParameter("boxStyle", i, "") as string
         const textStyleStr = this.getNodeParameter("textStyle", i, "") as string
+        const activeWordStyleStr = this.getNodeParameter(
+          "activeWordStyle",
+          i,
+          "",
+        ) as string
 
         // Position params
         const topPos = this.getNodeParameter("topPos", i)
@@ -609,6 +628,13 @@ export class YVEVideoCaptions implements INodeType {
               inputProps.textStyle = JSON.parse(textStyleStr)
             } catch (e) {
               throw new Error("textStyle is not valid JSON: " + e)
+            }
+          }
+          if (activeWordStyleStr && activeWordStyleStr.trim() !== "") {
+            try {
+              inputProps.activeWordStyle = JSON.parse(activeWordStyleStr)
+            } catch (e) {
+              throw new Error("activeWordStyle is not valid JSON: " + e)
             }
           }
 

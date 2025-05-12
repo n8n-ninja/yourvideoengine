@@ -310,6 +310,19 @@ class YVEVideoCaptions {
                         },
                     },
                 },
+                {
+                    displayName: "Active Word Style (JSON)",
+                    name: "activeWordStyle",
+                    type: "json",
+                    default: "{}",
+                    description: 'Custom JSON for the active word (e.g. {"textShadow":"2px 2px 8px #F2E905","fontWeight":"bold"})',
+                    required: false,
+                    displayOptions: {
+                        show: {
+                            operation: ["addCaptionsToVideo"],
+                        },
+                    },
+                },
                 // Regroupe toutes les options de style dans une seule collection
                 {
                     displayName: "Optional Style",
@@ -489,6 +502,7 @@ class YVEVideoCaptions {
                 // Style params
                 const boxStyleStr = this.getNodeParameter("boxStyle", i, "");
                 const textStyleStr = this.getNodeParameter("textStyle", i, "");
+                const activeWordStyleStr = this.getNodeParameter("activeWordStyle", i, "");
                 // Position params
                 const topPos = this.getNodeParameter("topPos", i);
                 const bottomPos = this.getNodeParameter("bottomPos", i);
@@ -577,6 +591,14 @@ class YVEVideoCaptions {
                         }
                         catch (e) {
                             throw new Error("textStyle is not valid JSON: " + e);
+                        }
+                    }
+                    if (activeWordStyleStr && activeWordStyleStr.trim() !== "") {
+                        try {
+                            inputProps.activeWordStyle = JSON.parse(activeWordStyleStr);
+                        }
+                        catch (e) {
+                            throw new Error("activeWordStyle is not valid JSON: " + e);
                         }
                     }
                     // Position & align
