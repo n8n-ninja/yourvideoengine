@@ -88,34 +88,23 @@ export const RemotionRoot: React.FC = () => {
           videoUrl:
             "https://files2.heygen.ai/aws_pacific/avatar_tmp/57ec360eba014be689b1992950c520f7/873be32229784da083ceac3b7eebefe0.mp4?Expires=1747395461&Signature=KBw-prseIuyekM~u~pN1vD3c~qJ2wDKe8ivG7bW3yolHza4AUh--MNHy3IuHpSEW12B5Ig4CWHnJlrnLhgWJJjHVV3d-uAfrkD3bzsslVx64AhpUtw2f2bAT-VXBaNN2hbQw7ZkZRflgiDTuuLT1PY~6hb1--g5ZMk4CfU0ENlYy4w~JvwagQfyYBc2Mdp0lhRp2NSrRzSoWZfEuUZSz825GWAQ51O6P09F8nRYn18rhBKktJ8Qx~LI1fuZkEmeMKHkBMiEMRlSyrQpfzqhCSZoqeImVUPT-0~YhR0U0jqklBJF5zaNWSGwDdpJW94NgSj-AgyyYVWmU~OQnIwzWXA__&Key-Pair-Id=K38HBHX5LX3X2H",
           combineTokensWithinMilliseconds: 1000,
-
-          // Font
-          fontFamily: "Montserrat" as const,
-          fontWeight: "black" as const,
+          fontFamily: "Montserrat",
+          fontWeight: "black",
           color: "#fff",
-          colors: ["#F8C734", "#E89F19", "#D87700"],
           highlightColor: "#F8C734",
           uppercase: true,
           fontSize: 55,
-          top: 80,
-          verticalAlign: "center" as const,
-          textAlign: "center",
-          animationType: "grow" as const,
-          textOutline: {
-            color: "black",
-            width: 0,
-            shadowColor: "black",
-            shadowSpread: 10,
-            shadowBlur: 30,
+          position: 80,
+          verticalAlign: "center",
+          animationType: "grow",
+          backgroundColor: "rgba(0,0,0,0.4)",
+          boxStyle: {
+            backgroundColor: "rgba(0,0,0,0.4)",
           },
 
-          // Box
-          padding: "0.6em 2em",
-          backgroundColor: "rgba(0,0,0,0.4)",
-          margin: "30px",
-          borderRadius: 80,
-
-          // Words
+          textStyle: {
+            textShadow: "0 2px 30px #000, 0 1px 10px #000",
+          },
           words: [
             { word: "i", start: 0.16, end: 0.39999998, confidence: 0.9945892 },
             { word: "take", start: 0.39999998, end: 0.64, confidence: 0.99927 },

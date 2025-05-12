@@ -53,6 +53,19 @@ class YVEVideoCaptions {
                 },
                 // VIDEO CAPTION STYLE PARAMS (toujours visibles pour addCaptionsToVideo)
                 {
+                    displayName: "Combine Tokens Within (ms)",
+                    name: "combineTokensWithinMilliseconds",
+                    type: "number",
+                    default: 1400,
+                    description: "Regroup words into phrases if they are close in time (ms). 0 = word by word.",
+                    required: false,
+                    displayOptions: {
+                        show: {
+                            operation: ["addCaptionsToVideo"],
+                        },
+                    },
+                },
+                {
                     displayName: "Position (0-100%)",
                     name: "top",
                     type: "number",
@@ -146,7 +159,7 @@ class YVEVideoCaptions {
                     ],
                     default: "black",
                     description: "Font weight for the captions.",
-                    required: false,
+                    required: true,
                     displayOptions: {
                         show: {
                             operation: ["addCaptionsToVideo"],
@@ -163,9 +176,9 @@ class YVEVideoCaptions {
                         { name: "Grow", value: "grow" },
                         { name: "Lift", value: "lift" },
                     ],
-                    default: "bump",
+                    default: "none",
                     description: "Type of animation for word appearance.",
-                    required: false,
+                    required: true,
                     displayOptions: {
                         show: {
                             operation: ["addCaptionsToVideo"],
@@ -193,14 +206,6 @@ class YVEVideoCaptions {
                     placeholder: "Add Option",
                     default: {},
                     options: [
-                        {
-                            displayName: "Combine Tokens Within (ms)",
-                            name: "combineTokensWithinMilliseconds",
-                            type: "number",
-                            default: 1400,
-                            description: "Regroup words into phrases if they are close in time (ms). 0 = word by word.",
-                            required: false,
-                        },
                         {
                             displayName: "Font Weight",
                             name: "fontWeight",
@@ -605,6 +610,7 @@ class YVEVideoCaptions {
                 const animationType = this.getNodeParameter("animationType", i);
                 const top = this.getNodeParameter("top", i);
                 const uppercase = this.getNodeParameter("uppercase", i);
+                const combineTokensWithinMilliseconds = this.getNodeParameter("combineTokensWithinMilliseconds", i);
                 const deepgramOptions = {
                     model: optionalTranslation.model ?? "nova-3",
                     language: optionalTranslation.language ?? "en",
@@ -653,6 +659,7 @@ class YVEVideoCaptions {
                     const inputProps = {
                         videoUrl,
                         words: words,
+                        combineTokensWithinMilliseconds,
                     };
                     if (color !== undefined)
                         inputProps.color = color;
