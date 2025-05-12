@@ -64,7 +64,6 @@ export const CaptionsSchema = z.object({
   phraseInAnimation: z.string().optional(),
   phraseOutAnimation: z.string().optional(),
   phraseAnimationDuration: z.number().optional(),
-  wordSpacing: z.string().optional(),
   letterSpacing: z.string().optional(),
   lineSpacing: z.string().optional(),
   textAlign: z.enum(["left", "center", "right", "justify"]).optional(),
@@ -104,7 +103,6 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
   phraseInAnimation,
   phraseOutAnimation,
   phraseAnimationDuration,
-  wordSpacing,
   letterSpacing,
   lineSpacing,
   textAlign,
@@ -154,14 +152,17 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
     backgroundColor: backgroundColor,
     padding: padding || "0.2em 0.6em",
     borderRadius: borderRadius ?? 18,
-    textAlign: textAlign || "center",
-    display: "inline-block" as const,
+    display: "inline-flex",
+    flexWrap: "wrap" as const,
+    gap: "0em 0.4em",
     width: fullWidth ? "100%" : boxWidth || undefined,
-    maxWidth: fullWidth ? undefined : boxWidth ? undefined : "80%",
+    maxWidth: fullWidth ? undefined : boxWidth ? undefined : "auto",
     lineHeight: lineSpacing || 1.4,
     textWrap: "balance" as const,
     wordBreak: "break-word" as const,
     whiteSpace: "pre-wrap" as const,
+    justifyContent: textAlign || "center",
+    textAlign: textAlign || "center",
     fontWeight: fontWeight
       ? { light: 300, regular: 500, bold: 700, black: 900 }[fontWeight] || 300
       : 300,
@@ -187,7 +188,7 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
         textShadow: [...outlineShadows, shadow].filter(Boolean).join(", "),
       }
     })(),
-    ...(wordSpacing ? { wordSpacing } : {}),
+
     ...(letterSpacing ? { letterSpacing } : {}),
     ...(backgroundGradient ? { background: backgroundGradient } : {}),
     ...(backgroundBlur ? { backdropFilter: `blur(${backgroundBlur})` } : {}),
@@ -209,8 +210,8 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
   }
 
   // Convert words to TikTok-style captions input
-  const captions = words.map((w, i) => ({
-    text: (i === 0 ? "" : " ") + w.word, // espace avant chaque mot sauf le premier
+  const captions = words.map((w) => ({
+    text: " " + w.word,
     startMs: Math.round(w.start * 1000),
     endMs: Math.round(w.end * 1000),
     timestampMs: Math.round(((w.start + w.end) / 2) * 1000),
@@ -372,11 +373,11 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
               const word =
                 combineTokensWithinMilliseconds === 0
                   ? uppercase
-                    ? token.text.trimStart().toUpperCase()
-                    : token.text.trimStart()
+                    ? token.text.trim().toUpperCase()
+                    : token.text.trim()
                   : uppercase
-                    ? token.text.toUpperCase()
-                    : token.text
+                    ? token.text.trim().toUpperCase()
+                    : token.text.trim()
               return (
                 <span
                   key={`${activePageIndex}-${i}`}
@@ -386,9 +387,6 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
                     display: "inline-block",
                     transform: `scale(${scale}) translateY(${translateY}%)`,
                     color: wordColor,
-                    ...(wordSpacing && i !== activePage.tokens.length - 1
-                      ? { marginRight: wordSpacing }
-                      : {}),
                   }}
                 >
                   {word}

@@ -79,27 +79,28 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="Captions"
         component={CaptionsComposition}
-        durationInFrames={300}
+        durationInFrames={duration}
         fps={30}
         width={1080}
         height={1920}
         schema={CaptionsSchema}
         defaultProps={{
+          videoUrl:
+            "https://files2.heygen.ai/aws_pacific/avatar_tmp/57ec360eba014be689b1992950c520f7/873be32229784da083ceac3b7eebefe0.mp4?Expires=1747395461&Signature=KBw-prseIuyekM~u~pN1vD3c~qJ2wDKe8ivG7bW3yolHza4AUh--MNHy3IuHpSEW12B5Ig4CWHnJlrnLhgWJJjHVV3d-uAfrkD3bzsslVx64AhpUtw2f2bAT-VXBaNN2hbQw7ZkZRflgiDTuuLT1PY~6hb1--g5ZMk4CfU0ENlYy4w~JvwagQfyYBc2Mdp0lhRp2NSrRzSoWZfEuUZSz825GWAQ51O6P09F8nRYn18rhBKktJ8Qx~LI1fuZkEmeMKHkBMiEMRlSyrQpfzqhCSZoqeImVUPT-0~YhR0U0jqklBJF5zaNWSGwDdpJW94NgSj-AgyyYVWmU~OQnIwzWXA__&Key-Pair-Id=K38HBHX5LX3X2H",
+          combineTokensWithinMilliseconds: 1000,
+
+          // Font
           fontFamily: "Montserrat" as const,
-          padding: "0.6em 2em",
           fontWeight: "black" as const,
           color: "#fff",
           colors: ["#F8C734", "#E89F19", "#D87700"],
           highlightColor: "#F8C734",
           uppercase: true,
-          fontSize: 60,
-
-          combineTokensWithinMilliseconds: 0,
-          backgroundColor: "rgba(0,0,0,0.4)",
-          letterSpacing: "0.15em",
+          fontSize: 55,
+          top: 80,
+          verticalAlign: "center" as const,
           textAlign: "center",
-          margin: "30px",
-          boxWidth: "auto",
+          animationType: "grow" as const,
           textOutline: {
             color: "black",
             width: 0,
@@ -108,13 +109,13 @@ export const RemotionRoot: React.FC = () => {
             shadowBlur: 30,
           },
 
-          top: 100.1,
-          verticalAlign: "bottom",
-          wave: true,
+          // Box
+          padding: "0.6em 2em",
+          backgroundColor: "rgba(0,0,0,0.4)",
+          margin: "30px",
           borderRadius: 80,
-          animationType: "grow",
-          videoUrl:
-            "https://files2.heygen.ai/aws_pacific/avatar_tmp/57ec360eba014be689b1992950c520f7/873be32229784da083ceac3b7eebefe0.mp4?Expires=1747395461&Signature=KBw-prseIuyekM~u~pN1vD3c~qJ2wDKe8ivG7bW3yolHza4AUh--MNHy3IuHpSEW12B5Ig4CWHnJlrnLhgWJJjHVV3d-uAfrkD3bzsslVx64AhpUtw2f2bAT-VXBaNN2hbQw7ZkZRflgiDTuuLT1PY~6hb1--g5ZMk4CfU0ENlYy4w~JvwagQfyYBc2Mdp0lhRp2NSrRzSoWZfEuUZSz825GWAQ51O6P09F8nRYn18rhBKktJ8Qx~LI1fuZkEmeMKHkBMiEMRlSyrQpfzqhCSZoqeImVUPT-0~YhR0U0jqklBJF5zaNWSGwDdpJW94NgSj-AgyyYVWmU~OQnIwzWXA__&Key-Pair-Id=K38HBHX5LX3X2H",
+
+          // Words
           words: [
             { word: "i", start: 0.16, end: 0.39999998, confidence: 0.9945892 },
             { word: "take", start: 0.39999998, end: 0.64, confidence: 0.99927 },

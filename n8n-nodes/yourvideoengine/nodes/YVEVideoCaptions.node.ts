@@ -112,10 +112,23 @@ export class YVEVideoCaptions implements INodeType {
           },
         },
       },
-      // VIDEO CAPTION STYLE PARAMS
+      {
+        displayName: "Duration (seconds)",
+        name: "duration",
+        type: "number",
+        default: 10,
+        description: "Duration of the video in seconds.",
+        required: true,
+        displayOptions: {
+          show: {
+            resource: ["video"],
+          },
+        },
+      },
+      // VIDEO CAPTION STYLE PARAMS (toujours visibles)
       {
         displayName: "Position (0-100)",
-        name: "position",
+        name: "top",
         type: "number",
         default: 75,
         typeOptions: {
@@ -133,10 +146,10 @@ export class YVEVideoCaptions implements INodeType {
         },
       },
       {
-        displayName: "Font Size",
+        displayName: "Font Size (px)",
         name: "fontSize",
         type: "number",
-        default: 80,
+        default: 90,
         description: "Font size for the captions (in px).",
         required: true,
         displayOptions: {
@@ -173,7 +186,6 @@ export class YVEVideoCaptions implements INodeType {
           },
         },
       },
-
       {
         displayName: "Color",
         name: "color",
@@ -191,14 +203,39 @@ export class YVEVideoCaptions implements INodeType {
           },
         },
       },
-
       {
-        displayName: "Text Shadow",
-        name: "textShadow",
-        type: "boolean",
-        default: true,
-        description: "Enable text shadow for the captions.",
-        required: true,
+        displayName: "Font Weight",
+        name: "fontWeight",
+        type: "options",
+        options: [
+          { name: "Light", value: "light" },
+          { name: "Regular", value: "regular" },
+          { name: "Bold", value: "bold" },
+          { name: "Black", value: "black" },
+        ],
+        default: "black",
+        description: "Font weight for the captions.",
+        required: false,
+        displayOptions: {
+          show: {
+            resource: ["video"],
+            operation: ["captionWordByWord"],
+          },
+        },
+      },
+      {
+        displayName: "Animation Type",
+        name: "animationType",
+        type: "options",
+        options: [
+          { name: "None", value: "none" },
+          { name: "Bump", value: "bump" },
+          { name: "Grow", value: "grow" },
+          { name: "Lift", value: "lift" },
+        ],
+        default: "bump",
+        description: "Type of animation for word appearance.",
+        required: false,
         displayOptions: {
           show: {
             resource: ["video"],
@@ -211,8 +248,8 @@ export class YVEVideoCaptions implements INodeType {
         name: "uppercase",
         type: "boolean",
         default: false,
-        description: "Mettre toutes les légendes en majuscules.",
-        required: true,
+        description: "Make all captions uppercase.",
+        required: false,
         displayOptions: {
           show: {
             resource: ["video"],
@@ -220,14 +257,23 @@ export class YVEVideoCaptions implements INodeType {
           },
         },
       },
-
+      // Regroupe toutes les options de style dans une seule collection
       {
         displayName: "Optional Style",
-        name: "optionalStyle",
+        name: "style",
         type: "collection",
         placeholder: "Add Option",
         default: {},
         options: [
+          {
+            displayName: "Combine Tokens Within (ms)",
+            name: "combineTokensWithinMilliseconds",
+            type: "number",
+            default: 1400,
+            description:
+              "Regroup words into phrases if they are close in time (ms). 0 = word by word.",
+            required: false,
+          },
           {
             displayName: "Font Weight",
             name: "fontWeight",
@@ -279,6 +325,252 @@ export class YVEVideoCaptions implements INodeType {
             description: "Border radius for the caption background (in px).",
             required: false,
           },
+
+          {
+            displayName: "Background Gradient (CSS)",
+            name: "backgroundGradient",
+            type: "string",
+            default: "",
+            description:
+              "CSS gradient for the background (ex: linear-gradient(...)).",
+            required: false,
+          },
+          {
+            displayName: "Background Blur (CSS, px)",
+            name: "backgroundBlur",
+            type: "string",
+            default: "",
+            description: "Blur effect for the background (ex: 8px).",
+            required: false,
+          },
+          {
+            displayName: "Box Border Color",
+            name: "boxBorderColor",
+            type: "string",
+            default: "",
+            typeOptions: {
+              colorPicker: true,
+            },
+            description: "Border color for the caption box.",
+            required: false,
+          },
+          {
+            displayName: "Box Border Width (CSS)",
+            name: "boxBorderWidth",
+            type: "string",
+            default: "",
+            description: "Border width for the caption box (ex: 2px).",
+            required: false,
+          },
+          {
+            displayName: "Box Shadow (CSS)",
+            name: "boxShadow",
+            type: "string",
+            default: "",
+            description: "CSS box-shadow for the caption box.",
+            required: false,
+          },
+          {
+            displayName: "Margin (CSS)",
+            name: "margin",
+            type: "string",
+            default: "",
+            description: "CSS margin for the caption box.",
+            required: false,
+          },
+          {
+            displayName: "Box Width (CSS)",
+            name: "boxWidth",
+            type: "string",
+            default: "",
+            description: "Width of the caption box (ex: 80%).",
+            required: false,
+          },
+          {
+            displayName: "Full Width",
+            name: "fullWidth",
+            type: "boolean",
+            default: false,
+            description: "If true, the caption box takes 100% width.",
+            required: false,
+          },
+          {
+            displayName: "Box Height (CSS or px)",
+            name: "boxHeight",
+            type: "string",
+            default: "",
+            description: "Height of the caption box (ex: 120px or 100%).",
+            required: false,
+          },
+          {
+            displayName: "Line Spacing (CSS)",
+            name: "lineSpacing",
+            type: "string",
+            default: "",
+            description: "CSS line-height for the captions.",
+            required: false,
+          },
+          {
+            displayName: "Word Spacing (CSS)",
+            name: "wordSpacing",
+            type: "string",
+            default: "",
+            description: "CSS word-spacing for the captions.",
+            required: false,
+          },
+          {
+            displayName: "Letter Spacing (CSS)",
+            name: "letterSpacing",
+            type: "string",
+            default: "",
+            description: "CSS letter-spacing for the captions.",
+            required: false,
+          },
+          {
+            displayName: "Text Align",
+            name: "textAlign",
+            type: "options",
+            options: [
+              { name: "Left", value: "left" },
+              { name: "Center", value: "center" },
+              { name: "Right", value: "right" },
+              { name: "Justify", value: "justify" },
+            ],
+            default: "center",
+            description: "Text alignment for the captions.",
+            required: false,
+          },
+          {
+            displayName: "Vertical Align",
+            name: "verticalAlign",
+            type: "options",
+            options: [
+              { name: "Top", value: "top" },
+              { name: "Center", value: "center" },
+              { name: "Bottom", value: "bottom" },
+            ],
+            default: "center",
+            description: "Vertical alignment of the caption box.",
+            required: false,
+          },
+          {
+            displayName: "Highlight Color",
+            name: "highlightColor",
+            type: "string",
+            default: "",
+            typeOptions: {
+              colorPicker: true,
+            },
+            description: "Color for the highlighted/active word.",
+            required: false,
+          },
+
+          {
+            displayName: "Transition Duration (CSS)",
+            name: "transitionDuration",
+            type: "string",
+            default: "0.12s",
+            description: "Transition duration for word highlight (ex: 0.12s).",
+            required: false,
+          },
+          {
+            displayName: "Transition Easing (CSS)",
+            name: "transitionEasing",
+            type: "string",
+            default: "cubic-bezier(0.4,0,0.2,1)",
+            description: "Transition easing for word highlight.",
+            required: false,
+          },
+          {
+            displayName: "Phrase In Animation",
+            name: "phraseInAnimation",
+            type: "options",
+            options: [
+              { name: "None", value: "" },
+              { name: "Fade", value: "fade" },
+              { name: "Slide Up", value: "slide-up" },
+            ],
+            default: "",
+            description: "Phrase in animation (fade, slide-up).",
+            required: false,
+          },
+          {
+            displayName: "Phrase Out Animation",
+            name: "phraseOutAnimation",
+            type: "options",
+            options: [
+              { name: "None", value: "" },
+              { name: "Fade", value: "fade" },
+              { name: "Slide Up", value: "slide-up" },
+              { name: "Slide Down", value: "slide-down" },
+            ],
+            default: "",
+            description: "Phrase out animation.",
+            required: false,
+          },
+          {
+            displayName: "Phrase Animation Duration (s)",
+            name: "phraseAnimationDuration",
+            type: "number",
+            default: 0.1,
+            description:
+              "Duration of the phrase in/out animation (in seconds).",
+            required: false,
+          },
+          {
+            displayName: "Text Outline (contour)",
+            name: "textOutline",
+            type: "fixedCollection",
+            typeOptions: { multipleValues: false },
+            default: {},
+            options: [
+              {
+                name: "outline",
+                displayName: "Outline",
+                values: [
+                  {
+                    displayName: "Color",
+                    name: "color",
+                    type: "string",
+                    default: "#000000",
+                    typeOptions: { colorPicker: true },
+                    required: false,
+                  },
+                  {
+                    displayName: "Width (px)",
+                    name: "width",
+                    type: "number",
+                    default: 2,
+                    required: false,
+                  },
+                  {
+                    displayName: "Shadow Color",
+                    name: "shadowColor",
+                    type: "string",
+                    default: "",
+                    typeOptions: { colorPicker: true },
+                    required: false,
+                  },
+                  {
+                    displayName: "Shadow Spread (px)",
+                    name: "shadowSpread",
+                    type: "number",
+                    default: 2,
+                    required: false,
+                  },
+                  {
+                    displayName: "Shadow Blur (px)",
+                    name: "shadowBlur",
+                    type: "number",
+                    default: 8,
+                    required: false,
+                  },
+                ],
+              },
+            ],
+            description: "Text outline and shadow.",
+            required: false,
+          },
         ],
         displayOptions: {
           show: {
@@ -287,6 +579,7 @@ export class YVEVideoCaptions implements INodeType {
           },
         },
       },
+
       {
         displayName: "Optional Transcript",
         name: "optionalTranslation",
@@ -387,50 +680,48 @@ export class YVEVideoCaptions implements INodeType {
       const operation = this.getNodeParameter("operation", i) as string
       const videoUrl = this.getNodeParameter("videoUrl", i) as string
       const keywordsRaw = this.getNodeParameter("keywords", i, "") as string
+      const duration = this.getNodeParameter("duration", i, 10) as number
 
       const keywordsArr = keywordsRaw
         .split(",")
         .map((k) => k.trim())
         .filter(Boolean)
 
-      // Récupération des options optionnelles pour video
-      const optionalStyle = this.getNodeParameter("optionalStyle", i, {}) as any
-      // Récupération des options optionnelles pour captions
+      // Retrieve optional style options for video
+      const style = this.getNodeParameter("style", i, {}) as any
+      // Retrieve optional style options for captions
       const optionalTranslation = this.getNodeParameter(
         "optionalTranslation",
         i,
         {},
       ) as any
 
-      // Paramètres principaux (toujours visibles)
+      // Main parameters (always visible)
       const color = this.getNodeParameter("color", i, "#fff") as string
-      const fontSize = this.getNodeParameter("fontSize", i, 70) as number
+      const fontSize = this.getNodeParameter("fontSize", i, 90) as number
       const fontFamily = this.getNodeParameter(
         "fontFamily",
         i,
-        "Arial Black",
+        "Montserrat",
       ) as string
-      const textShadow = this.getNodeParameter(
-        "textShadow",
+      const fontWeight = this.getNodeParameter(
+        "fontWeight",
         i,
-        false,
-      ) as boolean
-      const position = this.getNodeParameter("position", i, 75) as number
+        "black",
+      ) as string
+      const animationType = this.getNodeParameter(
+        "animationType",
+        i,
+        "bump",
+      ) as string
+      const top = this.getNodeParameter("top", i, 75) as number
       const uppercase = this.getNodeParameter("uppercase", i, false) as boolean
 
-      // Paramètres optionnels de style (pour la vidéo)
-      const style = {
-        fontWeight: optionalStyle.fontWeight ?? "black",
-        colors: (optionalStyle.colors ?? "")
-          .split(",")
-          .map((c: string) => c.trim())
-          .filter(Boolean),
-        backgroundColor: optionalStyle.backgroundColor ?? "rgba(0,0,0,0.7)",
-        padding: optionalStyle.padding ?? "0.2em 0.6em",
-        borderRadius: optionalStyle.borderRadius ?? 18,
-        uppercase: optionalStyle.uppercase ?? uppercase,
-      }
+      // Extract advanced options (with fallback)
+      const getAdv = (key: string, fallback: any) =>
+        style && style[key] !== undefined ? style[key] : fallback
 
+      let wordsArr = []
       if (resource === "video") {
         const deepgramOptions = {
           model: optionalTranslation.model ?? "nova-3",
@@ -452,10 +743,9 @@ export class YVEVideoCaptions implements INodeType {
               punctuation: deepgramOptions.punctuation,
               helpers: this.helpers,
             })
-            console.log("[YVE] Réponse Deepgram", { response })
+            console.log("[YVE] Deepgram response", { response })
 
-            // On parse la réponse pour extraire le tableau words (structure Deepgram)
-            let wordsArr = []
+            // Parse the response to extract the words array (Deepgram structure)
             try {
               wordsArr = response.words || []
             } catch (e) {
@@ -463,7 +753,7 @@ export class YVEVideoCaptions implements INodeType {
             }
             console.log("[YVE] Words extraits pour Remotion", { wordsArr })
 
-            // Nettoie les mots pour ne garder que les champs attendus par Remotion
+            // Clean the words to keep only the fields expected by Remotion
             wordsArr = wordsArr.map((w: any) => ({
               word:
                 w.punctuated_word !== undefined ? w.punctuated_word : w.word,
@@ -478,26 +768,72 @@ export class YVEVideoCaptions implements INodeType {
               )
             }
 
+            const inputProps: any = {
+              videoUrl,
+              words: wordsArr,
+              color,
+              fontSize,
+              fontFamily,
+              fontWeight,
+              animationType,
+              top,
+              uppercase,
+              // Advanced
+              colors: (getAdv("colors", "") as string)
+                .split(",")
+                .map((c: string) => c.trim())
+                .filter(Boolean),
+              backgroundColor: getAdv("backgroundColor", "rgba(0,0,0,0.7)"),
+              backgroundGradient: getAdv("backgroundGradient", ""),
+              backgroundBlur: getAdv("backgroundBlur", ""),
+              padding: getAdv("padding", "0.2em 0.6em"),
+              borderRadius: getAdv("borderRadius", 18),
+              boxBorderColor: getAdv("boxBorderColor", ""),
+              boxBorderWidth: getAdv("boxBorderWidth", ""),
+              boxShadow: getAdv("boxShadow", ""),
+              margin: getAdv("margin", ""),
+              boxWidth: getAdv("boxWidth", ""),
+              fullWidth: getAdv("fullWidth", false),
+              boxHeight: getAdv("boxHeight", ""),
+              lineSpacing: getAdv("lineSpacing", ""),
+              wordSpacing: getAdv("wordSpacing", ""),
+              letterSpacing: getAdv("letterSpacing", ""),
+              textAlign: getAdv("textAlign", "center"),
+              verticalAlign: getAdv("verticalAlign", "center"),
+              highlightColor: getAdv("highlightColor", ""),
+              combineTokensWithinMilliseconds: getAdv(
+                "combineTokensWithinMilliseconds",
+                1400,
+              ),
+              transitionDuration: getAdv("transitionDuration", "0.12s"),
+              transitionEasing: getAdv(
+                "transitionEasing",
+                "cubic-bezier(0.4,0,0.2,1)",
+              ),
+              phraseInAnimation: getAdv("phraseInAnimation", ""),
+              phraseOutAnimation: getAdv("phraseOutAnimation", ""),
+              phraseAnimationDuration: getAdv("phraseAnimationDuration", 0.1),
+              textOutline: (() => {
+                const outline = getAdv("textOutline", {})
+                if (
+                  outline &&
+                  outline.outline &&
+                  Array.isArray(outline.outline) &&
+                  outline.outline.length > 0
+                ) {
+                  return outline.outline[0]
+                }
+                return undefined
+              })(),
+            }
+
             const remotionPayload = {
               serveUrl:
                 "https://remotionlambda-useast1-xw8v2xhmyv.s3.us-east-1.amazonaws.com/sites/yourvideoengine/index.html",
               composition: "Captions",
               framesPerLambda: 12,
-              inputProps: {
-                videoUrl,
-                words: wordsArr,
-                color,
-                fontSize,
-                fontFamily,
-                fontWeight: style.fontWeight,
-                textShadow,
-                colors: style.colors,
-                backgroundColor: style.backgroundColor,
-                top: position,
-                padding: style.padding,
-                borderRadius: style.borderRadius,
-                uppercase: style.uppercase,
-              },
+              inputProps: inputProps,
+              durationInFrames: Math.round(duration * 30),
             }
             console.log("[YVE] Appel Remotion", { remotionPayload })
             const remotionResponse = await this.helpers.httpRequest({
@@ -509,9 +845,9 @@ export class YVEVideoCaptions implements INodeType {
               body: remotionPayload,
               json: true,
             })
-            console.log("[YVE] Réponse Remotion", { remotionResponse })
+            console.log("[YVE] Remotion response", { remotionResponse })
 
-            // Polling sur statusUrl si présent
+            // Polling on statusUrl if present
             let outputFile = null
             let statusData = null
             if (remotionResponse.statusUrl) {
@@ -550,7 +886,7 @@ export class YVEVideoCaptions implements INodeType {
               })
             }
           } catch (err) {
-            console.error("[YVE] Erreur dans captionWordByWord", err)
+            console.error("[YVE] Error in captionWordByWord", err)
             throw err
           }
         }
