@@ -88,22 +88,18 @@ export const RemotionRoot: React.FC = () => {
           videoUrl:
             "https://files2.heygen.ai/aws_pacific/avatar_tmp/57ec360eba014be689b1992950c520f7/873be32229784da083ceac3b7eebefe0.mp4?Expires=1747395461&Signature=KBw-prseIuyekM~u~pN1vD3c~qJ2wDKe8ivG7bW3yolHza4AUh--MNHy3IuHpSEW12B5Ig4CWHnJlrnLhgWJJjHVV3d-uAfrkD3bzsslVx64AhpUtw2f2bAT-VXBaNN2hbQw7ZkZRflgiDTuuLT1PY~6hb1--g5ZMk4CfU0ENlYy4w~JvwagQfyYBc2Mdp0lhRp2NSrRzSoWZfEuUZSz825GWAQ51O6P09F8nRYn18rhBKktJ8Qx~LI1fuZkEmeMKHkBMiEMRlSyrQpfzqhCSZoqeImVUPT-0~YhR0U0jqklBJF5zaNWSGwDdpJW94NgSj-AgyyYVWmU~OQnIwzWXA__&Key-Pair-Id=K38HBHX5LX3X2H",
           combineTokensWithinMilliseconds: 1000,
-          fontFamily: "Montserrat",
-          fontWeight: "black",
-          color: "#fff",
-          highlightColor: "#F8C734",
-          uppercase: true,
           fontSize: 75,
-          animationType: "none",
-          backgroundColor: "rgba(0,0,0,0.4)",
-          boxStyle: {},
-          textStyle: {},
-          activeWordStyle: {
-            transform: "skew(-20deg) scale(1.4)",
+          boxStyle: {
+            height: "500px",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            alignContent: "center",
+            width: "70%",
+            flexWrap: "wrap",
+            borderRadius: "0",
+            boxShadow: "32px 32px 2px 1px #2E257D",
           },
-          floating: 2,
-          verticalAlign: "end",
-          multiColors: ["#F8C734", "#FF6B6B", "#4ECDC4", "#45B7D1"],
 
           words: [
             { word: "i", start: 0.16, end: 0.39999998, confidence: 0.9945892 },

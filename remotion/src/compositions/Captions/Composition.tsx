@@ -37,7 +37,6 @@ const defaultActiveWordStyle: React.CSSProperties = {
 
 export const CaptionsSchema = z.object({
   videoUrl: z.string(),
-
   combineTokensWithinMilliseconds: z.number().optional(),
   top: z.number().optional(),
   left: z.number().optional(),
@@ -45,7 +44,7 @@ export const CaptionsSchema = z.object({
   bottom: z.number().optional(),
   horizontalAlign: z.enum(["start", "center", "end"]).optional(),
   verticalAlign: z.enum(["start", "center", "end"]).optional(),
-  fontSize: z.union([z.number(), z.string()]),
+  fontSize: z.union([z.number(), z.string()]).optional(),
   fontFamily: z.string().optional(),
   color: z.string().optional(),
   highlightColor: z.string().optional(),
@@ -75,6 +74,7 @@ export const CaptionsSchema = z.object({
   ),
   multiColors: z.array(z.string()).optional(),
   floating: z.number().optional(),
+  randomWordSize: z.number().optional(),
 })
 
 export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
@@ -112,6 +112,7 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
 
   multiColors,
   floating,
+  randomWordSize,
 }) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
@@ -164,6 +165,7 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
   // Style du texte
   let resolvedTextStyle: React.CSSProperties = {
     color,
+    verticalAlign: "middle",
     fontFamily: fontFamily
       ? `${fontFamily}, sans-serif`
       : "Montserrat, sans-serif",
@@ -395,15 +397,29 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
                 mergedTransform = `${mergedTransform} ${resolvedActiveWordStyle.transform}`
               }
 
+              // Taille discrète (petite, moyenne, grande) selon un motif cyclique régulier
+              let wordFontSize = resolvedTextStyle.fontSize
+              if (randomWordSize && randomWordSize > 1) {
+                const baseSize =
+                  typeof fontSize === "number"
+                    ? fontSize
+                    : parseFloat(fontSize as string)
+                const amp = randomWordSize / 2
+                // 3 tailles : petite, moyenne, grande
+                const sizes = [baseSize + amp, baseSize - amp, baseSize] // ordre : grande, petite, moyenne
+                // Motif cyclique : [grande, petite, moyenne, ...]
+                wordFontSize = sizes[i % 3]
+              }
+
               return (
                 <span
                   key={`${activePageIndex}-${i}`}
                   style={{
                     ...resolvedTextStyle,
+                    fontSize: wordFontSize,
                     ...(isActive ? resolvedActiveWordStyle : {}),
                     color: wordColor,
                     opacity: 1,
-
                     transition: wordTransition,
                     display: "inline-block",
                     transform: mergedTransform,

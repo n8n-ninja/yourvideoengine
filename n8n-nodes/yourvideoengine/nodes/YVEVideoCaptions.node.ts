@@ -66,7 +66,7 @@ export class YVEVideoCaptions implements INodeType {
         type: "number",
         default: 1400,
         description:
-          "Regroup words into phrases if they are close in time (ms). 0 = word by word.",
+          "Regroup words into phrases if they are close in time (ms). 0 = word by word. 1000 words = normal length. 2000 words = long length.",
         required: false,
         displayOptions: {
           show: {
@@ -400,10 +400,22 @@ export class YVEVideoCaptions implements INodeType {
             type: "number",
             typeOptions: {
               minValue: 0,
-              maxValue: 20,
+              maxValue: 100,
             },
             default: 0,
-            description: "Floating effect intensity (0-20). Optional.",
+            description: "Floating effect intensity (0-100).",
+            required: false,
+          },
+          {
+            displayName: "Random Word Size",
+            name: "randomWordSize",
+            type: "number",
+            typeOptions: {
+              minValue: 0,
+              maxValue: 100,
+            },
+            default: 0,
+            description: "Vary the difference in word sizes (0-100).",
             required: false,
           },
         ],
@@ -673,6 +685,8 @@ export class YVEVideoCaptions implements INodeType {
                 }
               } else if (key === "floating") {
                 inputProps.floating = value
+              } else if (key === "randomWordSize") {
+                inputProps.randomWordSize = value
               } else {
                 inputProps[key] = value
               }

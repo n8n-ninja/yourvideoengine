@@ -387,6 +387,18 @@ class YVEVideoCaptions {
                             description: "Floating effect intensity (0-20). Optional.",
                             required: false,
                         },
+                        {
+                            displayName: "Random Word Size",
+                            name: "randomWordSize",
+                            type: "number",
+                            typeOptions: {
+                                minValue: 0,
+                                maxValue: 100,
+                            },
+                            default: 0,
+                            description: "Vary the difference in word sizes (0-100). Optional.",
+                            required: false,
+                        },
                     ],
                     displayOptions: {
                         show: {
@@ -637,6 +649,9 @@ class YVEVideoCaptions {
                             }
                             else if (key === "floating") {
                                 inputProps.floating = value;
+                            }
+                            else if (key === "randomWordSize") {
+                                inputProps.randomWordSize = value;
                             }
                             else {
                                 inputProps[key] = value;
