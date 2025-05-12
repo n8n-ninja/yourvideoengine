@@ -6,8 +6,9 @@ import {
   INodeExecutionData,
 } from "n8n-workflow"
 
-const API_BASE_URL = "http://n04sg488kwcss8ow04kk4c8k.91.107.237.123.sslip.io"
-const API_TOKEN = "Bearer sk_live_2b87210c8f3e4d3e9a23a09d5cf7d144"
+const UTILS_API_BASE_URL =
+  "http://n04sg488kwcss8ow04kk4c8k.91.107.237.123.sslip.io"
+const UTILS_API_TOKEN = "Bearer sk_live_2b87210c8f3e4d3e9a23a09d5cf7d144"
 
 export class YVEVideoCaptions implements INodeType {
   description: INodeTypeDescription = {
@@ -55,19 +56,6 @@ export class YVEVideoCaptions implements INodeType {
         displayOptions: {
           show: {
             operation: ["addCaptionsToVideo", "extractCaptionsFromVideo"],
-          },
-        },
-      },
-      {
-        displayName: "⚠️ Duration (seconds)",
-        name: "duration",
-        type: "number",
-        default: 10,
-        description: "Duration of the video in seconds.",
-        required: true,
-        displayOptions: {
-          show: {
-            operation: ["addCaptionsToVideo"],
           },
         },
       },
@@ -622,7 +610,6 @@ export class YVEVideoCaptions implements INodeType {
     for (let i = 0; i < items.length; i++) {
       const operation = this.getNodeParameter("operation", i) as string
       const videoUrl = this.getNodeParameter("videoUrl", i) as string
-      const duration = this.getNodeParameter("duration", i, 10) as number
       const style = this.getNodeParameter("style", i, {}) as any
       const optionalTranslation = this.getNodeParameter(
         "optionalTranslation",
@@ -672,6 +659,25 @@ export class YVEVideoCaptions implements INodeType {
             throw new Error(
               "No words found in Deepgram response. Check if the video/audio URL is valid and accessible.",
             )
+          }
+
+          const body: Record<string, unknown> = {
+            url: videoUrl,
+          }
+
+          const durationResponse = await this.helpers.httpRequest({
+            method: "POST",
+            url: `${UTILS_API_BASE_URL}/duration`,
+            headers: {
+              Authorization: UTILS_API_TOKEN,
+            },
+            body,
+            json: true,
+          })
+
+          const duration = durationResponse.duration
+          if (!duration || isNaN(duration)) {
+            throw new Error("Could not fetch video duration from utils API.")
           }
           const inputProps: any = {
             videoUrl,

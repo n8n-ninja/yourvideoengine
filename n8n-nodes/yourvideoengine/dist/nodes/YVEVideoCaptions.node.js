@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.YVEVideoCaptions = void 0;
-const API_BASE_URL = "http://n04sg488kwcss8ow04kk4c8k.91.107.237.123.sslip.io";
-const API_TOKEN = "Bearer sk_live_2b87210c8f3e4d3e9a23a09d5cf7d144";
+const UTILS_API_BASE_URL = "http://n04sg488kwcss8ow04kk4c8k.91.107.237.123.sslip.io";
+const UTILS_API_TOKEN = "Bearer sk_live_2b87210c8f3e4d3e9a23a09d5cf7d144";
 class YVEVideoCaptions {
     constructor() {
         this.description = {
@@ -48,19 +48,6 @@ class YVEVideoCaptions {
                     displayOptions: {
                         show: {
                             operation: ["addCaptionsToVideo", "extractCaptionsFromVideo"],
-                        },
-                    },
-                },
-                {
-                    displayName: "⚠️ Duration (seconds)",
-                    name: "duration",
-                    type: "number",
-                    default: 10,
-                    description: "Duration of the video in seconds.",
-                    required: true,
-                    displayOptions: {
-                        show: {
-                            operation: ["addCaptionsToVideo"],
                         },
                     },
                 },
@@ -605,7 +592,6 @@ class YVEVideoCaptions {
         for (let i = 0; i < items.length; i++) {
             const operation = this.getNodeParameter("operation", i);
             const videoUrl = this.getNodeParameter("videoUrl", i);
-            const duration = this.getNodeParameter("duration", i, 10);
             const style = this.getNodeParameter("style", i, {});
             const optionalTranslation = this.getNodeParameter("optionalTranslation", i, {});
             let words = [];
@@ -647,6 +633,22 @@ class YVEVideoCaptions {
                     }));
                     if (!words || words.length === 0) {
                         throw new Error("No words found in Deepgram response. Check if the video/audio URL is valid and accessible.");
+                    }
+                    const body = {
+                        url: videoUrl,
+                    };
+                    const durationResponse = await this.helpers.httpRequest({
+                        method: "POST",
+                        url: `${UTILS_API_BASE_URL}/duration`,
+                        headers: {
+                            Authorization: UTILS_API_TOKEN,
+                        },
+                        body,
+                        json: true,
+                    });
+                    const duration = durationResponse.duration;
+                    if (!duration || isNaN(duration)) {
+                        throw new Error("Could not fetch video duration from utils API.");
                     }
                     const inputProps = {
                         videoUrl,

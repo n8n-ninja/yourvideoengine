@@ -6,6 +6,10 @@ import {
   INodeExecutionData,
 } from "n8n-workflow"
 
+const UTILS_API_BASE_URL =
+  "http://n04sg488kwcss8ow04kk4c8k.91.107.237.123.sslip.io"
+const UTILS_API_TOKEN = "Bearer sk_live_2b87210c8f3e4d3e9a23a09d5cf7d144"
+
 export class YVEUtils implements INodeType {
   description: INodeTypeDescription = {
     displayName: "YVE Utils",
@@ -54,21 +58,11 @@ export class YVEUtils implements INodeType {
         },
       },
     ],
-    credentials: [
-      {
-        name: "yveUtilsApi",
-        required: true,
-      },
-    ],
   }
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     const items = this.getInputData()
     const returnData: INodeExecutionData[] = []
-    const credentials = (await this.getCredentials("yveUtilsApi")) as {
-      apiUrl: string
-      apiToken: string
-    }
     for (let i = 0; i < items.length; i++) {
       const operation = this.getNodeParameter("operation", i) as string
       const videoUrl = this.getNodeParameter("videoUrl", i) as string
@@ -78,9 +72,9 @@ export class YVEUtils implements INodeType {
         }
         const response = await this.helpers.httpRequest({
           method: "POST",
-          url: `${credentials.apiUrl}/mp3`,
+          url: `${UTILS_API_BASE_URL}/mp3`,
           headers: {
-            Authorization: `Bearer ${credentials.apiToken}`,
+            Authorization: UTILS_API_TOKEN,
           },
           body,
           encoding: "arraybuffer",
@@ -101,9 +95,9 @@ export class YVEUtils implements INodeType {
         }
         const response = await this.helpers.httpRequest({
           method: "POST",
-          url: `${credentials.apiUrl}/duration`,
+          url: `${UTILS_API_BASE_URL}/duration`,
           headers: {
-            Authorization: `Bearer ${credentials.apiToken}`,
+            Authorization: UTILS_API_TOKEN,
           },
           body,
           json: true,
