@@ -155,6 +155,39 @@ app.post("/captions-word-by-word", async (req, res) => {
   }
 })
 
+/**
+ * ⏱️ /duration
+ * Calcule la durée d'une vidéo (en secondes)
+ */
+app.post("/duration", async (req, res) => {
+  const videoUrl = req.body.url
+  if (!videoUrl) return res.status(400).send("Missing url")
+
+  const videoPath = path.join(tmp, "input.mp4")
+
+  try {
+    const response = await axios.get(videoUrl, { responseType: "stream" })
+    const writer = fs.createWriteStream(videoPath)
+    await new Promise((resolve, reject) => {
+      response.data.pipe(writer)
+      writer.on("finish", resolve)
+      writer.on("error", reject)
+    })
+
+    const ffprobeCmd = `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ${videoPath}`
+    const durationStr = execSync(ffprobeCmd).toString().trim()
+    const duration = parseFloat(durationStr)
+
+    res.json({ duration })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({
+      error: error.message || "Error",
+      stack: error.stack,
+    })
+  }
+})
+
 app.listen(port, () => {
   console.log(`🚀 extract-and-caption running on port ${port}`)
 })

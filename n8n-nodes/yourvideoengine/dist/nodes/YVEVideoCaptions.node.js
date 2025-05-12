@@ -19,78 +19,24 @@ class YVEVideoCaptions {
             outputs: ["main" /* NodeConnectionType.Main */],
             properties: [
                 {
-                    displayName: "Resource",
-                    name: "resource",
-                    type: "options",
-                    options: [
-                        { name: "Video", value: "video" },
-                        { name: "Caption", value: "caption" },
-                        { name: "Audio", value: "audio" },
-                    ],
-                    default: "video",
-                    required: true,
-                },
-                // VIDEO METHODS
-                {
                     displayName: "Operation",
                     name: "operation",
                     type: "options",
-                    displayOptions: {
-                        show: {
-                            resource: ["video"],
-                        },
-                    },
                     options: [
                         {
-                            name: "Add Caption Word by Word",
-                            value: "captionWordByWord",
+                            name: "Add Captions to Video",
+                            value: "addCaptionsToVideo",
                             description: "Extract word-by-word subtitles (JSON) from a video URL and add the captions directly to the video.",
                         },
-                    ],
-                    default: "captionWordByWord",
-                    required: true,
-                },
-                // CAPTION METHODS
-                {
-                    displayName: "Operation",
-                    name: "operation",
-                    type: "options",
-                    displayOptions: {
-                        show: {
-                            resource: ["caption"],
-                        },
-                    },
-                    options: [
                         {
-                            name: "Get Word by Word",
-                            value: "getWordByWord",
+                            name: "Extract Captions from Video",
+                            value: "extractCaptionsFromVideo",
                             description: "Extract word-by-word subtitles (JSON) from a video URL.",
                         },
                     ],
-                    default: "getWordByWord",
+                    default: "addCaptionsToVideo",
                     required: true,
                 },
-                // AUDIO METHODS
-                {
-                    displayName: "Operation",
-                    name: "operation",
-                    type: "options",
-                    displayOptions: {
-                        show: {
-                            resource: ["audio"],
-                        },
-                    },
-                    options: [
-                        {
-                            name: "Extract Audio",
-                            value: "extractAudio",
-                            description: "Extract audio (mp3) from a video URL.",
-                        },
-                    ],
-                    default: "extractAudio",
-                    required: true,
-                },
-                // COMMON PARAMS
                 {
                     displayName: "Video URL",
                     name: "videoUrl",
@@ -101,12 +47,12 @@ class YVEVideoCaptions {
                     required: true,
                     displayOptions: {
                         show: {
-                            resource: ["video", "caption", "audio"],
+                            operation: ["addCaptionsToVideo", "extractCaptionsFromVideo"],
                         },
                     },
                 },
                 {
-                    displayName: "Duration (seconds)",
+                    displayName: "⚠️ Duration (seconds)",
                     name: "duration",
                     type: "number",
                     default: 10,
@@ -114,13 +60,13 @@ class YVEVideoCaptions {
                     required: true,
                     displayOptions: {
                         show: {
-                            resource: ["video"],
+                            operation: ["addCaptionsToVideo"],
                         },
                     },
                 },
-                // VIDEO CAPTION STYLE PARAMS (toujours visibles)
+                // VIDEO CAPTION STYLE PARAMS (toujours visibles pour addCaptionsToVideo)
                 {
-                    displayName: "Position (0-100)",
+                    displayName: "Position (0-100%)",
                     name: "top",
                     type: "number",
                     default: 75,
@@ -132,8 +78,7 @@ class YVEVideoCaptions {
                     required: true,
                     displayOptions: {
                         show: {
-                            resource: ["video"],
-                            operation: ["captionWordByWord"],
+                            operation: ["addCaptionsToVideo"],
                         },
                     },
                 },
@@ -146,8 +91,7 @@ class YVEVideoCaptions {
                     required: true,
                     displayOptions: {
                         show: {
-                            resource: ["video"],
-                            operation: ["captionWordByWord"],
+                            operation: ["addCaptionsToVideo"],
                         },
                     },
                 },
@@ -173,42 +117,33 @@ class YVEVideoCaptions {
                     required: true,
                     displayOptions: {
                         show: {
-                            resource: ["video"],
-                            operation: ["captionWordByWord"],
+                            operation: ["addCaptionsToVideo"],
                         },
                     },
                 },
                 {
                     displayName: "Color",
                     name: "color",
-                    type: "string",
+                    type: "color",
                     default: "#ffffff",
-                    typeOptions: {
-                        colorPicker: true,
-                    },
                     description: "Text color for the captions.",
                     required: true,
                     displayOptions: {
                         show: {
-                            resource: ["video"],
-                            operation: ["captionWordByWord"],
+                            operation: ["addCaptionsToVideo"],
                         },
                     },
                 },
                 {
                     displayName: "Highlight Color",
                     name: "highlightColor",
-                    type: "string",
-                    default: "",
-                    typeOptions: {
-                        colorPicker: true,
-                    },
+                    type: "color",
+                    default: "#F2E905",
                     description: "Color for the highlighted/active word.",
                     required: false,
                     displayOptions: {
                         show: {
-                            resource: ["video"],
-                            operation: ["captionWordByWord"],
+                            operation: ["addCaptionsToVideo"],
                         },
                     },
                 },
@@ -227,8 +162,7 @@ class YVEVideoCaptions {
                     required: false,
                     displayOptions: {
                         show: {
-                            resource: ["video"],
-                            operation: ["captionWordByWord"],
+                            operation: ["addCaptionsToVideo"],
                         },
                     },
                 },
@@ -247,8 +181,7 @@ class YVEVideoCaptions {
                     required: false,
                     displayOptions: {
                         show: {
-                            resource: ["video"],
-                            operation: ["captionWordByWord"],
+                            operation: ["addCaptionsToVideo"],
                         },
                     },
                 },
@@ -261,8 +194,7 @@ class YVEVideoCaptions {
                     required: false,
                     displayOptions: {
                         show: {
-                            resource: ["video"],
-                            operation: ["captionWordByWord"],
+                            operation: ["addCaptionsToVideo"],
                         },
                     },
                 },
@@ -566,8 +498,7 @@ class YVEVideoCaptions {
                     ],
                     displayOptions: {
                         show: {
-                            resource: ["video"],
-                            operation: ["captionWordByWord"],
+                            operation: ["addCaptionsToVideo"],
                         },
                     },
                 },
@@ -653,10 +584,16 @@ class YVEVideoCaptions {
                     ],
                     displayOptions: {
                         show: {
-                            resource: ["caption", "video"],
-                            operation: ["getWordByWord", "captionWordByWord"],
+                            operation: ["addCaptionsToVideo", "extractCaptionsFromVideo"],
                         },
                     },
+                },
+            ],
+            credentials: [
+                {
+                    name: "deepgramApi",
+                    required: true,
+                    testedBy: "testDeepgramAuth",
                 },
             ],
         };
@@ -664,31 +601,24 @@ class YVEVideoCaptions {
     async execute() {
         const items = this.getInputData();
         const returnData = [];
+        const credentials = (await this.getCredentials("deepgramApi"));
         for (let i = 0; i < items.length; i++) {
-            const resource = this.getNodeParameter("resource", i);
             const operation = this.getNodeParameter("operation", i);
             const videoUrl = this.getNodeParameter("videoUrl", i);
-            const keywordsRaw = this.getNodeParameter("keywords", i, "");
             const duration = this.getNodeParameter("duration", i, 10);
-            const keywordsArr = keywordsRaw
-                .split(",")
-                .map((k) => k.trim())
-                .filter(Boolean);
-            // Retrieve optional style options for video
             const style = this.getNodeParameter("style", i, {});
-            // Retrieve optional style options for captions
             const optionalTranslation = this.getNodeParameter("optionalTranslation", i, {});
-            // Main parameters (toujours visibles, sans fallback)
-            const color = this.getNodeParameter("color", i);
-            const highlightColor = this.getNodeParameter("highlightColor", i);
-            const fontSize = this.getNodeParameter("fontSize", i);
-            const fontFamily = this.getNodeParameter("fontFamily", i);
-            const fontWeight = this.getNodeParameter("fontWeight", i);
-            const animationType = this.getNodeParameter("animationType", i);
-            const top = this.getNodeParameter("top", i);
-            const uppercase = this.getNodeParameter("uppercase", i);
-            let wordsArr = [];
-            if (resource === "video") {
+            let words = [];
+            if (operation === "addCaptionsToVideo") {
+                // Main params
+                const color = this.getNodeParameter("color", i);
+                const highlightColor = this.getNodeParameter("highlightColor", i);
+                const fontSize = this.getNodeParameter("fontSize", i);
+                const fontFamily = this.getNodeParameter("fontFamily", i);
+                const fontWeight = this.getNodeParameter("fontWeight", i);
+                const animationType = this.getNodeParameter("animationType", i);
+                const top = this.getNodeParameter("top", i);
+                const uppercase = this.getNodeParameter("uppercase", i);
                 const deepgramOptions = {
                     model: optionalTranslation.model ?? "nova-3",
                     language: optionalTranslation.language ?? "en",
@@ -698,139 +628,7 @@ class YVEVideoCaptions {
                         .map((k) => k.trim())
                         .filter(Boolean),
                 };
-                if (operation === "captionWordByWord") {
-                    try {
-                        console.log("[YVE] Appel Deepgram", { videoUrl });
-                        const response = await callDeepgramWordByWord({
-                            videoUrl,
-                            model: deepgramOptions.model,
-                            language: deepgramOptions.language,
-                            keywordsArr: deepgramOptions.keywordsArr,
-                            punctuation: deepgramOptions.punctuation,
-                            helpers: this.helpers,
-                        });
-                        console.log("[YVE] Deepgram response", { response });
-                        // Parse the response to extract the words array (Deepgram structure)
-                        try {
-                            wordsArr = response.words || [];
-                        }
-                        catch (e) {
-                            wordsArr = [];
-                        }
-                        console.log("[YVE] Words extraits pour Remotion", { wordsArr });
-                        // Clean the words to keep only the fields expected by Remotion
-                        wordsArr = wordsArr.map((w) => ({
-                            word: w.punctuated_word !== undefined ? w.punctuated_word : w.word,
-                            start: w.start,
-                            end: w.end,
-                            confidence: w.confidence,
-                        }));
-                        if (!wordsArr || wordsArr.length === 0) {
-                            throw new Error("No words found in Deepgram response. Check if the video/audio URL is valid and accessible.");
-                        }
-                        // inputProps: on ne passe que les props définies
-                        const inputProps = {
-                            videoUrl,
-                            words: wordsArr,
-                        };
-                        if (color !== undefined)
-                            inputProps.color = color;
-                        if (fontSize !== undefined)
-                            inputProps.fontSize = fontSize;
-                        if (fontFamily !== undefined)
-                            inputProps.fontFamily = fontFamily;
-                        if (fontWeight !== undefined)
-                            inputProps.fontWeight = fontWeight;
-                        if (animationType !== undefined)
-                            inputProps.animationType = animationType;
-                        if (top !== undefined)
-                            inputProps.top = top;
-                        if (uppercase !== undefined)
-                            inputProps.uppercase = uppercase;
-                        if (highlightColor !== undefined)
-                            inputProps.highlightColor = highlightColor;
-                        // Pour le style (collection)
-                        Object.entries(style || {}).forEach(([key, value]) => {
-                            if (value !== undefined && value !== "") {
-                                inputProps[key] = value;
-                            }
-                        });
-                        const remotionPayload = {
-                            serveUrl: "https://remotionlambda-useast1-xw8v2xhmyv.s3.us-east-1.amazonaws.com/sites/yourvideoengine/index.html",
-                            composition: "Captions",
-                            framesPerLambda: 12,
-                            inputProps: inputProps,
-                            durationInFrames: Math.round(duration * 30),
-                        };
-                        console.log("[YVE] Appel Remotion", { remotionPayload });
-                        const remotionResponse = await this.helpers.httpRequest({
-                            method: "POST",
-                            url: "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/render",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: remotionPayload,
-                            json: true,
-                        });
-                        console.log("[YVE] Remotion response", { remotionResponse });
-                        // Polling on statusUrl if present
-                        let outputFile = null;
-                        let statusData = null;
-                        if (remotionResponse.statusUrl) {
-                            const statusUrl = remotionResponse.statusUrl;
-                            const start = Date.now();
-                            const timeout = 5 * 60 * 1000; // 5 minutes
-                            while (Date.now() - start < timeout) {
-                                await new Promise((r) => setTimeout(r, 10000)); // 10s
-                                try {
-                                    statusData = await this.helpers.httpRequest({
-                                        method: "GET",
-                                        url: statusUrl,
-                                        json: true,
-                                    });
-                                    console.log("[YVE] Poll Remotion status", statusData);
-                                    if (statusData.done && statusData.outputFile) {
-                                        outputFile = statusData.outputFile;
-                                        break;
-                                    }
-                                }
-                                catch (e) {
-                                    console.error("[YVE] Erreur polling Remotion", e);
-                                    break;
-                                }
-                            }
-                        }
-                        if (outputFile) {
-                            returnData.push({
-                                json: { video_url: outputFile, captions: response },
-                            });
-                        }
-                        else {
-                            returnData.push({
-                                json: {
-                                    remotion: remotionResponse,
-                                    status: statusData,
-                                },
-                            });
-                        }
-                    }
-                    catch (err) {
-                        console.error("[YVE] Error in captionWordByWord", err);
-                        throw err;
-                    }
-                }
-            }
-            else if (resource === "caption") {
-                const deepgramOptions = {
-                    model: optionalTranslation.model ?? "nova-3",
-                    language: optionalTranslation.language ?? "en",
-                    punctuation: optionalTranslation.punctuation ?? false,
-                    keywordsArr: (optionalTranslation.keywords ?? "")
-                        .split(",")
-                        .map((k) => k.trim())
-                        .filter(Boolean),
-                };
-                if (operation === "getWordByWord") {
+                try {
                     const response = await callDeepgramWordByWord({
                         videoUrl,
                         model: deepgramOptions.model,
@@ -838,35 +636,121 @@ class YVEVideoCaptions {
                         keywordsArr: deepgramOptions.keywordsArr,
                         punctuation: deepgramOptions.punctuation,
                         helpers: this.helpers,
+                        apiKey: credentials.apiKey,
                     });
-                    returnData.push({ json: { response } });
+                    words = response.words || [];
+                    words = words.map((w) => ({
+                        word: w.punctuated_word !== undefined ? w.punctuated_word : w.word,
+                        start: w.start,
+                        end: w.end,
+                        confidence: w.confidence,
+                    }));
+                    if (!words || words.length === 0) {
+                        throw new Error("No words found in Deepgram response. Check if the video/audio URL is valid and accessible.");
+                    }
+                    const inputProps = {
+                        videoUrl,
+                        words: words,
+                    };
+                    if (color !== undefined)
+                        inputProps.color = color;
+                    if (highlightColor !== undefined)
+                        inputProps.highlightColor = highlightColor;
+                    if (fontSize !== undefined)
+                        inputProps.fontSize = fontSize;
+                    if (fontFamily !== undefined)
+                        inputProps.fontFamily = fontFamily;
+                    if (fontWeight !== undefined)
+                        inputProps.fontWeight = fontWeight;
+                    if (animationType !== undefined)
+                        inputProps.animationType = animationType;
+                    if (top !== undefined)
+                        inputProps.top = top;
+                    if (uppercase !== undefined)
+                        inputProps.uppercase = uppercase;
+                    Object.entries(style || {}).forEach(([key, value]) => {
+                        if (value !== undefined && value !== "") {
+                            inputProps[key] = value;
+                        }
+                    });
+                    const remotionPayload = {
+                        serveUrl: "https://remotionlambda-useast1-xw8v2xhmyv.s3.us-east-1.amazonaws.com/sites/yourvideoengine/index.html",
+                        composition: "Captions",
+                        framesPerLambda: 12,
+                        inputProps: inputProps,
+                        durationInFrames: Math.round(duration * 30),
+                    };
+                    const remotionResponse = await this.helpers.httpRequest({
+                        method: "POST",
+                        url: "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/render",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: remotionPayload,
+                        json: true,
+                    });
+                    let outputFile = null;
+                    let statusData = null;
+                    if (remotionResponse.statusUrl) {
+                        const statusUrl = remotionResponse.statusUrl;
+                        const start = Date.now();
+                        const timeout = 5 * 60 * 1000; // 5 minutes
+                        while (Date.now() - start < timeout) {
+                            await new Promise((r) => setTimeout(r, 10000)); // 10s
+                            try {
+                                statusData = await this.helpers.httpRequest({
+                                    method: "GET",
+                                    url: statusUrl,
+                                    json: true,
+                                });
+                                if (statusData.done && statusData.outputFile) {
+                                    outputFile = statusData.outputFile;
+                                    break;
+                                }
+                            }
+                            catch (e) {
+                                break;
+                            }
+                        }
+                    }
+                    if (outputFile) {
+                        returnData.push({
+                            json: { video_url: outputFile, captions: response },
+                        });
+                    }
+                    else {
+                        returnData.push({
+                            json: {
+                                remotion: remotionResponse,
+                                status: statusData,
+                            },
+                        });
+                    }
+                }
+                catch (err) {
+                    throw err;
                 }
             }
-            else if (resource === "audio") {
-                if (operation === "extractAudio") {
-                    const body = {
-                        url: videoUrl,
-                    };
-                    const response = await this.helpers.httpRequest({
-                        method: "POST",
-                        url: `${API_BASE_URL}/mp3`,
-                        headers: {
-                            Authorization: API_TOKEN,
-                        },
-                        body,
-                        encoding: "arraybuffer",
-                    });
-                    returnData.push({
-                        json: { videoUrl },
-                        binary: {
-                            audio: {
-                                data: Buffer.from(response).toString("base64"),
-                                mimeType: "audio/mpeg",
-                                fileName: "audio.mp3",
-                            },
-                        },
-                    });
-                }
+            else if (operation === "extractCaptionsFromVideo") {
+                const deepgramOptions = {
+                    model: optionalTranslation.model ?? "nova-3",
+                    language: optionalTranslation.language ?? "en",
+                    punctuation: optionalTranslation.punctuation ?? false,
+                    keywordsArr: (optionalTranslation.keywords ?? "")
+                        .split(",")
+                        .map((k) => k.trim())
+                        .filter(Boolean),
+                };
+                const response = await callDeepgramWordByWord({
+                    videoUrl,
+                    model: deepgramOptions.model,
+                    language: deepgramOptions.language,
+                    keywordsArr: deepgramOptions.keywordsArr,
+                    punctuation: deepgramOptions.punctuation,
+                    helpers: this.helpers,
+                    apiKey: credentials.apiKey,
+                });
+                returnData.push({ json: { response } });
             }
         }
         return this.prepareOutputData(returnData);
@@ -874,7 +758,7 @@ class YVEVideoCaptions {
 }
 exports.YVEVideoCaptions = YVEVideoCaptions;
 // Shared Deepgram call function
-async function callDeepgramWordByWord({ videoUrl, model, language, keywordsArr, punctuation, helpers, }) {
+async function callDeepgramWordByWord({ videoUrl, model, language, keywordsArr, punctuation, helpers, apiKey, }) {
     const url = new URL("https://api.deepgram.com/v1/listen");
     url.searchParams.set("model", model);
     url.searchParams.set("language", language);
@@ -887,15 +771,11 @@ async function callDeepgramWordByWord({ videoUrl, model, language, keywordsArr, 
     else if (model !== "nova-3" && keywordsArr.length > 0) {
         keywordsArr.forEach((k) => url.searchParams.append("keywords", k));
     }
-    // LOG: debug Deepgram params and request
-    console.log("[YVEVideoCaptions] Deepgram url:", url.toString());
-    console.log("[YVEVideoCaptions] model:", model);
-    console.log("[YVEVideoCaptions] keywordsArr:", keywordsArr);
     const response = await helpers.httpRequest({
         method: "POST",
         url: url.toString(),
         headers: {
-            Authorization: "Token 955ff624d0af44bf5ef57c78cf15448422c5d32a",
+            Authorization: `Token ${apiKey}`,
             "Content-Type": "application/json",
         },
         body: {
@@ -903,6 +783,12 @@ async function callDeepgramWordByWord({ videoUrl, model, language, keywordsArr, 
         },
         json: true,
     });
-    console.log("[YVEVideoCaptions] Deepgram response:", JSON.stringify(response));
+    if (!response.results ||
+        !response.results.channels ||
+        !response.results.channels[0] ||
+        !response.results.channels[0].alternatives ||
+        !response.results.channels[0].alternatives[0]) {
+        throw new Error("Unexpected Deepgram response structure");
+    }
     return response.results.channels[0].alternatives[0];
 }
