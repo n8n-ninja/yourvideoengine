@@ -74,6 +74,7 @@ export const CaptionsSchema = z.object({
     }),
   ),
   multiColors: z.array(z.string()).optional(),
+  floating: z.number().optional(),
 })
 
 export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
@@ -110,6 +111,7 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
   animationDuration,
 
   multiColors,
+  floating,
 }) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
@@ -311,6 +313,24 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
     resolvedTextStyle.transition ||
     "opacity 0.12s, transform 0.12s cubic-bezier(0.4,0,0.2,1), color 0.12s cubic-bezier(0.4,0,0.2,1)"
 
+  // Animation flottante (floating)
+  let floatingTransform = undefined
+  if (floating && floating > 0) {
+    const speed = floating * 0.7
+    const amplitude = 8 + floating * 2
+    const t = frame * speed * 0.015
+    // Ajoute un peu d'aléatoire par page pour que ça ne soit pas toujours pareil
+    const seed = activePageIndex * 1000 + 42
+    function pseudoRandom(seed: number) {
+      return Math.sin(seed) * 10000 - Math.floor(Math.sin(seed) * 10000)
+    }
+    const phaseX = t + pseudoRandom(seed) * Math.PI * 2
+    const phaseY = t + pseudoRandom(seed + 1) * Math.PI * 2
+    const x = Math.sin(phaseX) * amplitude
+    const y = Math.cos(phaseY) * amplitude
+    floatingTransform = `translate(${x}px, ${y}px)`
+  }
+
   return (
     <AbsoluteFill
       style={{
@@ -322,7 +342,13 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
       <Video src={videoUrl} style={{ width: "100%", height: "100%" }} />
       <div style={containerStyle}>
         {activePage && shouldShowContainer && (
-          <div style={{ ...resolvedBoxStyle, ...animStyle }}>
+          <div
+            style={{
+              ...resolvedBoxStyle,
+              ...animStyle,
+              ...(floatingTransform ? { transform: floatingTransform } : {}),
+            }}
+          >
             {activePage.tokens.map((token, i) => {
               const isActive =
                 currentMs >= token.fromMs && currentMs < token.toMs
@@ -377,6 +403,7 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
                     ...(isActive ? resolvedActiveWordStyle : {}),
                     color: wordColor,
                     opacity: 1,
+
                     transition: wordTransition,
                     display: "inline-block",
                     transform: mergedTransform,

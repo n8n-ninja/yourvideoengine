@@ -394,6 +394,18 @@ export class YVEVideoCaptions implements INodeType {
               "Comma-separated list of colors to use for captions (e.g. #FF0000,#00FF00,#0000FF)",
             required: false,
           },
+          {
+            displayName: "Floating",
+            name: "floating",
+            type: "number",
+            typeOptions: {
+              minValue: 0,
+              maxValue: 20,
+            },
+            default: 0,
+            description: "Floating effect intensity (0-20). Optional.",
+            required: false,
+          },
         ],
         displayOptions: {
           show: {
@@ -659,6 +671,8 @@ export class YVEVideoCaptions implements INodeType {
                 if (arr.length > 0) {
                   inputProps.multiColors = arr
                 }
+              } else if (key === "floating") {
+                inputProps.floating = value
               } else {
                 inputProps[key] = value
               }

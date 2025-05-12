@@ -101,6 +101,7 @@ export const RemotionRoot: React.FC = () => {
           activeWordStyle: {
             transform: "skew(-20deg) scale(1.4)",
           },
+          floating: 2,
           verticalAlign: "end",
           multiColors: ["#F8C734", "#FF6B6B", "#4ECDC4", "#45B7D1"],
 
