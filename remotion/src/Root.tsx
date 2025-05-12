@@ -93,18 +93,17 @@ export const RemotionRoot: React.FC = () => {
           color: "#fff",
           highlightColor: "#F8C734",
           uppercase: true,
-          fontSize: 55,
-          position: 80,
-          verticalAlign: "center",
-          animationType: "grow",
+          fontSize: 75,
+          animationType: "none",
           backgroundColor: "rgba(0,0,0,0.4)",
-          boxStyle: {
-            backgroundColor: "rgba(0,0,0,0.4)",
+          boxStyle: {},
+          textStyle: {},
+          activeWordStyle: {
+            transform: "skew(-20deg) scale(1.4)",
           },
+          verticalAlign: "end",
+          multiColors: ["#F8C734", "#FF6B6B", "#4ECDC4", "#45B7D1"],
 
-          textStyle: {
-            textShadow: "0 2px 30px #000, 0 1px 10px #000",
-          },
           words: [
             { word: "i", start: 0.16, end: 0.39999998, confidence: 0.9945892 },
             { word: "take", start: 0.39999998, end: 0.64, confidence: 0.99927 },

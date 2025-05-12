@@ -74,24 +74,7 @@ export class YVEVideoCaptions implements INodeType {
           },
         },
       },
-      {
-        displayName: "Position (0-100%)",
-        name: "top",
-        type: "number",
-        default: 75,
-        typeOptions: {
-          minValue: 0,
-          maxValue: 100,
-        },
-        description:
-          "Vertical position of the captions as a percentage of the video height. 0 = top, 100 = bottom.",
-        required: true,
-        displayOptions: {
-          show: {
-            operation: ["addCaptionsToVideo"],
-          },
-        },
-      },
+
       {
         displayName: "Font Size (px)",
         name: "fontSize",
@@ -132,6 +115,25 @@ export class YVEVideoCaptions implements INodeType {
         },
       },
       {
+        displayName: "Font Weight",
+        name: "fontWeight",
+        type: "options",
+        options: [
+          { name: "Light", value: "light" },
+          { name: "Regular", value: "regular" },
+          { name: "Bold", value: "bold" },
+          { name: "Black", value: "black" },
+        ],
+        default: "bold",
+        description: "Font weight for the captions.",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["addCaptionsToVideo"],
+          },
+        },
+      },
+      {
         displayName: "Color",
         name: "color",
         type: "color",
@@ -158,18 +160,12 @@ export class YVEVideoCaptions implements INodeType {
         },
       },
       {
-        displayName: "Font Weight",
-        name: "fontWeight",
-        type: "options",
-        options: [
-          { name: "Light", value: "light" },
-          { name: "Regular", value: "regular" },
-          { name: "Bold", value: "bold" },
-          { name: "Black", value: "black" },
-        ],
-        default: "black",
-        description: "Font weight for the captions.",
-        required: true,
+        displayName: "Background Color",
+        name: "backgroundColor",
+        type: "string",
+        default: "rgba(0,0,0,0.7)",
+        description: "Background color of the captions container.",
+        required: false,
         displayOptions: {
           show: {
             operation: ["addCaptionsToVideo"],
@@ -208,6 +204,128 @@ export class YVEVideoCaptions implements INodeType {
           },
         },
       },
+      // POSITION FIELDS (top, bottom, left, right)
+      {
+        displayName: "Top (%)",
+        name: "topPos",
+        type: "number",
+        default: 75,
+        description:
+          "Top position of the captions container as a percentage of the video height.",
+        required: false,
+        displayOptions: {
+          show: {
+            operation: ["addCaptionsToVideo"],
+          },
+        },
+      },
+      {
+        displayName: "Bottom (%)",
+        name: "bottomPos",
+        type: "number",
+        default: 0,
+        description:
+          "Bottom position of the captions container as a percentage of the video height.",
+        required: false,
+        displayOptions: {
+          show: {
+            operation: ["addCaptionsToVideo"],
+          },
+        },
+      },
+      {
+        displayName: "Left (%)",
+        name: "leftPos",
+        type: "number",
+        default: 0,
+        description:
+          "Left position of the captions container as a percentage of the video width.",
+        required: false,
+        displayOptions: {
+          show: {
+            operation: ["addCaptionsToVideo"],
+          },
+        },
+      },
+      {
+        displayName: "Right (%)",
+        name: "rightPos",
+        type: "number",
+        default: 0,
+        description:
+          "Right position of the captions container as a percentage of the video width.",
+        required: false,
+        displayOptions: {
+          show: {
+            operation: ["addCaptionsToVideo"],
+          },
+        },
+      },
+      // POSITION JSON + ALIGN DROPDOWNS
+      {
+        displayName: "Horizontal Align",
+        name: "horizontalAlign",
+        type: "options",
+        options: [
+          { name: "Start", value: "start" },
+          { name: "Center", value: "center" },
+          { name: "End", value: "end" },
+        ],
+        default: "center",
+        description: "Horizontal alignment of the captions container.",
+        required: false,
+        displayOptions: {
+          show: {
+            operation: ["addCaptionsToVideo"],
+          },
+        },
+      },
+      {
+        displayName: "Vertical Align",
+        name: "verticalAlign",
+        type: "options",
+        options: [
+          { name: "Start", value: "start" },
+          { name: "Center", value: "center" },
+          { name: "End", value: "end" },
+        ],
+        default: "center",
+        description: "Vertical alignment of the captions container.",
+        required: false,
+        displayOptions: {
+          show: {
+            operation: ["addCaptionsToVideo"],
+          },
+        },
+      },
+      {
+        displayName: "Box Style (JSON)",
+        name: "boxStyle",
+        type: "json",
+        default: "{}",
+        description:
+          'Custom JSON for the captions container (e.g. {"backgroundColor":"#000","borderRadius":18})',
+        required: false,
+        displayOptions: {
+          show: {
+            operation: ["addCaptionsToVideo"],
+          },
+        },
+      },
+      {
+        displayName: "Text Style (JSON)",
+        name: "textStyle",
+        type: "json",
+        default: "{}",
+        description:
+          'Custom JSON for the captions text (e.g. {"textShadow":"2px 2px 8px #000"})',
+        required: false,
+        displayOptions: {
+          show: {
+            operation: ["addCaptionsToVideo"],
+          },
+        },
+      },
       // Regroupe toutes les options de style dans une seule collection
       {
         displayName: "Optional Style",
@@ -216,201 +334,6 @@ export class YVEVideoCaptions implements INodeType {
         placeholder: "Add Option",
         default: {},
         options: [
-          {
-            displayName: "Font Weight",
-            name: "fontWeight",
-            type: "options",
-            options: [
-              { name: "Light", value: "light" },
-              { name: "Regular", value: "regular" },
-              { name: "Bold", value: "bold" },
-              { name: "Black", value: "black" },
-            ],
-            default: "black",
-            description: "Font weight for the captions.",
-            required: false,
-          },
-          {
-            displayName: "Colors (comma separated)",
-            name: "colors",
-            type: "string",
-            default: "",
-            placeholder: "#fff,#000,#f00",
-            description: "Array of colors to use (comma separated).",
-            required: false,
-          },
-          {
-            displayName: "Background Color",
-            name: "backgroundColor",
-            type: "string",
-            default: "rgba(0,0,0,0.7)",
-            typeOptions: {
-              colorPicker: true,
-            },
-            description: "Background color for the captions.",
-            required: false,
-          },
-          {
-            displayName: "Padding",
-            name: "padding",
-            type: "string",
-            default: "0.2em 0.6em",
-            description:
-              "CSS padding for the caption background (e.g., '0.2em 0.6em').",
-            required: false,
-          },
-          {
-            displayName: "Border Radius",
-            name: "borderRadius",
-            type: "number",
-            default: 18,
-            description: "Border radius for the caption background (in px).",
-            required: false,
-          },
-
-          {
-            displayName: "Background Gradient (CSS)",
-            name: "backgroundGradient",
-            type: "string",
-            default: "",
-            description:
-              "CSS gradient for the background (ex: linear-gradient(...)).",
-            required: false,
-          },
-          {
-            displayName: "Background Blur (CSS, px)",
-            name: "backgroundBlur",
-            type: "string",
-            default: "",
-            description: "Blur effect for the background (ex: 8px).",
-            required: false,
-          },
-          {
-            displayName: "Box Border Color",
-            name: "boxBorderColor",
-            type: "string",
-            default: "",
-            typeOptions: {
-              colorPicker: true,
-            },
-            description: "Border color for the caption box.",
-            required: false,
-          },
-          {
-            displayName: "Box Border Width (CSS)",
-            name: "boxBorderWidth",
-            type: "string",
-            default: "",
-            description: "Border width for the caption box (ex: 2px).",
-            required: false,
-          },
-          {
-            displayName: "Box Shadow (CSS)",
-            name: "boxShadow",
-            type: "string",
-            default: "",
-            description: "CSS box-shadow for the caption box.",
-            required: false,
-          },
-          {
-            displayName: "Margin (CSS)",
-            name: "margin",
-            type: "string",
-            default: "",
-            description: "CSS margin for the caption box.",
-            required: false,
-          },
-          {
-            displayName: "Box Width (CSS)",
-            name: "boxWidth",
-            type: "string",
-            default: "",
-            description: "Width of the caption box (ex: 80%).",
-            required: false,
-          },
-          {
-            displayName: "Full Width",
-            name: "fullWidth",
-            type: "boolean",
-            default: false,
-            description: "If true, the caption box takes 100% width.",
-            required: false,
-          },
-          {
-            displayName: "Box Height (CSS or px)",
-            name: "boxHeight",
-            type: "string",
-            default: "",
-            description: "Height of the caption box (ex: 120px or 100%).",
-            required: false,
-          },
-          {
-            displayName: "Line Spacing (CSS)",
-            name: "lineSpacing",
-            type: "string",
-            default: "",
-            description: "CSS line-height for the captions.",
-            required: false,
-          },
-          {
-            displayName: "Word Spacing (CSS)",
-            name: "wordSpacing",
-            type: "string",
-            default: "",
-            description: "CSS word-spacing for the captions.",
-            required: false,
-          },
-          {
-            displayName: "Letter Spacing (CSS)",
-            name: "letterSpacing",
-            type: "string",
-            default: "",
-            description: "CSS letter-spacing for the captions.",
-            required: false,
-          },
-          {
-            displayName: "Text Align",
-            name: "textAlign",
-            type: "options",
-            options: [
-              { name: "Left", value: "left" },
-              { name: "Center", value: "center" },
-              { name: "Right", value: "right" },
-              { name: "Justify", value: "justify" },
-            ],
-            default: "center",
-            description: "Text alignment for the captions.",
-            required: false,
-          },
-          {
-            displayName: "Vertical Align",
-            name: "verticalAlign",
-            type: "options",
-            options: [
-              { name: "Top", value: "top" },
-              { name: "Center", value: "center" },
-              { name: "Bottom", value: "bottom" },
-            ],
-            default: "center",
-            description: "Vertical alignment of the caption box.",
-            required: false,
-          },
-          {
-            displayName: "Transition Duration (CSS)",
-            name: "transitionDuration",
-            type: "string",
-            default: "0.12s",
-            description: "Transition duration for word highlight (ex: 0.12s).",
-            required: false,
-          },
-          {
-            displayName: "Transition Easing (CSS)",
-            name: "transitionEasing",
-            type: "string",
-            default: "cubic-bezier(0.4,0,0.2,1)",
-            description: "Transition easing for word highlight.",
-            required: false,
-          },
           {
             displayName: "Phrase In Animation",
             name: "phraseInAnimation",
@@ -448,57 +371,13 @@ export class YVEVideoCaptions implements INodeType {
             required: false,
           },
           {
-            displayName: "Text Outline (contour)",
-            name: "textOutline",
-            type: "fixedCollection",
-            typeOptions: { multipleValues: false },
-            default: {},
-            options: [
-              {
-                name: "outline",
-                displayName: "Outline",
-                values: [
-                  {
-                    displayName: "Color",
-                    name: "color",
-                    type: "string",
-                    default: "#000000",
-                    typeOptions: { colorPicker: true },
-                    required: false,
-                  },
-                  {
-                    displayName: "Width (px)",
-                    name: "width",
-                    type: "number",
-                    default: 2,
-                    required: false,
-                  },
-                  {
-                    displayName: "Shadow Color",
-                    name: "shadowColor",
-                    type: "string",
-                    default: "",
-                    typeOptions: { colorPicker: true },
-                    required: false,
-                  },
-                  {
-                    displayName: "Shadow Spread (px)",
-                    name: "shadowSpread",
-                    type: "number",
-                    default: 2,
-                    required: false,
-                  },
-                  {
-                    displayName: "Shadow Blur (px)",
-                    name: "shadowBlur",
-                    type: "number",
-                    default: 8,
-                    required: false,
-                  },
-                ],
-              },
-            ],
-            description: "Text outline and shadow.",
+            displayName: "Multi Colors",
+            name: "multiColors",
+            type: "string",
+            default: "",
+            placeholder: "#FF0000,#00FF00,#0000FF",
+            description:
+              "Comma-separated list of colors to use for captions (e.g. #FF0000,#00FF00,#0000FF)",
             required: false,
           },
         ],
@@ -627,17 +506,30 @@ export class YVEVideoCaptions implements INodeType {
         // Main params
         const color = this.getNodeParameter("color", i)
         const highlightColor = this.getNodeParameter("highlightColor", i)
+        const backgroundColor = this.getNodeParameter("backgroundColor", i)
         const fontSize = this.getNodeParameter("fontSize", i)
         const fontFamily = this.getNodeParameter("fontFamily", i)
         const fontWeight = this.getNodeParameter("fontWeight", i)
         const animationType = this.getNodeParameter("animationType", i)
-        const top = this.getNodeParameter("top", i)
         const uppercase = this.getNodeParameter("uppercase", i)
         const combineTokensWithinMilliseconds = this.getNodeParameter(
           "combineTokensWithinMilliseconds",
           i,
         )
 
+        // Style params
+        const boxStyleStr = this.getNodeParameter("boxStyle", i, "") as string
+        const textStyleStr = this.getNodeParameter("textStyle", i, "") as string
+
+        // Position params
+        const topPos = this.getNodeParameter("topPos", i)
+        const bottomPos = this.getNodeParameter("bottomPos", i)
+        const leftPos = this.getNodeParameter("leftPos", i)
+        const rightPos = this.getNodeParameter("rightPos", i)
+        const horizontalAlign = this.getNodeParameter("horizontalAlign", i)
+        const verticalAlign = this.getNodeParameter("verticalAlign", i)
+
+        // Deepgram params
         const deepgramOptions = {
           model: optionalTranslation.model ?? "nova-3",
           language: optionalTranslation.language ?? "en",
@@ -693,21 +585,61 @@ export class YVEVideoCaptions implements INodeType {
             words: words,
             combineTokensWithinMilliseconds,
           }
+
           if (color !== undefined) inputProps.color = color
           if (highlightColor !== undefined)
             inputProps.highlightColor = highlightColor
+          if (backgroundColor !== undefined)
+            inputProps.backgroundColor = backgroundColor
           if (fontSize !== undefined) inputProps.fontSize = fontSize
           if (fontFamily !== undefined) inputProps.fontFamily = fontFamily
           if (fontWeight !== undefined) inputProps.fontWeight = fontWeight
           if (animationType !== undefined)
             inputProps.animationType = animationType
-          if (top !== undefined) inputProps.top = top
           if (uppercase !== undefined) inputProps.uppercase = uppercase
+          if (boxStyleStr && boxStyleStr.trim() !== "") {
+            try {
+              inputProps.boxStyle = JSON.parse(boxStyleStr)
+            } catch (e) {
+              throw new Error("boxStyle is not valid JSON: " + e)
+            }
+          }
+          if (textStyleStr && textStyleStr.trim() !== "") {
+            try {
+              inputProps.textStyle = JSON.parse(textStyleStr)
+            } catch (e) {
+              throw new Error("textStyle is not valid JSON: " + e)
+            }
+          }
+
+          // Position & align
+          inputProps.top = topPos
+          inputProps.bottom = bottomPos
+          inputProps.left = leftPos
+          inputProps.right = rightPos
+
+          if (horizontalAlign) inputProps.horizontalAlign = horizontalAlign
+          if (verticalAlign) inputProps.verticalAlign = verticalAlign
+
+          // Optional style
           Object.entries(style || {}).forEach(([key, value]) => {
             if (value !== undefined && value !== "") {
-              inputProps[key] = value
+              if (key === "multiColors" && typeof value === "string") {
+                // Split and pass as array if not empty
+                const arr = value
+                  .split(",")
+                  .map((c: string) => c.trim())
+                  .filter(Boolean)
+                if (arr.length > 0) {
+                  inputProps.multiColors = arr
+                }
+              } else {
+                inputProps[key] = value
+              }
             }
           })
+
+          // Remotion payload
           const remotionPayload = {
             serveUrl:
               "https://remotionlambda-useast1-xw8v2xhmyv.s3.us-east-1.amazonaws.com/sites/yourvideoengine/index.html",
@@ -716,6 +648,8 @@ export class YVEVideoCaptions implements INodeType {
             inputProps: inputProps,
             durationInFrames: Math.round(duration * 30),
           }
+
+          // Remotion response
           const remotionResponse = await this.helpers.httpRequest({
             method: "POST",
             url: "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/render",
@@ -725,8 +659,11 @@ export class YVEVideoCaptions implements INodeType {
             body: remotionPayload,
             json: true,
           })
+
+          // Output file
           let outputFile = null
           let statusData = null
+
           if (remotionResponse.statusUrl) {
             const statusUrl = remotionResponse.statusUrl
             const start = Date.now()
@@ -748,9 +685,15 @@ export class YVEVideoCaptions implements INodeType {
               }
             }
           }
+
+          // Output data
           if (outputFile) {
             returnData.push({
-              json: { video_url: outputFile, captions: response },
+              json: {
+                video_url: outputFile,
+                captions: response,
+                status: statusData,
+              },
             })
           } else {
             returnData.push({

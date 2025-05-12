@@ -29,19 +29,22 @@ function parseStyleString(style: string): React.CSSProperties {
   return obj as React.CSSProperties
 }
 
+const defaultActiveWordStyle: React.CSSProperties = {
+  zIndex: 100,
+  position: "relative",
+  // Ajoute ici d'autres propriétés par défaut si besoin
+}
+
 export const CaptionsSchema = z.object({
   videoUrl: z.string(),
-  words: z.array(
-    z.object({
-      word: z.string(),
-      start: z.number(), // seconds
-      end: z.number(), // seconds
-      confidence: z.number().optional(),
-    }),
-  ),
+
   combineTokensWithinMilliseconds: z.number().optional(),
-  position: z.number().optional(),
-  verticalAlign: z.enum(["center", "top", "bottom"]).optional(),
+  top: z.number().optional(),
+  left: z.number().optional(),
+  right: z.number().optional(),
+  bottom: z.number().optional(),
+  horizontalAlign: z.enum(["start", "center", "end"]).optional(),
+  verticalAlign: z.enum(["start", "center", "end"]).optional(),
   fontSize: z.union([z.number(), z.string()]),
   fontFamily: z.string().optional(),
   color: z.string().optional(),
@@ -54,6 +57,7 @@ export const CaptionsSchema = z.object({
   uppercase: z.boolean().optional(),
   boxStyle: z.union([z.record(z.any()), z.string()]).optional(),
   textStyle: z.union([z.record(z.any()), z.string()]).optional(),
+  activeWordStyle: z.union([z.record(z.any()), z.string()]).optional(),
   phraseInAnimation: z
     .enum(["fade", "slide-up", "slide-down", "none"])
     .optional(),
@@ -61,15 +65,32 @@ export const CaptionsSchema = z.object({
     .enum(["fade", "slide-up", "slide-down", "none"])
     .optional(),
   animationDuration: z.number().optional(),
+  words: z.array(
+    z.object({
+      word: z.string(),
+      start: z.number(), // seconds
+      end: z.number(), // seconds
+      confidence: z.number().optional(),
+    }),
+  ),
+  multiColors: z.array(z.string()).optional(),
 })
 
 export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
   videoUrl,
   words,
   combineTokensWithinMilliseconds = 1400,
-  position = 75,
+
+  // Positionnement
+  top = 70,
+  left = 0,
+  right = 0,
+  bottom = 0,
+  horizontalAlign = "center",
   verticalAlign = "center",
-  fontSize = 55,
+
+  // Font
+  fontSize = 75,
   fontFamily = "Montserrat",
   color = "#fff",
   highlightColor = "#F8C734",
@@ -77,11 +98,18 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
   fontWeight = "black",
   animationType = "none",
   uppercase = false,
+
+  // Custom styles
   boxStyle,
   textStyle,
+  activeWordStyle,
+
+  // Animations
   phraseInAnimation,
   phraseOutAnimation,
   animationDuration,
+
+  multiColors,
 }) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
@@ -115,16 +143,13 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
     backgroundColor,
     borderRadius: 18,
     padding: "1.5em 4em",
-    display: "inline-flex",
+    display: "inline-block",
     letterSpacing: "0.08em",
-    flexWrap: "wrap",
-    gap: "0em 1.4em",
+    wordSpacing: "1.08em",
     lineHeight: 1.4,
-    wordBreak: "break-word",
-    whiteSpace: "pre-wrap",
-    justifyContent: "center",
+    textWrap: "balance",
     textAlign: "center",
-    alignItems: "center",
+    margin: "30px",
   }
   if (boxStyle) {
     if (typeof boxStyle === "string") {
@@ -137,8 +162,11 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
   // Style du texte
   let resolvedTextStyle: React.CSSProperties = {
     color,
-    fontFamily: fontFamily ? `${fontFamily}, sans-serif` : "Arial, sans-serif",
+    fontFamily: fontFamily
+      ? `${fontFamily}, sans-serif`
+      : "Montserrat, sans-serif",
     fontSize,
+    textShadow: "0 2px 30px #000, 0 1px 10px #000",
     fontWeight:
       typeof fontWeight === "number"
         ? fontWeight
@@ -158,25 +186,33 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
     }
   }
 
-  // Positionnement vertical
-  const topValue = `${position}%`
-  let transformValue = "translateY(-50%)"
-  if (verticalAlign === "top") {
-    transformValue = "translateY(0%)"
-  } else if (verticalAlign === "bottom") {
-    transformValue = "translateY(-100%)"
+  // Style du mot actif
+  let resolvedActiveWordStyle: React.CSSProperties = {
+    ...defaultActiveWordStyle,
+  }
+  if (activeWordStyle) {
+    if (typeof activeWordStyle === "string") {
+      resolvedActiveWordStyle = {
+        ...defaultActiveWordStyle,
+        ...parseStyleString(activeWordStyle),
+      }
+    } else {
+      resolvedActiveWordStyle = {
+        ...defaultActiveWordStyle,
+        ...activeWordStyle,
+      }
+    }
   }
 
   const containerStyle = {
     position: "absolute" as const,
-    top: topValue,
-    left: 0,
-    width: "100%",
+    top: `${top}%`,
+    left: `${left}%`,
+    right: `${right}%`,
+    bottom: `${bottom}%`,
     display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center" as const,
-    transform: transformValue,
+    justifyContent: horizontalAlign,
+    alignItems: verticalAlign,
   }
 
   // Convert words to TikTok-style captions input
@@ -200,6 +236,12 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
     (p) => currentMs >= p.startMs && currentMs < p.startMs + p.durationMs,
   )
   const activePage = pages[activePageIndex]
+
+  // Détermine la couleur de highlight pour la phrase courante
+  let phraseHighlightColor = highlightColor
+  if (multiColors && multiColors.length > 0 && activePageIndex >= 0) {
+    phraseHighlightColor = multiColors[activePageIndex % multiColors.length]
+  }
 
   // Détermine si au moins un mot est affiché (pour masquer le container si aucun mot)
   let shouldShowContainer = false
@@ -285,8 +327,8 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
               const isActive =
                 currentMs >= token.fromMs && currentMs < token.toMs
               let wordColor = resolvedTextStyle.color || "#fff"
-              if (isActive && highlightColor) {
-                wordColor = highlightColor
+              if (isActive && phraseHighlightColor) {
+                wordColor = phraseHighlightColor
               }
               // Animation "bump" : le mot grossit à l'apparition puis reste à 1 tant qu'il est actif
               let scale = 1
@@ -316,19 +358,30 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
               // Word by word : n'affiche que le mot actif
               if (combineTokensWithinMilliseconds === 0 && !isActive)
                 return null
-              // En word by word, on retire l'espace initial
+              // On retire l'espace initial du token
               let word = token.text.trim()
               if (uppercase) word = word.toUpperCase()
+
+              // Fusion intelligente du transform :
+              let mergedTransform = `scale(${scale}) translateY(${translateY}%)`
+              if (isActive && resolvedActiveWordStyle.transform) {
+                // Si activeWordStyle a un transform, on les concatène
+                mergedTransform = `${mergedTransform} ${resolvedActiveWordStyle.transform}`
+              }
+
               return (
                 <span
                   key={`${activePageIndex}-${i}`}
                   style={{
                     ...resolvedTextStyle,
+                    ...(isActive ? resolvedActiveWordStyle : {}),
                     color: wordColor,
                     opacity: 1,
                     transition: wordTransition,
                     display: "inline-block",
-                    transform: `scale(${scale}) translateY(${translateY}%)`,
+                    transform: mergedTransform,
+                    marginRight:
+                      i !== activePage.tokens.length - 1 ? "0.32em" : undefined,
                   }}
                 >
                   {word}
