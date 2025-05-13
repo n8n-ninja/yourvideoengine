@@ -30,11 +30,53 @@ export const TitlesSchema = z.array(
     // Offsets pour le titre
     titleStartOffset: z.number().optional(), // Décalage relatif pour le début de l'animation du titre
     titleEndOffset: z.number().optional(), // Décalage relatif pour la fin de l'animation du titre
+    // Thème visuel prédéfini
+    theme: z
+      .enum([
+        "minimal",
+        "impact",
+        "elegant",
+        "neon",
+        "shadow",
+        "outline",
+        "gradient",
+        "retro",
+        "cinematic",
+        "3d",
+      ])
+      .optional(),
+    // 3D transformation properties
+    threeDEffect: z
+      .object({
+        enabled: z.boolean().optional(),
+        perspective: z.number().optional(), // Perspective depth in pixels
+        rotateX: z.number().optional(), // Rotation in degrees
+        rotateY: z.number().optional(), // Rotation in degrees
+        rotateZ: z.number().optional(), // Rotation in degrees
+        translateZ: z.number().optional(), // Translation in Z-axis
+        animation: z
+          .object({
+            from: z.record(z.any()),
+            to: z.record(z.any()),
+            exit: z.record(z.any()).optional(),
+            easing: z.string().optional(),
+          })
+          .optional(),
+      })
+      .optional(),
     // Animation lettre par lettre
     letterAnimation: z
       .object({
         preset: z
-          .enum(["typewriter", "fade", "slide", "bounce", "random"])
+          .enum([
+            "typewriter",
+            "fade",
+            "slide",
+            "bounce",
+            "random",
+            "3d-flip",
+            "3d-rotate",
+          ])
           .optional(),
         staggerDelay: z.number().optional(), // Délai entre chaque lettre en secondes
         duration: z.number().optional(), // Durée d'animation pour chaque lettre
@@ -140,6 +182,24 @@ const letterAnimationPresets = {
     direction: "ltr",
     animateSpaces: true,
   },
+  "3d-flip": {
+    from: { opacity: 0, rotateX: 90, perspective: 800 },
+    to: { opacity: 1, rotateX: 0, perspective: 800 },
+    staggerDelay: 0.05,
+    duration: 0.4,
+    easing: "easeOut",
+    direction: "ltr" as const,
+    animateSpaces: true,
+  },
+  "3d-rotate": {
+    from: { opacity: 0, rotateY: 90, perspective: 800 },
+    to: { opacity: 1, rotateY: 0, perspective: 800 },
+    staggerDelay: 0.04,
+    duration: 0.5,
+    easing: "easeOutElastic",
+    direction: "ltr" as const,
+    animateSpaces: true,
+  },
 }
 
 function getEasingFn(easingName?: string): (x: number) => number {
@@ -223,6 +283,13 @@ function applyAnimationToStyle(
   // Compose la transform dynamiquement
   const transforms = []
 
+  // Perspective for 3D
+  let hasPerspective = false
+  if (interp.perspective !== undefined) {
+    hasPerspective = true
+    style.perspective = `${interp.perspective}px`
+  }
+
   // Scale (avec support de scaleX/scaleY séparés)
   if (interp.scaleX !== undefined) {
     transforms.push(`scaleX(${interp.scaleX})`)
@@ -238,7 +305,29 @@ function applyAnimationToStyle(
     transforms.push(`scale(${interp.scale})`)
   }
 
-  if (interp.translateX !== undefined || interp.translateY !== undefined) {
+  // 3D Transforms - need to be before translate
+  if (interp.rotateX !== undefined) {
+    transforms.push(`rotateX(${interp.rotateX}deg)`)
+  }
+  if (interp.rotateY !== undefined) {
+    transforms.push(`rotateY(${interp.rotateY}deg)`)
+  }
+  if (interp.rotateZ !== undefined) {
+    transforms.push(`rotateZ(${interp.rotateZ}deg)`)
+  }
+
+  // Handle translation (2D or 3D)
+  if (interp.translateZ !== undefined) {
+    // If we have Z translation, use translate3d
+    const x = interp.translateX ?? 0
+    const y = interp.translateY ?? 0
+    const z = interp.translateZ
+    transforms.push(`translate3d(${x}px, ${y}px, ${z}px)`)
+  } else if (
+    interp.translateX !== undefined ||
+    interp.translateY !== undefined
+  ) {
+    // Otherwise use regular 2D translate
     const x = interp.translateX ?? 0
     const y = interp.translateY ?? 0
     transforms.push(`translate(${x}px, ${y}px)`)
@@ -254,9 +343,113 @@ function applyAnimationToStyle(
 
   if (transforms.length > 0) {
     style.transform = transforms.join(" ")
+
+    // Add transform-style and backface-visibility for 3D transforms
+    if (
+      hasPerspective ||
+      interp.rotateX !== undefined ||
+      interp.rotateY !== undefined ||
+      interp.rotateZ !== undefined ||
+      interp.translateZ !== undefined
+    ) {
+      style.transformStyle = "preserve-3d" as const
+      style.backfaceVisibility = "hidden" as const
+    }
   }
 
   return style
+}
+
+// Thèmes visuels prédéfinis
+const titleThemes: Record<string, React.CSSProperties> = {
+  minimal: {
+    color: "#ffffff",
+    fontFamily: "Inter, sans-serif",
+    fontSize: 90,
+    fontWeight: 500,
+    letterSpacing: "0.05em",
+  },
+  impact: {
+    color: "#ffffff",
+    fontFamily: "Impact, sans-serif",
+    fontSize: 100,
+    fontWeight: 800,
+    textTransform: "uppercase" as const,
+    letterSpacing: "0.03em",
+    textShadow: "2px 2px 0 #000",
+  },
+  elegant: {
+    color: "#ffffff",
+    fontFamily: "Playfair Display, serif",
+    fontSize: 85,
+    fontWeight: 400,
+    fontStyle: "italic",
+    letterSpacing: "0.05em",
+    textShadow: "0 2px 20px rgba(0,0,0,0.5)",
+  },
+  neon: {
+    color: "#00fff7",
+    fontFamily: "Montserrat, sans-serif",
+    fontSize: 80,
+    fontWeight: 700,
+    textShadow:
+      "0 0 5px #00fff7, 0 0 10px #00fff7, 0 0 20px #00fff7, 0 0 30px #00fff7",
+    letterSpacing: "0.08em",
+  },
+  shadow: {
+    color: "#ffffff",
+    fontFamily: "Roboto, sans-serif",
+    fontSize: 90,
+    fontWeight: 900,
+    textShadow:
+      "0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15)",
+  },
+  outline: {
+    color: "transparent",
+    fontFamily: "Oswald, sans-serif",
+    fontSize: 95,
+    fontWeight: 800,
+    WebkitTextStroke: "2px white",
+    textTransform: "uppercase" as const,
+    letterSpacing: "0.05em",
+  },
+  gradient: {
+    fontFamily: "Montserrat, sans-serif",
+    fontSize: 90,
+    fontWeight: 800,
+    background: "linear-gradient(to right, #ff8a00, #da1b60, #8a16ff)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    textShadow: "0 2px 15px rgba(0,0,0,0.2)",
+  },
+  retro: {
+    color: "#ffde59",
+    fontFamily: "Press Start 2P, cursive",
+    fontSize: 60,
+    textShadow: "5px 5px 0px #ff00a2",
+    letterSpacing: "0.05em",
+    lineHeight: 1.5,
+  },
+  cinematic: {
+    color: "#ffffff",
+    fontFamily: "Cinzel, serif",
+    fontSize: 85,
+    fontWeight: 700,
+    letterSpacing: "0.2em",
+    textTransform: "uppercase" as const,
+    textShadow: "0 2px 30px rgba(0,0,0,0.8)",
+  },
+  "3d": {
+    color: "#ffffff",
+    fontFamily: "Montserrat, sans-serif",
+    fontSize: 90,
+    fontWeight: 800,
+    letterSpacing: "0.05em",
+    textShadow:
+      "0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2)",
+    transformStyle: "preserve-3d" as const,
+    perspective: "1000px",
+  },
 }
 
 /*
@@ -483,7 +676,7 @@ export const Title: React.FC<TitleProps> = ({ titles }) => {
     pointerEvents: "none" as const,
   }
 
-  // Style title
+  // Style title with theme if provided
   let resolvedTitleStyle: React.CSSProperties = {
     color: "#fff",
     fontFamily: "Montserrat, sans-serif",
@@ -493,6 +686,16 @@ export const Title: React.FC<TitleProps> = ({ titles }) => {
     textShadow: "0 2px 30px #000, 0 1px 10px #000",
     lineHeight: 1.1,
   }
+
+  // Apply theme if specified
+  if (activeTitle.theme && titleThemes[activeTitle.theme]) {
+    resolvedTitleStyle = {
+      ...resolvedTitleStyle,
+      ...titleThemes[activeTitle.theme],
+    }
+  }
+
+  // Apply custom style on top of theme if provided
   if (activeTitle.titleStyle) {
     if (typeof activeTitle.titleStyle === "string") {
       resolvedTitleStyle = {
@@ -829,7 +1032,7 @@ export const Title: React.FC<TitleProps> = ({ titles }) => {
               )
 
               const spaceStyle = applyAnimationToStyle(
-                { display: "inline-block", marginRight: "0.3em" },
+                { display: "inline-block" },
                 interpValues,
               )
 
@@ -844,11 +1047,7 @@ export const Title: React.FC<TitleProps> = ({ titles }) => {
               return (
                 <React.Fragment key={`word-space-${wordIndex}`}>
                   {wordElement}
-                  <span
-                    style={{ display: "inline-block", marginRight: "0.3em" }}
-                  >
-                    &nbsp;
-                  </span>
+                  <span style={{ display: "inline-block" }}>&nbsp;</span>
                 </React.Fragment>
               )
             }
@@ -860,6 +1059,78 @@ export const Title: React.FC<TitleProps> = ({ titles }) => {
     )
   }
 
+  // 3D effect processing
+  const has3DEffect = activeTitle?.threeDEffect?.enabled ?? false
+  let threeDStyle: React.CSSProperties = {}
+
+  if (has3DEffect) {
+    // Base 3D style
+    threeDStyle = {
+      perspective: `${activeTitle.threeDEffect?.perspective ?? 1000}px`,
+      transformStyle: "preserve-3d",
+    }
+
+    // Apply static 3D transforms if no animation is defined
+    if (!activeTitle.threeDEffect?.animation) {
+      const transforms = []
+
+      if (activeTitle.threeDEffect?.rotateX !== undefined) {
+        transforms.push(`rotateX(${activeTitle.threeDEffect.rotateX}deg)`)
+      }
+      if (activeTitle.threeDEffect?.rotateY !== undefined) {
+        transforms.push(`rotateY(${activeTitle.threeDEffect.rotateY}deg)`)
+      }
+      if (activeTitle.threeDEffect?.rotateZ !== undefined) {
+        transforms.push(`rotateZ(${activeTitle.threeDEffect.rotateZ}deg)`)
+      }
+      if (activeTitle.threeDEffect?.translateZ !== undefined) {
+        transforms.push(`translateZ(${activeTitle.threeDEffect.translateZ}px)`)
+      }
+
+      if (transforms.length > 0) {
+        threeDStyle.transform = transforms.join(" ")
+      }
+    }
+  }
+
+  // Apply 3D animation if defined
+  let animated3DStyle: React.CSSProperties | undefined = undefined
+
+  if (
+    has3DEffect &&
+    activeTitle.threeDEffect?.animation?.from &&
+    activeTitle.threeDEffect.animation?.to
+  ) {
+    const threeDAnimation = activeTitle.threeDEffect.animation
+    const easingFn = getEasingFn(threeDAnimation.easing)
+
+    let interp: Record<string, number | string>
+    if (titleInDuration > 0 && currentTime < titleInEnd) {
+      // Entry animation
+      const easedProgress = easingFn(titleAnimProgress)
+      interp = interpolate(
+        threeDAnimation.from,
+        threeDAnimation.to,
+        easedProgress,
+      )
+    } else if (titleOutDuration > 0 && currentTime > titleOutStart) {
+      // Exit animation
+      const outProgress = 1 - titleAnimProgress
+      const easedProgress = easingFn(outProgress)
+      interp = interpolate(
+        threeDAnimation.to,
+        threeDAnimation.exit || threeDAnimation.from,
+        easedProgress,
+      )
+    } else {
+      // Stable state
+      interp = { ...threeDAnimation.to }
+    }
+
+    animated3DStyle = applyAnimationToStyle(threeDStyle, interp)
+  }
+
+  // Final container rendering
   return (
     <AbsoluteFill
       style={{
@@ -875,6 +1146,8 @@ export const Title: React.FC<TitleProps> = ({ titles }) => {
             style={{
               ...backgroundBoxStyle,
               ...(animatedBoxStyle ? animatedBoxStyle : {}),
+              ...(has3DEffect ? threeDStyle : {}),
+              ...(animated3DStyle ? animated3DStyle : {}),
             }}
           >
             {titleAppear && (
@@ -884,7 +1157,7 @@ export const Title: React.FC<TitleProps> = ({ titles }) => {
                   ...(animatedTitleStyle ? animatedTitleStyle : {}),
                   opacity: animatedTitleStyle?.opacity ?? titleAnimProgress,
                   margin: 0,
-                  whiteSpace: hasLetterAnimation ? "normal" : "nowrap", // Désactive nowrap pour les animations lettre par lettre
+                  whiteSpace: hasLetterAnimation ? "normal" : "nowrap",
                 }}
               >
                 {hasLetterAnimation
@@ -900,6 +1173,8 @@ export const Title: React.FC<TitleProps> = ({ titles }) => {
               ...(animatedTitleStyle ? animatedTitleStyle : {}),
               opacity: animatedTitleStyle?.opacity ?? titleAnimProgress,
               whiteSpace: hasLetterAnimation ? "normal" : "nowrap",
+              ...(has3DEffect ? threeDStyle : {}),
+              ...(animated3DStyle ? animated3DStyle : {}),
             }}
           >
             {hasLetterAnimation

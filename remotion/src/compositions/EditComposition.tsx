@@ -84,8 +84,34 @@ export const EditComposition = () => {
             },
             titles: [
               {
+                theme: "3d",
+                threeDEffect: {
+                  enabled: true,
+                  perspective: 100,
+                  rotateX: 10,
+                  rotateY: 10,
+                  rotateZ: 10,
+                },
+                letterAnimation: {
+                  preset: "slide",
+                  direction: "edges",
+                  from: { opacity: 0, scale: 1.5 },
+                  to: { opacity: 1, scale: 1 },
+                },
+                animation: {
+                  easing: "ease-in-out",
+
+                  from: { opacity: 0, scale: 1.5 },
+                  to: { opacity: 1, scale: 1 },
+                },
                 time: 0,
                 title: "Hello world",
+                titleStyle: {
+                  padding: 30,
+                  margin: 30,
+                  fontSize: 100,
+                  color: "red",
+                },
               },
             ],
 
@@ -119,6 +145,9 @@ export const EditComposition = () => {
               {
                 title: "Mon Titre Animé qui plait aux vieux et aux jeunes ",
                 time: 1,
+                top: 0,
+                verticalAlign: "end",
+                bottom: 0,
                 duration: 3.2,
                 titleInDuration: 0.5,
                 titleOutDuration: 0.5,
@@ -130,7 +159,8 @@ export const EditComposition = () => {
                   to: { opacity: 1, scale: 1 },
                 },
                 titleStyle: {
-                  padding: 10,
+                  padding: 130,
+                  textWrap: "balance",
                   textAlign: "center",
                 },
                 backgroundBox: {
