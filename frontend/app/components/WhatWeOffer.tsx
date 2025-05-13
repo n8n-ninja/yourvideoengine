@@ -12,6 +12,13 @@ export function WhatWeOffer({ children }: WhatWeOfferProps) {
   const openModal = () => setIsModalOpen(true)
   const closeModal = () => setIsModalOpen(false)
 
+  const videoImage = (
+    <img
+      src="/video-sales-letter.webp"
+      alt="Watch our presentation"
+      className="w-full h-full object-cover rounded-lg"
+    />
+  )
   const videoThumbnail = (
     <button
       className="w-full h-full focus:outline-none p-3"
@@ -66,12 +73,12 @@ export function WhatWeOffer({ children }: WhatWeOfferProps) {
       <FiftyFifty
         imagePosition="right"
         colorTheme="purple"
-        imageContent={videoThumbnail}
+        imageContent={videoImage}
       >
         {children}
       </FiftyFifty>
 
-      <Dialog open={isModalOpen} onClose={closeModal} className="relative z-50">
+      {/* <Dialog open={isModalOpen} onClose={closeModal} className="relative z-50">
         <div
           className="fixed inset-0 bg-black/80 backdrop-blur-sm"
           aria-hidden="true"
@@ -124,7 +131,7 @@ export function WhatWeOffer({ children }: WhatWeOfferProps) {
             </div>
           </Dialog.Panel>
         </div>
-      </Dialog>
+      </Dialog> */}
     </>
   )
 }

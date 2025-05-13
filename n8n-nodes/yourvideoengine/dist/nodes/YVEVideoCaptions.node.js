@@ -57,7 +57,7 @@ class YVEVideoCaptions {
                     name: "combineTokensWithinMilliseconds",
                     type: "number",
                     default: 1400,
-                    description: "Regroup words into phrases if they are close in time (ms). 0 = word by word.",
+                    description: "Regroup words into phrases if they are close in time (ms). 0 = word by word. 1000 words = normal length. 2000 words = long length.",
                     required: false,
                     displayOptions: {
                         show: {
@@ -381,10 +381,10 @@ class YVEVideoCaptions {
                             type: "number",
                             typeOptions: {
                                 minValue: 0,
-                                maxValue: 20,
+                                maxValue: 100,
                             },
                             default: 0,
-                            description: "Floating effect intensity (0-20). Optional.",
+                            description: "Floating effect intensity (0-100).",
                             required: false,
                         },
                         {
@@ -396,7 +396,7 @@ class YVEVideoCaptions {
                                 maxValue: 100,
                             },
                             default: 0,
-                            description: "Vary the difference in word sizes (0-100). Optional.",
+                            description: "Vary the difference in word sizes (0-100).",
                             required: false,
                         },
                     ],

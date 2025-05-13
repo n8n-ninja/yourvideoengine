@@ -45,7 +45,7 @@ export default function Index() {
   const sectionRef = useRef<HTMLElement>(null)
   const useCaseMarkerRef = useRef<HTMLDivElement>(null)
   const technologyMarkerRef = useRef<HTMLDivElement>(null)
-  const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(true)
+  const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(false)
 
   // Synchroniser l'état des stats avec le mode développement
   useEffect(() => {
@@ -200,11 +200,11 @@ export default function Index() {
 
       <div ref={section6eRef}></div>
 
-      <Testimonials
+      {/* <Testimonials
         title={homeContent.testimonials.title}
         description={homeContent.testimonials.description}
         testimonials={homeContent.testimonials.items}
-      />
+      /> */}
 
       <div className="absolute -mt-[500px]" ref={section7Ref}></div>
 
