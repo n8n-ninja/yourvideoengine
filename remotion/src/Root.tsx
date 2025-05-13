@@ -214,10 +214,7 @@ export const RemotionRoot: React.FC = () => {
             },
             {
               time: 1,
-              glitch: {
-                intensity: 0.8,
-                duration: 0.8,
-              },
+              vignette: { intensity: 50, size: 50, color: "#000" },
             },
           ],
         }}
