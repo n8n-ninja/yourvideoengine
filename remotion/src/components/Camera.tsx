@@ -12,7 +12,7 @@ import {
 import { z } from "zod"
 import React from "react"
 
-export const CameraZoomSchema = z.object({
+export const CameraSchema = z.object({
   videoUrl: z.string(),
   keyframes: z.array(
     z.object({
@@ -72,7 +72,6 @@ export const CameraZoomSchema = z.object({
   ),
 })
 
-// Helper pour parser un filter CSS en objet clé/valeur
 function parseFilter(filterStr: string): Record<string, number> {
   const regex = /(\w+)\(([^)]+)\)/g
   const result: Record<string, number> = {}
@@ -85,16 +84,16 @@ function parseFilter(filterStr: string): Record<string, number> {
   return result
 }
 
-// Helper pour reconstruire un filter CSS à partir d'un objet
 function buildFilter(obj: Record<string, number>): string {
   return Object.entries(obj)
     .map(([k, v]) => `${k}(${v})`)
     .join(" ")
 }
 
-export const CameraZoomComposition: React.FC<
-  z.infer<typeof CameraZoomSchema>
-> = ({ videoUrl, keyframes }) => {
+export const Camera: React.FC<z.infer<typeof CameraSchema>> = ({
+  videoUrl,
+  keyframes,
+}) => {
   const frame = useCurrentFrame()
   const { fps, durationInFrames, width, height } = useVideoConfig()
   const totalDurationSec = durationInFrames / fps

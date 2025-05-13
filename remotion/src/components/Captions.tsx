@@ -1,18 +1,9 @@
-import {
-  AbsoluteFill,
-  Video,
-  useCurrentFrame,
-  useVideoConfig,
-  spring,
-} from "remotion"
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion"
 import { z } from "zod"
-import { useEffect, useState } from "react"
-import { parseMedia } from "@remotion/media-parser"
 import React from "react"
-import "./fonts.css"
+
 import { createTikTokStyleCaptions } from "@remotion/captions"
 
-// Utilitaire pour parser une string CSS en objet JS
 function parseStyleString(style: string): React.CSSProperties {
   const obj = style
     .split(";")
@@ -36,7 +27,6 @@ const defaultActiveWordStyle: React.CSSProperties = {
 }
 
 export const CaptionsSchema = z.object({
-  videoUrl: z.string(),
   combineTokensWithinMilliseconds: z.number().optional(),
   top: z.number().optional(),
   left: z.number().optional(),
@@ -77,8 +67,7 @@ export const CaptionsSchema = z.object({
   randomWordSize: z.number().optional(),
 })
 
-export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
-  videoUrl,
+export const Captions: React.FC<z.infer<typeof CaptionsSchema>> = ({
   words,
   combineTokensWithinMilliseconds = 1400,
 
@@ -118,28 +107,10 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
   const { fps } = useVideoConfig()
   const currentTime = frame / fps
 
-  const [meta, setMeta] = useState<{ width: number; height: number } | null>(
-    null,
-  )
-  useEffect(() => {
-    let mounted = true
-    parseMedia({
-      src: videoUrl,
-      fields: { dimensions: true },
-    }).then((data) => {
-      if (mounted && data.dimensions)
-        setMeta({
-          width: data.dimensions.width,
-          height: data.dimensions.height,
-        })
-    })
-    return () => {
-      mounted = false
-    }
-  }, [videoUrl])
+  const { width, height } = useVideoConfig()
 
-  const videoWidth = meta?.width ?? 1080
-  const videoHeight = meta?.height ?? 1920
+  const videoWidth = width ?? 1080
+  const videoHeight = height ?? 1920
 
   // Style de la boîte (container)
   let resolvedBoxStyle: React.CSSProperties = {
@@ -336,12 +307,11 @@ export const CaptionsComposition: React.FC<z.infer<typeof CaptionsSchema>> = ({
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "black",
+        backgroundColor: "transparent",
         width: videoWidth,
         height: videoHeight,
       }}
     >
-      <Video src={videoUrl} style={{ width: "100%", height: "100%" }} />
       <div style={containerStyle}>
         {activePage && shouldShowContainer && (
           <div
