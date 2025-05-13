@@ -212,7 +212,13 @@ export const RemotionRoot: React.FC = () => {
               time: 0,
               filter: "brightness(1) sepia(0)",
             },
-            { time: 1, filter: "brightness(1.3) sepia(0.5) contrast(2)" },
+            {
+              time: 1,
+              glitch: {
+                intensity: 0.8,
+                duration: 0.8,
+              },
+            },
           ],
         }}
       />

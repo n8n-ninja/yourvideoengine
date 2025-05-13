@@ -32,6 +32,12 @@ export const CameraZoomSchema = z.object({
         .optional(),
       rotation: z.number().optional(), // rotation de la vidéo en degrés (0-360)
       filter: z.string().optional(), // filtre CSS optionnel (ex: 'brightness(1.2) sepia(0.5)')
+      glitch: z
+        .object({
+          duration: z.number(), // durée du glitch en secondes
+          intensity: z.number(), // intensité du glitch (0-1+)
+        })
+        .optional(),
     }),
   ),
 })
@@ -199,11 +205,51 @@ export const CameraZoomComposition: React.FC<
       (random(`shake-blur-${frame}`) - 0.5) * blurAmount * 0.2
   }
 
+  // Glitch effect
+  let glitchActive = false
+  let glitch = undefined
+  for (let i = 0; i < resolvedKeyframes.length; i++) {
+    const kf = resolvedKeyframes[i]
+    if (kf.absTime <= currentTime && kf.glitch) {
+      const glitchEnd = kf.absTime + kf.glitch.duration
+      if (currentTime < glitchEnd) {
+        glitchActive = true
+        glitch = kf.glitch
+      } else {
+        glitchActive = false
+        glitch = undefined
+      }
+    }
+    if (kf.absTime > currentTime) break
+  }
+
+  let glitchTransform = ""
+  let glitchFilter = ""
+  let glitchClip = ""
+  if (glitchActive && glitch) {
+    const intensity = glitch.intensity
+    // Translation X/Y rapide et chaotique
+    const tx = (random(`glitch-x-${frame}`) - 0.5) * 40 * intensity
+    const ty = (random(`glitch-y-${frame}`) - 0.5) * 24 * intensity
+    // Scale saccadé
+    const scaleG =
+      1 + (random(`glitch-scale-${frame}`) - 0.5) * 0.08 * intensity
+    // Hue rotate saccadé
+    const hue = (random(`glitch-hue-${frame}`) - 0.5) * 80 * intensity
+    // Clip-path saccadé (bande horizontale)
+    const bandY = Math.floor(random(`glitch-band-${frame}`) * 80)
+    const bandH = 20 + random(`glitch-bandh-${frame}`) * 30
+    glitchTransform = `translate(${tx}px,${ty}px) scale(${scaleG})`
+    glitchFilter = `hue-rotate(${hue}deg)`
+    glitchClip = `inset(${bandY}% 0% calc(100% - ${bandY + bandH}%) 0%)`
+  }
+
   const videoStyle: React.CSSProperties = {
     width: "100%",
     height: "100%",
-    transform: `scale(${scale * shakeScale}) rotate(${baseRotation + shakeRotate}deg)`,
-    filter: `${filterString} blur(${blur + shakeBlur}px)`,
+    transform: `scale(${scale * shakeScale}) rotate(${baseRotation + shakeRotate}deg) ${glitchTransform}`,
+    filter: `${filterString} blur(${blur + shakeBlur}px) ${glitchFilter}`,
+    clipPath: glitchClip || undefined,
     transformOrigin: `50% 50%`,
   }
 
