@@ -13,6 +13,10 @@ import {
   CaptionsComposition,
   CaptionsSchema,
 } from "@/compositions/Captions/Composition"
+import {
+  CameraZoomComposition,
+  CameraZoomSchema,
+} from "@/compositions/CameraZoom/Composition"
 
 type InputProps = {
   durationInFrames?: number
@@ -187,6 +191,28 @@ export const RemotionRoot: React.FC = () => {
               confidence: 0.99952996,
             },
             { word: "made", start: 8.559999, end: 8.72, confidence: 0.995906 },
+          ],
+        }}
+      />
+
+      <Composition
+        id="CameraZoom"
+        component={CameraZoomComposition}
+        durationInFrames={inputProps?.durationInFrames || 90}
+        fps={30}
+        width={1080}
+        height={1920}
+        schema={CameraZoomSchema}
+        defaultProps={{
+          videoUrl:
+            "https://files2.heygen.ai/aws_pacific/avatar_tmp/57ec360eba014be689b1992950c520f7/873be32229784da083ceac3b7eebefe0.mp4?Expires=1747395461&Signature=KBw-prseIuyekM~u~pN1vD3c~qJ2wDKe8ivG7bW3yolHza4AUh--MNHy3IuHpSEW12B5Ig4CWHnJlrnLhgWJJjHVV3d-uAfrkD3bzsslVx64AhpUtw2f2bAT-VXBaNN2hbQw7ZkZRflgiDTuuLT1PY~6hb1--g5ZMk4CfU0ENlYy4w~JvwagQfyYBc2Mdp0lhRp2NSrRzSoWZfEuUZSz825GWAQ51O6P09F8nRYn18rhBKktJ8Qx~LI1fuZkEmeMKHkBMiEMRlSyrQpfzqhCSZoqeImVUPT-0~YhR0U0jqklBJF5zaNWSGwDdpJW94NgSj-AgyyYVWmU~OQnIwzWXA__&Key-Pair-Id=K38HBHX5LX3X2H",
+
+          keyframes: [
+            {
+              time: 0,
+              filter: "brightness(1) sepia(0)",
+            },
+            { time: 1, filter: "brightness(1.3) sepia(0.5) contrast(2)" },
           ],
         }}
       />
