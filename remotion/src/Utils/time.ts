@@ -178,3 +178,23 @@ export function getEasingFn(easingName?: string): (x: number) => number {
   // Add more custom easings here if needed
   return (x) => x
 }
+
+/**
+ * Interpolates between two objects of numbers/strings, given a progress (0-1).
+ * For numbers: linear interpolation. For strings: switches at halfway.
+ */
+export function interpolate(
+  from: Record<string, number | string>,
+  to: Record<string, number | string>,
+  progress: number,
+): Record<string, number | string> {
+  const out: Record<string, number | string> = {}
+  for (const key in from) {
+    if (typeof from[key] === "number" && typeof to[key] === "number") {
+      out[key] = from[key] + (to[key] - from[key]) * progress
+    } else if (typeof from[key] === "string" && typeof to[key] === "string") {
+      out[key] = progress < 0.5 ? from[key] : to[key]
+    }
+  }
+  return out
+}
