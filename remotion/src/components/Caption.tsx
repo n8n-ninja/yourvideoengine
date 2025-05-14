@@ -1,120 +1,53 @@
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion"
+import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion"
 import { z } from "zod"
 import React from "react"
-
 import { createTikTokStyleCaptions } from "@remotion/captions"
-
-function parseStyleString(style: string): React.CSSProperties {
-  const obj = style
-    .split(";")
-    .filter(Boolean)
-    .reduce((acc: Record<string, string>, rule: string) => {
-      const [key, value] = rule.split(":")
-      if (!key || !value) return acc
-      const jsKey: string = key
-        .trim()
-        .replace(/-([a-z])/g, (_, c) => c.toUpperCase())
-      acc[jsKey] = value.trim()
-      return acc
-    }, {})
-  return obj as React.CSSProperties
-}
+import { usePositionStyle } from "@/Utils/usePositionStyle"
+import { useTransition } from "@/Utils/useTransition"
+import { parseStyleString } from "@/Utils/style"
+import { TransitionSchema } from "@/Utils/useTransition"
+import { PositionStyleSchema } from "@/Utils/usePositionStyle"
 
 const defaultActiveWordStyle: React.CSSProperties = {
   zIndex: 100,
   position: "relative",
-  // Ajoute ici d'autres propriétés par défaut si besoin
 }
 
 export const CaptionSchema = z.object({
-  combineTokensWithinMilliseconds: z.number().optional(),
-  top: z.number().optional(),
-  left: z.number().optional(),
-  right: z.number().optional(),
-  bottom: z.number().optional(),
-  horizontalAlign: z.enum(["start", "center", "end"]).optional(),
-  verticalAlign: z.enum(["start", "center", "end"]).optional(),
-  fontSize: z.union([z.number(), z.string()]).optional(),
-  fontFamily: z.string().optional(),
-  color: z.string().optional(),
-  highlightColor: z.string().optional(),
-  backgroundColor: z.string().optional(),
-  fontWeight: z
-    .union([z.number(), z.enum(["light", "regular", "bold", "black"])])
-    .optional(),
-  animationType: z.enum(["bump", "grow", "lift", "none"]).optional(),
-  uppercase: z.boolean().optional(),
-  boxStyle: z.union([z.record(z.any()), z.string()]).optional(),
-  textStyle: z.union([z.record(z.any()), z.string()]).optional(),
-  activeWordStyle: z.union([z.record(z.any()), z.string()]).optional(),
-  phraseInAnimation: z
-    .enum(["fade", "slide-up", "slide-down", "none"])
-    .optional(),
-  phraseOutAnimation: z
-    .enum(["fade", "slide-up", "slide-down", "none"])
-    .optional(),
-  animationDuration: z.number().optional(),
   words: z.array(
     z.object({
       word: z.string(),
-      start: z.number(), // seconds
-      end: z.number(), // seconds
+      start: z.number(),
+      end: z.number(),
       confidence: z.number().optional(),
     }),
   ),
-  multiColors: z.array(z.string()).optional(),
-  floating: z.number().optional(),
-  randomWordSize: z.number().optional(),
+  position: PositionStyleSchema.optional(),
+  transition: TransitionSchema.optional(),
+  boxStyle: z.union([z.record(z.any()), z.string()]).optional(),
+  textStyle: z.union([z.record(z.any()), z.string()]).optional(),
+  activeWordStyle: z.union([z.record(z.any()), z.string()]).optional(),
 })
 
 export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
   words,
-  combineTokensWithinMilliseconds = 1400,
-
-  // Positionnement
-  top = 70,
-  left = 0,
-  right = 0,
-  bottom = 0,
-  horizontalAlign = "center",
-  verticalAlign = "center",
-
-  // Font
-  fontSize = 75,
-  fontFamily = "Montserrat",
-  color = "#fff",
-  highlightColor = "#F8C734",
-  backgroundColor = "rgba(0,0,0,0.4)",
-  fontWeight = "black",
-  animationType = "none",
-  uppercase = false,
-
-  // Custom styles
+  position,
+  transition,
   boxStyle,
   textStyle,
   activeWordStyle,
-
-  // Animations
-  phraseInAnimation,
-  phraseOutAnimation,
-  animationDuration,
-
-  multiColors,
-  floating,
-  randomWordSize,
 }) => {
+  console.log("words", words)
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
   const currentTime = frame / fps
 
-  const { width, height } = useVideoConfig()
-
-  const videoWidth = width ?? 1080
-  const videoHeight = height ?? 1920
+  // Positionnement
+  const containerStyle = usePositionStyle(position ?? {})
 
   // Style de la boîte (container)
   let resolvedBoxStyle: React.CSSProperties = {
-    backgroundColor,
+    backgroundColor: "rgba(0,0,0,0.7)",
     borderRadius: 18,
     padding: "1.5em 4em",
     display: "inline-block",
@@ -125,6 +58,7 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
     textAlign: "center",
     margin: "30px",
   }
+
   if (boxStyle) {
     if (typeof boxStyle === "string") {
       resolvedBoxStyle = { ...resolvedBoxStyle, ...parseStyleString(boxStyle) }
@@ -135,18 +69,12 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
 
   // Style du texte
   let resolvedTextStyle: React.CSSProperties = {
-    color,
+    color: "#fff",
     verticalAlign: "middle",
-    fontFamily: fontFamily
-      ? `${fontFamily}, sans-serif`
-      : "Montserrat, sans-serif",
-    fontSize,
+    fontFamily: "Montserrat, sans-serif",
+    fontSize: 75,
     textShadow: "0 2px 30px #000, 0 1px 10px #000",
-    fontWeight:
-      typeof fontWeight === "number"
-        ? fontWeight
-        : { light: 300, regular: 500, bold: 700, black: 900 }[fontWeight] ||
-          300,
+    fontWeight: 900,
     transition:
       "color 0.12s cubic-bezier(0.4,0,0.2,1), transform 0.12s cubic-bezier(0.4,0,0.2,1)",
   }
@@ -164,30 +92,22 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
   // Style du mot actif
   let resolvedActiveWordStyle: React.CSSProperties = {
     ...defaultActiveWordStyle,
+    color: "#F8C734",
+    textShadow: "0 2px 30px #000, 0 1px 10px #000",
+    fontWeight: 900,
   }
   if (activeWordStyle) {
     if (typeof activeWordStyle === "string") {
       resolvedActiveWordStyle = {
-        ...defaultActiveWordStyle,
+        ...resolvedActiveWordStyle,
         ...parseStyleString(activeWordStyle),
       }
     } else {
       resolvedActiveWordStyle = {
-        ...defaultActiveWordStyle,
+        ...resolvedActiveWordStyle,
         ...activeWordStyle,
       }
     }
-  }
-
-  const containerStyle = {
-    position: "absolute" as const,
-    top: `${top}%`,
-    left: `${left}%`,
-    right: `${right}%`,
-    bottom: `${bottom}%`,
-    display: "flex",
-    justifyContent: horizontalAlign,
-    alignItems: verticalAlign,
   }
 
   // Convert words to TikTok-style captions input
@@ -202,7 +122,7 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
   // Regroupe les mots en pages façon TikTok
   const { pages } = createTikTokStyleCaptions({
     captions,
-    combineTokensWithinMilliseconds,
+    combineTokensWithinMilliseconds: 1400,
   })
 
   // Trouve la page active
@@ -212,192 +132,44 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
   )
   const activePage = pages[activePageIndex]
 
-  // Détermine la couleur de highlight pour la phrase courante
-  let phraseHighlightColor = highlightColor
-  if (multiColors && multiColors.length > 0 && activePageIndex >= 0) {
-    phraseHighlightColor = multiColors[activePageIndex % multiColors.length]
-  }
-
-  // Détermine si au moins un mot est affiché (pour masquer le container si aucun mot)
-  let shouldShowContainer = false
-  if (activePage) {
-    const animDurationMs = (animationDuration || 0.1) * 1000
-    const phraseEnd = activePage.startMs + activePage.durationMs
-    shouldShowContainer =
-      (currentMs >= activePage.startMs && currentMs < phraseEnd) ||
-      (!!phraseOutAnimation &&
-        currentMs >= phraseEnd &&
-        currentMs < phraseEnd + animDurationMs)
-  }
-
-  // Animation d'entrée/sortie de la phrase
-  const phraseIn = phraseInAnimation || null
-  const phraseOut = phraseOutAnimation || null
-  const animDuration = animationDuration || 0.1 // secondes
-
-  const phraseStart = activePage?.startMs ?? 0
-  const phraseEnd = (activePage?.startMs ?? 0) + (activePage?.durationMs ?? 0)
-  const phraseInEnd = phraseStart + animDuration * 1000
-  const phraseOutStart = phraseEnd - animDuration * 1000
-
-  let animStyle = {}
-  if (activePage) {
-    if (phraseIn && phraseIn !== "none" && currentMs < phraseInEnd) {
-      // Animation d'entrée
-      const progress = Math.max(
-        0,
-        Math.min(1, (currentMs - phraseStart) / (phraseInEnd - phraseStart)),
-      )
-      if (phraseIn === "fade") animStyle = { opacity: progress }
-      if (phraseIn === "slide-up")
-        animStyle = {
-          opacity: progress,
-          transform: `translateY(${(1 - progress) * 40}px)`,
-        }
-    } else if (
-      phraseOut &&
-      phraseOut !== "none" &&
-      currentMs > phraseOutStart
-    ) {
-      // Animation de sortie
-      const progress = Math.max(
-        0,
-        Math.min(
-          1,
-          1 - (currentMs - phraseOutStart) / (phraseEnd - phraseOutStart),
-        ),
-      )
-      if (phraseOut === "fade") animStyle = { opacity: progress }
-      if (phraseOut === "slide-up")
-        animStyle = {
-          opacity: progress,
-          transform: `translateY(-${(1 - progress) * 40}px)`,
-        }
-      if (phraseOut === "slide-down")
-        animStyle = {
-          opacity: progress,
-          transform: `translateY(${(1 - progress) * 40}px)`,
-        }
-    }
-  }
-
-  // Animation des mots
-  const wordTransition =
-    resolvedTextStyle.transition ||
-    "opacity 0.12s, transform 0.12s cubic-bezier(0.4,0,0.2,1), color 0.12s cubic-bezier(0.4,0,0.2,1)"
-
-  // Animation flottante (floating)
-  let floatingTransform = undefined
-  if (floating && floating > 0) {
-    const speed = floating * 0.7
-    const amplitude = 8 + floating * 2
-    const t = frame * speed * 0.015
-    // Ajoute un peu d'aléatoire par page pour que ça ne soit pas toujours pareil
-    const seed = activePageIndex * 1000 + 42
-    function pseudoRandom(seed: number) {
-      return Math.sin(seed) * 10000 - Math.floor(Math.sin(seed) * 10000)
-    }
-    const phaseX = t + pseudoRandom(seed) * Math.PI * 2
-    const phaseY = t + pseudoRandom(seed + 1) * Math.PI * 2
-    const x = Math.sin(phaseX) * amplitude
-    const y = Math.cos(phaseY) * amplitude
-    floatingTransform = `translate(${x}px, ${y}px)`
-  }
+  // Animation d'entrée/sortie de la phrase (transition)
+  const phraseStart = activePage?.startMs ? activePage.startMs / 1000 : 0
+  const phraseDuration = activePage?.durationMs
+    ? activePage.durationMs / 1000
+    : 0
+  const phraseTransition = useTransition({
+    ...(transition ?? {}),
+    start: phraseStart,
+    duration: phraseDuration,
+    currentTime,
+  })
 
   return (
-    <AbsoluteFill
-      style={{
-        backgroundColor: "transparent",
-        width: videoWidth,
-        height: videoHeight,
-      }}
-    >
+    <AbsoluteFill style={{ backgroundColor: "transparent" }}>
       <div style={containerStyle}>
-        {activePage && shouldShowContainer && (
+        {activePage && phraseTransition.visible && (
           <div
             style={{
               ...resolvedBoxStyle,
-              ...animStyle,
-              ...(floatingTransform ? { transform: floatingTransform } : {}),
+              ...phraseTransition.style,
             }}
           >
             {activePage.tokens.map((token, i) => {
               const isActive =
                 currentMs >= token.fromMs && currentMs < token.toMs
-              let wordColor = resolvedTextStyle.color || "#fff"
-              if (isActive && phraseHighlightColor) {
-                wordColor = phraseHighlightColor
-              }
-              // Animation "bump" : le mot grossit à l'apparition puis reste à 1 tant qu'il est actif
-              let scale = 1
-              let translateY = 0
-              if (animationType === "bump" && isActive) {
-                const highlightStartFrame = Math.floor(
-                  (token.fromMs / 1000) * fps,
-                )
-                if (frame - highlightStartFrame < 6) {
-                  scale =
-                    0.8 +
-                    0.2 *
-                      spring({
-                        frame: frame - highlightStartFrame,
-                        fps,
-                        config: { damping: 300, stiffness: 800, mass: 1 },
-                        durationInFrames: 6,
-                      })
-                } else {
-                  scale = 1
-                }
-              } else if (animationType === "grow" && isActive) {
-                scale = 1.08
-              } else if (animationType === "lift" && isActive) {
-                translateY = -12
-              }
-              // Word by word : n'affiche que le mot actif
-              if (combineTokensWithinMilliseconds === 0 && !isActive)
-                return null
-              // On retire l'espace initial du token
-              let word = token.text.trim()
-              if (uppercase) word = word.toUpperCase()
-
-              // Fusion intelligente du transform :
-              let mergedTransform = `scale(${scale}) translateY(${translateY}%)`
-              if (isActive && resolvedActiveWordStyle.transform) {
-                // Si activeWordStyle a un transform, on les concatène
-                mergedTransform = `${mergedTransform} ${resolvedActiveWordStyle.transform}`
-              }
-
-              // Taille discrète (petite, moyenne, grande) selon un motif cyclique régulier
-              let wordFontSize = resolvedTextStyle.fontSize
-              if (randomWordSize && randomWordSize > 1) {
-                const baseSize =
-                  typeof fontSize === "number"
-                    ? fontSize
-                    : parseFloat(fontSize as string)
-                const amp = randomWordSize / 2
-                // 3 tailles : petite, moyenne, grande
-                const sizes = [baseSize + amp, baseSize - amp, baseSize] // ordre : grande, petite, moyenne
-                // Motif cyclique : [grande, petite, moyenne, ...]
-                wordFontSize = sizes[i % 3]
-              }
-
               return (
                 <span
                   key={`${activePageIndex}-${i}`}
                   style={{
                     ...resolvedTextStyle,
-                    fontSize: wordFontSize,
                     ...(isActive ? resolvedActiveWordStyle : {}),
-                    color: wordColor,
                     opacity: 1,
-                    transition: wordTransition,
                     display: "inline-block",
-                    transform: mergedTransform,
                     marginRight:
                       i !== activePage.tokens.length - 1 ? "0.32em" : undefined,
                   }}
                 >
-                  {word}
+                  {token.text.trim()}
                 </span>
               )
             })}

@@ -153,7 +153,7 @@ export const EditComposition = () => {
   const inputProps = getInputProps<z.infer<typeof editSchema>>()
 
   const scenes = inputProps.scenes || editScenes.scenes
-  const sounds = inputProps.sounds || editScenes.sounds
+  const sounds = inputProps.sounds
   const fps = inputProps.fps || 30
   const width = inputProps.width || 1080
   const height = inputProps.height || 1920

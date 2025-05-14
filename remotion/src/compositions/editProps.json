@@ -1,297 +1,262 @@
 {
   "scenes": [
     {
-      "durationInFrames": 12270,
-      "transition": {
-        "type": "fade",
-        "duration": 18
-      },
+      "durationInFrames": 102,
       "camera": {
-        "videoUrl": "https://files2.heygen.ai/aws_pacific/avatar_tmp/57ec360eba014be689b1992950c520f7/873be32229784da083ceac3b7eebefe0.mp4?Expires=1747395461&Signature=KBw-prseIuyekM~u~pN1vD3c~qJ2wDKe8ivG7bW3yolHza4AUh--MNHy3IuHpSEW12B5Ig4CWHnJlrnLhgWJJjHVV3d-uAfrkD3bzsslVx64AhpUtw2f2bAT-VXBaNN2hbQw7ZkZRflgiDTuuLT1PY~6hb1--g5ZMk4CfU0ENlYy4w~JvwagQfyYBc2Mdp0lhRp2NSrRzSoWZfEuUZSz825GWAQ51O6P09F8nRYn18rhBKktJ8Qx~LI1fuZkEmeMKHkBMiEMRlSyrQpfzqhCSZoqeImVUPT-0~YhR0U0jqklBJF5zaNWSGwDdpJW94NgSj-AgyyYVWmU~OQnIwzWXA__&Key-Pair-Id=K38HBHX5LX3X2H",
-        "keyframes": [
-          {
-            "start": 0,
-            "scale": 1.02
-          },
-          {
-            "start": 1,
-            "scale": 1.5
-          }
-        ]
-      },
-
-      "titles": [
-        {
-          "title": "Minimal Fade In",
-          "theme": "minimal",
-          "transition": {
-            "start": 1,
-            "type": "fade",
-            "inDuration": 0.5,
-            "outDuration": 0.5,
-            "duration": 1.5
-          },
-          "position": { "top": 10, "left": 0 }
-        },
-        {
-          "title": "Impact Slide Up",
-          "theme": "impact",
-          "transition": {
-            "start": 2.7,
-            "type": "slide-up",
-            "inDuration": 0.4,
-            "outDuration": 0.4,
-            "duration": 1.5
-          },
-          "position": { "top": 25, "left": 0 }
-        },
-        {
-          "title": "Elegant Bounce",
-          "theme": "elegant",
-          "transition": {
-            "start": 4.2,
-            "type": "fade",
-            "inDuration": 0.3,
-            "outDuration": 0.3,
-            "duration": 1.5
-          },
-          "letterAnimation": { "preset": "bounce", "direction": "center" },
-          "position": { "top": 40, "left": 0 }
-        },
-        {
-          "title": "Neon Slide Left",
-          "theme": "neon",
-          "transition": {
-            "start": 5.7,
-            "type": "slide-left",
-            "inDuration": 0.4,
-            "outDuration": 0.4,
-            "duration": 1.5
-          },
-          "letterAnimation": { "preset": "slide", "direction": "rtl" },
-          "position": { "top": 55, "left": 0 }
-        },
-        {
-          "title": "Shadow Typewriter",
-          "theme": "shadow",
-          "transition": {
-            "start": 7.2,
-            "type": "fade",
-            "inDuration": 0.3,
-            "outDuration": 0.3,
-            "duration": 1.5
-          },
-          "letterAnimation": { "preset": "typewriter" },
-          "position": { "top": 70, "left": 0 }
-        },
-        {
-          "title": "Outline Gradient",
-          "theme": "outline",
-          "transition": {
-            "start": 8.7,
-            "type": "slide-right",
-            "inDuration": 0.4,
-            "outDuration": 0.4,
-            "duration": 1.5
-          },
-          "position": { "top": 85, "left": 0 }
-        },
-        {
-          "title": "Gradient Retro",
-          "theme": "gradient",
-          "transition": {
-            "start": 10.2,
-            "type": "fade",
-            "inDuration": 0.3,
-            "outDuration": 0.3,
-            "duration": 1.5
-          },
-          "position": { "top": 50, "left": 50, "right": 0 },
-          "titleStyle": { "fontSize": 120, "fontWeight": 900 }
-        },
-        {
-          "title": "Retro Fun!",
-          "theme": "retro",
-          "transition": {
-            "start": 11.7,
-            "type": "slide-down",
-            "inDuration": 0.4,
-            "outDuration": 0.4,
-            "duration": 1.5
-          },
-          "position": { "top": 60, "left": 60 },
-          "titleStyle": { "fontSize": 80 }
-        },
-        {
-          "title": "Cinematic Finale",
-          "theme": "cinematic",
-          "transition": {
-            "start": 13.2,
-            "type": "fade",
-            "inDuration": 0.5,
-            "outDuration": 0.5,
-            "duration": 2
-          },
-          "position": { "top": 80, "left": 0 },
-          "letterAnimation": { "preset": "random", "direction": "edges" }
-        },
-        {
-          "title": "Box avant le titre",
-          "theme": "minimal",
-          "transition": {
-            "start": 16,
-            "type": "fade",
-            "inDuration": 0.2,
-            "outDuration": 0.2,
-            "duration": 6
-          },
-          "position": { "top": 20, "left": 10 },
-          "letterAnimation": {
-            "preset": "fade",
-            "staggerDelay": 0.1,
-            "direction": "ltr"
-          }
-        }
-      ]
-    },
-    {
-      "durationInFrames": 190,
-      "transition": {
-        "type": "flip",
-        "duration": 30,
-        "direction": "from-left",
-        "sound": "woosh-1.mp3"
-      },
-      "camera": {
-        "videoUrl": "https://files2.heygen.ai/aws_pacific/avatar_tmp/c330096d4fe2412196a174937603458f/42a35d3bcbf042efa2baa3869f9fa37b.mp4?Expires=1747559878&Signature=PlgNZ1sbX6DuRa3JCLTWHzS8HXuRZ4qohrmQWVOd-wDuS60a0JhputRQLKqDr9eFc~-1LxyrkRd8SrYx4~5g9Z9D-OsbUKD-NnQKyfNSxCKBQt11mNU0uJw1RgZ9g5iW3XqZOFJ~ofHCHbaicYsiUbTJJGAWwPIwJ8xL6exbI7ZejwySIhng6lZNH7GhMb483UdKEgycolS2wuDjGpl15K8d0Zn6-7ZC~3IJLIhghlfDT5AmF9kfLeK3g6~9JS7~DwxNb6SErmWh0bfaFHkpYJUOW0y-ulMKygNvkS~i2jf9FkTK3DtJUeTZf3vtxUEa83CkITS3db5UFX00-zRJfA__&Key-Pair-Id=K38HBHX5LX3X2H",
-        "keyframes": [
-          {
-            "start": 0,
-            "scale": 1.0,
-            "blur": 10
-          },
-          {
-            "start": 2,
-            "blur": 0,
-            "scale": 1.5
-          }
-        ]
+        "videoUrl": "https://aiatelier.s3.eu-west-1.amazonaws.com/temporary-uploads/1747260842473-thais-demo-1.mp4"
       },
       "captions": {
-        "words": [{ "word": "test2", "start": 10, "end": 1 }],
-        "fontSize": 80,
-        "fontFamily": "Arial",
-        "backgroundColor": "rgba(0,0,0,1)",
-        "top": 0
-      },
-      "titles": [
-        {
-          "title": "Slide In From Left",
-          "start": 1,
-          "duration": 1
-        },
-        {
-          "title": "Mon Titre Animé qui plait aux vieux et aux jeunes ",
-          "start": 1,
-          "top": 0,
-          "verticalAlign": "end",
-          "bottom": 0,
-          "duration": 3.2,
-          "titleInDuration": 0.5,
-          "titleOutDuration": 0.5,
-          "titleStartOffset": 0,
-          "letterAnimation": {
-            "preset": "slide",
-            "direction": "edges",
-            "from": { "opacity": 0, "scale": 1.5 },
-            "to": { "opacity": 1, "scale": 1 }
+        "words": [
+          {
+            "word": "you",
+            "start": 0.16,
+            "end": 0.56,
+            "confidence": 0.98810333
           },
-          "titleStyle": {
-            "padding": 130,
-            "textWrap": "balance",
-            "textAlign": "center"
+          {
+            "word": "will",
+            "start": 0.56,
+            "end": 0.71999997,
+            "confidence": 0.9888573
           },
-          "backgroundBox": {
-            "style": {
-              "backgroundColor": "rgba(0, 0, 0, 0.7)",
-              "borderRadius": 8,
-              "padding": "10px",
-              "width": "1000px",
-              "margin": 0,
-              "transformOrigin": "center center"
-            },
-            "animation": {
-              "from": {
-                "opacity": 0
-              },
-              "to": {
-                "opacity": 1
-              },
-              "exit": {
-                "opacity": 0
-              },
-              "inDuration": 0.2,
-              "easing": "easeOut"
-            }
+          {
+            "word": "never",
+            "start": 0.71999997,
+            "end": 1.04,
+            "confidence": 0.9994086
+          },
+          {
+            "word": "believe",
+            "start": 1.04,
+            "end": 1.28,
+            "confidence": 0.9984018
+          },
+          {
+            "word": "what",
+            "start": 1.28,
+            "end": 1.52,
+            "confidence": 0.99891496
+          },
+          {
+            "word": "i'm",
+            "start": 1.52,
+            "end": 1.76,
+            "confidence": 0.86010087
+          },
+          {
+            "word": "about",
+            "start": 1.76,
+            "end": 2,
+            "confidence": 0.9992331
+          },
+          {
+            "word": "to",
+            "start": 2,
+            "end": 2.1599998,
+            "confidence": 0.9970118
+          },
+          {
+            "word": "tell",
+            "start": 2.1599998,
+            "end": 2.32,
+            "confidence": 0.9998536
+          },
+          {
+            "word": "you",
+            "start": 2.32,
+            "end": 2.56,
+            "confidence": 0.9590763
           }
-        }
-      ],
-      "overlays": [
-        {
-          "type": "scanline",
-          "start": 0.5,
-          "duration": 1.5,
-          "intensity": 40,
-          "color": "#0ff",
-          "speed": 1.5,
-          "opacity": 0.5
-        },
-        {
-          "type": "color",
-          "start": 1,
-          "duration": 0.3,
-          "intensity": 100,
-          "color": "#ff0",
-          "opacity": 0.8
-        }
-      ]
-    }
-  ],
-  "sounds": [
+        ]
+      }
+    },
     {
-      "start": 1,
-      "end": -1,
-      "sound": "music-calm.mp3",
-      "volume": 0.5,
-      "fadeIn": 0.5,
-      "fadeOut": 2.5,
-
-      "volumes": [
-        {
-          "time": 1,
-          "volume": 0.5
-        },
-        {
-          "time": 2,
-          "volume": 0.5
-        },
-        {
-          "time": 3,
-          "volume": 1
-        },
-        {
-          "time": 4,
-          "volume": 0
-        },
-        {
-          "time": 5,
-          "volume": 0
-        },
-        {
-          "time": 6,
-          "volume": 1
-        }
-      ]
+      "durationInFrames": 209,
+      "camera": {
+        "videoUrl": "https://aiatelier.s3.eu-west-1.amazonaws.com/temporary-uploads/1747260944264-thais-demo-2.mp4"
+      },
+      "captions": {
+        "words": [
+          {
+            "word": "hello",
+            "start": 0.08,
+            "end": 0.71999997,
+            "confidence": 0.9232632
+          },
+          {
+            "word": "my",
+            "start": 0.71999997,
+            "end": 0.79999995,
+            "confidence": 0.9991086
+          },
+          {
+            "word": "name",
+            "start": 0.79999995,
+            "end": 0.96,
+            "confidence": 0.9997805
+          },
+          {
+            "word": "is",
+            "start": 0.96,
+            "end": 1.12,
+            "confidence": 0.9984328
+          },
+          {
+            "word": "taiz",
+            "start": 1.12,
+            "end": 1.5999999,
+            "confidence": 0.66174835
+          },
+          {
+            "word": "i'm",
+            "start": 1.5999999,
+            "end": 1.76,
+            "confidence": 0.9909365
+          },
+          {
+            "word": "a",
+            "start": 1.76,
+            "end": 1.92,
+            "confidence": 0.9978775
+          },
+          {
+            "word": "human",
+            "start": 1.92,
+            "end": 2.24,
+            "confidence": 0.9980434
+          },
+          {
+            "word": "radar",
+            "start": 2.24,
+            "end": 2.56,
+            "confidence": 0.9520858
+          },
+          {
+            "word": "designed",
+            "start": 2.56,
+            "end": 2.96,
+            "confidence": 0.9604338
+          },
+          {
+            "word": "to",
+            "start": 2.96,
+            "end": 3.12,
+            "confidence": 0.9998037
+          },
+          {
+            "word": "identify",
+            "start": 3.12,
+            "end": 3.6,
+            "confidence": 0.9995449
+          },
+          {
+            "word": "the",
+            "start": 3.6,
+            "end": 3.9199998,
+            "confidence": 0.99988663
+          },
+          {
+            "word": "most",
+            "start": 3.9199998,
+            "end": 4.16,
+            "confidence": 0.99995863
+          },
+          {
+            "word": "groundbreaking",
+            "start": 4.16,
+            "end": 4.7999997,
+            "confidence": 0.97080845
+          },
+          {
+            "word": "ai",
+            "start": 4.7999997,
+            "end": 5.2799997,
+            "confidence": 0.99930525
+          },
+          {
+            "word": "innovations",
+            "start": 5.2799997,
+            "end": 5.92,
+            "confidence": 0.99797916
+          }
+        ]
+      }
+    },
+    {
+      "durationInFrames": 133,
+      "camera": {
+        "videoUrl": "https://aiatelier.s3.eu-west-1.amazonaws.com/temporary-uploads/1747260965465-thais-demo-3.mp4"
+      },
+      "captions": {
+        "words": [
+          {
+            "word": "every",
+            "start": 0.08,
+            "end": 0.56,
+            "confidence": 0.9976037
+          },
+          {
+            "word": "week",
+            "start": 0.56,
+            "end": 0.96,
+            "confidence": 0.86405456
+          },
+          {
+            "word": "i",
+            "start": 0.96,
+            "end": 1.12,
+            "confidence": 0.99861896
+          },
+          {
+            "word": "uncover",
+            "start": 1.12,
+            "end": 1.52,
+            "confidence": 0.98938656
+          },
+          {
+            "word": "the",
+            "start": 1.52,
+            "end": 1.76,
+            "confidence": 0.9984439
+          },
+          {
+            "word": "latest",
+            "start": 1.76,
+            "end": 2.08,
+            "confidence": 0.999178
+          },
+          {
+            "word": "tools",
+            "start": 2.08,
+            "end": 2.3999999,
+            "confidence": 0.9978048
+          },
+          {
+            "word": "that",
+            "start": 2.3999999,
+            "end": 2.56,
+            "confidence": 0.9990895
+          },
+          {
+            "word": "could",
+            "start": 2.56,
+            "end": 2.8,
+            "confidence": 0.9970101
+          },
+          {
+            "word": "change",
+            "start": 2.8,
+            "end": 3.12,
+            "confidence": 0.9995121
+          },
+          {
+            "word": "everything",
+            "start": 3.12,
+            "end": 3.6,
+            "confidence": 0.9944214
+          }
+        ]
+      }
     }
   ]
 }

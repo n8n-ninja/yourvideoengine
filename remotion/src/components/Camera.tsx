@@ -16,30 +16,33 @@ import { parseFilter, buildFilter } from "@/Utils/filter"
  */
 export const CameraSchema = z.object({
   videoUrl: z.string(),
-  keyframes: z.array(
-    z.object({
-      start: z.number(),
-      scale: z.number().optional(),
-      blur: z.number().optional(),
-      top: z.number().optional(),
-      left: z.number().optional(),
-      easing: z.string().optional(),
-      shake: z
-        .object({
-          duration: z.number(),
-          intensity: z.number(),
-        })
-        .optional(),
-      rotation: z.number().optional(),
-      filter: z.string().optional(),
-      mirror: z
-        .object({
-          horizontal: z.boolean().optional(),
-          vertical: z.boolean().optional(),
-        })
-        .optional(),
-    }),
-  ),
+  keyframes: z
+    .array(
+      z.object({
+        start: z.number(),
+        scale: z.number().optional(),
+        blur: z.number().optional(),
+        top: z.number().optional(),
+        left: z.number().optional(),
+        easing: z.string().optional(),
+        shake: z
+          .object({
+            duration: z.number(),
+            intensity: z.number(),
+          })
+          .optional(),
+        rotation: z.number().optional(),
+        filter: z.string().optional(),
+        mirror: z
+          .object({
+            horizontal: z.boolean().optional(),
+            vertical: z.boolean().optional(),
+          })
+          .optional(),
+      }),
+    )
+    .optional()
+    .default([]),
 })
 
 // Type for a resolved keyframe (with absTime)
@@ -232,30 +235,50 @@ function useCameraShake({
  */
 export const Camera: React.FC<z.infer<typeof CameraSchema>> = ({
   videoUrl,
-  keyframes,
+  keyframes = [],
 }) => {
   // Runtime props validation in development
   if (process.env.NODE_ENV !== "production") {
-    CameraSchema.parse({ videoUrl, keyframes })
+    CameraSchema.parse({ videoUrl, keyframes: keyframes ?? [] })
   }
 
   const frame = useCurrentFrame()
   const { fps, durationInFrames } = useVideoConfig()
   const currentTime = frame / fps
 
+  // If keyframes is not provided, use a default keyframe
+  const safeKeyframes: NonNullable<z.infer<typeof CameraSchema>["keyframes"]> =
+    useMemo(
+      () =>
+        keyframes && keyframes.length > 0
+          ? keyframes
+          : [
+              {
+                start: 0,
+                scale: 1,
+              },
+            ],
+      [keyframes],
+    )
+
   // --- Camera interpolation (scale, blur, rotation, filter, mirror) ---
   const { scale, blur, baseRotation, filterString, mirrorTransform } =
-    useCameraInterpolation({ keyframes, fps, durationInFrames, frame })
+    useCameraInterpolation({
+      keyframes: safeKeyframes,
+      fps,
+      durationInFrames,
+      frame,
+    })
 
   // --- Camera shake effect ---
   const { shakeRotate, shakeScale, shakeBlur } = useCameraShake({
     keyframes: useMemo(
       () =>
-        keyframes.map((kf) => ({
+        safeKeyframes.map((kf) => ({
           ...kf,
           absTime: resolveTime(kf.start, fps, durationInFrames),
         })),
-      [keyframes, fps, durationInFrames],
+      [safeKeyframes, fps, durationInFrames],
     ),
     frame,
     currentTime,
