@@ -14,6 +14,7 @@
 // TODO: Add unit tests for all helpers
 
 import { useVideoConfig } from "remotion"
+import { Easing } from "remotion"
 
 /**
  * Clamp a value between min and max.
@@ -152,4 +153,28 @@ export function getTimeRange({
 export function useTimeRange({ start, end, duration }: TimeRangeInput) {
   const { fps, durationInFrames } = useVideoConfig()
   return getTimeRange({ start, end, duration, fps, durationInFrames })
+}
+
+/**
+ * Interpolates between two numeric values (linear interpolation by default).
+ * @param a - Start value
+ * @param b - End value
+ * @param t - Interpolation factor (0-1)
+ * @returns Interpolated value
+ */
+export function interpolateValue(a: number, b: number, t: number): number {
+  return a + (b - a) * t
+}
+
+/**
+ * Returns an easing function by name. Supports 'linear', 'easeIn', 'easeOut', 'easeInOut'.
+ * Defaults to linear if unknown.
+ */
+export function getEasingFn(easingName?: string): (x: number) => number {
+  if (!easingName || easingName === "linear") return (x) => x
+  if (easingName === "easeIn") return Easing.in(Easing.ease)
+  if (easingName === "easeOut") return Easing.out(Easing.ease)
+  if (easingName === "easeInOut") return Easing.inOut(Easing.ease)
+  // Add more custom easings here if needed
+  return (x) => x
 }
