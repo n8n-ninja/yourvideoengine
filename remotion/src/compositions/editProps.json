@@ -61,6 +61,14 @@
             "color": "red"
           }
         }
+      ],
+      "sounds": [
+        {
+          "start": 0.2,
+          "sound": "woosh-1.mp3",
+          "volume": 0.5,
+          "fadeIn": 0.5
+        }
       ]
     },
     {
@@ -144,6 +152,43 @@
               "easing": "easeOut"
             }
           }
+        }
+      ]
+    }
+  ],
+  "sounds": [
+    {
+      "start": 1,
+      "end": -1,
+      "sound": "music-calm.mp3",
+      "volume": 0.5,
+      "fadeIn": 0.5,
+      "fadeOut": 2.5,
+
+      "volumes": [
+        {
+          "time": 1,
+          "volume": 0.5
+        },
+        {
+          "time": 2,
+          "volume": 0.5
+        },
+        {
+          "time": 3,
+          "volume": 1
+        },
+        {
+          "time": 4,
+          "volume": 0
+        },
+        {
+          "time": 5,
+          "volume": 0
+        },
+        {
+          "time": 6,
+          "volume": 1
         }
       ]
     }

@@ -11,6 +11,8 @@ import { Caption, CaptionSchema } from "@/components/Caption"
 import { Camera, CameraSchema } from "@/components/Camera"
 import { Title, TitlesSchema } from "@/components/Title"
 import editScenes from "./editProps.json"
+import { Sound, SoundsSchema } from "@/components/Sound"
+import { addSound } from "@/Utils/addSound"
 
 const TransitionSchema = z.object({
   type: z.enum(["fade", "wipe", "slide", "flip", "clockWipe"]),
@@ -32,7 +34,6 @@ const TransitionSchema = z.object({
     .optional(),
   sound: z.string().optional(),
 })
-import { addSound } from "@/Utils/addSound"
 
 const getTransition = (
   transition: z.infer<typeof TransitionSchema>,
@@ -96,44 +97,52 @@ export const editSchema = z.object({
       camera: CameraSchema,
       transition: TransitionSchema.optional(),
       captions: CaptionSchema.optional(),
-      titles: TitlesSchema,
+      titles: TitlesSchema.optional(),
+      sounds: SoundsSchema.optional(),
     }),
   ),
+  sounds: SoundsSchema.optional(),
 })
 
 export const EditComponent = ({
   scenes,
+  sounds,
 }: {
   scenes: z.infer<typeof editSchema>["scenes"]
+  sounds?: z.infer<typeof editSchema>["sounds"]
 }) => {
   return (
-    <TransitionSeries>
-      {scenes.map((scene, index) => (
-        <>
-          {scene.transition && (
-            <TransitionSeries.Transition
-              timing={springTiming({
-                config: { damping: scene.transition.duration },
-              })}
-              presentation={
-                getTransition(scene.transition) as TransitionPresentation<
-                  Record<string, unknown>
-                >
-              }
-            />
-          )}
+    <>
+      <TransitionSeries>
+        {scenes.map((scene, index) => (
+          <>
+            {scene.transition && (
+              <TransitionSeries.Transition
+                timing={springTiming({
+                  config: { damping: scene.transition.duration },
+                })}
+                presentation={
+                  getTransition(scene.transition) as TransitionPresentation<
+                    Record<string, unknown>
+                  >
+                }
+              />
+            )}
 
-          <TransitionSeries.Sequence
-            durationInFrames={scene.durationInFrames}
-            key={index}
-          >
-            <Camera {...scene.camera} />
-            {scene.captions && <Caption {...scene.captions} />}
-            {scene.titles && <Title titles={scene.titles} />}
-          </TransitionSeries.Sequence>
-        </>
-      ))}
-    </TransitionSeries>
+            <TransitionSeries.Sequence
+              durationInFrames={scene.durationInFrames}
+              key={index}
+            >
+              <Camera {...scene.camera} />
+              {scene.captions && <Caption {...scene.captions} />}
+              {scene.titles && <Title titles={scene.titles} />}
+              {scene.sounds && <Sound sounds={scene.sounds} />}
+            </TransitionSeries.Sequence>
+          </>
+        ))}
+      </TransitionSeries>
+      {sounds && <Sound sounds={sounds} />}
+    </>
   )
 }
 
@@ -141,6 +150,7 @@ export const EditComposition = () => {
   const inputProps = getInputProps<z.infer<typeof editSchema>>()
 
   const scenes = inputProps.scenes || editScenes.scenes
+  const sounds = inputProps.sounds || editScenes.sounds
   const fps = inputProps.fps || 30
   const width = inputProps.width || 1080
   const height = inputProps.height || 1920
@@ -158,6 +168,7 @@ export const EditComposition = () => {
       height={height}
       defaultProps={{
         scenes,
+        sounds,
         fps,
         width,
         height,
