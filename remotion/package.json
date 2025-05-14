@@ -10,6 +10,7 @@
     "@remotion/google-fonts": "4.0.298",
     "@remotion/lambda": "4.0.298",
     "@remotion/motion-blur": "4.0.298",
+    "@remotion/transitions": "4.0.298",
     "@remotion/zod-types": "4.0.298",
     "@types/express": "^5.0.1",
     "express": "^5.1.0",

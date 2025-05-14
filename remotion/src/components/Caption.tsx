@@ -26,7 +26,7 @@ const defaultActiveWordStyle: React.CSSProperties = {
   // Ajoute ici d'autres propriétés par défaut si besoin
 }
 
-export const CaptionsSchema = z.object({
+export const CaptionSchema = z.object({
   combineTokensWithinMilliseconds: z.number().optional(),
   top: z.number().optional(),
   left: z.number().optional(),
@@ -67,7 +67,7 @@ export const CaptionsSchema = z.object({
   randomWordSize: z.number().optional(),
 })
 
-export const Captions: React.FC<z.infer<typeof CaptionsSchema>> = ({
+export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
   words,
   combineTokensWithinMilliseconds = 1400,
 

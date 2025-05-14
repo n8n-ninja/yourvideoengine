@@ -1,196 +1,166 @@
-import { Composition, Series, getInputProps } from "remotion"
+import { Composition, getInputProps, staticFile } from "remotion"
+import { springTiming, TransitionSeries } from "@remotion/transitions"
+import { fade } from "@remotion/transitions/fade"
+import { wipe } from "@remotion/transitions/wipe"
+import { slide } from "@remotion/transitions/slide"
+import { flip } from "@remotion/transitions/flip"
+import { clockWipe } from "@remotion/transitions/clock-wipe"
+import { TransitionPresentation } from "@remotion/transitions"
 import { z } from "zod"
-import { Captions, CaptionsSchema } from "@/components/Captions"
+import { Caption, CaptionSchema } from "@/components/Caption"
 import { Camera, CameraSchema } from "@/components/Camera"
 import { Title, TitlesSchema } from "@/components/Title"
+import editScenes from "./editProps.json"
 
-type InputProps = {
-  fps: number
-  width: number
-  height: number
-  scenes: {
-    captions: z.infer<typeof CaptionsSchema>
-    camera: z.infer<typeof CameraSchema>
-    titles: z.infer<typeof TitlesSchema>
-    durationInFrames: number
-  }[]
+const TransitionSchema = z.object({
+  type: z.enum(["fade", "wipe", "slide", "flip", "clockWipe"]),
+  duration: z.number().optional(),
+  direction: z
+    .enum(["from-left", "from-right", "from-top", "from-bottom"])
+    .optional(),
+  wipeDirection: z
+    .enum([
+      "from-left",
+      "from-right",
+      "from-top",
+      "from-bottom",
+      "from-top-left",
+      "from-top-right",
+      "from-bottom-left",
+      "from-bottom-right",
+    ])
+    .optional(),
+  sound: z.string().optional(),
+})
+import { addSound } from "@/Utils/addSound"
+
+const getTransition = (
+  transition: z.infer<typeof TransitionSchema>,
+  width = 1080,
+  height = 1920,
+) => {
+  let presentation
+
+  if (transition.type == "wipe")
+    presentation = wipe({
+      direction:
+        transition.wipeDirection || transition.direction || "from-left",
+    })
+  else if (transition.type == "slide")
+    presentation = slide({
+      direction: transition.direction || "from-left",
+    })
+  else if (transition.type == "flip")
+    presentation = flip({
+      direction: transition.direction || "from-left",
+    })
+  else if (transition.type == "clockWipe")
+    presentation = clockWipe({
+      width: width,
+      height: height,
+    })
+  else presentation = fade()
+
+  if (transition.sound) {
+    presentation = addSound(
+      presentation as TransitionPresentation<Record<string, unknown>>,
+      staticFile(`/sound/${transition.sound}`),
+    )
+  }
+
+  return presentation
 }
 
-export const EditComponent = ({ scenes }: { scenes: InputProps["scenes"] }) => {
+const calculateDurationInFrames = (
+  scenes: z.infer<typeof editSchema>["scenes"],
+) => {
+  let totalDurationInFrames = 0
+
+  for (const [index, scene] of scenes.entries()) {
+    totalDurationInFrames += scene.durationInFrames
+    if (scene.transition && index > 0) {
+      totalDurationInFrames -= scene.transition.duration || 30
+    }
+  }
+
+  return Math.round(totalDurationInFrames)
+}
+
+export const editSchema = z.object({
+  fps: z.number(),
+  width: z.number(),
+  height: z.number(),
+  scenes: z.array(
+    z.object({
+      durationInFrames: z.number(),
+      camera: CameraSchema,
+      transition: TransitionSchema.optional(),
+      captions: CaptionSchema.optional(),
+      titles: TitlesSchema,
+    }),
+  ),
+})
+
+export const EditComponent = ({
+  scenes,
+}: {
+  scenes: z.infer<typeof editSchema>["scenes"]
+}) => {
   return (
-    <Series>
+    <TransitionSeries>
       {scenes.map((scene, index) => (
-        <Series.Sequence durationInFrames={scene.durationInFrames} key={index}>
-          <Camera {...scene.camera} />
-          <Captions {...scene.captions} />
-          <Title titles={scene.titles} />
-        </Series.Sequence>
+        <>
+          {scene.transition && (
+            <TransitionSeries.Transition
+              timing={springTiming({
+                config: { damping: scene.transition.duration },
+              })}
+              presentation={
+                getTransition(scene.transition) as TransitionPresentation<
+                  Record<string, unknown>
+                >
+              }
+            />
+          )}
+
+          <TransitionSeries.Sequence
+            durationInFrames={scene.durationInFrames}
+            key={index}
+          >
+            <Camera {...scene.camera} />
+            {scene.captions && <Caption {...scene.captions} />}
+            {scene.titles && <Title titles={scene.titles} />}
+          </TransitionSeries.Sequence>
+        </>
       ))}
-    </Series>
+    </TransitionSeries>
   )
 }
 
 export const EditComposition = () => {
-  const inputProps = getInputProps<InputProps>()
+  const inputProps = getInputProps<z.infer<typeof editSchema>>()
 
-  const durationInFrames = 200
+  const scenes = inputProps.scenes || editScenes.scenes
   const fps = inputProps.fps || 30
   const width = inputProps.width || 1080
   const height = inputProps.height || 1920
+
+  const durationInFrames = calculateDurationInFrames(scenes)
 
   return (
     <Composition
       id="Edit"
       component={EditComponent}
+      schema={editSchema}
       durationInFrames={durationInFrames}
       fps={fps}
       width={width}
       height={height}
       defaultProps={{
-        scenes: [
-          {
-            captions: {
-              words: [{ word: "test", start: 0, end: 1 }],
-              fontSize: 70,
-            },
-            camera: {
-              videoUrl:
-                "https://files2.heygen.ai/aws_pacific/avatar_tmp/57ec360eba014be689b1992950c520f7/873be32229784da083ceac3b7eebefe0.mp4?Expires=1747395461&Signature=KBw-prseIuyekM~u~pN1vD3c~qJ2wDKe8ivG7bW3yolHza4AUh--MNHy3IuHpSEW12B5Ig4CWHnJlrnLhgWJJjHVV3d-uAfrkD3bzsslVx64AhpUtw2f2bAT-VXBaNN2hbQw7ZkZRflgiDTuuLT1PY~6hb1--g5ZMk4CfU0ENlYy4w~JvwagQfyYBc2Mdp0lhRp2NSrRzSoWZfEuUZSz825GWAQ51O6P09F8nRYn18rhBKktJ8Qx~LI1fuZkEmeMKHkBMiEMRlSyrQpfzqhCSZoqeImVUPT-0~YhR0U0jqklBJF5zaNWSGwDdpJW94NgSj-AgyyYVWmU~OQnIwzWXA__&Key-Pair-Id=K38HBHX5LX3X2H",
-              keyframes: [
-                {
-                  time: 0,
-                  scale: 1.02,
-                  glitch: {
-                    intensity: 10,
-                    duration: 0.2,
-                  },
-                  vignette: {
-                    intensity: 10,
-                    size: 10,
-                    color: "rgba(0,0,0,1)",
-                  },
-                },
-                {
-                  time: 1,
-                  scale: 1.5,
-                  easing: "ease-in-out",
-                  vignette: {
-                    intensity: 100,
-                    size: 100,
-                    color: "rgba(0,0,0,1)",
-                  },
-                },
-              ],
-            },
-            titles: [
-              {
-                theme: "3d",
-                threeDEffect: {
-                  enabled: true,
-                  perspective: 100,
-                  rotateX: 10,
-                  rotateY: 10,
-                  rotateZ: 10,
-                },
-                letterAnimation: {
-                  preset: "slide",
-                  direction: "edges",
-                  from: { opacity: 0, scale: 1.5 },
-                  to: { opacity: 1, scale: 1 },
-                },
-                animation: {
-                  easing: "ease-in-out",
-
-                  from: { opacity: 0, scale: 1.5 },
-                  to: { opacity: 1, scale: 1 },
-                },
-                time: 0,
-                title: "Hello world",
-                titleStyle: {
-                  padding: 30,
-                  margin: 30,
-                  fontSize: 100,
-                  color: "red",
-                },
-              },
-            ],
-
-            durationInFrames: 30,
-          },
-          {
-            captions: {
-              words: [{ word: "test2", start: 10, end: 1 }],
-              fontSize: 80,
-              fontFamily: "Arial",
-              backgroundColor: "rgba(0,0,0,1)",
-              top: 0,
-            },
-            camera: {
-              videoUrl:
-                "https://files2.heygen.ai/aws_pacific/avatar_tmp/c330096d4fe2412196a174937603458f/42a35d3bcbf042efa2baa3869f9fa37b.mp4?Expires=1747559878&Signature=PlgNZ1sbX6DuRa3JCLTWHzS8HXuRZ4qohrmQWVOd-wDuS60a0JhputRQLKqDr9eFc~-1LxyrkRd8SrYx4~5g9Z9D-OsbUKD-NnQKyfNSxCKBQt11mNU0uJw1RgZ9g5iW3XqZOFJ~ofHCHbaicYsiUbTJJGAWwPIwJ8xL6exbI7ZejwySIhng6lZNH7GhMb483UdKEgycolS2wuDjGpl15K8d0Zn6-7ZC~3IJLIhghlfDT5AmF9kfLeK3g6~9JS7~DwxNb6SErmWh0bfaFHkpYJUOW0y-ulMKygNvkS~i2jf9FkTK3DtJUeTZf3vtxUEa83CkITS3db5UFX00-zRJfA__&Key-Pair-Id=K38HBHX5LX3X2H",
-              keyframes: [
-                {
-                  time: 0,
-                  scale: 1.0,
-                  blur: 10,
-                },
-                {
-                  time: 0.1,
-                  blur: 0,
-                  scale: 1.5,
-                },
-              ],
-            },
-            titles: [
-              {
-                title: "Mon Titre Animé qui plait aux vieux et aux jeunes ",
-                time: 1,
-                top: 0,
-                verticalAlign: "end",
-                bottom: 0,
-                duration: 3.2,
-                titleInDuration: 0.5,
-                titleOutDuration: 0.5,
-                titleStartOffset: 0,
-                letterAnimation: {
-                  preset: "slide",
-                  direction: "edges",
-                  from: { opacity: 0, scale: 1.5 },
-                  to: { opacity: 1, scale: 1 },
-                },
-                titleStyle: {
-                  padding: 130,
-                  textWrap: "balance",
-                  textAlign: "center",
-                },
-                backgroundBox: {
-                  style: {
-                    backgroundColor: "rgba(0, 0, 0, 0.7)",
-                    borderRadius: 8,
-                    padding: "10px",
-                    width: "1000px",
-                    margin: 0,
-                    transformOrigin: "center center",
-                  },
-                  animation: {
-                    from: {
-                      opacity: 0,
-                    },
-                    to: {
-                      opacity: 1,
-                    },
-                    exit: {
-                      opacity: 0,
-                    },
-                    inDuration: 0.2,
-                    easing: "easeOut",
-                  },
-                },
-              },
-            ],
-            durationInFrames: 190,
-          },
-        ],
+        scenes,
+        fps,
+        width,
+        height,
       }}
     />
   )

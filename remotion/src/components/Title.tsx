@@ -23,14 +23,11 @@ export const TitlesSchema = z.array(
     title: z.string(),
     time: z.number().optional(),
     duration: z.number().optional(),
-    // Animation controls
     titleInDuration: z.number().optional(),
     titleOutDuration: z.number().optional(),
     titleEasing: z.string().optional(),
-    // Offsets pour le titre
-    titleStartOffset: z.number().optional(), // Décalage relatif pour le début de l'animation du titre
-    titleEndOffset: z.number().optional(), // Décalage relatif pour la fin de l'animation du titre
-    // Thème visuel prédéfini
+    titleStartOffset: z.number().optional(),
+    titleEndOffset: z.number().optional(),
     theme: z
       .enum([
         "minimal",
@@ -42,50 +39,20 @@ export const TitlesSchema = z.array(
         "gradient",
         "retro",
         "cinematic",
-        "3d",
       ])
       .optional(),
-    // 3D transformation properties
-    threeDEffect: z
-      .object({
-        enabled: z.boolean().optional(),
-        perspective: z.number().optional(), // Perspective depth in pixels
-        rotateX: z.number().optional(), // Rotation in degrees
-        rotateY: z.number().optional(), // Rotation in degrees
-        rotateZ: z.number().optional(), // Rotation in degrees
-        translateZ: z.number().optional(), // Translation in Z-axis
-        animation: z
-          .object({
-            from: z.record(z.any()),
-            to: z.record(z.any()),
-            exit: z.record(z.any()).optional(),
-            easing: z.string().optional(),
-          })
-          .optional(),
-      })
-      .optional(),
-    // Animation lettre par lettre
     letterAnimation: z
       .object({
         preset: z
-          .enum([
-            "typewriter",
-            "fade",
-            "slide",
-            "bounce",
-            "random",
-            "3d-flip",
-            "3d-rotate",
-          ])
+          .enum(["typewriter", "fade", "slide", "bounce", "random"])
           .optional(),
-        staggerDelay: z.number().optional(), // Délai entre chaque lettre en secondes
-        duration: z.number().optional(), // Durée d'animation pour chaque lettre
-        easing: z.string().optional(), // Easing pour chaque lettre
-        // Pour les animations personnalisées
+        staggerDelay: z.number().optional(),
+        duration: z.number().optional(),
+        easing: z.string().optional(),
         from: z.record(z.any()).optional(),
         to: z.record(z.any()).optional(),
-        direction: z.enum(["ltr", "rtl", "center", "edges"]).optional(), // Direction de l'animation
-        animateSpaces: z.boolean().optional(), // Animer aussi les espaces entre les mots
+        direction: z.enum(["ltr", "rtl", "center", "edges"]).optional(),
+        animateSpaces: z.boolean().optional(),
       })
       .optional(),
     animation: z
@@ -96,15 +63,13 @@ export const TitlesSchema = z.array(
         easing: z.string().optional(),
       })
       .optional(),
-    // Background box
     backgroundBox: z
       .object({
         enabled: z.boolean().optional(),
         style: z.union([z.record(z.any()), z.string()]).optional(),
         padding: z.number().optional(),
-        // Offsets pour la boîte
-        startOffset: z.number().optional(), // Décalage relatif pour le début de l'animation de la boîte
-        endOffset: z.number().optional(), // Décalage relatif pour la fin de l'animation de la boîte
+        startOffset: z.number().optional(),
+        endOffset: z.number().optional(),
         animation: z
           .object({
             from: z.record(z.any()),
@@ -117,14 +82,12 @@ export const TitlesSchema = z.array(
           .optional(),
       })
       .optional(),
-    // Positionnement
     top: z.number().optional(),
     left: z.number().optional(),
     right: z.number().optional(),
     bottom: z.number().optional(),
     horizontalAlign: z.enum(["start", "center", "end"]).optional(),
     verticalAlign: z.enum(["start", "center", "end"]).optional(),
-    // Styles
     titleStyle: z.union([z.record(z.any()), z.string()]).optional(),
   }),
 )
@@ -135,7 +98,6 @@ type TitleProps = {
   titles: TitleItem[]
 }
 
-// Presets for letter animations
 const letterAnimationPresets = {
   typewriter: {
     from: { opacity: 0 },
@@ -182,24 +144,6 @@ const letterAnimationPresets = {
     direction: "ltr",
     animateSpaces: true,
   },
-  "3d-flip": {
-    from: { opacity: 0, rotateX: 90, perspective: 800 },
-    to: { opacity: 1, rotateX: 0, perspective: 800 },
-    staggerDelay: 0.05,
-    duration: 0.4,
-    easing: "easeOut",
-    direction: "ltr" as const,
-    animateSpaces: true,
-  },
-  "3d-rotate": {
-    from: { opacity: 0, rotateY: 90, perspective: 800 },
-    to: { opacity: 1, rotateY: 0, perspective: 800 },
-    staggerDelay: 0.04,
-    duration: 0.5,
-    easing: "easeOutElastic",
-    direction: "ltr" as const,
-    animateSpaces: true,
-  },
 }
 
 function getEasingFn(easingName?: string): (x: number) => number {
@@ -243,27 +187,12 @@ function applyAnimationToStyle(
 ): React.CSSProperties {
   const style = { ...baseStyle }
 
-  // Appliquer transformOrigin AVANT de générer la transform pour s'assurer qu'il est pris en compte
-  if (interp.transformOrigin !== undefined) {
-    style.transformOrigin = interp.transformOrigin as string
-  } else if (interp.scaleX !== undefined || interp.scaleY !== undefined) {
-    // Par défaut à left center pour le scaleX et center top pour le scaleY
-    if (interp.scaleX !== undefined && interp.scaleY === undefined) {
-      style.transformOrigin = "left center"
-    } else if (interp.scaleY !== undefined && interp.scaleX === undefined) {
-      style.transformOrigin = "center top"
-    } else {
-      style.transformOrigin = "left top"
-    }
-  }
-
   if (interp.opacity !== undefined) style.opacity = interp.opacity
   if (interp.backgroundColor !== undefined)
     style.backgroundColor = interp.backgroundColor as string
   if (interp.borderRadius !== undefined)
     style.borderRadius = interp.borderRadius
 
-  // Gestion spéciale pour width et height
   if (interp.width !== undefined) {
     if (typeof interp.width === "number") {
       style.width = `${interp.width}px`
@@ -280,87 +209,9 @@ function applyAnimationToStyle(
     }
   }
 
-  // Compose la transform dynamiquement
-  const transforms = []
-
-  // Perspective for 3D
-  let hasPerspective = false
-  if (interp.perspective !== undefined) {
-    hasPerspective = true
-    style.perspective = `${interp.perspective}px`
-  }
-
-  // Scale (avec support de scaleX/scaleY séparés)
-  if (interp.scaleX !== undefined) {
-    transforms.push(`scaleX(${interp.scaleX})`)
-  }
-  if (interp.scaleY !== undefined) {
-    transforms.push(`scaleY(${interp.scaleY})`)
-  }
-  if (
-    interp.scale !== undefined &&
-    interp.scaleX === undefined &&
-    interp.scaleY === undefined
-  ) {
-    transforms.push(`scale(${interp.scale})`)
-  }
-
-  // 3D Transforms - need to be before translate
-  if (interp.rotateX !== undefined) {
-    transforms.push(`rotateX(${interp.rotateX}deg)`)
-  }
-  if (interp.rotateY !== undefined) {
-    transforms.push(`rotateY(${interp.rotateY}deg)`)
-  }
-  if (interp.rotateZ !== undefined) {
-    transforms.push(`rotateZ(${interp.rotateZ}deg)`)
-  }
-
-  // Handle translation (2D or 3D)
-  if (interp.translateZ !== undefined) {
-    // If we have Z translation, use translate3d
-    const x = interp.translateX ?? 0
-    const y = interp.translateY ?? 0
-    const z = interp.translateZ
-    transforms.push(`translate3d(${x}px, ${y}px, ${z}px)`)
-  } else if (
-    interp.translateX !== undefined ||
-    interp.translateY !== undefined
-  ) {
-    // Otherwise use regular 2D translate
-    const x = interp.translateX ?? 0
-    const y = interp.translateY ?? 0
-    transforms.push(`translate(${x}px, ${y}px)`)
-  }
-
-  if (interp.rotate !== undefined) {
-    transforms.push(`rotate(${interp.rotate}deg)`)
-  }
-
-  if (interp.skew !== undefined) {
-    transforms.push(`skew(${interp.skew}deg)`)
-  }
-
-  if (transforms.length > 0) {
-    style.transform = transforms.join(" ")
-
-    // Add transform-style and backface-visibility for 3D transforms
-    if (
-      hasPerspective ||
-      interp.rotateX !== undefined ||
-      interp.rotateY !== undefined ||
-      interp.rotateZ !== undefined ||
-      interp.translateZ !== undefined
-    ) {
-      style.transformStyle = "preserve-3d" as const
-      style.backfaceVisibility = "hidden" as const
-    }
-  }
-
   return style
 }
 
-// Thèmes visuels prédéfinis
 const titleThemes: Record<string, React.CSSProperties> = {
   minimal: {
     color: "#ffffff",
@@ -439,202 +290,7 @@ const titleThemes: Record<string, React.CSSProperties> = {
     textTransform: "uppercase" as const,
     textShadow: "0 2px 30px rgba(0,0,0,0.8)",
   },
-  "3d": {
-    color: "#ffffff",
-    fontFamily: "Montserrat, sans-serif",
-    fontSize: 90,
-    fontWeight: 800,
-    letterSpacing: "0.05em",
-    textShadow:
-      "0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2)",
-    transformStyle: "preserve-3d" as const,
-    perspective: "1000px",
-  },
 }
-
-/*
- * Exemple d'utilisation des offsets et transformOrigin:
- *
- * Animation depuis la gauche (par défaut):
- * {
- *   backgroundBox: {
- *     animation: {
- *       from: { scaleX: 0 },
- *       to: { scaleX: 1 }
- *     }
- *   }
- * }
- *
- * Animation depuis la droite:
- * {
- *   backgroundBox: {
- *     animation: {
- *       from: {
- *         scaleX: 0,
- *         transformOrigin: "right center"
- *       },
- *       to: { scaleX: 1 }
- *     }
- *   }
- * }
- *
- * Animation depuis le centre:
- * {
- *   backgroundBox: {
- *     animation: {
- *       from: {
- *         scaleX: 0,
- *         transformOrigin: "center center"
- *       },
- *       to: { scaleX: 1 }
- *     }
- *   }
- * }
- *
- * Animation verticale depuis le haut (par défaut):
- * {
- *   backgroundBox: {
- *     animation: {
- *       from: { scaleY: 0 },
- *       to: { scaleY: 1 }
- *     }
- *   }
- * }
- *
- * Animation verticale depuis le bas:
- * {
- *   backgroundBox: {
- *     animation: {
- *       from: {
- *         scaleY: 0,
- *         transformOrigin: "center bottom"
- *       },
- *       to: { scaleY: 1 }
- *     }
- *   }
- * }
- *
- * Animation avec skew (effet de distorsion):
- * {
- *   backgroundBox: {
- *     animation: {
- *       from: {
- *         scaleX: 0,
- *         skew: 20 // Inclinaison de 20 degrés
- *       },
- *       to: {
- *         scaleX: 1,
- *         skew: 0  // Retour à la normale
- *       }
- *     }
- *   }
- * }
- *
- * Animation avec skewX et skewY séparés:
- * {
- *   backgroundBox: {
- *     animation: {
- *       from: {
- *         skewX: 30, // Inclinaison horizontale
- *         skewY: 15  // Inclinaison verticale
- *       },
- *       to: {
- *         skewX: 0,
- *         skewY: 0
- *       }
- *     }
- *   }
- * }
- *
- * Animation lettre par lettre (presets):
- * {
- *   title: "Apparaît lettre par lettre",
- *   letterAnimation: {
- *     preset: "typewriter" // Choisir parmi: "typewriter", "fade", "slide", "bounce", "random"
- *   }
- * }
- *
- * Animation lettre par lettre avec direction:
- * {
- *   title: "Animation de droite à gauche",
- *   letterAnimation: {
- *     preset: "fade",
- *     direction: "rtl" // right-to-left - Commence par la dernière lettre
- *   }
- * }
- *
- * Animation depuis le centre:
- * {
- *   title: "Animation depuis le centre",
- *   letterAnimation: {
- *     preset: "slide",
- *     direction: "center" // Commence par le milieu du texte et se propage vers les bords
- *   }
- * }
- *
- * Animation depuis les bords:
- * {
- *   title: "Animation depuis les bords",
- *   letterAnimation: {
- *     preset: "bounce",
- *     direction: "edges" // Commence par les première et dernière lettres et se propage vers le milieu
- *   }
- * }
- *
- * Animation avec espaces animés:
- * {
- *   title: "Animation avec espaces",
- *   letterAnimation: {
- *     preset: "slide",
- *     animateSpaces: true // Les espaces entre les mots sont également animés
- *   }
- * }
- *
- * Animation lettre par lettre personnalisée:
- * {
- *   title: "Animation personnalisée",
- *   letterAnimation: {
- *     staggerDelay: 0.06, // 60ms entre chaque lettre
- *     duration: 0.4,      // Chaque lettre s'anime en 400ms
- *     easing: "easeOut",
- *     direction: "rtl",   // De droite à gauche
- *     animateSpaces: true, // Inclure les espaces dans l'animation
- *     from: {
- *       opacity: 0,
- *       scale: 2,
- *       rotate: 45
- *     },
- *     to: {
- *       opacity: 1,
- *       scale: 1,
- *       rotate: 0
- *     }
- *   }
- * }
- *
- * Combinaison d'animations:
- * {
- *   title: "Animations combinées",
- *   // Animation globale du titre
- *   animation: {
- *     from: { translateY: -50 },
- *     to: { translateY: 0 }
- *   },
- *   // Animation lettre par lettre
- *   letterAnimation: {
- *     preset: "fade"
- *   },
- *   // Animation de la boîte
- *   backgroundBox: {
- *     enabled: true,
- *     startOffset: -0.3, // La boîte commence avant le titre
- *     animation: {
- *       from: { scaleX: 0 },
- *       to: { scaleX: 1 }
- *     }
- *   }
- * }
- */
 
 export const Title: React.FC<TitleProps> = ({ titles }) => {
   const frame = useCurrentFrame()
@@ -644,493 +300,15 @@ export const Title: React.FC<TitleProps> = ({ titles }) => {
   const videoWidth = width ?? 1080
   const videoHeight = height ?? 1920
 
-  // Trouver le titre actif
-  const activeTitle = titles.find((t) => {
+  // Filter all titles that should be visible at the current time
+  const visibleTitles = titles.filter((t) => {
     const titleStart = t.time ?? 0
     const titleDuration = t.duration ?? Infinity
     return currentTime >= titleStart && currentTime < titleStart + titleDuration
   })
 
-  if (!activeTitle) return null
+  if (visibleTitles.length === 0) return null
 
-  // Positionnement
-  const top = activeTitle.top ?? 10
-  const left = activeTitle.left ?? 0
-  const right = activeTitle.right ?? 0
-  const bottom = activeTitle.bottom ?? 0
-  const horizontalAlign = activeTitle.horizontalAlign ?? "center"
-  const verticalAlign = activeTitle.verticalAlign ?? "center"
-
-  // Style container
-  const containerStyle: React.CSSProperties = {
-    position: "absolute",
-    top: `${top}%`,
-    left: `${left}%`,
-    right: `${right}%`,
-    bottom: `${bottom}%`,
-    display: "flex",
-    justifyContent: horizontalAlign,
-    alignItems: verticalAlign,
-    width: "100%",
-    height: "100%",
-    pointerEvents: "none" as const,
-  }
-
-  // Style title with theme if provided
-  let resolvedTitleStyle: React.CSSProperties = {
-    color: "#fff",
-    fontFamily: "Montserrat, sans-serif",
-    fontSize: 90,
-    fontWeight: 900,
-    marginBottom: 12,
-    textShadow: "0 2px 30px #000, 0 1px 10px #000",
-    lineHeight: 1.1,
-  }
-
-  // Apply theme if specified
-  if (activeTitle.theme && titleThemes[activeTitle.theme]) {
-    resolvedTitleStyle = {
-      ...resolvedTitleStyle,
-      ...titleThemes[activeTitle.theme],
-    }
-  }
-
-  // Apply custom style on top of theme if provided
-  if (activeTitle.titleStyle) {
-    if (typeof activeTitle.titleStyle === "string") {
-      resolvedTitleStyle = {
-        ...resolvedTitleStyle,
-        ...parseStyleString(activeTitle.titleStyle),
-      }
-    } else {
-      resolvedTitleStyle = { ...resolvedTitleStyle, ...activeTitle.titleStyle }
-    }
-  }
-  if ("transition" in resolvedTitleStyle) delete resolvedTitleStyle.transition
-
-  // Timing title avec offsets
-  const titleStart =
-    (activeTitle.time ?? 0) + (activeTitle.titleStartOffset ?? 0)
-  const titleDuration = activeTitle.duration ?? Infinity
-  const titleEndOffset = activeTitle.titleEndOffset ?? 0
-  const titleInDuration = activeTitle.titleInDuration ?? 0
-  const titleOutDuration = activeTitle.titleOutDuration ?? 0
-  const titleInEnd = titleStart + titleInDuration
-  const titleOutStart =
-    titleStart + titleDuration + titleEndOffset - titleOutDuration
-  const titleAppear =
-    currentTime >= titleStart &&
-    currentTime < titleStart + titleDuration + titleEndOffset
-
-  let titleAnimProgress = 1
-  if (titleInDuration > 0 && currentTime < titleInEnd) {
-    titleAnimProgress = Math.min(
-      1,
-      Math.max(0, (currentTime - titleStart) / titleInDuration),
-    )
-  } else if (titleOutDuration > 0 && currentTime > titleOutStart) {
-    titleAnimProgress = Math.max(
-      0,
-      1 - (currentTime - titleOutStart) / titleOutDuration,
-    )
-  }
-
-  // Title animation
-  let animatedTitleStyle: React.CSSProperties | undefined = undefined
-  if (
-    activeTitle.animation &&
-    activeTitle.animation.from &&
-    activeTitle.animation.to
-  ) {
-    const easingFn = getEasingFn(activeTitle.animation.easing)
-    let interp: Record<string, number | string>
-    if (titleInDuration > 0 && currentTime < titleInEnd) {
-      // Entrée : from -> to
-      const easedProgress = easingFn(titleAnimProgress)
-      interp = interpolate(
-        activeTitle.animation.from,
-        activeTitle.animation.to,
-        easedProgress,
-      )
-    } else if (titleOutDuration > 0 && currentTime > titleOutStart) {
-      // Sortie : to -> exit (ou from si pas exit)
-      const outProgress = 1 - titleAnimProgress
-      const easedProgress = easingFn(outProgress)
-      interp = interpolate(
-        activeTitle.animation.to,
-        activeTitle.animation.exit || activeTitle.animation.from,
-        easedProgress,
-      )
-    } else {
-      // Stable : to
-      interp = { ...activeTitle.animation.to }
-    }
-    animatedTitleStyle = applyAnimationToStyle(resolvedTitleStyle, interp)
-  }
-
-  // Background box
-  const showBackgroundBox = activeTitle.backgroundBox?.enabled ?? false
-  let backgroundBoxStyle: React.CSSProperties = {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    borderRadius: 8,
-    padding: activeTitle.backgroundBox?.padding ?? 20,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden", // Important pour les animations de taille
-  }
-
-  if (activeTitle.backgroundBox?.style) {
-    if (typeof activeTitle.backgroundBox.style === "string") {
-      backgroundBoxStyle = {
-        ...backgroundBoxStyle,
-        ...parseStyleString(activeTitle.backgroundBox.style),
-      }
-    } else {
-      backgroundBoxStyle = {
-        ...backgroundBoxStyle,
-        ...activeTitle.backgroundBox.style,
-      }
-    }
-  }
-
-  // Animation de la box avec offsets
-  let animatedBoxStyle: React.CSSProperties | undefined = undefined
-  let showBox = false
-
-  if (
-    showBackgroundBox &&
-    activeTitle.backgroundBox?.animation &&
-    activeTitle.backgroundBox.animation.from &&
-    activeTitle.backgroundBox.animation.to
-  ) {
-    const boxAnim = activeTitle.backgroundBox.animation
-    const boxStartOffset = activeTitle.backgroundBox.startOffset ?? 0
-    const boxEndOffset = activeTitle.backgroundBox.endOffset ?? 0
-    const boxInDuration = boxAnim.inDuration ?? titleInDuration
-    const boxOutDuration = boxAnim.outDuration ?? titleOutDuration
-
-    const baseTime = activeTitle.time ?? 0
-    const boxStart = baseTime + boxStartOffset
-    const boxInEnd = boxStart + boxInDuration
-    const boxEnd = baseTime + titleDuration + boxEndOffset
-    const boxOutStart = boxEnd - boxOutDuration
-
-    // Déterminer si la boîte doit être affichée
-    showBox = currentTime >= boxStart && currentTime < boxEnd
-
-    let boxAnimProgress = 1
-    if (
-      boxInDuration > 0 &&
-      currentTime < boxInEnd &&
-      currentTime >= boxStart
-    ) {
-      boxAnimProgress = Math.min(
-        1,
-        Math.max(0, (currentTime - boxStart) / boxInDuration),
-      )
-    } else if (boxOutDuration > 0 && currentTime > boxOutStart) {
-      boxAnimProgress = Math.max(
-        0,
-        1 - (currentTime - boxOutStart) / boxOutDuration,
-      )
-    } else if (currentTime < boxStart) {
-      boxAnimProgress = 0
-    }
-
-    const easingFn = getEasingFn(boxAnim.easing)
-    let interp: Record<string, number | string>
-
-    if (
-      boxInDuration > 0 &&
-      currentTime < boxInEnd &&
-      currentTime >= boxStart
-    ) {
-      // Entrée : from -> to
-      const easedProgress = easingFn(boxAnimProgress)
-      interp = interpolate(boxAnim.from, boxAnim.to, easedProgress)
-    } else if (boxOutDuration > 0 && currentTime > boxOutStart) {
-      // Sortie : to -> exit (ou from si pas exit)
-      const outProgress = 1 - boxAnimProgress
-      const easedProgress = easingFn(outProgress)
-      interp = interpolate(
-        boxAnim.to,
-        boxAnim.exit || boxAnim.from,
-        easedProgress,
-      )
-    } else if (currentTime < boxStart) {
-      interp = { ...boxAnim.from }
-    } else {
-      // Stable : to
-      interp = { ...boxAnim.to }
-    }
-
-    animatedBoxStyle = applyAnimationToStyle(backgroundBoxStyle, interp)
-  }
-
-  // Handle letter animation
-  const hasLetterAnimation = !!activeTitle.letterAnimation
-
-  let letterAnimationConfig = null
-
-  if (hasLetterAnimation) {
-    const preset = activeTitle.letterAnimation?.preset
-    const presetConfig = preset ? letterAnimationPresets[preset] : null
-
-    letterAnimationConfig = {
-      staggerDelay:
-        activeTitle.letterAnimation?.staggerDelay ??
-        presetConfig?.staggerDelay ??
-        0.05,
-      duration:
-        activeTitle.letterAnimation?.duration ?? presetConfig?.duration ?? 0.3,
-      easing:
-        activeTitle.letterAnimation?.easing ??
-        presetConfig?.easing ??
-        "easeOut",
-      from: activeTitle.letterAnimation?.from ??
-        presetConfig?.from ?? { opacity: 0 },
-      to: activeTitle.letterAnimation?.to ?? presetConfig?.to ?? { opacity: 1 },
-      direction: activeTitle.letterAnimation?.direction ?? "ltr",
-      animateSpaces: activeTitle.letterAnimation?.animateSpaces ?? false,
-    }
-  }
-
-  const renderLetterAnimation = (text: string) => {
-    if (!hasLetterAnimation || !letterAnimationConfig) {
-      return text
-    }
-
-    // Split text into words and then characters
-    const words = text.split(/\s+/)
-
-    // Get all characters as flat array for direction calculation
-    const allCharacters = Array.from(text.replace(/\s+/g, " "))
-    const direction = letterAnimationConfig.direction || "ltr"
-    const animateSpaces = letterAnimationConfig.animateSpaces || false
-    const totalChars = allCharacters.length
-    const middle = Math.floor(totalChars / 2)
-    const halfLength = totalChars / 2
-
-    // Function to calculate character index based on animation direction
-    const getDelayIndex = (globalIndex: number) => {
-      if (direction === "rtl") {
-        // Right to left
-        return totalChars - 1 - globalIndex
-      } else if (direction === "center") {
-        // From center outwards
-        return Math.abs(middle - globalIndex)
-      } else if (direction === "edges") {
-        // From edges inwards
-        return halfLength - Math.abs(globalIndex - halfLength)
-      } else {
-        // Left to right (default)
-        return globalIndex
-      }
-    }
-
-    return (
-      <div
-        style={{
-          display: "inline-block",
-          whiteSpace: "pre-wrap",
-        }}
-      >
-        {words.map((word, wordIndex) => {
-          // Split word into characters
-          const characters = Array.from(word)
-
-          // Calculate the word start index for global position
-          const wordStartIndex =
-            words.slice(0, wordIndex).join(" ").length +
-            (wordIndex > 0 ? wordIndex : 0)
-
-          // Create the word element
-          const wordElement = (
-            <span
-              key={`word-${wordIndex}`}
-              style={{
-                display: "inline-block",
-                marginRight: 0,
-              }}
-            >
-              {characters.map((char, charIndex) => {
-                // Calculate the global index of this character within the entire text
-                const globalIndex = wordStartIndex + charIndex
-
-                // Calculate the delay based on the direction
-                const delayIndex = getDelayIndex(globalIndex)
-                const delay = letterAnimationConfig.staggerDelay * delayIndex
-                const letterDuration = letterAnimationConfig.duration
-
-                // Calculate animation progress for this letter
-                let letterProgress = 0
-                const letterStart = titleStart + delay
-                const letterEnd = letterStart + letterDuration
-
-                if (currentTime >= letterStart && currentTime < letterEnd) {
-                  letterProgress = (currentTime - letterStart) / letterDuration
-                } else if (currentTime >= letterEnd) {
-                  letterProgress = 1
-                }
-
-                // Apply easing
-                const easingFn = getEasingFn(letterAnimationConfig.easing)
-                const easedProgress = easingFn(letterProgress)
-
-                // Interpolate between from and to states
-                const interpValues = interpolate(
-                  letterAnimationConfig.from,
-                  letterAnimationConfig.to,
-                  easedProgress,
-                )
-
-                // Create style for this letter
-                const letterStyle = applyAnimationToStyle(
-                  { display: "inline-block" },
-                  interpValues,
-                )
-
-                return (
-                  <span
-                    key={`char-${wordIndex}-${charIndex}`}
-                    style={letterStyle}
-                  >
-                    {char}
-                  </span>
-                )
-              })}
-            </span>
-          )
-
-          // Add space after word if not last word
-          if (wordIndex < words.length - 1) {
-            // If animating spaces, apply the same animation to the space
-            if (animateSpaces) {
-              const spaceIndex = wordStartIndex + characters.length
-              const delayIndex = getDelayIndex(spaceIndex)
-              const delay = letterAnimationConfig.staggerDelay * delayIndex
-              const letterDuration = letterAnimationConfig.duration
-
-              let spaceProgress = 0
-              const spaceStart = titleStart + delay
-              const spaceEnd = spaceStart + letterDuration
-
-              if (currentTime >= spaceStart && currentTime < spaceEnd) {
-                spaceProgress = (currentTime - spaceStart) / letterDuration
-              } else if (currentTime >= spaceEnd) {
-                spaceProgress = 1
-              }
-
-              const easingFn = getEasingFn(letterAnimationConfig.easing)
-              const easedProgress = easingFn(spaceProgress)
-
-              const interpValues = interpolate(
-                letterAnimationConfig.from,
-                letterAnimationConfig.to,
-                easedProgress,
-              )
-
-              const spaceStyle = applyAnimationToStyle(
-                { display: "inline-block" },
-                interpValues,
-              )
-
-              return (
-                <React.Fragment key={`word-space-${wordIndex}`}>
-                  {wordElement}
-                  <span style={spaceStyle}>&nbsp;</span>
-                </React.Fragment>
-              )
-            } else {
-              // Just add a regular space
-              return (
-                <React.Fragment key={`word-space-${wordIndex}`}>
-                  {wordElement}
-                  <span style={{ display: "inline-block" }}>&nbsp;</span>
-                </React.Fragment>
-              )
-            }
-          }
-
-          return wordElement
-        })}
-      </div>
-    )
-  }
-
-  // 3D effect processing
-  const has3DEffect = activeTitle?.threeDEffect?.enabled ?? false
-  let threeDStyle: React.CSSProperties = {}
-
-  if (has3DEffect) {
-    // Base 3D style
-    threeDStyle = {
-      perspective: `${activeTitle.threeDEffect?.perspective ?? 1000}px`,
-      transformStyle: "preserve-3d",
-    }
-
-    // Apply static 3D transforms if no animation is defined
-    if (!activeTitle.threeDEffect?.animation) {
-      const transforms = []
-
-      if (activeTitle.threeDEffect?.rotateX !== undefined) {
-        transforms.push(`rotateX(${activeTitle.threeDEffect.rotateX}deg)`)
-      }
-      if (activeTitle.threeDEffect?.rotateY !== undefined) {
-        transforms.push(`rotateY(${activeTitle.threeDEffect.rotateY}deg)`)
-      }
-      if (activeTitle.threeDEffect?.rotateZ !== undefined) {
-        transforms.push(`rotateZ(${activeTitle.threeDEffect.rotateZ}deg)`)
-      }
-      if (activeTitle.threeDEffect?.translateZ !== undefined) {
-        transforms.push(`translateZ(${activeTitle.threeDEffect.translateZ}px)`)
-      }
-
-      if (transforms.length > 0) {
-        threeDStyle.transform = transforms.join(" ")
-      }
-    }
-  }
-
-  // Apply 3D animation if defined
-  let animated3DStyle: React.CSSProperties | undefined = undefined
-
-  if (
-    has3DEffect &&
-    activeTitle.threeDEffect?.animation?.from &&
-    activeTitle.threeDEffect.animation?.to
-  ) {
-    const threeDAnimation = activeTitle.threeDEffect.animation
-    const easingFn = getEasingFn(threeDAnimation.easing)
-
-    let interp: Record<string, number | string>
-    if (titleInDuration > 0 && currentTime < titleInEnd) {
-      // Entry animation
-      const easedProgress = easingFn(titleAnimProgress)
-      interp = interpolate(
-        threeDAnimation.from,
-        threeDAnimation.to,
-        easedProgress,
-      )
-    } else if (titleOutDuration > 0 && currentTime > titleOutStart) {
-      // Exit animation
-      const outProgress = 1 - titleAnimProgress
-      const easedProgress = easingFn(outProgress)
-      interp = interpolate(
-        threeDAnimation.to,
-        threeDAnimation.exit || threeDAnimation.from,
-        easedProgress,
-      )
-    } else {
-      // Stable state
-      interp = { ...threeDAnimation.to }
-    }
-
-    animated3DStyle = applyAnimationToStyle(threeDStyle, interp)
-  }
-
-  // Final container rendering
   return (
     <AbsoluteFill
       style={{
@@ -1140,49 +318,384 @@ export const Title: React.FC<TitleProps> = ({ titles }) => {
         height: videoHeight,
       }}
     >
-      <div style={containerStyle}>
-        {showBackgroundBox && showBox ? (
-          <div
-            style={{
+      {visibleTitles.map((title, idx) => {
+        const top = title.top ?? 10
+        const left = title.left ?? 0
+        const right = title.right ?? 0
+        const bottom = title.bottom ?? 0
+        const horizontalAlign = title.horizontalAlign ?? "center"
+        const verticalAlign = title.verticalAlign ?? "center"
+
+        const containerStyle: React.CSSProperties = {
+          position: "absolute",
+          top: `${top}%`,
+          left: `${left}%`,
+          right: `${right}%`,
+          bottom: `${bottom}%`,
+          display: "flex",
+          justifyContent: horizontalAlign,
+          alignItems: verticalAlign,
+          width: "100%",
+          height: "100%",
+          pointerEvents: "none" as const,
+        }
+
+        let resolvedTitleStyle: React.CSSProperties = {
+          color: "#fff",
+          fontFamily: "Montserrat, sans-serif",
+          fontSize: 90,
+          fontWeight: 900,
+          marginBottom: 12,
+          textShadow: "0 2px 30px #000, 0 1px 10px #000",
+          lineHeight: 1.1,
+        }
+        if (title.theme && titleThemes[title.theme]) {
+          resolvedTitleStyle = {
+            ...resolvedTitleStyle,
+            ...titleThemes[title.theme],
+          }
+        }
+        if (title.titleStyle) {
+          if (typeof title.titleStyle === "string") {
+            resolvedTitleStyle = {
+              ...resolvedTitleStyle,
+              ...parseStyleString(title.titleStyle),
+            }
+          } else {
+            resolvedTitleStyle = { ...resolvedTitleStyle, ...title.titleStyle }
+          }
+        }
+        if ("transition" in resolvedTitleStyle)
+          delete resolvedTitleStyle.transition
+
+        const titleStart = (title.time ?? 0) + (title.titleStartOffset ?? 0)
+        const titleDuration = title.duration ?? Infinity
+        const titleEndOffset = title.titleEndOffset ?? 0
+        const titleInDuration = title.titleInDuration ?? 0
+        const titleOutDuration = title.titleOutDuration ?? 0
+        const titleInEnd = titleStart + titleInDuration
+        const titleOutStart =
+          titleStart + titleDuration + titleEndOffset - titleOutDuration
+        const titleAppear =
+          currentTime >= titleStart &&
+          currentTime < titleStart + titleDuration + titleEndOffset
+
+        let titleAnimProgress = 1
+        if (titleInDuration > 0 && currentTime < titleInEnd) {
+          titleAnimProgress = Math.min(
+            1,
+            Math.max(0, (currentTime - titleStart) / titleInDuration),
+          )
+        } else if (titleOutDuration > 0 && currentTime > titleOutStart) {
+          titleAnimProgress = Math.max(
+            0,
+            1 - (currentTime - titleOutStart) / titleOutDuration,
+          )
+        }
+
+        let animatedTitleStyle: React.CSSProperties | undefined = undefined
+        if (title.animation && title.animation.from && title.animation.to) {
+          const easingFn = getEasingFn(title.animation.easing)
+          let interp: Record<string, number | string>
+          if (titleInDuration > 0 && currentTime < titleInEnd) {
+            const easedProgress = easingFn(titleAnimProgress)
+            interp = interpolate(
+              title.animation.from,
+              title.animation.to,
+              easedProgress,
+            )
+          } else if (titleOutDuration > 0 && currentTime > titleOutStart) {
+            const outProgress = 1 - titleAnimProgress
+            const easedProgress = easingFn(outProgress)
+            interp = interpolate(
+              title.animation.to,
+              title.animation.exit || title.animation.from,
+              easedProgress,
+            )
+          } else {
+            interp = { ...title.animation.to }
+          }
+          animatedTitleStyle = applyAnimationToStyle(resolvedTitleStyle, interp)
+        }
+
+        const showBackgroundBox = title.backgroundBox?.enabled ?? false
+        let backgroundBoxStyle: React.CSSProperties = {
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          borderRadius: 8,
+          padding: title.backgroundBox?.padding ?? 20,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          overflow: "hidden",
+        }
+        if (title.backgroundBox?.style) {
+          if (typeof title.backgroundBox.style === "string") {
+            backgroundBoxStyle = {
               ...backgroundBoxStyle,
-              ...(animatedBoxStyle ? animatedBoxStyle : {}),
-              ...(has3DEffect ? threeDStyle : {}),
-              ...(animated3DStyle ? animated3DStyle : {}),
-            }}
-          >
-            {titleAppear && (
+              ...parseStyleString(title.backgroundBox.style),
+            }
+          } else {
+            backgroundBoxStyle = {
+              ...backgroundBoxStyle,
+              ...title.backgroundBox.style,
+            }
+          }
+        }
+
+        let animatedBoxStyle: React.CSSProperties | undefined = undefined
+        let showBox = false
+        if (
+          showBackgroundBox &&
+          title.backgroundBox?.animation &&
+          title.backgroundBox.animation.from &&
+          title.backgroundBox.animation.to
+        ) {
+          const boxAnim = title.backgroundBox.animation
+          const boxStartOffset = title.backgroundBox.startOffset ?? 0
+          const boxEndOffset = title.backgroundBox.endOffset ?? 0
+          const boxInDuration = boxAnim.inDuration ?? titleInDuration
+          const boxOutDuration = boxAnim.outDuration ?? titleOutDuration
+
+          const baseTime = title.time ?? 0
+          const boxStart = baseTime + boxStartOffset
+          const boxInEnd = boxStart + boxInDuration
+          const boxEnd = baseTime + titleDuration + boxEndOffset
+          const boxOutStart = boxEnd - boxOutDuration
+
+          showBox = currentTime >= boxStart && currentTime < boxEnd
+
+          let boxAnimProgress = 1
+          if (
+            boxInDuration > 0 &&
+            currentTime < boxInEnd &&
+            currentTime >= boxStart
+          ) {
+            boxAnimProgress = Math.min(
+              1,
+              Math.max(0, (currentTime - boxStart) / boxInDuration),
+            )
+          } else if (boxOutDuration > 0 && currentTime > boxOutStart) {
+            boxAnimProgress = Math.max(
+              0,
+              1 - (currentTime - boxOutStart) / boxOutDuration,
+            )
+          } else if (currentTime < boxStart) {
+            boxAnimProgress = 0
+          }
+
+          const easingFn = getEasingFn(boxAnim.easing)
+          let interp: Record<string, number | string>
+
+          if (
+            boxInDuration > 0 &&
+            currentTime < boxInEnd &&
+            currentTime >= boxStart
+          ) {
+            const easedProgress = easingFn(boxAnimProgress)
+            interp = interpolate(boxAnim.from, boxAnim.to, easedProgress)
+          } else if (boxOutDuration > 0 && currentTime > boxOutStart) {
+            const outProgress = 1 - boxAnimProgress
+            const easedProgress = easingFn(outProgress)
+            interp = interpolate(
+              boxAnim.to,
+              boxAnim.exit || boxAnim.from,
+              easedProgress,
+            )
+          } else if (currentTime < boxStart) {
+            interp = { ...boxAnim.from }
+          } else {
+            interp = { ...boxAnim.to }
+          }
+
+          animatedBoxStyle = applyAnimationToStyle(backgroundBoxStyle, interp)
+        }
+
+        const hasLetterAnimation = !!title.letterAnimation
+        let letterAnimationConfig = null
+        if (hasLetterAnimation) {
+          const preset = title.letterAnimation?.preset
+          const presetConfig = preset ? letterAnimationPresets[preset] : null
+          letterAnimationConfig = {
+            staggerDelay:
+              title.letterAnimation?.staggerDelay ??
+              presetConfig?.staggerDelay ??
+              0.05,
+            duration:
+              title.letterAnimation?.duration ?? presetConfig?.duration ?? 0.3,
+            easing:
+              title.letterAnimation?.easing ??
+              presetConfig?.easing ??
+              "easeOut",
+            from: title.letterAnimation?.from ??
+              presetConfig?.from ?? { opacity: 0 },
+            to: title.letterAnimation?.to ?? presetConfig?.to ?? { opacity: 1 },
+            direction: title.letterAnimation?.direction ?? "ltr",
+            animateSpaces: title.letterAnimation?.animateSpaces ?? false,
+          }
+        }
+
+        const renderLetterAnimation = (text: string) => {
+          if (!hasLetterAnimation || !letterAnimationConfig) {
+            return text
+          }
+          const words = text.split(/\s+/)
+          const allCharacters = Array.from(text.replace(/\s+/g, " "))
+          const direction = letterAnimationConfig.direction || "ltr"
+          const animateSpaces = letterAnimationConfig.animateSpaces || false
+          const totalChars = allCharacters.length
+          const middle = Math.floor(totalChars / 2)
+          const halfLength = totalChars / 2
+          const getDelayIndex = (globalIndex: number) => {
+            if (direction === "rtl") {
+              return totalChars - 1 - globalIndex
+            } else if (direction === "center") {
+              return Math.abs(middle - globalIndex)
+            } else if (direction === "edges") {
+              return halfLength - Math.abs(globalIndex - halfLength)
+            } else {
+              return globalIndex
+            }
+          }
+          return (
+            <div style={{ display: "inline-block", whiteSpace: "pre-wrap" }}>
+              {words.map((word, wordIndex) => {
+                const characters = Array.from(word)
+                const wordStartIndex =
+                  words.slice(0, wordIndex).join(" ").length +
+                  (wordIndex > 0 ? wordIndex : 0)
+                const wordElement = (
+                  <span
+                    key={`word-${wordIndex}`}
+                    style={{ display: "inline-block", marginRight: 0 }}
+                  >
+                    {characters.map((char, charIndex) => {
+                      const globalIndex = wordStartIndex + charIndex
+                      const delayIndex = getDelayIndex(globalIndex)
+                      const delay =
+                        letterAnimationConfig.staggerDelay * delayIndex
+                      const letterDuration = letterAnimationConfig.duration
+                      let letterProgress = 0
+                      const letterStart = titleStart + delay
+                      const letterEnd = letterStart + letterDuration
+                      if (
+                        currentTime >= letterStart &&
+                        currentTime < letterEnd
+                      ) {
+                        letterProgress =
+                          (currentTime - letterStart) / letterDuration
+                      } else if (currentTime >= letterEnd) {
+                        letterProgress = 1
+                      }
+                      const easingFn = getEasingFn(letterAnimationConfig.easing)
+                      const easedProgress = easingFn(letterProgress)
+                      const interpValues = interpolate(
+                        letterAnimationConfig.from,
+                        letterAnimationConfig.to,
+                        easedProgress,
+                      )
+                      const letterStyle = applyAnimationToStyle(
+                        { display: "inline-block" },
+                        interpValues,
+                      )
+                      return (
+                        <span
+                          key={`char-${wordIndex}-${charIndex}`}
+                          style={letterStyle}
+                        >
+                          {char}
+                        </span>
+                      )
+                    })}
+                  </span>
+                )
+                if (wordIndex < words.length - 1) {
+                  if (animateSpaces) {
+                    const spaceIndex = wordStartIndex + characters.length
+                    const delayIndex = getDelayIndex(spaceIndex)
+                    const delay =
+                      letterAnimationConfig.staggerDelay * delayIndex
+                    const letterDuration = letterAnimationConfig.duration
+                    let spaceProgress = 0
+                    const spaceStart = titleStart + delay
+                    const spaceEnd = spaceStart + letterDuration
+                    if (currentTime >= spaceStart && currentTime < spaceEnd) {
+                      spaceProgress =
+                        (currentTime - spaceStart) / letterDuration
+                    } else if (currentTime >= spaceEnd) {
+                      spaceProgress = 1
+                    }
+                    const easingFn = getEasingFn(letterAnimationConfig.easing)
+                    const easedProgress = easingFn(spaceProgress)
+                    const interpValues = interpolate(
+                      letterAnimationConfig.from,
+                      letterAnimationConfig.to,
+                      easedProgress,
+                    )
+                    const spaceStyle = applyAnimationToStyle(
+                      { display: "inline-block" },
+                      interpValues,
+                    )
+                    return (
+                      <React.Fragment key={`word-space-${wordIndex}`}>
+                        {wordElement}
+                        <span style={spaceStyle}>&nbsp;</span>
+                      </React.Fragment>
+                    )
+                  } else {
+                    return (
+                      <React.Fragment key={`word-space-${wordIndex}`}>
+                        {wordElement}
+                        <span style={{ display: "inline-block" }}>&nbsp;</span>
+                      </React.Fragment>
+                    )
+                  }
+                }
+                return wordElement
+              })}
+            </div>
+          )
+        }
+
+        return titleAppear ? (
+          <div key={idx} style={containerStyle}>
+            {showBackgroundBox && showBox ? (
+              <div
+                style={{
+                  ...backgroundBoxStyle,
+                  ...(animatedBoxStyle ? animatedBoxStyle : {}),
+                }}
+              >
+                <div
+                  style={{
+                    ...resolvedTitleStyle,
+                    ...(animatedTitleStyle ? animatedTitleStyle : {}),
+                    opacity: animatedTitleStyle?.opacity ?? titleAnimProgress,
+                    margin: 0,
+                    whiteSpace: hasLetterAnimation ? "normal" : "nowrap",
+                  }}
+                >
+                  {hasLetterAnimation
+                    ? renderLetterAnimation(title.title)
+                    : title.title}
+                </div>
+              </div>
+            ) : (
               <div
                 style={{
                   ...resolvedTitleStyle,
                   ...(animatedTitleStyle ? animatedTitleStyle : {}),
                   opacity: animatedTitleStyle?.opacity ?? titleAnimProgress,
-                  margin: 0,
                   whiteSpace: hasLetterAnimation ? "normal" : "nowrap",
                 }}
               >
                 {hasLetterAnimation
-                  ? renderLetterAnimation(activeTitle.title)
-                  : activeTitle.title}
+                  ? renderLetterAnimation(title.title)
+                  : title.title}
               </div>
             )}
           </div>
-        ) : titleAppear ? (
-          <div
-            style={{
-              ...resolvedTitleStyle,
-              ...(animatedTitleStyle ? animatedTitleStyle : {}),
-              opacity: animatedTitleStyle?.opacity ?? titleAnimProgress,
-              whiteSpace: hasLetterAnimation ? "normal" : "nowrap",
-              ...(has3DEffect ? threeDStyle : {}),
-              ...(animated3DStyle ? animated3DStyle : {}),
-            }}
-          >
-            {hasLetterAnimation
-              ? renderLetterAnimation(activeTitle.title)
-              : activeTitle.title}
-          </div>
-        ) : null}
-      </div>
+        ) : null
+      })}
     </AbsoluteFill>
   )
 }
