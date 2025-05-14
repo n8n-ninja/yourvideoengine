@@ -13,6 +13,7 @@ import { Title, TitlesSchema } from "@/components/Title"
 import editScenes from "./editProps.json"
 import { Sound, SoundsSchema } from "@/components/Sound"
 import { addSound } from "@/Utils/addSound"
+import { Overlay } from "@/components/Overlay"
 
 const TransitionSchema = z.object({
   type: z.enum(["fade", "wipe", "slide", "flip", "clockWipe"]),
@@ -99,6 +100,7 @@ export const editSchema = z.object({
       captions: CaptionSchema.optional(),
       titles: TitlesSchema.optional(),
       sounds: SoundsSchema.optional(),
+      overlays: z.array(z.any()).optional(),
     }),
   ),
   sounds: SoundsSchema.optional(),
@@ -134,6 +136,7 @@ export const EditComponent = ({
               key={index}
             >
               <Camera {...scene.camera} />
+              {scene.overlays && <Overlay overlays={scene.overlays} />}
               {scene.captions && <Caption {...scene.captions} />}
               {scene.titles && <Title titles={scene.titles} />}
               {scene.sounds && <Sound sounds={scene.sounds} />}
