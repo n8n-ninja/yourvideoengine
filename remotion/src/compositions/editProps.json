@@ -3,9 +3,41 @@
     {
       "durationInFrames": 102,
       "camera": {
-        "videoUrl": "https://aiatelier.s3.eu-west-1.amazonaws.com/temporary-uploads/1747260842473-thais-demo-1.mp4"
+        "videoUrl": "https://aiatelier.s3.eu-west-1.amazonaws.com/temporary-uploads/1747260842473-thais-demo-1.mp4",
+        "keyframes": [
+          {
+            "start": 0,
+            "scale": 1.02,
+            "blur": 10,
+            "easing": "ease-in-out"
+          },
+          {
+            "start": 0.3,
+            "scale": 1.3,
+            "blur": 0
+          },
+          {
+            "start": 1.6,
+            "scale": 1.5
+          },
+          {
+            "start": 2,
+            "scale": 1.2
+          },
+          {
+            "start": -0.01,
+            "scale": 1.02
+          }
+        ]
       },
       "captions": {
+        "position": {
+          "top": 50
+        },
+        "combineTokensWithinMilliseconds": 600,
+        "multiColors": ["#F8C734", "#00FFEA", "#FF0080"],
+        "textStyle": "font-size: 80px; font-weight: 900; text-transform: uppercase;",
+        "activeWordStyle": "transform: scale(1.1) translate(0px, -3px) skew(-20deg);",
         "words": [
           {
             "word": "you",
@@ -71,11 +103,40 @@
       }
     },
     {
+      "transition": {
+        "type": "slide",
+        "duration": 30
+      },
       "durationInFrames": 209,
       "camera": {
-        "videoUrl": "https://aiatelier.s3.eu-west-1.amazonaws.com/temporary-uploads/1747260944264-thais-demo-2.mp4"
+        "videoUrl": "https://aiatelier.s3.eu-west-1.amazonaws.com/temporary-uploads/1747260944264-thais-demo-2.mp4",
+        "keyframes": [
+          {
+            "start": 0,
+            "scale": 1.8
+          },
+          {
+            "start": 2,
+            "scale": 1
+          },
+          {
+            "start": 3,
+            "scale": 1
+          },
+          {
+            "start": -0.01,
+            "scale": 1.5
+          }
+        ]
       },
       "captions": {
+        "position": {
+          "top": 50
+        },
+        "combineTokensWithinMilliseconds": 600,
+        "multiColors": ["#F8C734", "#00FFEA", "#FF0080"],
+        "textStyle": "font-size: 80px; font-weight: 900; text-transform: uppercase;",
+        "activeWordStyle": "transform: scale(1.1) translate(0px, -3px) skew(-20deg);",
         "words": [
           {
             "word": "hello",
@@ -183,11 +244,22 @@
       }
     },
     {
+      "transition": {
+        "type": "wipe",
+        "duration": 30
+      },
       "durationInFrames": 133,
       "camera": {
         "videoUrl": "https://aiatelier.s3.eu-west-1.amazonaws.com/temporary-uploads/1747260965465-thais-demo-3.mp4"
       },
       "captions": {
+        "position": {
+          "top": 50
+        },
+        "combineTokensWithinMilliseconds": 600,
+        "multiColors": ["#F8C734", "#00FFEA", "#FF0080"],
+        "textStyle": "font-size: 80px; font-weight: 900; text-transform: uppercase;",
+        "activeWordStyle": "transform: scale(1.1) translate(0px, -3px) skew(-20deg);",
         "words": [
           {
             "word": "every",

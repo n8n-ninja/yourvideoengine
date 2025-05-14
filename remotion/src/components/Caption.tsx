@@ -3,9 +3,7 @@ import { z } from "zod"
 import React from "react"
 import { createTikTokStyleCaptions } from "@remotion/captions"
 import { usePositionStyle } from "@/Utils/usePositionStyle"
-import { useTransition } from "@/Utils/useTransition"
 import { parseStyleString } from "@/Utils/style"
-import { TransitionSchema } from "@/Utils/useTransition"
 import { PositionStyleSchema } from "@/Utils/usePositionStyle"
 
 const defaultActiveWordStyle: React.CSSProperties = {
@@ -23,21 +21,22 @@ export const CaptionSchema = z.object({
     }),
   ),
   position: PositionStyleSchema.optional(),
-  transition: TransitionSchema.optional(),
   boxStyle: z.union([z.record(z.any()), z.string()]).optional(),
   textStyle: z.union([z.record(z.any()), z.string()]).optional(),
   activeWordStyle: z.union([z.record(z.any()), z.string()]).optional(),
+  multiColors: z.array(z.string()).optional(),
+  combineTokensWithinMilliseconds: z.number().optional(),
 })
 
 export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
   words,
   position,
-  transition,
   boxStyle,
   textStyle,
   activeWordStyle,
+  multiColors,
+  combineTokensWithinMilliseconds = 1400,
 }) => {
-  console.log("words", words)
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
   const currentTime = frame / fps
@@ -50,9 +49,6 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
     backgroundColor: "rgba(0,0,0,0.7)",
     borderRadius: 18,
     padding: "1.5em 4em",
-    display: "inline-block",
-    letterSpacing: "0.08em",
-    wordSpacing: "1.08em",
     lineHeight: 1.4,
     textWrap: "balance",
     textAlign: "center",
@@ -70,7 +66,6 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
   // Style du texte
   let resolvedTextStyle: React.CSSProperties = {
     color: "#fff",
-    verticalAlign: "middle",
     fontFamily: "Montserrat, sans-serif",
     fontSize: 75,
     textShadow: "0 2px 30px #000, 0 1px 10px #000",
@@ -89,7 +84,7 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
     }
   }
 
-  // Style du mot actif
+  // Style du mot actif (initialisation, sera potentiellement modifié après activePageIndex)
   let resolvedActiveWordStyle: React.CSSProperties = {
     ...defaultActiveWordStyle,
     color: "#F8C734",
@@ -110,7 +105,7 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
     }
   }
 
-  // Convert words to TikTok-style captions input
+  // Regroupe les mots en pages façon TikTok
   const captions = words.map((w) => ({
     text: " " + w.word,
     startMs: Math.round(w.start * 1000),
@@ -122,7 +117,7 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
   // Regroupe les mots en pages façon TikTok
   const { pages } = createTikTokStyleCaptions({
     captions,
-    combineTokensWithinMilliseconds: 1400,
+    combineTokensWithinMilliseconds: combineTokensWithinMilliseconds,
   })
 
   // Trouve la page active
@@ -132,28 +127,19 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
   )
   const activePage = pages[activePageIndex]
 
-  // Animation d'entrée/sortie de la phrase (transition)
-  const phraseStart = activePage?.startMs ? activePage.startMs / 1000 : 0
-  const phraseDuration = activePage?.durationMs
-    ? activePage.durationMs / 1000
-    : 0
-  const phraseTransition = useTransition({
-    ...(transition ?? {}),
-    start: phraseStart,
-    duration: phraseDuration,
-    currentTime,
-  })
+  // Override color with multiColors si fourni (juste avant le return, activePageIndex est garanti défini)
+  if (multiColors && multiColors.length > 0 && activePageIndex >= 0) {
+    resolvedActiveWordStyle = {
+      ...resolvedActiveWordStyle,
+      color: multiColors[activePageIndex % multiColors.length],
+    }
+  }
 
   return (
     <AbsoluteFill style={{ backgroundColor: "transparent" }}>
       <div style={containerStyle}>
-        {activePage && phraseTransition.visible && (
-          <div
-            style={{
-              ...resolvedBoxStyle,
-              ...phraseTransition.style,
-            }}
-          >
+        {activePage && (
+          <div style={resolvedBoxStyle}>
             {activePage.tokens.map((token, i) => {
               const isActive =
                 currentMs >= token.fromMs && currentMs < token.toMs
