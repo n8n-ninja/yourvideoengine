@@ -1,6 +1,9 @@
 import React from "react"
 import { useVideoConfig } from "remotion"
 
+/**
+ * VignetteOverlayProps: props for the VignetteOverlay component.
+ */
 export type VignetteOverlayProps = {
   type: "vignette"
   intensity?: number
@@ -9,6 +12,9 @@ export type VignetteOverlayProps = {
   opacity?: number
 }
 
+/**
+ * VignetteOverlay: renders a vignette effect overlay with adjustable intensity, size, color, and opacity.
+ */
 export const VignetteOverlay: React.FC<VignetteOverlayProps> = ({
   intensity = 100,
   size = 40,

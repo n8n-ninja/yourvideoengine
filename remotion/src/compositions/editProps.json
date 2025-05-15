@@ -41,23 +41,15 @@
         {
           "title": "Fade In, Fade Out, Linear",
 
-          "timing": { "start": 1, "end": 3 },
+          "timing": { "start": 1, "end": 4 },
           "letterAnimation": {
-            "titleStart": 0,
-            "letterDuration": 0.5,
-            "direction": "edges"
-          },
-          "transition": {
-            "type": "fade",
-            "inDuration": 0.5,
-            "outDuration": 0.5,
-            "easing": "linear"
+            "stagger": 0.1
           }
         },
         {
           "title": "Slide Up In, Fade Out, EaseIn",
           "theme": "elegant",
-          "timing": { "start": 3.2, "end": 5 },
+          "timing": { "start": 4.2, "end": 5 },
           "transition": {
             "inType": "slide-up",
             "outType": "fade",

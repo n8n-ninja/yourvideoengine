@@ -10,17 +10,23 @@ import {
   useRevealTransition,
 } from "@/Utils/useRevealTransition"
 
+// Overlay base type
 type OverlayBase = {
   timing: z.infer<typeof TimingSchema>
   transition: z.infer<typeof TransitionSchema>
   opacity?: number
 }
 
+// Union type for all overlay variants
+// (scanline, vignette, color)
 type OverlayType =
   | (OverlayBase & ScanlineOverlayProps)
   | (OverlayBase & VignetteOverlayProps)
   | (OverlayBase & ColorOverlayProps)
 
+/**
+ * OverlayItem: renders a single overlay with timing and transition.
+ */
 const OverlayItem: React.FC<{ overlay: OverlayType }> = ({ overlay }) => {
   const { startFrame, endFrame, visible } = useTiming({
     start: overlay.timing.start,
@@ -45,6 +51,9 @@ const OverlayItem: React.FC<{ overlay: OverlayType }> = ({ overlay }) => {
   )
 }
 
+/**
+ * Overlay: renders a list of overlays.
+ */
 export const Overlay: React.FC<{ overlays: OverlayType[] }> = ({
   overlays,
 }) => {

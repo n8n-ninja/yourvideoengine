@@ -1,3 +1,4 @@
+import React from "react"
 import {
   AbsoluteFill,
   Audio,
@@ -6,15 +7,16 @@ import {
   staticFile,
 } from "remotion"
 import { z } from "zod"
-import React from "react"
-import { useTiming } from "@/Utils/useTiming"
-import { TimingSchema } from "@/Utils/useTiming"
+import { useTiming, TimingSchema } from "@/Utils/useTiming"
 import {
   ProgressEasingSchema,
   useProgressEasing,
 } from "@/Utils/useProgressEasing"
 import { useKeyframes, Keyframe } from "@/Utils/useKeyframes"
 
+/**
+ * SoundSchema: zod schema for sound props validation.
+ */
 export const SoundSchema = z.object({
   timing: TimingSchema.optional(),
   sound: z.string(),
@@ -36,27 +38,31 @@ export const SoundsSchema = z.array(SoundSchema)
 
 type SoundType = z.infer<typeof SoundSchema>
 
-// Composant pour un seul son
+/**
+ * SoundItem: renders a single sound with timing, volume keyframes, and transitions.
+ */
 const SoundItem: React.FC<{ sound: SoundType; fps: number }> = ({ sound }) => {
-  // Gestion du volume dynamique avec keyframes
+  // Dynamic volume with keyframes
   const keyframes: Keyframe<number>[] | undefined = sound.volumes?.map((v) => ({
     time: v.time,
     value: v.value,
   }))
   const dynamicVolume = useKeyframes<number>(keyframes ?? [])
-
   const volume = dynamicVolume ?? sound.volume ?? 1
 
+  // Timing for the sound
   const timing = useTiming({
     start: sound.timing?.start ?? 0,
     end: sound.timing?.end,
     duration: sound.timing?.duration,
   })
 
+  // Resolve sound source (local or remote)
   const soundSrc = sound.sound.startsWith("http")
     ? sound.sound
     : staticFile(`/sound/${sound.sound}`)
 
+  // Progress and transition for fade in/out
   const { phase, progressIn, progressOut } = useProgressEasing({
     transition: sound.transition,
     startFrame: timing.startFrame,
@@ -80,6 +86,9 @@ const SoundItem: React.FC<{ sound: SoundType; fps: number }> = ({ sound }) => {
   )
 }
 
+/**
+ * Sound: renders a list of sounds.
+ */
 export const Sound: React.FC<{ sounds: SoundType[] }> = ({ sounds }) => {
   const { fps } = useVideoConfig()
   return (

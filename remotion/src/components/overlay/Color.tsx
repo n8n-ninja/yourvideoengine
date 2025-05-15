@@ -1,5 +1,8 @@
 import React from "react"
 
+/**
+ * ColorOverlayProps: props for the ColorOverlay component.
+ */
 export type ColorOverlayProps = {
   type: "color"
   color?: string
@@ -7,6 +10,9 @@ export type ColorOverlayProps = {
   opacity?: number
 }
 
+/**
+ * ColorOverlay: renders a colored overlay with adjustable intensity and opacity.
+ */
 export const ColorOverlay: React.FC<ColorOverlayProps> = ({
   color = "#fff",
   intensity = 50,

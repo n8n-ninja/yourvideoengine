@@ -1,6 +1,6 @@
+import React from "react"
 import { AbsoluteFill, Video, useCurrentFrame } from "remotion"
 import { z } from "zod"
-import React from "react"
 import { useKeyframes, Keyframe } from "@/Utils/useKeyframes"
 
 /**
@@ -43,9 +43,8 @@ export const Camera: React.FC<CameraProps> = ({
   videoUrl,
   animationKeyframes,
 }) => {
-  useCurrentFrame() // pour trigger le render, même si non utilisé
+  useCurrentFrame()
 
-  // fallback: une keyframe par défaut si rien n'est fourni
   const safeKeyframes: Keyframe<CameraValue>[] =
     animationKeyframes && animationKeyframes.length > 0
       ? animationKeyframes
@@ -56,7 +55,7 @@ export const Camera: React.FC<CameraProps> = ({
           },
         ]
 
-  // interpolation de la keyframe courante
+  // Interpolated keyframe for the current frame
   const interpolated = useKeyframes<CameraValue>(safeKeyframes) || {}
 
   const {

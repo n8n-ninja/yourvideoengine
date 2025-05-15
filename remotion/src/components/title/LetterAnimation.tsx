@@ -1,212 +1,140 @@
 import React from "react"
 import { z } from "zod"
-import { useTiming } from "@/Utils/useTiming"
-import { useProgressEasing } from "@/Utils/useProgressEasing"
-import { applyAnimationToStyle } from "@/Utils/style"
+import { useCurrentFrame, useVideoConfig, random } from "remotion"
 
+/**
+ * LetterAnimationConfig: config for animating letters.
+ * - direction: 'ltr' | 'rtl' | 'random' (default: 'ltr')
+ */
 export type LetterAnimationConfig = {
-  preset?: string
-  staggerDelay?: number
-  duration?: number
-  easing?: string
-  from?: Record<string, number | string>
-  to?: Record<string, number | string>
-  direction?: "ltr" | "rtl" | "center" | "edges"
-  animateSpaces?: boolean
+  duration?: number // duration of each letter animation (seconds)
+  stagger?: number // delay between each letter (seconds)
+  easing?: string // (non utilisé ici)
+  translateY?: number // px to move from (default 20)
+  direction?: "ltr" | "rtl" | "random"
 }
 
 export const LetterAnimationConfigSchema = z.object({
-  preset: z.string().optional(),
-  staggerDelay: z.number().optional(),
   duration: z.number().optional(),
+  stagger: z.number().optional(),
   easing: z.string().optional(),
-  from: z.record(z.any()).optional(),
-  to: z.record(z.any()).optional(),
-  direction: z.enum(["ltr", "rtl", "center", "edges"]).optional(),
-  animateSpaces: z.boolean().optional(),
+  translateY: z.number().optional(),
+  direction: z.enum(["ltr", "rtl", "random"]).optional(),
 })
 
-type LetterAnimationProps = {
+/**
+ * LetterAnimation: animates a string letter by letter (fade in + translateY),
+ * regroups each word in a span to avoid ugly line breaks.
+ * Supports direction: ltr, rtl, random.
+ */
+export const LetterAnimation: React.FC<{
   text: string
-  config: LetterAnimationConfig
-  titleStart: number
-}
+  config?: LetterAnimationConfig
+  titleStart?: number
+}> = ({ text, config = {}, titleStart = 0 }) => {
+  const {
+    duration = 0.5,
+    stagger = 0.15,
+    translateY = 20,
+    direction = "random",
+  } = config
 
-type AnimatedLetterProps = {
-  char: string
-  delay: number
-  config: LetterAnimationConfig
-  titleStart: number
-}
+  const frame = useCurrentFrame()
+  const { fps } = useVideoConfig()
+  const currentTime = frame / fps
 
-const AnimatedLetter: React.FC<AnimatedLetterProps> = ({
-  char,
-  delay,
-  config,
-  titleStart,
-}) => {
-  const letterStart = titleStart + delay
-  const duration = config.duration ?? 0.3
-  const easing = config.easing ?? "easeOut"
-  const from = config.from ?? { opacity: 0 }
-  const to = config.to ?? { opacity: 1 }
-  const timing = useTiming({
-    start: letterStart,
-    duration,
-  })
-  const { phase, progressIn, progressOut } = useProgressEasing({
-    transition: { easing, duration },
-    startFrame: timing.startFrame,
-    endFrame: timing.endFrame,
-  })
-  let progress = 0
-  if (phase === "in") progress = progressIn
-  else if (phase === "out") progress = 1 - progressOut
-  else progress = 1
-  const interpValues = Object.fromEntries(
-    Object.keys(from).map((key) => {
-      const fromVal = from[key]
-      const toVal = to[key]
-      if (typeof fromVal === "number" && typeof toVal === "number") {
-        return [key, fromVal + (toVal - fromVal) * progress]
-      }
-      return [key, progress < 1 ? fromVal : toVal]
-    }),
-  )
-  const letterStyle = applyAnimationToStyle(
-    { display: "inline-block" },
-    interpValues,
-  )
-  return <span style={letterStyle}>{char}</span>
-}
+  const words = text.split(/(\s+)/) // keep spaces as tokens
+  let globalIndex = 0
 
-type AnimatedSpaceProps = {
-  delay: number
-  config: LetterAnimationConfig
-  titleStart: number
-}
-
-const AnimatedSpace: React.FC<AnimatedSpaceProps> = ({
-  delay,
-  config,
-  titleStart,
-}) => {
-  const spaceStart = titleStart + delay
-  const duration = config.duration ?? 0.3
-  const easing = config.easing ?? "easeOut"
-  const from = config.from ?? { opacity: 0 }
-  const to = config.to ?? { opacity: 1 }
-  const timing = useTiming({
-    start: spaceStart,
-    duration,
-  })
-  const { phase, progressIn, progressOut } = useProgressEasing({
-    transition: { easing, duration },
-    startFrame: timing.startFrame,
-    endFrame: timing.endFrame,
-  })
-  let progress = 0
-  if (phase === "in") progress = progressIn
-  else if (phase === "out") progress = 1 - progressOut
-  else progress = 1
-  const interpValues = Object.fromEntries(
-    Object.keys(from).map((key) => {
-      const fromVal = from[key]
-      const toVal = to[key]
-      if (typeof fromVal === "number" && typeof toVal === "number") {
-        return [key, fromVal + (toVal - fromVal) * progress]
-      }
-      return [key, progress < 1 ? fromVal : toVal]
-    }),
-  )
-  const spaceStyle = applyAnimationToStyle(
-    { display: "inline-block" },
-    interpValues,
-  )
-  return <span style={spaceStyle}>&nbsp;</span>
-}
-
-export const LetterAnimation: React.FC<LetterAnimationProps> = ({
-  text,
-  config,
-  titleStart,
-}) => {
-  const words = text.split(/\s+/)
-  const allCharacters = Array.from(text.replace(/\s+/g, " "))
-  const direction = config.direction ?? "ltr"
-  const animateSpaces = config.animateSpaces ?? false
-  const staggerDelay = config.staggerDelay ?? 0.05
-  const totalChars = allCharacters.length
-  const middle = Math.floor(totalChars / 2)
-  const halfLength = totalChars / 2
-  const getDelayIndex = (globalIndex: number) => {
-    if (direction === "rtl") {
-      return totalChars - 1 - globalIndex
-    } else if (direction === "center") {
-      return Math.abs(middle - globalIndex)
-    } else if (direction === "edges") {
-      return halfLength - Math.abs(globalIndex - halfLength)
-    } else {
-      return globalIndex
+  // Helper to get a stable random permutation for a word (using remotion's random)
+  function getRandomOrder(length: number, seed: string) {
+    const arr = Array.from({ length }, (_, i) => i)
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(random(seed + i) * (i + 1))
+      ;[arr[i], arr[j]] = [arr[j], arr[i]]
     }
+    return arr
   }
 
-  const elements: React.ReactNode[] = []
-  words.forEach((word, wordIndex) => {
-    const characters = Array.from(word)
-    const wordStartIndex =
-      words.slice(0, wordIndex).join(" ").length +
-      (wordIndex > 0 ? wordIndex : 0)
-    // Lettres du mot, groupées dans un span
-    const wordLetters = characters.map((char, charIndex) => {
-      const globalIndex = wordStartIndex + charIndex
-      const delayIndex = getDelayIndex(globalIndex)
-      const delay = staggerDelay * delayIndex
-      return (
-        <AnimatedLetter
-          key={`char-${wordIndex}-${charIndex}`}
-          char={char}
-          delay={delay}
-          config={config}
-          titleStart={titleStart}
-        />
-      )
-    })
-    elements.push(
-      <span key={`word-${wordIndex}`} style={{ display: "inline-block" }}>
-        {wordLetters}
-      </span>,
-    )
-    // Espace animé ou normal entre les mots
-    if (wordIndex < words.length - 1) {
-      if (animateSpaces) {
-        const spaceIndex = wordStartIndex + characters.length
-        const delayIndex = getDelayIndex(spaceIndex)
-        const delay = staggerDelay * delayIndex
-        elements.push(
-          <AnimatedSpace
-            key={`word-space-${wordIndex}`}
-            delay={delay}
-            config={config}
-            titleStart={titleStart}
-          />,
-        )
-      } else {
-        elements.push(
-          <span
-            key={`word-space-${wordIndex}`}
-            style={{ display: "inline-block" }}
-          >
-            &nbsp;
-          </span>,
-        )
-      }
+  // Easing simple (linear)
+  function ease(t: number) {
+    return t
+  }
+
+  // Internal component for each letter to use hooks correctly
+  const LetterSpan: React.FC<{ char: string; delayIndex: number }> = ({
+    char,
+    delayIndex,
+  }) => {
+    const inStart = titleStart + delayIndex * stagger
+    let opacity = 0
+    let y = translateY
+    if (currentTime < inStart) {
+      opacity = 0
+      y = translateY
+    } else {
+      const t = Math.min((currentTime - inStart) / duration, 1)
+      opacity = ease(t)
+      y = (1 - ease(t)) * translateY
     }
-  })
+    return (
+      <span
+        style={{
+          display: "inline-block",
+          opacity,
+          transform: `translateY(${y}px)`,
+          transition: "none",
+        }}
+      >
+        {char === " " ? "\u00A0" : char}
+      </span>
+    )
+  }
 
   return (
     <div style={{ display: "inline-block", whiteSpace: "pre-wrap" }}>
-      {elements}
+      {words.map((word, wIdx) => {
+        if (/^\s+$/.test(word)) {
+          // espace : span insécable
+          return (
+            <span key={`space-${wIdx}`} style={{ display: "inline-block" }}>
+              {"\u00A0"}
+            </span>
+          )
+        }
+        // mot : span qui regroupe toutes les lettres
+        const letters = Array.from(word)
+        // Calcule l'ordre d'animation (delayIndex) pour chaque lettre
+        let order: number[] = []
+        if (direction === "ltr") {
+          order = Array.from({ length: letters.length }, (_, i) => i)
+        } else if (direction === "rtl") {
+          order = Array.from(
+            { length: letters.length },
+            (_, i) => letters.length - 1 - i,
+          )
+        } else if (direction === "random") {
+          order = getRandomOrder(letters.length, word + wIdx)
+        }
+        // Associe à chaque lettre son delayIndex selon la direction
+        const letterSpans = letters.map((char, i) => {
+          const delayIndex = order[i]
+          const el = (
+            <LetterSpan
+              key={i}
+              char={char}
+              delayIndex={globalIndex + delayIndex - i}
+            />
+          )
+          return el
+        })
+        globalIndex += letters.length
+        return (
+          <span key={`word-${wIdx}`} style={{ display: "inline-block" }}>
+            {letterSpans}
+          </span>
+        )
+      })}
     </div>
   )
 }

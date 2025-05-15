@@ -1,28 +1,29 @@
+import React from "react"
 import { AbsoluteFill } from "remotion"
 import { z } from "zod"
-import React from "react"
 import { titleThemes, letterAnimationPresets } from "./title/themes"
 import {
   LetterAnimation,
   LetterAnimationConfigSchema,
 } from "./title/LetterAnimation"
-import { TimingSchema } from "@/Utils/useTiming"
-import { PositionSchema } from "@/Utils/usePosition"
-import { useTiming } from "@/Utils/useTiming"
-import { usePosition } from "@/Utils/usePosition"
+import { TimingSchema, useTiming } from "@/Utils/useTiming"
+import { PositionSchema, usePosition } from "@/Utils/usePosition"
 import {
   TransitionSchema,
   useRevealTransition,
 } from "@/Utils/useRevealTransition"
-import { useLetterAnimationConfig } from "./title/useLetterAnimationConfig"
 
 const themeNames = Object.keys(titleThemes)
 const animationPresetNames = Object.keys(letterAnimationPresets)
 
+// Schema for letter animation config with preset
 const LetterAnimationSchema = LetterAnimationConfigSchema.extend({
   preset: z.enum(animationPresetNames as [string, ...string[]]).optional(),
 })
 
+/**
+ * TitlesSchema: zod schema for an array of title items.
+ */
 export const TitlesSchema = z.array(
   z.object({
     title: z.string(),
@@ -41,6 +42,7 @@ type TitleProps = {
   titles: TitleItem[]
 }
 
+// Base style for all titles
 const baseStyle: React.CSSProperties = {
   color: "#fff",
   fontFamily: "Montserrat, sans-serif",
@@ -53,6 +55,9 @@ const baseStyle: React.CSSProperties = {
   lineHeight: 1.1,
 }
 
+/**
+ * TitleItemDisplay: renders a single title with theme, animation, and transition.
+ */
 const TitleItemDisplay: React.FC<{ title: TitleItem }> = ({ title }) => {
   const timing = useTiming({ ...title.timing, start: title.timing?.start ?? 0 })
   const containerStyle = usePosition(title.position ?? {})
@@ -68,7 +73,21 @@ const TitleItemDisplay: React.FC<{ title: TitleItem }> = ({ title }) => {
     ...title.style,
     ...transitionStyle,
   }
-  const letterAnimationConfig = useLetterAnimationConfig(title.letterAnimation)
+  let letterAnimationConfig = null
+  if (title.letterAnimation) {
+    const config = title.letterAnimation
+    const presetConfig = config.preset
+      ? letterAnimationPresets[
+          config.preset as keyof typeof letterAnimationPresets
+        ]
+      : undefined
+    letterAnimationConfig = {
+      duration: config.duration ?? presetConfig?.duration ?? 0.3,
+      easing: config.easing ?? presetConfig?.easing ?? "easeOut",
+      stagger: config.stagger ?? presetConfig?.staggerDelay ?? 0.05,
+      translateY: config.translateY ?? 20,
+    }
+  }
   if (!timing.visible) return null
   return (
     <div style={containerStyle}>
@@ -87,6 +106,9 @@ const TitleItemDisplay: React.FC<{ title: TitleItem }> = ({ title }) => {
   )
 }
 
+/**
+ * Title: renders a list of titles.
+ */
 export const Title: React.FC<TitleProps> = ({ titles }) => {
   return (
     <AbsoluteFill>

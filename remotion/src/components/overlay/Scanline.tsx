@@ -1,5 +1,8 @@
 import React from "react"
 
+/**
+ * ScanlineOverlayProps: props for the ScanlineOverlay component.
+ */
 export type ScanlineOverlayProps = {
   type: "scanline"
   intensity: number
@@ -9,6 +12,9 @@ export type ScanlineOverlayProps = {
   frame: number
 }
 
+/**
+ * ScanlineOverlay: renders a scanline effect overlay with adjustable intensity, color, speed, and opacity.
+ */
 export const ScanlineOverlay: React.FC<ScanlineOverlayProps> = ({
   intensity,
   color = "#fff",

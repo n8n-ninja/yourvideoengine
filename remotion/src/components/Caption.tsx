@@ -1,16 +1,20 @@
+import React from "react"
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion"
 import { z } from "zod"
-import React from "react"
 import { createTikTokStyleCaptions } from "@remotion/captions"
 import { usePosition } from "@/Utils/usePosition"
-import { parseStyleString } from "@/Utils/style"
+import { parseStyleString } from "@/Utils/useStyle"
 import { PositionSchema } from "@/Utils/usePosition"
 
+// Default style for the active word
 const defaultActiveWordStyle: React.CSSProperties = {
   zIndex: 100,
   position: "relative",
 }
 
+/**
+ * CaptionSchema: zod schema for caption props validation.
+ */
 export const CaptionSchema = z.object({
   words: z.array(
     z.object({
@@ -28,6 +32,9 @@ export const CaptionSchema = z.object({
   combineTokensWithinMilliseconds: z.number().optional(),
 })
 
+/**
+ * Caption component: displays TikTok-style synchronized captions with dynamic styles.
+ */
 export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
   words,
   position,
@@ -37,14 +44,15 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
   multiColors,
   combineTokensWithinMilliseconds = 1400,
 }) => {
+  // Current frame and video config
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
   const currentTime = frame / fps
 
-  // Positionnement
+  // Container positioning style
   const containerStyle = usePosition(position ?? {})
 
-  // Style de la boîte (container)
+  // Box (container) style
   let resolvedBoxStyle: React.CSSProperties = {
     backgroundColor: "rgba(0,0,0,0.7)",
     borderRadius: 18,
@@ -54,7 +62,6 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
     textAlign: "center",
     margin: "30px",
   }
-
   if (boxStyle) {
     if (typeof boxStyle === "string") {
       resolvedBoxStyle = { ...resolvedBoxStyle, ...parseStyleString(boxStyle) }
@@ -63,7 +70,7 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
     }
   }
 
-  // Style du texte
+  // Text style
   let resolvedTextStyle: React.CSSProperties = {
     color: "#fff",
     fontFamily: "Montserrat, sans-serif",
@@ -84,7 +91,7 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
     }
   }
 
-  // Style du mot actif (initialisation, sera potentiellement modifié après activePageIndex)
+  // Active word style
   let resolvedActiveWordStyle: React.CSSProperties = {
     ...defaultActiveWordStyle,
     color: "#F8C734",
@@ -105,7 +112,7 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
     }
   }
 
-  // Regroupe les mots en pages façon TikTok
+  // Map words to TikTok caption objects
   const captions = words.map((w) => ({
     text: " " + w.word,
     startMs: Math.round(w.start * 1000),
@@ -114,20 +121,20 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
     confidence: w.confidence ?? null,
   }))
 
-  // Regroupe les mots en pages façon TikTok
+  // Split into TikTok-style pages
   const { pages } = createTikTokStyleCaptions({
     captions,
-    combineTokensWithinMilliseconds: combineTokensWithinMilliseconds,
+    combineTokensWithinMilliseconds,
   })
 
-  // Trouve la page active
+  // Find the active page
   const currentMs = currentTime * 1000
   const activePageIndex = pages.findIndex(
     (p) => currentMs >= p.startMs && currentMs < p.startMs + p.durationMs,
   )
   const activePage = pages[activePageIndex]
 
-  // Override color with multiColors si fourni (juste avant le return, activePageIndex est garanti défini)
+  // Override active word color if multiColors is provided
   if (multiColors && multiColors.length > 0 && activePageIndex >= 0) {
     resolvedActiveWordStyle = {
       ...resolvedActiveWordStyle,
