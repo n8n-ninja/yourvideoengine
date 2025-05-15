@@ -7,7 +7,7 @@ import { flip } from "@remotion/transitions/flip"
 import { clockWipe } from "@remotion/transitions/clock-wipe"
 import { TransitionPresentation } from "@remotion/transitions"
 import { z } from "zod"
-import { Caption, CaptionSchema } from "@/components/Caption"
+// import { Caption, CaptionSchema } from "@/components/Caption"
 import { Camera, CameraSchema } from "@/components/Camera"
 import { Title, TitlesSchema } from "@/components/Title"
 import editScenes from "./editProps.json"
@@ -97,7 +97,7 @@ export const editSchema = z.object({
       durationInFrames: z.number(),
       camera: CameraSchema,
       transition: TransitionSchema.optional(),
-      captions: CaptionSchema.optional(),
+      // captions: CaptionSchema.optional(),
       titles: TitlesSchema.optional(),
       sounds: SoundsSchema.optional(),
       overlays: z.array(z.any()).optional(),
@@ -137,7 +137,7 @@ export const EditComponent = ({
             >
               <Camera {...scene.camera} />
               {scene.overlays && <Overlay overlays={scene.overlays} />}
-              {scene.captions && <Caption {...scene.captions} />}
+              {/* {scene.captions && <Caption {...scene.captions} />} */}
               {scene.titles && <Title titles={scene.titles} />}
               {scene.sounds && <Sound sounds={scene.sounds} />}
             </TransitionSeries.Sequence>

@@ -17,7 +17,9 @@ export function addSound<T extends Record<string, unknown>>(
   ) => {
     return (
       <>
-        {p.presentationDirection === "entering" ? <Audio src={src} /> : null}
+        {p.presentationDirection === "entering" ? (
+          <Audio src={src} volume={0.2} />
+        ) : null}
         <C {...p} />
       </>
     )

@@ -1,7 +1,5 @@
-import { useMemo } from "react"
+import { useCurrentFrame, interpolate, useVideoConfig, Easing } from "remotion"
 import { z } from "zod"
-import { getEasingFn } from "@/Utils/time"
-import { applyAnimationToStyle } from "@/Utils/style"
 
 export const TRANSITION_TYPES = [
   "fade",
@@ -9,92 +7,195 @@ export const TRANSITION_TYPES = [
   "slide-down",
   "slide-left",
   "slide-right",
+  "zoom-in",
+  "zoom-out",
+  "blur",
 ] as const
 
 export type TransitionType = (typeof TRANSITION_TYPES)[number]
 
-export type UseTransitionProps = {
-  start: number
-  end?: number
-  duration?: number
-  inDuration?: number
-  outDuration?: number
-  easing?: string
-  type?: TransitionType
-  currentTime: number
+export const TransitionSchema = z.object({
+  type: z.enum(TRANSITION_TYPES).optional(),
+  easing: z.string().optional(),
+  duration: z.number().optional(),
+
+  inType: z.enum(TRANSITION_TYPES).optional(),
+  inEasing: z.string().optional(),
+  inDuration: z.number().optional(),
+
+  outType: z.enum(TRANSITION_TYPES).optional(),
+  outEasing: z.string().optional(),
+  outDuration: z.number().optional(),
+})
+
+function getEasingFn(easing?: string) {
+  switch (easing) {
+    case "easeIn":
+      return Easing.in(Easing.ease)
+    case "easeOut":
+      return Easing.out(Easing.ease)
+    case "easeInOut":
+      return Easing.inOut(Easing.ease)
+    case "linear":
+    default:
+      return Easing.linear
+  }
+}
+
+function clamp(val: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, val))
+}
+
+function getBlur(type: string, progress: number) {
+  if (type !== "blur") return undefined
+  progress = clamp(progress, 0, 1)
+  return `blur(${20 * (1 - progress)}px)`
+}
+
+// Helpers for transform
+function getTransform(type: string, progress: number) {
+  // Clamp progress entre 0 et 1
+  progress = clamp(progress, 0, 1)
+  switch (type) {
+    case "slide-up":
+      return `translateY(${clamp((1 - progress) * 40, -100, 100)}%)`
+    case "slide-down":
+      return `translateY(${clamp((progress - 1) * 40, -100, 100)}%)`
+    case "slide-left":
+      return `translateX(${clamp((1 - progress) * 40, -100, 100)}%)`
+    case "slide-right":
+      return `translateX(${clamp((progress - 1) * 40, -100, 100)}%)`
+    case "zoom-in":
+      return `scale(${clamp(0.5 + 0.5 * progress, 0.01, 5)})`
+    case "zoom-out":
+      return `scale(${clamp(0.5 + (1 - 0.5 * progress), 0.01, 5)})`
+    case "blur":
+      return undefined
+    default:
+      return undefined
+  }
+}
+
+function getBounds(
+  startFrame: number,
+  inDuration: number,
+  totalFrames: number,
+  outDuration: number,
+) {
+  const inEnd = Math.max(startFrame, startFrame + inDuration)
+  let outStart = Math.max(0, totalFrames - outDuration)
+  if (outStart < inEnd) outStart = inEnd + 1
+  if (outStart > totalFrames) outStart = totalFrames - 1
+  return { inEnd, outStart }
+}
+
+function getPhase(
+  frame: number,
+  inEnd: number,
+  outStart: number,
+): "in" | "steady" | "out" {
+  if (frame < inEnd) return "in"
+  if (frame >= outStart) return "out"
+  return "steady"
+}
+
+function getProgress(
+  frame: number,
+  start: number,
+  end: number,
+  from: number,
+  to: number,
+  duration: number,
+  easingFn: (x: number) => number,
+) {
+  const progress =
+    duration > 0
+      ? interpolate(frame, [start, end], [from, to], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        })
+      : to
+  return easingFn(progress)
 }
 
 export function useTransition({
-  start,
-  end,
-  duration,
-  inDuration = 0,
-  outDuration = 0,
-  easing = "linear",
-  type = "fade",
-  currentTime,
-}: UseTransitionProps) {
-  // Calcul du timing
-  const resolvedEnd =
-    end ?? (duration !== undefined ? start + duration : start + 1)
-  const inEnd = start + inDuration
-  const outStart = resolvedEnd - outDuration
-  const visible = currentTime >= start && currentTime < resolvedEnd
+  transition = {},
+  startFrame = 0,
+  endFrame = 1,
+}: {
+  transition?: z.infer<typeof TransitionSchema>
+  startFrame: number
+  endFrame: number
+}) {
+  const frame = useCurrentFrame()
+  const { fps } = useVideoConfig()
 
-  // Progress global (0 = avant, 1 = après in, 0 = après out)
-  let progress = 1
-  if (inDuration > 0 && currentTime < inEnd) {
-    progress = Math.min(1, Math.max(0, (currentTime - start) / inDuration))
-  } else if (outDuration > 0 && currentTime > outStart) {
-    progress = Math.max(0, 1 - (currentTime - outStart) / outDuration)
-  } else if (currentTime < start) {
-    progress = 0
-  } else if (currentTime >= resolvedEnd) {
-    progress = 0
+  // Duration (in frames)
+  const inDuration = Math.max(
+    0,
+    (transition.inDuration ?? transition.duration ?? 0) * fps,
+  )
+  const outDuration = Math.max(
+    0,
+    (transition.outDuration ?? transition.duration ?? 0) * fps,
+  )
+
+  // Types & easings
+  const inType = transition.inType ?? transition.type ?? "fade"
+  const outType = transition.outType ?? transition.type ?? "fade"
+  const inEasingFn = getEasingFn(
+    transition.inEasing ?? transition.easing ?? "easeInOut",
+  )
+  const outEasingFn = getEasingFn(
+    transition.outEasing ?? transition.easing ?? "easeInOut",
+  )
+
+  // Bounds
+  const { inEnd, outStart } = getBounds(
+    startFrame,
+    inDuration,
+    endFrame,
+    outDuration,
+  )
+
+  // Progress in/out
+  const progressIn = getProgress(
+    frame,
+    startFrame,
+    inEnd,
+    0,
+    1,
+    inDuration,
+    inEasingFn,
+  )
+  const progressOut = getProgress(
+    frame,
+    outStart,
+    endFrame,
+    1,
+    0,
+    outDuration,
+    outEasingFn,
+  )
+
+  // Phase
+  const phase = getPhase(frame, inEnd, outStart)
+
+  // Style
+  const style: React.CSSProperties = {}
+  if (phase === "in") {
+    style.opacity = progressIn
+    style.transform = getTransform(inType, progressIn)
+    style.filter = getBlur(inType, progressIn)
+  } else if (phase === "out") {
+    style.opacity = progressOut
+    style.transform = getTransform(outType, progressOut)
+    style.filter = getBlur(outType, progressOut)
   } else {
-    progress = 1
+    style.opacity = 1
+    style.transform = "none"
+    style.filter = "none"
   }
 
-  // Easing
-  const eased = getEasingFn(easing)(progress)
-
-  // Style selon le type
-  const style = useMemo(() => {
-    const s: Record<string, number | string> = {}
-    if (type === "fade") {
-      s.opacity = eased
-    } else if (type === "slide-up") {
-      s.opacity = eased
-      s.translateY = (1 - eased) * 40
-    } else if (type === "slide-down") {
-      s.opacity = eased
-      s.translateY = (eased - 1) * 40
-    } else if (type === "slide-left") {
-      s.opacity = eased
-      s.translateX = (1 - eased) * 40
-    } else if (type === "slide-right") {
-      s.opacity = eased
-      s.translateX = (eased - 1) * 40
-    }
-    return s
-  }, [eased, type])
-
-  return useMemo(
-    () => ({
-      visible,
-      progress,
-      style: applyAnimationToStyle({}, style),
-    }),
-    [visible, progress, style],
-  )
+  return style
 }
-
-export const TransitionSchema = z.object({
-  start: z.number(),
-  end: z.number().optional(),
-  duration: z.number().optional(),
-  inDuration: z.number().optional(),
-  outDuration: z.number().optional(),
-  easing: z.string().optional(),
-  type: z.enum(TRANSITION_TYPES).optional(),
-})

@@ -2,9 +2,9 @@ import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion"
 import { z } from "zod"
 import React from "react"
 import { createTikTokStyleCaptions } from "@remotion/captions"
-import { usePositionStyle } from "@/Utils/usePositionStyle"
+import { usePositionStyle } from "@/Utils/usePosition"
 import { parseStyleString } from "@/Utils/style"
-import { PositionStyleSchema } from "@/Utils/usePositionStyle"
+import { PositionStyleSchema } from "@/Utils/usePosition"
 
 const defaultActiveWordStyle: React.CSSProperties = {
   zIndex: 100,

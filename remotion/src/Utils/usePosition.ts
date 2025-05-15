@@ -1,7 +1,7 @@
 import React from "react"
 import { z } from "zod"
 
-export const PositionStyleSchema = z.object({
+export const PositionSchema = z.object({
   top: z.number().optional(),
   left: z.number().optional(),
   right: z.number().optional(),
@@ -10,16 +10,16 @@ export const PositionStyleSchema = z.object({
   verticalAlign: z.enum(["start", "center", "end"]).optional(),
 })
 
-export type UsePositionStyleProps = z.infer<typeof PositionStyleSchema>
+export type UsePositionProps = z.infer<typeof PositionSchema>
 
-export function usePositionStyle({
+export function usePosition({
   top = 0,
   left = 0,
   right = 0,
   bottom = 0,
   horizontalAlign = "center",
   verticalAlign = "center",
-}: UsePositionStyleProps): React.CSSProperties {
+}: UsePositionProps): React.CSSProperties {
   return {
     position: "absolute",
     top: `${top}%`,

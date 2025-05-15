@@ -8,12 +8,12 @@ import {
 } from "remotion"
 import { z } from "zod"
 import React, { useMemo } from "react"
-import { useTimeRange } from "@/Utils/time"
+import { useTiming } from "@/Utils/useTiming"
+import { TimingSchema } from "@/Utils/useTiming"
 
 export const SoundSchema = z.object({
-  start: z.number(), // peut être négatif (depuis la fin)
-  end: z.number().optional(), // peut être négatif (depuis la fin)
-  duration: z.number().optional(), // en secondes, prioritaire sur end
+  timing: TimingSchema.optional(),
+
   sound: z.string(),
   pitch: z.number().optional(),
   volume: z.number().optional(),
@@ -106,10 +106,10 @@ const SoundItem: React.FC<{ sound: SoundType; fps: number }> = ({
   sound,
   fps,
 }) => {
-  const { from, frames } = useTimeRange({
-    start: sound.start,
-    end: sound.end,
-    duration: sound.duration,
+  const timing = useTiming({
+    start: sound.timing?.start ?? 0,
+    end: sound.timing?.end,
+    duration: sound.timing?.duration,
   })
   const soundSrc = sound.sound.startsWith("http")
     ? sound.sound
@@ -120,17 +120,18 @@ const SoundItem: React.FC<{ sound: SoundType; fps: number }> = ({
     [sound.volumes],
   )
 
-  if (frames <= 0) return null
+  if (!timing.visible || timing.totalFrames <= 0) return null
 
+  console.log("timing", timing)
   return (
-    <Sequence from={from} durationInFrames={frames}>
+    <Sequence from={timing.startFrame} durationInFrames={timing.totalFrames}>
       <Audio
         src={soundSrc}
         volume={(f) =>
           computeVolume({
             f,
             fps,
-            frames,
+            frames: timing.totalFrames,
             baseVolume: sound.volume,
             fadeIn: sound.fadeIn,
             fadeOut: sound.fadeOut,

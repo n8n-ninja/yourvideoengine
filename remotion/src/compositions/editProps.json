@@ -1,7 +1,97 @@
 {
   "scenes": [
     {
-      "durationInFrames": 102,
+      "sounds": [
+        {
+          "sound": "woosh-1.mp3",
+          "volume": 3.2,
+          "fadeIn": 1.5,
+          "fadeOut": 1.5,
+          "timing": { "start": 1 }
+        }
+      ],
+      "titles": [
+        {
+          "title": "Fade In, Fade Out, Linear",
+          "theme": "elegant",
+          "timing": { "start": 1, "end": 3 },
+          "transition": {
+            "type": "fade",
+            "inDuration": 0.5,
+            "outDuration": 0.5,
+            "easing": "linear"
+          }
+        },
+        {
+          "title": "Slide Up In, Fade Out, EaseIn",
+          "theme": "elegant",
+          "timing": { "start": 3.2, "end": 5 },
+          "transition": {
+            "inType": "slide-up",
+            "outType": "fade",
+            "inDuration": 0.5,
+            "outDuration": 0.5,
+            "inEasing": "easeIn"
+          }
+        },
+        {
+          "title": "Slide Left In, Slide Right Out, EaseOut",
+          "theme": "elegant",
+          "timing": { "start": 5.2, "end": 7 },
+          "transition": {
+            "inType": "slide-left",
+            "outType": "slide-right",
+            "inDuration": 0.5,
+            "outDuration": 0.5,
+            "outEasing": "easeOut"
+          }
+        },
+        {
+          "title": "Zoom In, Zoom Out, EaseInOut",
+          "theme": "elegant",
+          "timing": { "start": 7.2, "end": 9 },
+          "transition": {
+            "inType": "zoom-in",
+            "outType": "zoom-out",
+            "inDuration": 0.5,
+            "outDuration": 0.5,
+            "inEasing": "easeInOut",
+            "outEasing": "easeInOut"
+          }
+        },
+        {
+          "title": "Blur In, Blur Out, Linear",
+          "theme": "elegant",
+          "timing": { "start": 9.2, "end": 11 },
+          "transition": {
+            "inType": "blur",
+            "outType": "blur",
+            "inDuration": 0.5,
+            "outDuration": 0.5,
+            "easing": "linear"
+          }
+        },
+        {
+          "title": "Fade + Slide Combo",
+          "theme": "elegant",
+          "timing": { "start": 11.2, "end": 13 },
+          "transition": {
+            "inType": "fade",
+            "outType": "slide-down",
+            "inDuration": 0.5,
+            "outDuration": 0.5,
+            "inEasing": "easeInOut",
+            "outEasing": "easeOut"
+          }
+        },
+        {
+          "title": "No Transition (Steady)",
+          "theme": "elegant",
+          "timing": { "start": 13.2, "end": 15 },
+          "transition": {}
+        }
+      ],
+      "durationInFrames": 250,
       "camera": {
         "videoUrl": "https://aiatelier.s3.eu-west-1.amazonaws.com/temporary-uploads/1747260842473-thais-demo-1.mp4",
         "keyframes": [
@@ -246,12 +336,29 @@
     {
       "transition": {
         "type": "wipe",
-        "duration": 30
+        "duration": 30,
+        "sound": "woosh-3.mp3",
+        "volume": 0.2
       },
       "durationInFrames": 133,
       "camera": {
-        "videoUrl": "https://aiatelier.s3.eu-west-1.amazonaws.com/temporary-uploads/1747260965465-thais-demo-3.mp4"
+        "videoUrl": "https://aiatelier.s3.eu-west-1.amazonaws.com/temporary-uploads/1747260965465-thais-demo-3.mp4",
+        "keyframes": [
+          {
+            "start": 0,
+            "scale": 2,
+            "top": 0,
+            "rotation": -10
+          },
+          {
+            "start": -0.01,
+            "scale": 1.7,
+            "rotation": 20,
+            "easing": "ease-in-out"
+          }
+        ]
       },
+
       "captions": {
         "position": {
           "top": 50
