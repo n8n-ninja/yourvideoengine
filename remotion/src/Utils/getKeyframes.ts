@@ -1,24 +1,5 @@
 import { Keyframe } from "@/schemas"
-
-function lerp(a: number, b: number, t: number) {
-  return a + (b - a) * t
-}
-
-function interpolateObject(
-  a: Record<string, unknown>,
-  b: Record<string, unknown>,
-  t: number,
-): Record<string, unknown> {
-  const result: Record<string, unknown> = {}
-  for (const key of Object.keys(a)) {
-    if (typeof a[key] === "number" && typeof b[key] === "number") {
-      result[key] = lerp(a[key] as number, b[key] as number, t)
-    } else {
-      result[key] = a[key]
-    }
-  }
-  return result
-}
+import { lerp, interpolateObject } from "./math"
 
 export function getKeyframeValue<T = number | Record<string, unknown>>(
   keyframes: Keyframe<T>[],

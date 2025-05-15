@@ -1,8 +1,5 @@
 import { TransitionReveal } from "@/schemas"
-
-function clamp(val: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, val))
-}
+import { clamp } from "./math"
 
 function getBlur(type: string, progress: number) {
   if (type !== "blur") return undefined
