@@ -7,12 +7,11 @@ import {
   staticFile,
 } from "remotion"
 import { z } from "zod"
-import { useTiming, TimingSchema } from "@/Utils/useTiming"
-import {
-  ProgressEasingSchema,
-  useProgressEasing,
-} from "@/Utils/useProgressEasing"
-import { useKeyframes, Keyframe } from "@/Utils/useKeyframes"
+import { useTiming } from "@/hooks/useTiming"
+import { ProgressEasingSchema, TimingSchema } from "@/schemas"
+import { useProgressEasing } from "@/hooks/useProgressEasing"
+import { useKeyframes } from "@/hooks/useKeyframes"
+import { Keyframe } from "@/schemas"
 
 /**
  * SoundSchema: zod schema for sound props validation.
@@ -58,9 +57,10 @@ const SoundItem: React.FC<{ sound: SoundType; fps: number }> = ({ sound }) => {
   })
 
   // Resolve sound source (local or remote)
-  const soundSrc = sound.sound.startsWith("http")
-    ? sound.sound
-    : staticFile(`/sound/${sound.sound}`)
+  const soundSrc =
+    sound.sound && sound.sound.startsWith("http")
+      ? sound.sound
+      : staticFile(`/sound/${sound.sound ?? ""}`)
 
   // Progress and transition for fade in/out
   const { phase, progressIn, progressOut } = useProgressEasing({

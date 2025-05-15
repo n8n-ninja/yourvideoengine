@@ -1,31 +1,4 @@
-import { z } from "zod"
-import { useProgressEasing } from "./useProgressEasing"
-export const TRANSITION_TYPES = [
-  "fade",
-  "slide-up",
-  "slide-down",
-  "slide-left",
-  "slide-right",
-  "zoom-in",
-  "zoom-out",
-  "blur",
-] as const
-
-export type TransitionType = (typeof TRANSITION_TYPES)[number]
-
-export const TransitionSchema = z.object({
-  type: z.enum(TRANSITION_TYPES).optional(),
-  easing: z.string().optional(),
-  duration: z.number().optional(),
-
-  inType: z.enum(TRANSITION_TYPES).optional(),
-  inEasing: z.string().optional(),
-  inDuration: z.number().optional(),
-
-  outType: z.enum(TRANSITION_TYPES).optional(),
-  outEasing: z.string().optional(),
-  outDuration: z.number().optional(),
-})
+import { TransitionReveal } from "@/schemas"
 
 function clamp(val: number, min: number, max: number) {
   return Math.max(min, Math.min(max, val))
@@ -37,9 +10,7 @@ function getBlur(type: string, progress: number) {
   return `blur(${20 * (1 - progress)}px)`
 }
 
-// Helpers for transform
 function getTransform(type: string, progress: number) {
-  // Clamp progress entre 0 et 1
   progress = clamp(progress, 0, 1)
   switch (type) {
     case "slide-up":
@@ -61,25 +32,19 @@ function getTransform(type: string, progress: number) {
   }
 }
 
-export function useRevealTransition({
+export const getRevealTransitionStyle = ({
   transition = {},
-  startFrame = 0,
-  endFrame = 1,
+  phase,
+  progressIn,
+  progressOut,
 }: {
-  transition?: z.infer<typeof TransitionSchema>
-  startFrame: number
-  endFrame: number
-}) {
-  const { phase, progressIn, progressOut } = useProgressEasing({
-    transition,
-    startFrame,
-    endFrame,
-  })
-
+  transition?: TransitionReveal
+  phase: "in" | "steady" | "out"
+  progressIn: number
+  progressOut: number
+}): React.CSSProperties => {
   const inType = transition.inType ?? transition.type ?? "fade"
   const outType = transition.outType ?? transition.type ?? "fade"
-
-  // Style
   const style: React.CSSProperties = {}
   if (phase === "in") {
     style.opacity = progressIn
@@ -94,6 +59,5 @@ export function useRevealTransition({
     style.transform = "none"
     style.filter = "none"
   }
-
-  return { style }
+  return style
 }

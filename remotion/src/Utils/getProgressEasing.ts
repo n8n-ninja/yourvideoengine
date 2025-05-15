@@ -1,16 +1,5 @@
-import { useCurrentFrame, interpolate, useVideoConfig, Easing } from "remotion"
-import { z } from "zod"
-
-export const ProgressEasingSchema = z.object({
-  easing: z.string().optional(),
-  duration: z.number().optional(),
-
-  inEasing: z.string().optional(),
-  inDuration: z.number().optional(),
-
-  outEasing: z.string().optional(),
-  outDuration: z.number().optional(),
-})
+import { Easing, interpolate } from "remotion"
+import { ProgressEasing } from "@/schemas"
 
 function getEasingFn(easing?: string) {
   switch (easing) {
@@ -68,18 +57,19 @@ function getProgress(
   return easingFn(progress)
 }
 
-export function useProgressEasing({
+export const getProgressEasing = ({
   transition = {},
   startFrame = 0,
   endFrame = 1,
+  frame,
+  fps,
 }: {
-  transition?: z.infer<typeof ProgressEasingSchema>
+  transition?: ProgressEasing
   startFrame: number
   endFrame: number
-}) {
-  const frame = useCurrentFrame()
-  const { fps } = useVideoConfig()
-
+  frame: number
+  fps: number
+}) => {
   // Duration (in frames)
   const inDuration = Math.max(
     0,

@@ -1,5 +1,4 @@
-import { z } from "zod"
-import React from "react"
+import { Style } from "@/schemas"
 
 export function parseStyleString(style: string): React.CSSProperties {
   const obj = style
@@ -17,10 +16,8 @@ export function parseStyleString(style: string): React.CSSProperties {
   return obj as React.CSSProperties
 }
 
-export const StyleSchema = z.union([z.record(z.unknown()), z.string()])
-
-export function useStyle(
-  userStyle: Record<string, unknown> | string | undefined,
+export function getStyle(
+  userStyle: Style | undefined,
   baseStyle: React.CSSProperties = {},
 ): React.CSSProperties {
   if (!userStyle) return baseStyle

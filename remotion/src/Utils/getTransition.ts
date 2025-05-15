@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { fade } from "@remotion/transitions/fade"
 import { wipe } from "@remotion/transitions/wipe"
 import { slide } from "@remotion/transitions/slide"
@@ -7,30 +6,10 @@ import { clockWipe } from "@remotion/transitions/clock-wipe"
 import { TransitionPresentation } from "@remotion/transitions"
 import { staticFile } from "remotion"
 import { addSound } from "./addSound"
-
-export const TransitionSchema = z.object({
-  type: z.enum(["fade", "wipe", "slide", "flip", "clockWipe"]),
-  duration: z.number().optional(),
-  direction: z
-    .enum(["from-left", "from-right", "from-top", "from-bottom"])
-    .optional(),
-  wipeDirection: z
-    .enum([
-      "from-left",
-      "from-right",
-      "from-top",
-      "from-bottom",
-      "from-top-left",
-      "from-top-right",
-      "from-bottom-left",
-      "from-bottom-right",
-    ])
-    .optional(),
-  sound: z.string().optional(),
-})
+import { Transition } from "@/schemas"
 
 export const getTransition = (
-  transition: z.infer<typeof TransitionSchema>,
+  transition: Transition,
   width = 1080,
   height = 1920,
 ): TransitionPresentation<Record<string, unknown>> => {

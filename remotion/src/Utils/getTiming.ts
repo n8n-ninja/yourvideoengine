@@ -1,20 +1,12 @@
-import { useCurrentFrame, useVideoConfig } from "remotion"
+import { TimingSchema } from "@/schemas/timing"
 import { z } from "zod"
 
-export const TimingSchema = z.object({
-  start: z.number(),
-  end: z.number().optional(),
-  duration: z.number().optional(),
-})
-
-export function useTiming({
-  start,
-  end,
-  duration,
-}: z.infer<typeof TimingSchema>) {
-  const frame = useCurrentFrame()
-  const { fps, durationInFrames } = useVideoConfig()
-
+export function getTiming(
+  currentTime: number,
+  fps: number,
+  durationInFrames: number,
+  { start, end, duration }: z.infer<typeof TimingSchema>,
+) {
   // Convertit start/end relatifs (négatifs) en absolus (secondes)
   const totalDurationSec = durationInFrames / fps
   const startSec = start < 0 ? totalDurationSec + start : start
@@ -31,9 +23,6 @@ export function useTiming({
   const startFrame = Math.round(startSec * fps)
   const endFrame = Math.round(endSec * fps)
   const totalFrames = Math.max(0, endFrame - startFrame)
-
-  // Temps courant (en secondes)
-  const currentTime = frame / fps
 
   // Progress (0 avant, 1 après, linéaire entre start et end)
   let progress = 0

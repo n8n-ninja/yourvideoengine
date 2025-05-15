@@ -40,7 +40,6 @@
       "titles": [
         {
           "title": "Fade In, Fade Out, Linear",
-
           "timing": { "start": 1, "end": 4 },
           "letterAnimation": {
             "stagger": 0.1

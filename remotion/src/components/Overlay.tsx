@@ -4,11 +4,9 @@ import { ScanlineOverlay, ScanlineOverlayProps } from "./overlay/Scanline"
 import { VignetteOverlay, VignetteOverlayProps } from "./overlay/Vignette"
 import { ColorOverlay, ColorOverlayProps } from "./overlay/Color"
 import { z } from "zod"
-import { TimingSchema, useTiming } from "@/Utils/useTiming"
-import {
-  TransitionSchema,
-  useRevealTransition,
-} from "@/Utils/useRevealTransition"
+import { useTiming } from "@/hooks/useTiming"
+import { useRevealTransition } from "@/hooks/useRevealTransition"
+import { TimingSchema, TransitionSchema } from "@/schemas"
 
 // Overlay base type
 type OverlayBase = {

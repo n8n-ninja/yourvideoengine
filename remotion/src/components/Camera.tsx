@@ -1,51 +1,19 @@
 import React from "react"
 import { AbsoluteFill, Video, useCurrentFrame } from "remotion"
-import { z } from "zod"
-import { useKeyframes, Keyframe } from "@/Utils/useKeyframes"
-
-/**
- * CameraSchema: zod schema for camera props validation.
- */
-export const CameraSchema = z.object({
-  videoUrl: z.string(),
-  animationKeyframes: z
-    .array(
-      z.object({
-        time: z.number(),
-        value: z.object({
-          scale: z.number().optional(),
-          blur: z.number().optional(),
-          rotation: z.number().optional(),
-          filter: z.string().optional(),
-          top: z.number().optional(),
-          left: z.number().optional(),
-        }),
-      }),
-    )
-    .optional(),
-})
-
-type CameraProps = z.infer<typeof CameraSchema>
-
-type CameraValue = {
-  scale?: number
-  blur?: number
-  rotation?: number
-  filter?: string
-  top?: number
-  left?: number
-}
+import { Camera } from "@/schemas"
+import { useKeyframes } from "@/hooks/useKeyframes"
+import { Keyframe } from "@/schemas"
 
 /**
  * Camera component: interpolates keyframes for camera movement and effects.
  */
-export const Camera: React.FC<CameraProps> = ({
+const CameraComponent: React.FC<Camera> = ({
   videoUrl,
   animationKeyframes,
 }) => {
   useCurrentFrame()
 
-  const safeKeyframes: Keyframe<CameraValue>[] =
+  const safeKeyframes: Keyframe<Record<string, number | string | undefined>>[] =
     animationKeyframes && animationKeyframes.length > 0
       ? animationKeyframes
       : [
@@ -56,7 +24,9 @@ export const Camera: React.FC<CameraProps> = ({
         ]
 
   // Interpolated keyframe for the current frame
-  const interpolated = useKeyframes<CameraValue>(safeKeyframes) || {}
+  const interpolated =
+    useKeyframes<Record<string, number | string | undefined>>(safeKeyframes) ||
+    {}
 
   const {
     scale = 1,
@@ -81,3 +51,5 @@ export const Camera: React.FC<CameraProps> = ({
     </AbsoluteFill>
   )
 }
+
+export { CameraComponent as Camera }

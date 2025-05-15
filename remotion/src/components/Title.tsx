@@ -1,46 +1,11 @@
-import React from "react"
 import { AbsoluteFill } from "remotion"
-import { z } from "zod"
+import React from "react"
 import { titleThemes, letterAnimationPresets } from "./title/themes"
-import {
-  LetterAnimation,
-  LetterAnimationConfigSchema,
-} from "./title/LetterAnimation"
-import { TimingSchema, useTiming } from "@/Utils/useTiming"
-import { PositionSchema, usePosition } from "@/Utils/usePosition"
-import {
-  TransitionSchema,
-  useRevealTransition,
-} from "@/Utils/useRevealTransition"
-
-const themeNames = Object.keys(titleThemes)
-const animationPresetNames = Object.keys(letterAnimationPresets)
-
-// Schema for letter animation config with preset
-const LetterAnimationSchema = LetterAnimationConfigSchema.extend({
-  preset: z.enum(animationPresetNames as [string, ...string[]]).optional(),
-})
-
-/**
- * TitlesSchema: zod schema for an array of title items.
- */
-export const TitlesSchema = z.array(
-  z.object({
-    title: z.string(),
-    theme: z.enum(themeNames as [string, ...string[]]).optional(),
-    timing: TimingSchema.optional(),
-    position: PositionSchema.optional(),
-    style: z.object({}).passthrough().optional(),
-    transition: TransitionSchema.optional(),
-    letterAnimation: LetterAnimationSchema.optional(),
-  }),
-)
-
-type TitleItem = z.infer<typeof TitlesSchema>[number]
-
-type TitleProps = {
-  titles: TitleItem[]
-}
+import { LetterAnimation } from "./title/LetterAnimation"
+import { useTiming } from "@/hooks/useTiming"
+import { useRevealTransition } from "@/hooks/useRevealTransition"
+import { getPosition } from "@/utils/getPosition"
+import { Title as TitleType, TransitionReveal } from "@/schemas"
 
 // Base style for all titles
 const baseStyle: React.CSSProperties = {
@@ -58,11 +23,12 @@ const baseStyle: React.CSSProperties = {
 /**
  * TitleItemDisplay: renders a single title with theme, animation, and transition.
  */
-const TitleItemDisplay: React.FC<{ title: TitleItem }> = ({ title }) => {
+const TitleItemDisplay: React.FC<{ title: TitleType }> = ({ title }) => {
   const timing = useTiming({ ...title.timing, start: title.timing?.start ?? 0 })
-  const containerStyle = usePosition(title.position ?? {})
+  const containerStyle = getPosition(title.position ?? {})
+  const transition = (title.transition ?? {}) as TransitionReveal
   const { style: transitionStyle } = useRevealTransition({
-    transition: title.transition,
+    transition,
     startFrame: timing.startFrame,
     endFrame: timing.endFrame,
   })
@@ -94,7 +60,7 @@ const TitleItemDisplay: React.FC<{ title: TitleItem }> = ({ title }) => {
       <h1 style={style}>
         {letterAnimationConfig ? (
           <LetterAnimation
-            text={title.title}
+            text={title.title || ""}
             config={letterAnimationConfig}
             titleStart={title.timing?.start ?? 0}
           />
@@ -109,7 +75,7 @@ const TitleItemDisplay: React.FC<{ title: TitleItem }> = ({ title }) => {
 /**
  * Title: renders a list of titles.
  */
-export const Title: React.FC<TitleProps> = ({ titles }) => {
+export const Title: React.FC<{ titles: TitleType[] }> = ({ titles }) => {
   return (
     <AbsoluteFill>
       {titles.map((title, idx) => (

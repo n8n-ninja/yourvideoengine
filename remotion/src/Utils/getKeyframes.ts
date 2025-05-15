@@ -1,9 +1,4 @@
-import { useCurrentFrame, useVideoConfig } from "remotion"
-
-export type Keyframe<T = number | Record<string, unknown>> = {
-  time: number // en secondes (peut être négatif)
-  value: T
-}
+import { Keyframe } from "@/schemas"
 
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t
@@ -25,26 +20,20 @@ function interpolateObject(
   return result
 }
 
-export function useKeyframes<T = number | Record<string, unknown>>(
+export function getKeyframeValue<T = number | Record<string, unknown>>(
   keyframes: Keyframe<T>[],
-  totalDurationSec?: number,
+  currentTime: number,
+  duration: number,
 ): T | undefined {
-  const frame = useCurrentFrame()
-  const { fps, durationInFrames } = useVideoConfig()
-  const currentTime = frame / fps
-  const duration = totalDurationSec ?? durationInFrames / fps
-
-  console.log(durationInFrames)
-
   if (!keyframes.length) return undefined
-  // Résolution des temps négatifs (en secondes)
+  // Resolve negative times (in seconds)
   const resolved = keyframes.map((kf) => ({
     ...kf,
     time: kf.time < 0 ? duration + kf.time : kf.time,
   }))
   const sorted = [...resolved].sort((a, b) => a.time - b.time)
 
-  // Trouver les deux keyframes entourant le temps courant
+  // Find the two keyframes surrounding the current time
   let prev = sorted[0]
   let next = sorted[sorted.length - 1]
   for (let i = 0; i < sorted.length; i++) {
@@ -82,6 +71,6 @@ export function useKeyframes<T = number | Record<string, unknown>>(
     ) as T
   }
 
-  // Si pas d'interpolation possible, retourne la valeur précédente
+  // If no interpolation possible, return previous value
   return prev.value as T
 }
