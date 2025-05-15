@@ -2,9 +2,9 @@ import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion"
 import { z } from "zod"
 import React from "react"
 import { createTikTokStyleCaptions } from "@remotion/captions"
-import { usePositionStyle } from "@/Utils/usePosition"
+import { usePosition } from "@/Utils/usePosition"
 import { parseStyleString } from "@/Utils/style"
-import { PositionStyleSchema } from "@/Utils/usePosition"
+import { PositionSchema } from "@/Utils/usePosition"
 
 const defaultActiveWordStyle: React.CSSProperties = {
   zIndex: 100,
@@ -20,7 +20,7 @@ export const CaptionSchema = z.object({
       confidence: z.number().optional(),
     }),
   ),
-  position: PositionStyleSchema.optional(),
+  position: PositionSchema.optional(),
   boxStyle: z.union([z.record(z.any()), z.string()]).optional(),
   textStyle: z.union([z.record(z.any()), z.string()]).optional(),
   activeWordStyle: z.union([z.record(z.any()), z.string()]).optional(),
@@ -42,7 +42,7 @@ export const Caption: React.FC<z.infer<typeof CaptionSchema>> = ({
   const currentTime = frame / fps
 
   // Positionnement
-  const containerStyle = usePositionStyle(position ?? {})
+  const containerStyle = usePosition(position ?? {})
 
   // Style de la boîte (container)
   let resolvedBoxStyle: React.CSSProperties = {

@@ -1,6 +1,7 @@
 import React from "react"
 
 export type ColorOverlayProps = {
+  type: "color"
   color?: string
   intensity?: number
   opacity?: number

@@ -9,7 +9,10 @@ import { TimingSchema } from "@/Utils/useTiming"
 import { PositionSchema } from "@/Utils/usePosition"
 import { useTiming } from "@/Utils/useTiming"
 import { usePosition } from "@/Utils/usePosition"
-import { TransitionSchema, useTransition } from "@/Utils/useTransition"
+import {
+  TransitionSchema,
+  useRevealTransition,
+} from "@/Utils/useRevealTransition"
 
 const themeNames = Object.keys(titleThemes)
 const animationPresetNames = Object.keys(letterAnimationPresets)
@@ -60,7 +63,7 @@ const TitleItemDisplay: React.FC<{ title: TitleItem }> = ({ title }) => {
   const letterAnimationConfig = useLetterAnimationConfig(title.letterAnimation)
 
   // Animation de transition (apparition/disparition)
-  const transitionStyle = useTransition({
+  const { style: transitionStyle } = useRevealTransition({
     transition: title.transition,
     startFrame: timing.startFrame,
     endFrame: timing.endFrame,

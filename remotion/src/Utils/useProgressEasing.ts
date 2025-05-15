@@ -1,29 +1,13 @@
 import { useCurrentFrame, interpolate, useVideoConfig, Easing } from "remotion"
 import { z } from "zod"
 
-export const TRANSITION_TYPES = [
-  "fade",
-  "slide-up",
-  "slide-down",
-  "slide-left",
-  "slide-right",
-  "zoom-in",
-  "zoom-out",
-  "blur",
-] as const
-
-export type TransitionType = (typeof TRANSITION_TYPES)[number]
-
-export const TransitionSchema = z.object({
-  type: z.enum(TRANSITION_TYPES).optional(),
+export const ProgressEasingSchema = z.object({
   easing: z.string().optional(),
   duration: z.number().optional(),
 
-  inType: z.enum(TRANSITION_TYPES).optional(),
   inEasing: z.string().optional(),
   inDuration: z.number().optional(),
 
-  outType: z.enum(TRANSITION_TYPES).optional(),
   outEasing: z.string().optional(),
   outDuration: z.number().optional(),
 })
@@ -39,40 +23,6 @@ function getEasingFn(easing?: string) {
     case "linear":
     default:
       return Easing.linear
-  }
-}
-
-function clamp(val: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, val))
-}
-
-function getBlur(type: string, progress: number) {
-  if (type !== "blur") return undefined
-  progress = clamp(progress, 0, 1)
-  return `blur(${20 * (1 - progress)}px)`
-}
-
-// Helpers for transform
-function getTransform(type: string, progress: number) {
-  // Clamp progress entre 0 et 1
-  progress = clamp(progress, 0, 1)
-  switch (type) {
-    case "slide-up":
-      return `translateY(${clamp((1 - progress) * 40, -100, 100)}%)`
-    case "slide-down":
-      return `translateY(${clamp((progress - 1) * 40, -100, 100)}%)`
-    case "slide-left":
-      return `translateX(${clamp((1 - progress) * 40, -100, 100)}%)`
-    case "slide-right":
-      return `translateX(${clamp((progress - 1) * 40, -100, 100)}%)`
-    case "zoom-in":
-      return `scale(${clamp(0.5 + 0.5 * progress, 0.01, 5)})`
-    case "zoom-out":
-      return `scale(${clamp(0.5 + (1 - 0.5 * progress), 0.01, 5)})`
-    case "blur":
-      return undefined
-    default:
-      return undefined
   }
 }
 
@@ -118,12 +68,12 @@ function getProgress(
   return easingFn(progress)
 }
 
-export function useTransition({
+export function useProgressEasing({
   transition = {},
   startFrame = 0,
   endFrame = 1,
 }: {
-  transition?: z.infer<typeof TransitionSchema>
+  transition?: z.infer<typeof ProgressEasingSchema>
   startFrame: number
   endFrame: number
 }) {
@@ -140,9 +90,7 @@ export function useTransition({
     (transition.outDuration ?? transition.duration ?? 0) * fps,
   )
 
-  // Types & easings
-  const inType = transition.inType ?? transition.type ?? "fade"
-  const outType = transition.outType ?? transition.type ?? "fade"
+  // Easings
   const inEasingFn = getEasingFn(
     transition.inEasing ?? transition.easing ?? "easeInOut",
   )
@@ -181,21 +129,9 @@ export function useTransition({
   // Phase
   const phase = getPhase(frame, inEnd, outStart)
 
-  // Style
-  const style: React.CSSProperties = {}
-  if (phase === "in") {
-    style.opacity = progressIn
-    style.transform = getTransform(inType, progressIn)
-    style.filter = getBlur(inType, progressIn)
-  } else if (phase === "out") {
-    style.opacity = progressOut
-    style.transform = getTransform(outType, progressOut)
-    style.filter = getBlur(outType, progressOut)
-  } else {
-    style.opacity = 1
-    style.transform = "none"
-    style.filter = "none"
+  return {
+    phase,
+    progressIn,
+    progressOut,
   }
-
-  return style
 }

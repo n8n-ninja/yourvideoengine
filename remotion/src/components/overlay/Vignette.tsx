@@ -2,6 +2,7 @@ import React from "react"
 import { useVideoConfig } from "remotion"
 
 export type VignetteOverlayProps = {
+  type: "vignette"
   intensity?: number
   size?: number
   color?: string

@@ -1,6 +1,7 @@
 import React from "react"
 
 export type ScanlineOverlayProps = {
+  type: "scanline"
   intensity: number
   color?: string
   speed?: number
