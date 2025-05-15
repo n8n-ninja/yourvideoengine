@@ -13,6 +13,7 @@ import {
   ProgressEasingSchema,
   useProgressEasing,
 } from "@/Utils/useProgressEasing"
+import { useKeyframes, Keyframe } from "@/Utils/useKeyframes"
 
 export const SoundSchema = z.object({
   timing: TimingSchema.optional(),
@@ -25,7 +26,7 @@ export const SoundSchema = z.object({
     .array(
       z.object({
         time: z.number(),
-        volume: z.number(),
+        value: z.number(),
       }),
     )
     .optional(),
@@ -37,7 +38,14 @@ type SoundType = z.infer<typeof SoundSchema>
 
 // Composant pour un seul son
 const SoundItem: React.FC<{ sound: SoundType; fps: number }> = ({ sound }) => {
-  const volume = sound.volume ?? 1
+  // Gestion du volume dynamique avec keyframes
+  const keyframes: Keyframe<number>[] | undefined = sound.volumes?.map((v) => ({
+    time: v.time,
+    value: v.value,
+  }))
+  const dynamicVolume = useKeyframes<number>(keyframes ?? [])
+
+  const volume = dynamicVolume ?? sound.volume ?? 1
 
   const timing = useTiming({
     start: sound.timing?.start ?? 0,

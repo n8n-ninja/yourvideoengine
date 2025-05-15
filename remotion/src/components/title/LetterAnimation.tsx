@@ -1,16 +1,18 @@
 import React from "react"
-import { getEasingFn, interpolate } from "@/Utils/time"
-import { applyAnimationToStyle } from "@/Utils/style"
 import { z } from "zod"
+import { useTiming } from "@/Utils/useTiming"
+import { useProgressEasing } from "@/Utils/useProgressEasing"
+import { applyAnimationToStyle } from "@/Utils/style"
 
 export type LetterAnimationConfig = {
-  staggerDelay: number
-  duration: number
-  easing: string
-  from: Record<string, number | string>
-  to: Record<string, number | string>
-  direction: "ltr" | "rtl" | "center" | "edges"
-  animateSpaces: boolean
+  preset?: string
+  staggerDelay?: number
+  duration?: number
+  easing?: string
+  from?: Record<string, number | string>
+  to?: Record<string, number | string>
+  direction?: "ltr" | "rtl" | "center" | "edges"
+  animateSpaces?: boolean
 }
 
 export const LetterAnimationConfigSchema = z.object({
@@ -27,20 +29,113 @@ export const LetterAnimationConfigSchema = z.object({
 type LetterAnimationProps = {
   text: string
   config: LetterAnimationConfig
-  currentTime: number
   titleStart: number
+}
+
+type AnimatedLetterProps = {
+  char: string
+  delay: number
+  config: LetterAnimationConfig
+  titleStart: number
+}
+
+const AnimatedLetter: React.FC<AnimatedLetterProps> = ({
+  char,
+  delay,
+  config,
+  titleStart,
+}) => {
+  const letterStart = titleStart + delay
+  const duration = config.duration ?? 0.3
+  const easing = config.easing ?? "easeOut"
+  const from = config.from ?? { opacity: 0 }
+  const to = config.to ?? { opacity: 1 }
+  const timing = useTiming({
+    start: letterStart,
+    duration,
+  })
+  const { phase, progressIn, progressOut } = useProgressEasing({
+    transition: { easing, duration },
+    startFrame: timing.startFrame,
+    endFrame: timing.endFrame,
+  })
+  let progress = 0
+  if (phase === "in") progress = progressIn
+  else if (phase === "out") progress = 1 - progressOut
+  else progress = 1
+  const interpValues = Object.fromEntries(
+    Object.keys(from).map((key) => {
+      const fromVal = from[key]
+      const toVal = to[key]
+      if (typeof fromVal === "number" && typeof toVal === "number") {
+        return [key, fromVal + (toVal - fromVal) * progress]
+      }
+      return [key, progress < 1 ? fromVal : toVal]
+    }),
+  )
+  const letterStyle = applyAnimationToStyle(
+    { display: "inline-block" },
+    interpValues,
+  )
+  return <span style={letterStyle}>{char}</span>
+}
+
+type AnimatedSpaceProps = {
+  delay: number
+  config: LetterAnimationConfig
+  titleStart: number
+}
+
+const AnimatedSpace: React.FC<AnimatedSpaceProps> = ({
+  delay,
+  config,
+  titleStart,
+}) => {
+  const spaceStart = titleStart + delay
+  const duration = config.duration ?? 0.3
+  const easing = config.easing ?? "easeOut"
+  const from = config.from ?? { opacity: 0 }
+  const to = config.to ?? { opacity: 1 }
+  const timing = useTiming({
+    start: spaceStart,
+    duration,
+  })
+  const { phase, progressIn, progressOut } = useProgressEasing({
+    transition: { easing, duration },
+    startFrame: timing.startFrame,
+    endFrame: timing.endFrame,
+  })
+  let progress = 0
+  if (phase === "in") progress = progressIn
+  else if (phase === "out") progress = 1 - progressOut
+  else progress = 1
+  const interpValues = Object.fromEntries(
+    Object.keys(from).map((key) => {
+      const fromVal = from[key]
+      const toVal = to[key]
+      if (typeof fromVal === "number" && typeof toVal === "number") {
+        return [key, fromVal + (toVal - fromVal) * progress]
+      }
+      return [key, progress < 1 ? fromVal : toVal]
+    }),
+  )
+  const spaceStyle = applyAnimationToStyle(
+    { display: "inline-block" },
+    interpValues,
+  )
+  return <span style={spaceStyle}>&nbsp;</span>
 }
 
 export const LetterAnimation: React.FC<LetterAnimationProps> = ({
   text,
   config,
-  currentTime,
   titleStart,
 }) => {
   const words = text.split(/\s+/)
   const allCharacters = Array.from(text.replace(/\s+/g, " "))
-  const direction = config.direction || "ltr"
-  const animateSpaces = config.animateSpaces || false
+  const direction = config.direction ?? "ltr"
+  const animateSpaces = config.animateSpaces ?? false
+  const staggerDelay = config.staggerDelay ?? 0.05
   const totalChars = allCharacters.length
   const middle = Math.floor(totalChars / 2)
   const halfLength = totalChars / 2
@@ -55,95 +150,63 @@ export const LetterAnimation: React.FC<LetterAnimationProps> = ({
       return globalIndex
     }
   }
+
+  const elements: React.ReactNode[] = []
+  words.forEach((word, wordIndex) => {
+    const characters = Array.from(word)
+    const wordStartIndex =
+      words.slice(0, wordIndex).join(" ").length +
+      (wordIndex > 0 ? wordIndex : 0)
+    // Lettres du mot, groupées dans un span
+    const wordLetters = characters.map((char, charIndex) => {
+      const globalIndex = wordStartIndex + charIndex
+      const delayIndex = getDelayIndex(globalIndex)
+      const delay = staggerDelay * delayIndex
+      return (
+        <AnimatedLetter
+          key={`char-${wordIndex}-${charIndex}`}
+          char={char}
+          delay={delay}
+          config={config}
+          titleStart={titleStart}
+        />
+      )
+    })
+    elements.push(
+      <span key={`word-${wordIndex}`} style={{ display: "inline-block" }}>
+        {wordLetters}
+      </span>,
+    )
+    // Espace animé ou normal entre les mots
+    if (wordIndex < words.length - 1) {
+      if (animateSpaces) {
+        const spaceIndex = wordStartIndex + characters.length
+        const delayIndex = getDelayIndex(spaceIndex)
+        const delay = staggerDelay * delayIndex
+        elements.push(
+          <AnimatedSpace
+            key={`word-space-${wordIndex}`}
+            delay={delay}
+            config={config}
+            titleStart={titleStart}
+          />,
+        )
+      } else {
+        elements.push(
+          <span
+            key={`word-space-${wordIndex}`}
+            style={{ display: "inline-block" }}
+          >
+            &nbsp;
+          </span>,
+        )
+      }
+    }
+  })
+
   return (
     <div style={{ display: "inline-block", whiteSpace: "pre-wrap" }}>
-      {words.map((word, wordIndex) => {
-        const characters = Array.from(word)
-        const wordStartIndex =
-          words.slice(0, wordIndex).join(" ").length +
-          (wordIndex > 0 ? wordIndex : 0)
-        const wordElement = (
-          <span
-            key={`word-${wordIndex}`}
-            style={{ display: "inline-block", marginRight: 0 }}
-          >
-            {characters.map((char, charIndex) => {
-              const globalIndex = wordStartIndex + charIndex
-              const delayIndex = getDelayIndex(globalIndex)
-              const delay = config.staggerDelay * delayIndex
-              const letterDuration = config.duration
-              let letterProgress = 0
-              const letterStart = titleStart + delay
-              const letterEnd = letterStart + letterDuration
-              if (currentTime >= letterStart && currentTime < letterEnd) {
-                letterProgress = (currentTime - letterStart) / letterDuration
-              } else if (currentTime >= letterEnd) {
-                letterProgress = 1
-              }
-              const easingFn = getEasingFn(config.easing)
-              const easedProgress = easingFn(letterProgress)
-              const interpValues = interpolate(
-                config.from,
-                config.to,
-                easedProgress,
-              )
-              const letterStyle = applyAnimationToStyle(
-                { display: "inline-block" },
-                interpValues,
-              )
-              return (
-                <span
-                  key={`char-${wordIndex}-${charIndex}`}
-                  style={letterStyle}
-                >
-                  {char}
-                </span>
-              )
-            })}
-          </span>
-        )
-        if (wordIndex < words.length - 1) {
-          if (animateSpaces) {
-            const spaceIndex = wordStartIndex + characters.length
-            const delayIndex = getDelayIndex(spaceIndex)
-            const delay = config.staggerDelay * delayIndex
-            const letterDuration = config.duration
-            let spaceProgress = 0
-            const spaceStart = titleStart + delay
-            const spaceEnd = spaceStart + letterDuration
-            if (currentTime >= spaceStart && currentTime < spaceEnd) {
-              spaceProgress = (currentTime - spaceStart) / letterDuration
-            } else if (currentTime >= spaceEnd) {
-              spaceProgress = 1
-            }
-            const easingFn = getEasingFn(config.easing)
-            const easedProgress = easingFn(spaceProgress)
-            const interpValues = interpolate(
-              config.from,
-              config.to,
-              easedProgress,
-            )
-            const spaceStyle = applyAnimationToStyle(
-              { display: "inline-block" },
-              interpValues,
-            )
-            return (
-              <React.Fragment key={`word-space-${wordIndex}`}>
-                {wordElement}
-                <span style={spaceStyle}>&nbsp;</span>
-              </React.Fragment>
-            )
-          } else {
-            return (
-              <React.Fragment key={`word-space-${wordIndex}`}>
-                {wordElement}
-                <span style={{ display: "inline-block" }}>&nbsp;</span>
-              </React.Fragment>
-            )
-          }
-        }
-        return wordElement
-      })}
+      {elements}
     </div>
   )
 }

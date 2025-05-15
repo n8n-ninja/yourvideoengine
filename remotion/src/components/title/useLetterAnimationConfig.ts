@@ -1,15 +1,25 @@
 import { letterAnimationPresets } from "./themes"
-import { TitleItem } from "../Title"
 
 export function useLetterAnimationConfig(
-  letterAnimation: TitleItem["letterAnimation"],
+  letterAnimation:
+    | {
+        preset?: string
+        staggerDelay?: number
+        duration?: number
+        easing?: string
+        from?: Record<string, number | string>
+        to?: Record<string, number | string>
+        direction?: "ltr" | "rtl" | "center" | "edges"
+        animateSpaces?: boolean
+      }
+    | undefined,
 ): {
   staggerDelay: number
   duration: number
   easing: string
   from: Record<string, number | string>
   to: Record<string, number | string>
-  direction: string
+  direction: "ltr" | "rtl" | "center" | "edges"
   animateSpaces: boolean
 } | null {
   if (!letterAnimation) return null
@@ -24,7 +34,10 @@ export function useLetterAnimationConfig(
     easing: letterAnimation.easing ?? presetConfig?.easing ?? "easeOut",
     from: letterAnimation.from ?? presetConfig?.from ?? { opacity: 0 },
     to: letterAnimation.to ?? presetConfig?.to ?? { opacity: 1 },
-    direction: letterAnimation.direction ?? "ltr",
-    animateSpaces: letterAnimation.animateSpaces ?? false,
+    direction: (letterAnimation.direction ??
+      presetConfig?.direction ??
+      "ltr") as "ltr" | "rtl" | "center" | "edges",
+    animateSpaces:
+      letterAnimation.animateSpaces ?? presetConfig?.animateSpaces ?? false,
   }
 }
