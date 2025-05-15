@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { getRevealTransitionStyle } from "./getRevealTransition"
+import { getRevealTransitionStyle } from "../getRevealTransition"
 
 const base = {
   progressIn: 0.5,

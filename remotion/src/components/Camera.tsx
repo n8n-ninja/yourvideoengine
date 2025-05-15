@@ -5,7 +5,11 @@ import { useKeyframes } from "@/hooks/useKeyframes"
 import { Keyframe } from "@/schemas"
 
 /**
- * Camera component: interpolates keyframes for camera movement and effects.
+ * Camera: renders a video with animated camera effects (scale, blur, rotation, filter, position) using keyframes.
+ *
+ * @param videoUrl The video source URL.
+ * @param animationKeyframes Optional array of keyframes for camera effects.
+ * @returns An AbsoluteFill with a styled Video element.
  */
 const CameraComponent: React.FC<Camera> = ({
   videoUrl,

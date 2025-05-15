@@ -1,5 +1,9 @@
 import { z } from "zod"
 
+/**
+ * Zod schema for progress easing configuration.
+ * Supports global, in, and out easing and durations.
+ */
 export const ProgressEasingSchema = z.object({
   easing: z.string().optional(),
   duration: z.number().optional(),
@@ -9,4 +13,7 @@ export const ProgressEasingSchema = z.object({
   outDuration: z.number().optional(),
 })
 
+/**
+ * Type inferred from ProgressEasingSchema.
+ */
 export type ProgressEasing = z.infer<typeof ProgressEasingSchema>

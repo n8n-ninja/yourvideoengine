@@ -1,5 +1,12 @@
 import { Style } from "@/schemas"
 
+/**
+ * Parses a CSS style string into a React.CSSProperties object.
+ * Supports kebab-case to camelCase conversion.
+ *
+ * @param style The CSS style string (e.g. 'font-size:12px; color:red;').
+ * @returns A React.CSSProperties object.
+ */
 export function parseStyleString(style: string): React.CSSProperties {
   const obj = style
     .split(";")
@@ -16,6 +23,14 @@ export function parseStyleString(style: string): React.CSSProperties {
   return obj as React.CSSProperties
 }
 
+/**
+ * Merges a user style (string or object) with a base style.
+ * If userStyle is a string, it is parsed as CSS. If an object, it is merged directly.
+ *
+ * @param userStyle The user style (string or object).
+ * @param baseStyle The base style (default: empty object).
+ * @returns The merged React.CSSProperties object.
+ */
 export function getStyle(
   userStyle: Style | undefined,
   baseStyle: React.CSSProperties = {},

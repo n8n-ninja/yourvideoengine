@@ -1,5 +1,9 @@
 import { z } from "zod"
 
+/**
+ * Zod schema for a camera configuration.
+ * Supports a video URL and optional animation keyframes for camera effects.
+ */
 export const CameraSchema = z.object({
   videoUrl: z.string(),
   animationKeyframes: z
@@ -19,4 +23,7 @@ export const CameraSchema = z.object({
     .optional(),
 })
 
+/**
+ * Type inferred from CameraSchema.
+ */
 export type Camera = z.infer<typeof CameraSchema>

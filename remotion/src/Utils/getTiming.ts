@@ -1,6 +1,16 @@
 import { TimingSchema } from "@/schemas/timing"
 import { z } from "zod"
 
+/**
+ * Computes timing information for an animation segment based on start, end, and duration.
+ * Handles negative (relative) start/end values, and returns frame/second boundaries, progress, and visibility.
+ *
+ * @param currentTime The current time (in seconds).
+ * @param fps Frames per second.
+ * @param durationInFrames Total duration in frames.
+ * @param timing Timing configuration (start, end, duration) from TimingSchema.
+ * @returns An object with startFrame, endFrame, totalFrames, startSec, endSec, currentTime, progress, and visible.
+ */
 export function getTiming(
   currentTime: number,
   fps: number,

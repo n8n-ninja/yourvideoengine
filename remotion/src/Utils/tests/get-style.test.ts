@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { getStyle, parseStyleString } from "./getStyle"
+import { getStyle, parseStyleString } from "../getStyle"
 
 describe("parseStyleString", () => {
   it("parses a simple CSS string", () => {

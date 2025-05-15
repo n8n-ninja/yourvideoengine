@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { getKeyframeValue } from "./getKeyframes"
+import { getKeyframeValue } from "../getKeyframes"
 
 describe("getKeyframeValue", () => {
   it("returns undefined for empty keyframes", () => {

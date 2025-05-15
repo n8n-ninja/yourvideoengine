@@ -11,6 +11,10 @@ const LetterAnimationSchema = LetterAnimationConfigSchema.extend({
   preset: z.enum(animationPresetNames as [string, ...string[]]).optional(),
 })
 
+/**
+ * Zod schema for an array of title objects.
+ * Each title can have a theme, timing, position, style, transition, and letter animation.
+ */
 export const TitlesSchema = z.array(
   z.object({
     title: z.string(),
@@ -23,5 +27,12 @@ export const TitlesSchema = z.array(
   }),
 )
 
+/**
+ * Type representing a single title object.
+ */
 export type Title = z.infer<typeof TitlesSchema>[number]
+
+/**
+ * Type representing an array of title objects.
+ */
 export type Titles = z.infer<typeof TitlesSchema>

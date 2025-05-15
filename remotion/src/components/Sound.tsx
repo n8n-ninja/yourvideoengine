@@ -39,6 +39,10 @@ type SoundType = z.infer<typeof SoundSchema>
 
 /**
  * SoundItem: renders a single sound with timing, volume keyframes, and transitions.
+ *
+ * @param sound The sound object to render (SoundType).
+ * @param fps The frames per second for timing calculations.
+ * @returns A Sequence with an Audio element, or null if not visible.
  */
 const SoundItem: React.FC<{ sound: SoundType; fps: number }> = ({ sound }) => {
   // Dynamic volume with keyframes
@@ -87,7 +91,10 @@ const SoundItem: React.FC<{ sound: SoundType; fps: number }> = ({ sound }) => {
 }
 
 /**
- * Sound: renders a list of sounds.
+ * Sound: renders a list of sounds as Audio elements with timing, keyframes, and transitions.
+ *
+ * @param sounds Array of sound objects to render.
+ * @returns An AbsoluteFill containing all rendered sounds.
  */
 export const Sound: React.FC<{ sounds: SoundType[] }> = ({ sounds }) => {
   const { fps } = useVideoConfig()

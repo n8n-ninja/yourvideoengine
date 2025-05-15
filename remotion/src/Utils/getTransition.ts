@@ -8,6 +8,15 @@ import { staticFile } from "remotion"
 import { addSound } from "./addSound"
 import { Transition } from "@/schemas"
 
+/**
+ * Returns a Remotion transition presentation based on the given transition config.
+ * Supports fade, wipe, slide, flip, clockWipe, and custom sound overlays.
+ *
+ * @param transition The transition configuration (type, direction, sound, etc).
+ * @param width The width for clockWipe transitions (default: 1080).
+ * @param height The height for clockWipe transitions (default: 1920).
+ * @returns A TransitionPresentation object for Remotion transitions.
+ */
 export const getTransition = (
   transition: Transition,
   width = 1080,

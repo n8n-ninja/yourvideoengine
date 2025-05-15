@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { getTiming } from "./getTiming"
+import { getTiming } from "../getTiming"
 
 describe("getTiming", () => {
   const fps = 30

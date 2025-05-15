@@ -57,6 +57,17 @@ function getProgress(
   return easingFn(progress)
 }
 
+/**
+ * Computes the progress and phase for an animation with easing, supporting in/out durations and custom easings.
+ * Returns the current phase (in, steady, out) and the eased progress for in and out.
+ *
+ * @param params.transition The transition configuration (ProgressEasing).
+ * @param params.startFrame The start frame of the animation.
+ * @param params.endFrame The end frame of the animation.
+ * @param params.frame The current frame.
+ * @param params.fps The frames per second.
+ * @returns An object with phase ('in' | 'steady' | 'out'), progressIn, and progressOut (numbers between 0 and 1).
+ */
 export const getProgressEasing = ({
   transition = {},
   startFrame = 0,

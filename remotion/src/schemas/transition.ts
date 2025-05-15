@@ -1,5 +1,9 @@
 import { z } from "zod"
 
+/**
+ * Zod schema for a transition configuration.
+ * Supports type, duration, direction, wipeDirection, and sound.
+ */
 export const TransitionSchema = z.object({
   type: z.enum(["fade", "wipe", "slide", "flip", "clockWipe"]),
   duration: z.number().optional(),
@@ -21,4 +25,7 @@ export const TransitionSchema = z.object({
   sound: z.string().optional(),
 })
 
+/**
+ * Type inferred from TransitionSchema.
+ */
 export type Transition = z.infer<typeof TransitionSchema>

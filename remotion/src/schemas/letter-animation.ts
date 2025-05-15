@@ -1,5 +1,9 @@
 import { z } from "zod"
 
+/**
+ * Zod schema for letter animation configuration.
+ * Supports duration, stagger, easing, translateY, and direction.
+ */
 export const LetterAnimationConfigSchema = z.object({
   duration: z.number().optional(),
   stagger: z.number().optional(),
@@ -8,4 +12,7 @@ export const LetterAnimationConfigSchema = z.object({
   direction: z.enum(["ltr", "rtl", "random"]).optional(),
 })
 
+/**
+ * Type inferred from LetterAnimationConfigSchema.
+ */
 export type LetterAnimationConfig = z.infer<typeof LetterAnimationConfigSchema>

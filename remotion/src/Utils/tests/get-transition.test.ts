@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import { getTransition } from "./getTransition"
+import { getTransition } from "../getTransition"
 import { fade } from "@remotion/transitions/fade"
 import { wipe } from "@remotion/transitions/wipe"
 import { slide } from "@remotion/transitions/slide"
 import { flip } from "@remotion/transitions/flip"
 import { clockWipe } from "@remotion/transitions/clock-wipe"
-import { addSound } from "./addSound"
+import { addSound } from "../addSound"
 import type { Transition } from "@/schemas"
 
 vi.mock("@remotion/transitions/fade", () => ({ fade: vi.fn(() => "fade") }))

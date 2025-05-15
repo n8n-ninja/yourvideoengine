@@ -22,6 +22,9 @@ const baseStyle: React.CSSProperties = {
 
 /**
  * TitleItemDisplay: renders a single title with theme, animation, and transition.
+ *
+ * @param title The title object to render (TitleType).
+ * @returns A styled h1 element with optional letter animation, or null if not visible.
  */
 const TitleItemDisplay: React.FC<{ title: TitleType }> = ({ title }) => {
   const timing = useTiming({ ...title.timing, start: title.timing?.start ?? 0 })
@@ -73,7 +76,10 @@ const TitleItemDisplay: React.FC<{ title: TitleType }> = ({ title }) => {
 }
 
 /**
- * Title: renders a list of titles.
+ * Title: renders a list of titles as styled h1 elements with theme, animation, and transition.
+ *
+ * @param titles Array of title objects to render.
+ * @returns An AbsoluteFill containing all rendered titles.
  */
 export const Title: React.FC<{ titles: TitleType[] }> = ({ titles }) => {
   return (

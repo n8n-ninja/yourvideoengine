@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { clamp, lerp, interpolateObject } from "./math"
+import { clamp, lerp, interpolateObject } from "../math"
 
 describe("clamp", () => {
   it("returns value if in range", () => {

@@ -1,6 +1,18 @@
 import { Keyframe } from "@/schemas"
 import { lerp, interpolateObject } from "./math"
 
+/**
+ * Returns the interpolated value for the given keyframes at the specified time.
+ * Supports both numeric and object values. Handles negative keyframe times (relative to duration).
+ * If currentTime is before the first keyframe, returns its value. If after the last, returns its value.
+ * If no interpolation is possible, returns the previous value.
+ *
+ * @template T The type of the keyframe value (number or object).
+ * @param keyframes Array of keyframes with time and value.
+ * @param currentTime The current time (in seconds or frames).
+ * @param duration The total duration (in seconds or frames).
+ * @returns The interpolated value at the given time, or undefined if no keyframes.
+ */
 export function getKeyframeValue<T = number | Record<string, unknown>>(
   keyframes: Keyframe<T>[],
   currentTime: number,

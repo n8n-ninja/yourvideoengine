@@ -23,7 +23,10 @@ type OverlayType =
   | (OverlayBase & ColorOverlayProps)
 
 /**
- * OverlayItem: renders a single overlay with timing and transition.
+ * OverlayItem: renders a single overlay (scanline, vignette, or color) with timing and transition.
+ *
+ * @param overlay The overlay object to render (OverlayType).
+ * @returns An AbsoluteFill with the overlay, or null if not visible.
  */
 const OverlayItem: React.FC<{ overlay: OverlayType }> = ({ overlay }) => {
   const { startFrame, endFrame, visible } = useTiming({
@@ -50,7 +53,10 @@ const OverlayItem: React.FC<{ overlay: OverlayType }> = ({ overlay }) => {
 }
 
 /**
- * Overlay: renders a list of overlays.
+ * Overlay: renders a list of overlays (scanline, vignette, color) with timing and transitions.
+ *
+ * @param overlays Array of overlay objects to render.
+ * @returns An AbsoluteFill containing all rendered overlays.
  */
 export const Overlay: React.FC<{ overlays: OverlayType[] }> = ({
   overlays,
