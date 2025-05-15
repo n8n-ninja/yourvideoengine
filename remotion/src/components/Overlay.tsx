@@ -69,3 +69,5 @@ export const Overlay: React.FC<{ overlays: OverlayType[] }> = ({
     </AbsoluteFill>
   )
 }
+
+export type { OverlayType }

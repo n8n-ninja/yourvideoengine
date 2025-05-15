@@ -3,9 +3,10 @@ import { TimingSchema } from "./timing"
 import { PositionSchema } from "./position"
 import { TransitionSchema } from "./transition"
 import { LetterAnimationConfigSchema } from "./letter-animation"
+import { titleThemes, letterAnimationPresets } from "@/components/title/themes"
 
-const themeNames = ["minimal"] // Add more as needed
-const animationPresetNames = ["fadeIn"] // Add more as needed
+const themeNames = Object.keys(titleThemes)
+const animationPresetNames = Object.keys(letterAnimationPresets)
 
 const LetterAnimationSchema = LetterAnimationConfigSchema.extend({
   preset: z.enum(animationPresetNames as [string, ...string[]]).optional(),
