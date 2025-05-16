@@ -367,27 +367,9 @@ importers:
 
   remotion-api:
     dependencies:
-      '@remotion/captions':
-        specifier: 4.0.304
-        version: 4.0.304
       '@remotion/lambda':
         specifier: 4.0.304
         version: 4.0.304(@remotion/bundler@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      '@remotion/lambda-client':
-        specifier: 4.0.304
-        version: 4.0.304
-      '@remotion/renderer':
-        specifier: 4.0.304
-        version: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      '@remotion/serverless-client':
-        specifier: 4.0.304
-        version: 4.0.304
-      '@remotion/streaming':
-        specifier: 4.0.304
-        version: 4.0.304
-      mime-types:
-        specifier: ^3.0.1
-        version: 3.0.1
       remotion:
         specifier: 4.0.304
         version: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -2998,9 +2980,6 @@ packages:
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
-
-  '@remotion/captions@4.0.304':
-    resolution: {integrity: sha512-cmkkKNJ47/e5WyxyOzm8fpqL06yjqdqGOuszG6TBmWJn6i+KPlkTiKM6TqVqGvgBy+4WSCeQ18OsEHzN78bm5A==}
 
   '@remotion/cli@4.0.304':
     resolution: {integrity: sha512-kn9+IsYmsBPg71fFA3ikGxlT0qYZH4SlD/5XOJMxXcPruO4Pa35DjJZLrf9qlDVZqv68cPFhd3L5Dd7aCWlqhg==}
@@ -12553,14 +12532,14 @@ snapshots:
     dependencies:
       '@remotion/studio': 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@remotion/studio-shared': 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      css-loader: 5.2.7(webpack@5.96.1(esbuild@0.25.0))
+      css-loader: 5.2.7(webpack@5.96.1)
       esbuild: 0.25.0
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       react-refresh: 0.9.0
       remotion: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       source-map: 0.7.3
-      style-loader: 4.0.0(webpack@5.96.1(esbuild@0.25.0))
+      style-loader: 4.0.0(webpack@5.96.1)
       webpack: 5.96.1(esbuild@0.25.0)
     transitivePeerDependencies:
       - '@swc/core'
@@ -12569,8 +12548,6 @@ snapshots:
       - uglify-js
       - utf-8-validate
       - webpack-cli
-
-  '@remotion/captions@4.0.304': {}
 
   '@remotion/cli@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
@@ -14757,7 +14734,7 @@ snapshots:
 
   crypto-js@4.2.0: {}
 
-  css-loader@5.2.7(webpack@5.96.1(esbuild@0.25.0)):
+  css-loader@5.2.7(webpack@5.96.1):
     dependencies:
       icss-utils: 5.1.0(postcss@8.5.3)
       loader-utils: 2.0.4
@@ -19199,7 +19176,7 @@ snapshots:
 
   stubs@3.0.0: {}
 
-  style-loader@4.0.0(webpack@5.96.1(esbuild@0.25.0)):
+  style-loader@4.0.0(webpack@5.96.1):
     dependencies:
       webpack: 5.96.1(esbuild@0.25.0)
 
@@ -19341,7 +19318,7 @@ snapshots:
       - encoding
       - supports-color
 
-  terser-webpack-plugin@5.3.14(esbuild@0.25.0)(webpack@5.96.1(esbuild@0.25.0)):
+  terser-webpack-plugin@5.3.14(esbuild@0.25.0)(webpack@5.96.1):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
@@ -20049,7 +20026,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.14(esbuild@0.25.0)(webpack@5.96.1(esbuild@0.25.0))
+      terser-webpack-plugin: 5.3.14(esbuild@0.25.0)(webpack@5.96.1)
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     transitivePeerDependencies:

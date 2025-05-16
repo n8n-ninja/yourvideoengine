@@ -1,0 +1,23 @@
+{
+  "name": "upload-to-s3",
+  "version": "1.0.0",
+  "description": "AWS Lambda function to upload files from URL to S3",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "d": "tsc && serverless deploy"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.438.0",
+    "axios": "^1.5.1",
+    "serverless-plugin-typescript": "^2.1.5",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.125",
+    "@types/node": "^20.8.7",
+    "@types/uuid": "^9.0.6",
+    "serverless": "^3.35.2",
+    "typescript": "^5.2.2"
+  }
+}

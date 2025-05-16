@@ -6,6 +6,7 @@ import { z } from "zod"
  */
 export const CameraSchema = z.object({
   videoUrl: z.string(),
+  onError: z.function().args(z.any()).optional(),
   animationKeyframes: z
     .array(
       z.object({
