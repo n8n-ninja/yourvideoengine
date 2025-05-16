@@ -1,196 +1,147 @@
-import { Composition } from "remotion"
-import { getInputProps } from "remotion"
-
+import "./fonts.css"
+import { Composition, getInputProps } from "remotion"
 import {
-  BlacksmithComposition,
-  BlacksmithSchema,
-} from "@/compositions/BlacksmithShorts/Composition"
-import {
-  DemoShortsComposition,
-  DemoShortsSchema,
-} from "@/compositions/DemoShorts/Composition"
-import {
-  CaptionsComposition,
-  CaptionsSchema,
-} from "@/compositions/Captions/Composition"
-
-type InputProps = {
-  durationInFrames?: number
-  // tu peux ajouter ici les autres props si besoin
-}
-
-const inputProps = getInputProps<InputProps>()
-const duration = inputProps?.durationInFrames ?? 1350
-
+  EditComponent,
+  editSchema,
+  calculateMetadata as editCalculateMetadata,
+} from "@/compositions/EditComposition"
+import { z } from "zod"
 export const RemotionRoot: React.FC = () => {
+  const inputProps = getInputProps<{
+    fps: number
+    width: number
+    height: number
+    global: z.infer<typeof editSchema>["global"]
+    scenes: z.infer<typeof editSchema>["scenes"]
+  }>()
+
+  const fps = inputProps.fps || 30
+  const width = inputProps.width || 1080
+  const height = inputProps.height || 1920
+
   return (
     <>
       <Composition
-        id="Demo"
-        component={DemoShortsComposition}
-        durationInFrames={duration}
-        fps={30}
-        width={1080}
-        height={1920}
-        schema={DemoShortsSchema}
+        id="Edit"
+        component={EditComponent}
+        schema={editSchema}
+        durationInFrames={1}
+        fps={fps}
+        width={width}
+        height={height}
         defaultProps={{
-          text: "Receive a summary of your emails in Notion",
-        }}
-      />
-      <Composition
-        id="BlacksmithShort"
-        component={BlacksmithComposition}
-        durationInFrames={duration}
-        fps={30}
-        width={1080}
-        height={1920}
-        schema={BlacksmithSchema}
-        defaultProps={{
-          number: 1,
-          problem: "You write product descriptions one by one?",
-          solution_1: "Let AI generate high-converting text",
-          solution_2: "based on your product features.",
-          hero_image:
-            "https://img.theapi.app/temp/30dda8f7-54b9-4f76-89ff-2d26113878d2.png",
-          steps: [
+          scenes: [
             {
-              logo: "https://themovemento.s3.eu-west-1.amazonaws.com/logos-services/shopify.png",
-              note: "A new product is created",
-              node: "Shopify",
+              camera: {
+                videoUrl:
+                  "https://your-video-engine-uploads.s3.us-east-1.amazonaws.com/uploads/4fce909b-5604-4f8d-8a86-d5962d7313a8.mp4",
+                animationKeyframes: [
+                  {
+                    time: 0,
+                    value: {
+                      scale: 1,
+                      blur: 10,
+                    },
+                  },
+                  {
+                    time: 1,
+                    value: {
+                      scale: 1.2,
+                      blur: 0,
+                    },
+                  },
+                ],
+              },
+              durationInFrames: 91.2,
             },
             {
-              logo: "https://themovemento.s3.eu-west-1.amazonaws.com/logos-services/perplexity.png",
-              note: "Fetch similar product references",
-              node: "Perplexity",
+              camera: {
+                videoUrl:
+                  "https://your-video-engine-uploads.s3.us-east-1.amazonaws.com/uploads/5d613ac4-8c4b-47aa-bf06-22fe0d7a179f.mp4",
+                animationKeyframes: [
+                  {
+                    time: 0,
+                    value: {
+                      scale: 1,
+                      blur: 10,
+                    },
+                  },
+                  {
+                    time: 1,
+                    value: {
+                      scale: 1.2,
+                      blur: 0,
+                    },
+                  },
+                ],
+              },
+              durationInFrames: 129.60000000000002,
             },
             {
-              logo: "https://themovemento.s3.eu-west-1.amazonaws.com/logos-services/openai.png",
-              note: "Write a catchy description",
-              node: "OpenAI",
+              camera: {
+                videoUrl:
+                  "https://your-video-engine-uploads.s3.us-east-1.amazonaws.com/uploads/811637bc-cfd4-406e-8831-a56e3e05479e.mp4",
+                animationKeyframes: [
+                  {
+                    time: 0,
+                    value: {
+                      scale: 1,
+                      blur: 10,
+                    },
+                  },
+                  {
+                    time: 1,
+                    value: {
+                      scale: 1.2,
+                      blur: 0,
+                    },
+                  },
+                ],
+              },
+              durationInFrames: 248.39999999999998,
             },
             {
-              logo: "https://themovemento.s3.eu-west-1.amazonaws.com/logos-services/shopify.png",
-              note: "Update the product with the new text",
-              node: "Shopify",
+              camera: {
+                videoUrl:
+                  "https://your-video-engine-uploads.s3.us-east-1.amazonaws.com/uploads/70322735-953b-41f2-b5d9-54fd50ae4549.mp4",
+                animationKeyframes: [
+                  {
+                    time: 0,
+                    value: {
+                      scale: 1,
+                      blur: 10,
+                    },
+                  },
+                  {
+                    time: 1,
+                    value: {
+                      scale: 1.2,
+                      blur: 0,
+                    },
+                  },
+                ],
+              },
+              durationInFrames: 631.1999999999999,
             },
           ],
-        }}
-      />
-      <Composition
-        id="Captions"
-        component={CaptionsComposition}
-        durationInFrames={300}
-        fps={30}
-        width={1080}
-        height={1920}
-        schema={CaptionsSchema}
-        defaultProps={{
-          videoUrl:
-            "https://files2.heygen.ai/aws_pacific/avatar_tmp/57ec360eba014be689b1992950c520f7/873be32229784da083ceac3b7eebefe0.mp4?Expires=1747395461&Signature=KBw-prseIuyekM~u~pN1vD3c~qJ2wDKe8ivG7bW3yolHza4AUh--MNHy3IuHpSEW12B5Ig4CWHnJlrnLhgWJJjHVV3d-uAfrkD3bzsslVx64AhpUtw2f2bAT-VXBaNN2hbQw7ZkZRflgiDTuuLT1PY~6hb1--g5ZMk4CfU0ENlYy4w~JvwagQfyYBc2Mdp0lhRp2NSrRzSoWZfEuUZSz825GWAQ51O6P09F8nRYn18rhBKktJ8Qx~LI1fuZkEmeMKHkBMiEMRlSyrQpfzqhCSZoqeImVUPT-0~YhR0U0jqklBJF5zaNWSGwDdpJW94NgSj-AgyyYVWmU~OQnIwzWXA__&Key-Pair-Id=K38HBHX5LX3X2H",
-          words: [
-            { word: "i", start: 0.16, end: 0.39999998, confidence: 0.9945897 },
-            {
-              word: "take",
-              start: 0.39999998,
-              end: 0.64,
-              confidence: 0.99927014,
+          global: {
+            captions: {
+              words: [{ word: "", start: 0, end: 0 }],
+              position: {
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                horizontalAlign: "start" as const,
+                verticalAlign: "start" as const,
+              },
+              multiColors: [""],
+              combineTokensWithinMilliseconds: 0,
+              activeWordStyle: "font-size: 130px;",
             },
-            { word: "zest", start: 0.64, end: 0.96, confidence: 0.6917163 },
-            {
-              word: "colostrum",
-              start: 0.96,
-              end: 1.4399999,
-              confidence: 0.85760194,
-            },
-            {
-              word: "gummies",
-              start: 1.4399999,
-              end: 1.76,
-              confidence: 0.97747153,
-            },
-            { word: "because", start: 1.76, end: 2, confidence: 0.9958307 },
-            { word: "the", start: 2, end: 2.08, confidence: 0.9996182 },
-            { word: "peach", start: 2.08, end: 2.32, confidence: 0.9992298 },
-            {
-              word: "flavor",
-              start: 2.32,
-              end: 2.6399999,
-              confidence: 0.9978229,
-            },
-            {
-              word: "actually",
-              start: 2.6399999,
-              end: 2.96,
-              confidence: 0.9991147,
-            },
-            {
-              word: "makes",
-              start: 2.96,
-              end: 3.1999998,
-              confidence: 0.99987113,
-            },
-            { word: "me", start: 3.1999998, end: 3.36, confidence: 0.9997949 },
-            { word: "wanna", start: 3.36, end: 3.6, confidence: 0.5926703 },
-            { word: "take", start: 3.6, end: 3.84, confidence: 0.9983216 },
-            { word: "them", start: 3.84, end: 4.32, confidence: 0.9944036 },
-            { word: "two", start: 4.4, end: 4.64, confidence: 0.9886761 },
-            { word: "a", start: 4.64, end: 4.7999997, confidence: 0.99710697 },
-            { word: "day", start: 4.7999997, end: 4.88, confidence: 0.999574 },
-            { word: "for", start: 4.88, end: 5.04, confidence: 0.9997718 },
-            {
-              word: "gut",
-              start: 5.04,
-              end: 5.2799997,
-              confidence: 0.99929225,
-            },
-            {
-              word: "repair",
-              start: 5.2799997,
-              end: 5.8399997,
-              confidence: 0.99716467,
-            },
-            {
-              word: "immunity",
-              start: 5.8399997,
-              end: 6.3999996,
-              confidence: 0.9859638,
-            },
-            {
-              word: "and",
-              start: 6.3999996,
-              end: 6.56,
-              confidence: 0.99984396,
-            },
-            {
-              word: "energy",
-              start: 6.56,
-              end: 7.2799997,
-              confidence: 0.96213496,
-            },
-            { word: "it's", start: 7.2799997, end: 7.6, confidence: 0.9983943 },
-            { word: "the", start: 7.6, end: 7.68, confidence: 0.9997589 },
-            { word: "easiest", start: 7.68, end: 8, confidence: 0.9998888 },
-            { word: "switch", start: 8, end: 8.32, confidence: 0.9995395 },
-            {
-              word: "i've",
-              start: 8.32,
-              end: 8.559999,
-              confidence: 0.99952996,
-            },
-            {
-              word: "made",
-              start: 8.559999,
-              end: 8.72,
-              confidence: 0.99590564,
-            },
-          ],
-          style: {
-            color: "#fff",
-            fontSize: 70,
-            backgroundColor: "rgba(0,0,0,0.7)",
-            fontFamily: "Arial Black, Arial, sans-serif",
           },
         }}
+        calculateMetadata={editCalculateMetadata}
       />
     </>
   )
