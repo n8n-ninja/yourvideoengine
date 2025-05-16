@@ -4,33 +4,13 @@ import { z } from "zod"
 import { createTikTokStyleCaptions } from "@remotion/captions"
 import { getPosition } from "@/utils/getPosition"
 import { parseStyleString } from "@/utils/getStyle"
-import { PositionSchema } from "@/schemas"
+import { CaptionSchema } from "@/schemas"
 
 // Default style for the active word
 const defaultActiveWordStyle: React.CSSProperties = {
   zIndex: 100,
   position: "relative",
 }
-
-/**
- * CaptionSchema: zod schema for caption props validation.
- */
-export const CaptionSchema = z.object({
-  words: z.array(
-    z.object({
-      word: z.string(),
-      start: z.number(),
-      end: z.number(),
-      confidence: z.number().optional(),
-    }),
-  ),
-  position: PositionSchema.optional(),
-  boxStyle: z.union([z.record(z.any()), z.string()]).optional(),
-  textStyle: z.union([z.record(z.any()), z.string()]).optional(),
-  activeWordStyle: z.union([z.record(z.any()), z.string()]).optional(),
-  multiColors: z.array(z.string()).optional(),
-  combineTokensWithinMilliseconds: z.number().optional(),
-})
 
 /**
  * Caption: displays TikTok-style synchronized captions with dynamic styles and active word highlighting.

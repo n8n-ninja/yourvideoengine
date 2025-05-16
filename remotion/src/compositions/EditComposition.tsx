@@ -1,11 +1,10 @@
 import React from "react"
-import { Composition, getInputProps } from "remotion"
+import { CalculateMetadataFunction } from "remotion"
 import { springTiming, TransitionSeries } from "@remotion/transitions"
 import { z } from "zod"
 import { Caption } from "@/components/Caption"
 import { Camera } from "@/components/Camera"
 import { Title } from "@/components/Title"
-import editScenes from "./editProps.json"
 import { Sound } from "@/components/Sound"
 import { Overlay } from "@/components/Overlay"
 import {
@@ -18,10 +17,13 @@ import {
 } from "@/schemas"
 import { getTransition } from "@/utils/getTransition"
 
-const calculateDurationInFrames = (
-  scenes: z.infer<typeof editSchema>["scenes"] = [],
+export const calculateDurationInFrames = (
+  scenes: z.infer<typeof editSchema>["scenes"],
 ) => {
   let totalDurationInFrames = 0
+
+  if (!scenes) return 1
+
   for (const [index, scene] of scenes.entries()) {
     const duration = scene.durationInFrames ?? 1
     totalDurationInFrames += duration
@@ -29,42 +31,58 @@ const calculateDurationInFrames = (
       totalDurationInFrames -= scene.transition.duration || 30
     }
   }
-  return Math.round(totalDurationInFrames)
+
+  return Math.round(totalDurationInFrames) || 1
+}
+
+export const calculateMetadata: CalculateMetadataFunction<{
+  scenes?: z.infer<typeof editSchema>["scenes"]
+  global?: z.infer<typeof editSchema>["global"]
+}> = ({ props, defaultProps }) => {
+  const scenes = props.scenes || defaultProps.scenes || []
+  const global = props.global || defaultProps.global || {}
+
+  return {
+    durationInFrames: calculateDurationInFrames(scenes),
+    props: {
+      scenes,
+      global,
+    },
+  }
 }
 
 export const editSchema = z.object({
-  fps: z.number(),
-  width: z.number(),
-  height: z.number(),
-  scenes: z.array(
-    z.object({
-      durationInFrames: z.number(),
-      camera: CameraSchema,
-      transition: TransitionSchema.optional(),
-      captions: CaptionSchema.optional(),
-      titles: TitlesSchema.optional(),
+  scenes: z
+    .array(
+      z.object({
+        durationInFrames: z.number(),
+        camera: CameraSchema,
+        transition: TransitionSchema.optional(),
+        captions: CaptionSchema.optional(),
+        titles: TitlesSchema.optional(),
+        sounds: SoundsSchema.optional(),
+        overlays: z.array(z.any()).optional(),
+      }),
+    )
+    .optional()
+    .default([]),
+  global: z
+    .object({
       sounds: SoundsSchema.optional(),
-      overlays: z.array(z.any()).optional(),
-    }),
-  ),
-  sounds: SoundsSchema.optional(),
-  titles: TitlesSchema.optional(),
-  captions: CaptionSchema.optional(),
-  overlays: z.array(z.any()).optional(),
+      titles: TitlesSchema.optional(),
+      captions: CaptionSchema.optional(),
+      // overlays: z.array(z.any()).optional(),
+    })
+    .optional()
+    .default({}),
 })
 
 export const EditComponent = ({
   scenes = [],
-  sounds,
-  titles,
-  captions,
-  overlays,
+  global,
 }: {
   scenes?: z.infer<typeof editSchema>["scenes"]
-  sounds?: z.infer<typeof editSchema>["sounds"]
-  titles?: z.infer<typeof editSchema>["titles"]
-  captions?: z.infer<typeof editSchema>["captions"]
-  overlays?: z.infer<typeof editSchema>["overlays"]
+  global?: z.infer<typeof editSchema>["global"]
 }) => {
   return (
     <>
@@ -84,45 +102,18 @@ export const EditComponent = ({
             >
               <Camera {...scene.camera} />
               {scene.overlays && <Overlay overlays={scene.overlays} />}
-              {scene.captions && <Caption {...scene.captions} />}
+              {scene.captions && <Caption captions={scene.captions} />}
               {scene.titles && <Title titles={scene.titles} />}
               {scene.sounds && <Sound sounds={scene.sounds} />}
             </TransitionSeries.Sequence>
           </React.Fragment>
         ))}
       </TransitionSeries>
-      {sounds && <Sound sounds={sounds} />}
-      {titles && <Title titles={titles} />}
-      {captions && <Caption {...captions} />}
-      {overlays && <Overlay overlays={overlays} />}
-    </>
-  )
-}
 
-export const EditComposition = () => {
-  const inputProps = getInputProps<z.infer<typeof editSchema>>()
-  const scenes = inputProps.scenes || editScenes.scenes
-  const sounds = inputProps.sounds
-  const fps = inputProps.fps || 30
-  const width = inputProps.width || 1080
-  const height = inputProps.height || 1920
-  const durationInFrames = calculateDurationInFrames(scenes)
-  return (
-    <Composition
-      id="Edit"
-      component={EditComponent}
-      schema={editSchema}
-      durationInFrames={durationInFrames}
-      fps={fps}
-      width={width}
-      height={height}
-      defaultProps={{
-        scenes,
-        sounds,
-        fps,
-        width,
-        height,
-      }}
-    />
+      {global?.sounds && <Sound sounds={global.sounds} />}
+      {global?.titles && <Title titles={global.titles} />}
+      {global?.captions && <Caption {...global.captions} />}
+      {global?.overlays && <Overlay overlays={global.overlays} />}
+    </>
   )
 }

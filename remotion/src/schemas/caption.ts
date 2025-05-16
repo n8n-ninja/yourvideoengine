@@ -12,7 +12,6 @@ export const CaptionSchema = z.object({
       word: z.string(),
       start: z.number(),
       end: z.number(),
-      confidence: z.number().optional(),
     }),
   ),
   position: PositionSchema.optional(),

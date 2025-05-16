@@ -5,10 +5,7 @@ import { z } from "zod"
  * Supports type, duration, direction, wipeDirection, and sound.
  */
 export const TransitionSchema = z.object({
-  type: z
-    .enum(["fade", "wipe", "slide", "flip", "clockWipe"])
-    .optional()
-    .default("fade"),
+  type: z.enum(["fade", "wipe", "slide", "flip", "clockWipe"]),
   duration: z.number().optional(),
   direction: z
     .enum(["from-left", "from-right", "from-top", "from-bottom"])
