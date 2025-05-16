@@ -1,5 +1,3 @@
-import { Style } from "@/schemas"
-
 /**
  * Parses a CSS style string into a React.CSSProperties object.
  * Supports kebab-case to camelCase conversion.
@@ -24,20 +22,17 @@ export function parseStyleString(style: string): React.CSSProperties {
 }
 
 /**
- * Merges a user style (string or object) with a base style.
- * If userStyle is a string, it is parsed as CSS. If an object, it is merged directly.
+ * Merges a user style string with a base style.
+ * If userStyle is a string, it is parsed as CSS. If undefined, returns baseStyle.
  *
- * @param userStyle The user style (string or object).
+ * @param userStyle The user style string.
  * @param baseStyle The base style (default: empty object).
  * @returns The merged React.CSSProperties object.
  */
 export function getStyle(
-  userStyle: Style | undefined,
+  userStyle: string | undefined,
   baseStyle: React.CSSProperties = {},
 ): React.CSSProperties {
   if (!userStyle) return baseStyle
-  if (typeof userStyle === "string") {
-    return { ...baseStyle, ...parseStyleString(userStyle) }
-  }
-  return { ...baseStyle, ...(userStyle as React.CSSProperties) }
+  return { ...baseStyle, ...parseStyleString(userStyle) }
 }

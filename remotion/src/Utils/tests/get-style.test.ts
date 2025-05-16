@@ -38,17 +38,8 @@ describe("getStyle", () => {
     ).toEqual({ color: "blue", margin: "2px", fontSize: "12px" })
   })
 
-  it("merges baseStyle and userStyle object", () => {
-    expect(
-      getStyle(
-        { color: "blue", fontWeight: "bold" },
-        { color: "red", margin: "2px" },
-      ),
-    ).toEqual({ color: "blue", margin: "2px", fontWeight: "bold" })
-  })
-
-  it("returns userStyle object if baseStyle is empty", () => {
-    expect(getStyle({ color: "blue" }, {})).toEqual({ color: "blue" })
+  it("returns baseStyle if userStyle is empty string", () => {
+    expect(getStyle("", { color: "blue" })).toEqual({ color: "blue" })
   })
 
   it("returns parseStyleString(userStyle) if baseStyle is empty and userStyle is string", () => {
@@ -59,8 +50,5 @@ describe("getStyle", () => {
     expect(getStyle("color:blue;", { color: "red", fontSize: "10px" })).toEqual(
       { color: "blue", fontSize: "10px" },
     )
-    expect(
-      getStyle({ color: "blue" }, { color: "red", fontSize: "10px" }),
-    ).toEqual({ color: "blue", fontSize: "10px" })
   })
 })

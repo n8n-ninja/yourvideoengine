@@ -4,7 +4,7 @@ import { PositionSchema } from "./position"
 import { TransitionSchema } from "./transition"
 import { LetterAnimationConfigSchema } from "./letter-animation"
 import { titleThemes, letterAnimationPresets } from "@/components/title/themes"
-
+import { StyleSchema } from "./style"
 const themeNames = Object.keys(titleThemes)
 const animationPresetNames = Object.keys(letterAnimationPresets)
 
@@ -22,7 +22,7 @@ export const TitlesSchema = z.array(
     theme: z.enum(themeNames as [string, ...string[]]).optional(),
     timing: TimingSchema.optional(),
     position: PositionSchema.optional(),
-    style: z.object({}).passthrough().optional(),
+    style: StyleSchema.optional(),
     transition: TransitionSchema.optional(),
     letterAnimation: LetterAnimationSchema.optional(),
   }),

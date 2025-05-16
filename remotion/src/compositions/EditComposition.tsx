@@ -71,7 +71,7 @@ export const editSchema = z.object({
       sounds: SoundsSchema.optional(),
       titles: TitlesSchema.optional(),
       captions: CaptionSchema.optional(),
-      // overlays: z.array(z.any()).optional(),
+      overlays: z.array(z.any()).optional(),
     })
     .optional()
     .default({}),
@@ -112,7 +112,7 @@ export const EditComponent = ({
 
       {global?.sounds && <Sound sounds={global.sounds} />}
       {global?.titles && <Title titles={global.titles} />}
-      {global?.captions && <Caption {...global.captions} />}
+      {global?.captions && <Caption captions={global.captions} />}
       {global?.overlays && <Overlay overlays={global.overlays} />}
     </>
   )

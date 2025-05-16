@@ -37,6 +37,22 @@ export const RemotionRoot: React.FC = () => {
                 videoUrl:
                   "https://aiatelier.s3.eu-west-1.amazonaws.com/temporary-uploads/1747260842473-thais-demo-1.mp4",
               },
+              captions: {
+                words: [{ word: "defefezfze", start: 0, end: 114 }],
+                position: {
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  horizontalAlign: "center" as const,
+                  verticalAlign: "center" as const,
+                },
+                boxStyle: "",
+                textStyle: "color: red;",
+                activeWordStyle: "color: blue;",
+                multiColors: [],
+                combineTokensWithinMilliseconds: 0,
+              },
             },
             {
               durationInFrames: 219,
@@ -59,6 +75,7 @@ export const RemotionRoot: React.FC = () => {
               },
               multiColors: [""],
               combineTokensWithinMilliseconds: 0,
+              activeWordStyle: "font-size: 130px;",
             },
           },
         }}

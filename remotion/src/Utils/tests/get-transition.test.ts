@@ -15,7 +15,7 @@ vi.mock("@remotion/transitions/flip", () => ({ flip: vi.fn(() => "flip") }))
 vi.mock("@remotion/transitions/clock-wipe", () => ({
   clockWipe: vi.fn(() => "clockWipe"),
 }))
-vi.mock("./addSound", () => ({
+vi.mock("../addSound", () => ({
   addSound: vi.fn((pres, sound) => ({ pres, sound })),
 }))
 vi.mock("remotion", () => ({ staticFile: (p: string) => `/static${p}` }))

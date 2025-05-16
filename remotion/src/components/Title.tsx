@@ -6,6 +6,7 @@ import { useTiming } from "@/hooks/useTiming"
 import { useRevealTransition } from "@/hooks/useRevealTransition"
 import { getPosition } from "@/utils/getPosition"
 import { Title as TitleType, TransitionReveal } from "@/schemas"
+import { parseStyleString } from "@/utils/getStyle"
 
 // Base style for all titles
 const baseStyle: React.CSSProperties = {
@@ -36,10 +37,11 @@ const TitleItemDisplay: React.FC<{ title: TitleType }> = ({ title }) => {
     endFrame: timing.endFrame,
   })
   const themeStyle = titleThemes[title.theme ?? "minimal"]
+  const titleStyle = title.style ? parseStyleString(title.style) : {}
   const style = {
     ...baseStyle,
     ...themeStyle,
-    ...title.style,
+    ...titleStyle,
     ...transitionStyle,
   }
   let letterAnimationConfig = null
