@@ -6,21 +6,21 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "@remotion/cli": "4.0.298",
-    "@remotion/google-fonts": "4.0.298",
-    "@remotion/lambda": "4.0.298",
-    "@remotion/motion-blur": "4.0.298",
-    "@remotion/transitions": "4.0.298",
-    "@remotion/zod-types": "4.0.298",
+    "remotion": "4.0.304",
+    "@remotion/cli": "4.0.304",
+    "@remotion/google-fonts": "4.0.304",
+    "@remotion/lambda": "4.0.304",
+    "@remotion/motion-blur": "4.0.304",
+    "@remotion/transitions": "4.0.304",
+    "@remotion/zod-types": "4.0.304",
     "@types/express": "^5.0.1",
     "express": "^5.1.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "remotion": "4.0.298",
     "zod": "3.22.3"
   },
   "devDependencies": {
-    "@remotion/eslint-config-flat": "4.0.298",
+    "@remotion/eslint-config-flat": "4.0.304",
     "@types/node": "^22.15.18",
     "@types/react": "19.0.0",
     "@types/web": "0.0.166",
@@ -29,16 +29,17 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths-webpack-plugin": "^4.2.0",
     "typescript": "5.8.2",
-    "vitest": "^3.1.3",
-    "zod-to-json-schema": "^3.24.5"
+    "vitest": "^3.1.3"
   },
   "scripts": {
     "dev": "remotion studio",
     "build": "remotion bundle",
-    "upgrade": "remotion upgrade",
+    "upgrade": "npx remotion upgrade",
     "lint": "eslint src && tsc",
     "api": "ts-node src/api.ts",
-    "d": "npx remotion lambda sites create src/index.ts --site-name=yourvideoengine",
+    "d": "npx remotion lambda sites create src/index.ts --site-name=yourvideoengine-dev",
+    "d:prod": "npx remotion lambda sites create src/index.ts --site-name=yourvideoengine-prod",
+    "d:engine": "npx remotion lambda functions deploy --disk 10240 --timeout 900",
     "test": "vitest"
   },
   "sideEffects": [

@@ -7,6 +7,8 @@ provider:
   timeout: 29
   deploymentBucket:
     name: manu-remotion-deployments
+  environment:
+    REMOTION_ENV: ${opt:stage, 'dev'}
   iam:
     role:
       statements:
@@ -40,3 +42,8 @@ functions:
             parameters:
               querystrings:
                 renderId: true
+
+custom:
+  stages:
+    - dev
+    - prod

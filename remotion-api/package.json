@@ -2,8 +2,11 @@
   "name": "lambda-api",
   "version": "1.0.0",
   "main": "handler.js",
+  "scripts": {
+    "d": "serverless deploy"
+  },
   "dependencies": {
-    "@remotion/captions": "4.0.298",
-    "@remotion/lambda": "4.0.298"
+    "@remotion/lambda": "4.0.304",
+    "remotion": "4.0.304"
   }
 }

@@ -1,16 +1,23 @@
 /* global process */
-const {
-  renderMediaOnLambda,
-  getRenderProgress,
-} = require("@remotion/lambda/client")
+const { renderMediaOnLambda, getRenderProgress } = require("@remotion/lambda")
+const { getConfig } = require("./config")
 
-const REMOTION_LAMBDA_FUNCTION_NAME = "remotion-render-4-0-293-mem2048mb-disk10240mb-900sec";
-const REMOTION_URL = "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com"
+// Helper function to detect environment from request
+const detectEnvironment = (event) => {
+  // First try to extract from API Gateway stage (most reliable)
+  if (event.requestContext && event.requestContext.stage) {
+    return event.requestContext.stage === "prod" ? "prod" : "dev"
+  }
+
+  // Then use the environment variable set during deployment
+  // (serverless.yml sets REMOTION_ENV: ${opt:stage, 'dev'})
+  return process.env.REMOTION_ENV || "dev"
+}
+
 module.exports.renderVideo = async (event) => {
   try {
     const body = JSON.parse(event.body)
     const {
-      serveUrl,
       composition,
       inputProps,
       framesPerLambda,
@@ -20,8 +27,12 @@ module.exports.renderVideo = async (event) => {
       customData,
     } = body
 
+    // Automatically detect environment from request
+    const environment = detectEnvironment(event)
+    const config = getConfig(environment)
+
     const { renderId, bucketName } = await renderMediaOnLambda({
-      serveUrl,
+      serveUrl: body.serveUrl || config.serveUrl,
       composition,
       inputProps: {
         ...inputProps,
@@ -29,7 +40,7 @@ module.exports.renderVideo = async (event) => {
       },
       region: "us-east-1",
       codec: "h264",
-      functionName: REMOTION_LAMBDA_FUNCTION_NAME,
+      functionName: config.remotionLambdaFunctionName,
       framesPerLambda: framesPerLambda ?? 12,
       webhook: webhookUrl
         ? {
@@ -40,7 +51,7 @@ module.exports.renderVideo = async (event) => {
       customData,
     })
 
-    const statusUrl = `${REMOTION_URL}/dev/status?renderId=${renderId}&bucketName=${bucketName}`
+    const statusUrl = `${config.remotionUrl}/status?renderId=${renderId}&bucketName=${bucketName}`
 
     return {
       statusCode: 200,
@@ -49,6 +60,7 @@ module.exports.renderVideo = async (event) => {
         renderId,
         bucketName,
         statusUrl,
+        environment,
       }),
     }
   } catch (err) {
@@ -65,6 +77,9 @@ module.exports.getStatus = async (event) => {
     const renderId = event.queryStringParameters?.renderId
     const bucketName = event.queryStringParameters?.bucketName
 
+    // Automatically detect environment from request
+    const environment = detectEnvironment(event)
+
     if (!renderId || !bucketName) {
       return {
         statusCode: 400,
@@ -75,16 +90,22 @@ module.exports.getStatus = async (event) => {
       }
     }
 
+    const config = getConfig(environment)
+
     const result = await getRenderProgress({
       renderId,
       bucketName,
       region: "us-east-1",
-      functionName: REMOTION_LAMBDA_FUNCTION_NAME,
+      functionName: config.remotionLambdaFunctionName,
     })
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, ...result }),
+      body: JSON.stringify({
+        success: true,
+        ...result,
+        environment,
+      }),
     }
   } catch (err) {
     console.error("❌ getStatus error:", err)

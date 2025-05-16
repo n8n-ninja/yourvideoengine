@@ -1,15 +1,11 @@
 import { renderMediaOnLambda } from "@remotion/lambda/client"
 
-const { bucketName, renderId } = await renderMediaOnLambda({
+await renderMediaOnLambda({
   region: "us-east-1",
-  functionName: "remotion-render-bds9aab",
-  composition: "BlacksmithShort",
+  functionName: "remotion-render-4-0-304-mem2048mb-disk10240mb-900sec",
+  composition: "Edit",
   serveUrl:
-    "https://remotionlambda-useast1-xw8v2xhmyv.s3.us-east-1.amazonaws.com/sites/blacksmith-shorts",
+    "https://remotionlambda-useast1-xw8v2xhmyv.s3.us-east-1.amazonaws.com/sites/yourvideoengine-dev",
   codec: "h264",
   framesPerLambda: 200,
 })
-
-console.log(`Rendu lancé avec succès!`)
-console.log(`Bucket: ${bucketName}`)
-console.log(`ID de rendu: ${renderId}`)

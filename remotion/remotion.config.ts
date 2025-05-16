@@ -15,5 +15,5 @@ Config.setVideoImageFormat("png")
 Config.setOverwriteOutput(true)
 
 export const getRenderMetadata = () => ({
-  maxFramesPerLambda: 200, // 👈 ça
+  maxFramesPerLambda: 200,
 })
