@@ -8,13 +8,15 @@ import { Caption as CaptionType } from "@/schemas"
 /**
  * Caption: displays TikTok-style synchronized captions with dynamic styles and active word highlighting.
  *
- * @param words Array of word objects with timing and optional confidence.
- * @param position Optional position for the caption container.
- * @param boxStyle Optional style for the caption box (object or CSS string).
- * @param textStyle Optional style for the text (object or CSS string).
- * @param activeWordStyle Optional style for the active word (object or CSS string).
- * @param multiColors Optional array of colors for active word cycling.
- * @param combineTokensWithinMilliseconds Optional merge window for tokens (default: 1400ms).
+ * @param captions An object of type CaptionType containing:
+ *   - words: Array of word objects with timing and optional confidence.
+ *   - position: (optional) Positioning for the caption container.
+ *   - boxStyle: (optional) Style for the caption box (object or CSS string).
+ *   - textStyle: (optional) Style for the text (object or CSS string).
+ *   - activeWordStyle: (optional) Style for the active word (object or CSS string).
+ *   - multiColors: (optional) Array of colors for active word cycling.
+ *   - combineTokensWithinMilliseconds: (optional) Merge window for tokens (default: 1400ms).
+ *
  * @returns An AbsoluteFill with styled captions, or nothing if no active page.
  */
 export const Caption: React.FC<{ captions: CaptionType }> = ({ captions }) => {

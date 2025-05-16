@@ -18,7 +18,7 @@ export const CaptionSchema = z.object({
   boxStyle: StyleSchema.optional(),
   textStyle: StyleSchema.optional(),
   activeWordStyle: StyleSchema.optional(),
-  multiColors: z.array(z.string()).optional(),
+  multiColors: z.array(z.string().default("#F7C500")).optional(),
   combineTokensWithinMilliseconds: z.number().optional(),
 })
 

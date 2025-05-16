@@ -38,7 +38,12 @@ export const RemotionRoot: React.FC = () => {
                   "https://aiatelier.s3.eu-west-1.amazonaws.com/temporary-uploads/1747260842473-thais-demo-1.mp4",
               },
               captions: {
-                words: [{ word: "defefezfze", start: 0, end: 114 }],
+                words: [
+                  { word: "Hemmp ", start: 0, end: 1 },
+                  { word: "test", start: 1, end: 2 },
+                  { word: "I ", start: 2, end: 3 },
+                  { word: "like", start: 4, end: 4.9998 },
+                ],
                 position: {
                   top: 0,
                   left: 0,
@@ -50,7 +55,7 @@ export const RemotionRoot: React.FC = () => {
                 boxStyle: "",
                 textStyle: "color: red;",
                 activeWordStyle: "color: blue;",
-                multiColors: [],
+                multiColors: ["orange", "blue", "pink"],
                 combineTokensWithinMilliseconds: 0,
               },
             },
