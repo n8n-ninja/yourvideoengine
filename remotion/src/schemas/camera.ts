@@ -22,6 +22,12 @@ export const CameraSchema = z.object({
       }),
     )
     .optional(),
+  offsetX: z.number().optional(),
+  offsetY: z.number().optional(),
+  style: z.string().optional(),
+  speed: z.number().optional(),
+  volume: z.number().optional(),
+  loop: z.boolean().optional(),
 })
 
 /**
