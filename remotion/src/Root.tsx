@@ -34,7 +34,7 @@ export const RemotionRoot: React.FC = () => {
             {
               camera: {
                 videoUrl:
-                  "https://your-video-engine-uploads.s3.us-east-1.amazonaws.com/uploads/4fce909b-5604-4f8d-8a86-d5962d7313a8.mp4",
+                  "https://diwa7aolcke5u.cloudfront.net/uploads/4fce909b-5604-4f8d-8a86-d5962d7313a8.mp4",
                 animationKeyframes: [
                   {
                     time: 0,
@@ -57,7 +57,7 @@ export const RemotionRoot: React.FC = () => {
             {
               camera: {
                 videoUrl:
-                  "https://your-video-engine-uploads.s3.us-east-1.amazonaws.com/uploads/5d613ac4-8c4b-47aa-bf06-22fe0d7a179f.mp4",
+                  "https://diwa7aolcke5u.cloudfront.net/uploads/5d613ac4-8c4b-47aa-bf06-22fe0d7a179f.mp4",
                 animationKeyframes: [
                   {
                     time: 0,
@@ -80,7 +80,7 @@ export const RemotionRoot: React.FC = () => {
             {
               camera: {
                 videoUrl:
-                  "https://your-video-engine-uploads.s3.us-east-1.amazonaws.com/uploads/811637bc-cfd4-406e-8831-a56e3e05479e.mp4",
+                  "https://diwa7aolcke5u.cloudfront.net/uploads/811637bc-cfd4-406e-8831-a56e3e05479e.mp4",
                 animationKeyframes: [
                   {
                     time: 0,
@@ -103,7 +103,7 @@ export const RemotionRoot: React.FC = () => {
             {
               camera: {
                 videoUrl:
-                  "https://your-video-engine-uploads.s3.us-east-1.amazonaws.com/uploads/70322735-953b-41f2-b5d9-54fd50ae4549.mp4",
+                  "https://diwa7aolcke5u.cloudfront.net/uploads/70322735-953b-41f2-b5d9-54fd50ae4549.mp4",
                 animationKeyframes: [
                   {
                     time: 0,
@@ -135,7 +135,7 @@ export const RemotionRoot: React.FC = () => {
                 horizontalAlign: "start" as const,
                 verticalAlign: "start" as const,
               },
-              multiColors: [""],
+              multiColors: ["#F7C500"],
               combineTokensWithinMilliseconds: 0,
               activeWordStyle: "font-size: 130px;",
             },

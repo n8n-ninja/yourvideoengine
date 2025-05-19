@@ -202,7 +202,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/upload-to-s3/dev/1747413885837-2025-05-16T16:44:45.837Z/uploadToS3.zip"
+                "S3Key": "serverless/upload-to-s3/dev/1747643973171-2025-05-19T08:39:33.171Z/uploadToS3.zip"
               },
               "Handler": "index.handler",
               "Runtime": "nodejs18.x",
@@ -225,14 +225,14 @@
               "UploadToS3LogGroup"
             ]
           },
-          "UploadToS3LambdaVersionAF8E68YwKNpUF03st9Q9lOL1e9ax2zlrP8hYUIHyxg": {
+          "UploadToS3LambdaVersionxrcufcQvPzDVZEgFDppINQ1a11qZ2BqEDlQz6icXYc": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "UploadToS3LambdaFunction"
               },
-              "CodeSha256": "qdgEmoQ49ps38OTX3XY7s1hUmTe+cCnJIMARiortPOY="
+              "CodeSha256": "5l/MCSeG2OyIWdHr2NGvN41HYD413WSUUg3V0KI29bE="
             }
           },
           "ApiGatewayRestApi": {
@@ -353,7 +353,7 @@
               "UploadToS3LambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1747413869347": {
+          "ApiGatewayDeployment1747643956703": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -416,7 +416,7 @@
           "UploadToS3LambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "UploadToS3LambdaVersionAF8E68YwKNpUF03st9Q9lOL1e9ax2zlrP8hYUIHyxg"
+              "Ref": "UploadToS3LambdaVersionxrcufcQvPzDVZEgFDppINQ1a11qZ2BqEDlQz6icXYc"
             },
             "Export": {
               "Name": "sls-upload-to-s3-dev-UploadToS3LambdaFunctionQualifiedArn"
@@ -585,7 +585,7 @@
         "timeout": 30,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "UploadToS3LambdaVersionAF8E68YwKNpUF03st9Q9lOL1e9ax2zlrP8hYUIHyxg"
+        "versionLogicalId": "UploadToS3LambdaVersionxrcufcQvPzDVZEgFDppINQ1a11qZ2BqEDlQz6icXYc"
       }
     },
     "configValidationMode": "warn",
@@ -599,7 +599,7 @@
       "package": {
         "individually": true,
         "artifactsS3KeyDirname": "serverless/upload-to-s3/dev/code-artifacts",
-        "artifactDirectoryName": "serverless/upload-to-s3/dev/1747413885837-2025-05-16T16:44:45.837Z"
+        "artifactDirectoryName": "serverless/upload-to-s3/dev/1747643973171-2025-05-19T08:39:33.171Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
@@ -616,7 +616,7 @@
   },
   "package": {
     "individually": true,
-    "artifactDirectoryName": "serverless/upload-to-s3/dev/1747413885837-2025-05-16T16:44:45.837Z",
+    "artifactDirectoryName": "serverless/upload-to-s3/dev/1747643973171-2025-05-19T08:39:33.171Z",
     "artifact": ""
   }
 }

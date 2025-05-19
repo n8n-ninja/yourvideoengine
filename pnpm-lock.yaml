@@ -299,22 +299,22 @@ importers:
     dependencies:
       '@remotion/cli':
         specifier: 4.0.304
-        version: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@remotion/google-fonts':
         specifier: 4.0.304
-        version: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@remotion/lambda':
         specifier: 4.0.304
-        version: 4.0.304(@remotion/bundler@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 4.0.304(@remotion/bundler@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@remotion/motion-blur':
         specifier: 4.0.304
-        version: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@remotion/transitions':
         specifier: 4.0.304
-        version: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@remotion/zod-types':
         specifier: 4.0.304
-        version: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(zod@3.22.3)
+        version: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.24.4)
       '@types/express':
         specifier: ^5.0.1
         version: 5.0.1
@@ -322,17 +322,17 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0
       react:
-        specifier: 19.0.0
-        version: 19.0.0
+        specifier: 18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: 19.0.0
-        version: 19.0.0(react@19.0.0)
+        specifier: 18.3.1
+        version: 18.3.1(react@18.3.1)
       remotion:
         specifier: 4.0.304
-        version: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       zod:
-        specifier: 3.22.3
-        version: 3.22.3
+        specifier: 3.24.4
+        version: 3.24.4
     devDependencies:
       '@remotion/eslint-config-flat':
         specifier: 4.0.304
@@ -341,8 +341,8 @@ importers:
         specifier: ^22.15.18
         version: 22.15.18
       '@types/react':
-        specifier: 19.0.0
-        version: 19.0.0
+        specifier: 18.3.20
+        version: 18.3.20
       '@types/web':
         specifier: 0.0.166
         version: 0.0.166
@@ -3748,9 +3748,6 @@ packages:
 
   '@types/react@18.3.20':
     resolution: {integrity: sha512-IPaCZN7PShZK/3t6Q87pfTkRm6oLTd4vztyoj+cbHUF1g3FfVb2tFIL79uCRKEfv16AhqDMBywP2VW3KIZUvcg==}
-
-  '@types/react@19.0.0':
-    resolution: {integrity: sha512-MY3oPudxvMYyesqs/kW1Bh8y9VqSmf+tzqw3ae8a9DZW68pUe3zAdHeI1jc6iAysuRdACnVknHP8AhwD4/dxtg==}
 
   '@types/readable-stream@4.0.18':
     resolution: {integrity: sha512-21jK/1j+Wg+7jVw1xnSwy/2Q1VgVjWuFssbYGTREPUBeZ+rqVFl2udq0IkxzPC0ZhOzVceUbyIACFZKLqKEBlA==}
@@ -12528,19 +12525,63 @@ snapshots:
     dependencies:
       web-streams-polyfill: 3.3.3
 
+  '@remotion/bundler@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@remotion/studio': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio-shared': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      css-loader: 5.2.7(webpack@5.96.1(esbuild@0.25.0))
+      esbuild: 0.25.0
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-refresh: 0.9.0
+      remotion: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      source-map: 0.7.3
+      style-loader: 4.0.0(webpack@5.96.1(esbuild@0.25.0))
+      webpack: 5.96.1(esbuild@0.25.0)
+    transitivePeerDependencies:
+      - '@swc/core'
+      - bufferutil
+      - supports-color
+      - uglify-js
+      - utf-8-validate
+      - webpack-cli
+
   '@remotion/bundler@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       '@remotion/studio': 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@remotion/studio-shared': 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      css-loader: 5.2.7(webpack@5.96.1)
+      css-loader: 5.2.7(webpack@5.96.1(esbuild@0.25.0))
       esbuild: 0.25.0
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       react-refresh: 0.9.0
       remotion: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       source-map: 0.7.3
-      style-loader: 4.0.0(webpack@5.96.1)
+      style-loader: 4.0.0(webpack@5.96.1(esbuild@0.25.0))
       webpack: 5.96.1(esbuild@0.25.0)
+    transitivePeerDependencies:
+      - '@swc/core'
+      - bufferutil
+      - supports-color
+      - uglify-js
+      - utf-8-validate
+      - webpack-cli
+
+  '@remotion/cli@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@remotion/bundler': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/media-utils': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/player': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/renderer': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio-server': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio-shared': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      dotenv: 9.0.2
+      minimist: 1.2.6
+      prompts: 2.4.2
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      remotion: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - '@swc/core'
       - bufferutil
@@ -12601,9 +12642,9 @@ snapshots:
       - supports-color
       - typescript
 
-  '@remotion/google-fonts@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@remotion/google-fonts@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      remotion: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      remotion: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - react
       - react-dom
@@ -12621,6 +12662,37 @@ snapshots:
       mime-types: 2.1.34
     transitivePeerDependencies:
       - aws-crt
+
+  '@remotion/lambda@4.0.304(@remotion/bundler@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@aws-sdk/client-cloudwatch-logs': 3.787.0
+      '@aws-sdk/client-iam': 3.787.0
+      '@aws-sdk/client-lambda': 3.787.0
+      '@aws-sdk/client-s3': 3.787.0
+      '@aws-sdk/client-service-quotas': 3.787.0
+      '@aws-sdk/client-sts': 3.787.0
+      '@aws-sdk/lib-storage': 3.787.0(@aws-sdk/client-s3@3.787.0)
+      '@aws-sdk/middleware-flexible-checksums': 3.787.0
+      '@aws-sdk/s3-request-presigner': 3.787.0
+      '@remotion/bundler': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/cli': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/lambda-client': 4.0.304
+      '@remotion/renderer': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/serverless': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/streaming': 4.0.304
+      '@smithy/abort-controller': 4.0.1
+      remotion: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      zod: 3.22.3
+    transitivePeerDependencies:
+      - '@swc/core'
+      - aws-crt
+      - bufferutil
+      - react
+      - react-dom
+      - supports-color
+      - uglify-js
+      - utf-8-validate
+      - webpack-cli
 
   '@remotion/lambda@4.0.304(@remotion/bundler@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
@@ -12657,25 +12729,60 @@ snapshots:
 
   '@remotion/media-parser@4.0.304': {}
 
+  '@remotion/media-utils@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      remotion: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+
   '@remotion/media-utils@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       remotion: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
 
-  '@remotion/motion-blur@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@remotion/motion-blur@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      react: 19.0.0
-      react-dom: 19.0.0(react@19.0.0)
-      remotion: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      remotion: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   '@remotion/paths@4.0.304': {}
+
+  '@remotion/player@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      remotion: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   '@remotion/player@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       remotion: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+
+  '@remotion/renderer@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@remotion/streaming': 4.0.304
+      execa: 5.1.1
+      extract-zip: 2.0.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      remotion: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      source-map: 0.8.0-beta.0
+      ws: 8.17.1
+    optionalDependencies:
+      '@remotion/compositor-darwin-arm64': 4.0.304
+      '@remotion/compositor-darwin-x64': 4.0.304
+      '@remotion/compositor-linux-arm64-gnu': 4.0.304
+      '@remotion/compositor-linux-arm64-musl': 4.0.304
+      '@remotion/compositor-linux-x64-gnu': 4.0.304
+      '@remotion/compositor-linux-x64-musl': 4.0.304
+      '@remotion/compositor-win32-x64-msvc': 4.0.304
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
 
   '@remotion/renderer@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
@@ -12702,6 +12809,22 @@ snapshots:
 
   '@remotion/serverless-client@4.0.304': {}
 
+  '@remotion/serverless@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@remotion/bundler': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/licensing': 4.0.304
+      '@remotion/renderer': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/serverless-client': 4.0.304
+    transitivePeerDependencies:
+      - '@swc/core'
+      - bufferutil
+      - react
+      - react-dom
+      - supports-color
+      - uglify-js
+      - utf-8-validate
+      - webpack-cli
+
   '@remotion/serverless@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       '@remotion/bundler': 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -12718,13 +12841,35 @@ snapshots:
       - utf-8-validate
       - webpack-cli
 
-  '@remotion/shapes@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@remotion/shapes@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@remotion/paths': 4.0.304
-      react: 19.0.0
-      react-dom: 19.0.0(react@19.0.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   '@remotion/streaming@4.0.304': {}
+
+  '@remotion/studio-server@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@babel/parser': 7.24.1
+      '@remotion/bundler': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/renderer': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio-shared': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      memfs: 3.4.3
+      open: 8.4.2
+      recast: 0.23.11
+      remotion: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      semver: 7.5.3
+      source-map: 0.7.3
+    transitivePeerDependencies:
+      - '@swc/core'
+      - bufferutil
+      - react
+      - react-dom
+      - supports-color
+      - uglify-js
+      - utf-8-validate
+      - webpack-cli
 
   '@remotion/studio-server@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
@@ -12748,12 +12893,40 @@ snapshots:
       - utf-8-validate
       - webpack-cli
 
+  '@remotion/studio-shared@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      remotion: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+    transitivePeerDependencies:
+      - react
+      - react-dom
+
   '@remotion/studio-shared@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       remotion: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
     transitivePeerDependencies:
       - react
       - react-dom
+
+  '@remotion/studio@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@remotion/media-parser': 4.0.304
+      '@remotion/media-utils': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/player': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/renderer': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/studio-shared': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/zod-types': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.22.3)
+      memfs: 3.4.3
+      open: 8.4.2
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      remotion: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      semver: 7.5.3
+      source-map: 0.7.3
+      zod: 3.22.3
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
 
   '@remotion/studio@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
@@ -12776,13 +12949,29 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@remotion/transitions@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@remotion/transitions@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@remotion/paths': 4.0.304
-      '@remotion/shapes': 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      react: 19.0.0
-      react-dom: 19.0.0(react@19.0.0)
-      remotion: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@remotion/shapes': 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      remotion: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+
+  '@remotion/zod-types@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.22.3)':
+    dependencies:
+      remotion: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      zod: 3.22.3
+    transitivePeerDependencies:
+      - react
+      - react-dom
+
+  '@remotion/zod-types@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.24.4)':
+    dependencies:
+      remotion: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      zod: 3.24.4
+    transitivePeerDependencies:
+      - react
+      - react-dom
 
   '@remotion/zod-types@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(zod@3.22.3)':
     dependencies:
@@ -13506,10 +13695,6 @@ snapshots:
   '@types/react@18.3.20':
     dependencies:
       '@types/prop-types': 15.7.14
-      csstype: 3.1.3
-
-  '@types/react@19.0.0':
-    dependencies:
       csstype: 3.1.3
 
   '@types/readable-stream@4.0.18':
@@ -14734,7 +14919,7 @@ snapshots:
 
   crypto-js@4.2.0: {}
 
-  css-loader@5.2.7(webpack@5.96.1):
+  css-loader@5.2.7(webpack@5.96.1(esbuild@0.25.0)):
     dependencies:
       icss-utils: 5.1.0(postcss@8.5.3)
       loader-utils: 2.0.4
@@ -18506,6 +18691,11 @@ snapshots:
       mdast-util-to-hast: 12.3.0
       unified: 10.1.2
 
+  remotion@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   remotion@4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       react: 19.0.0
@@ -19176,7 +19366,7 @@ snapshots:
 
   stubs@3.0.0: {}
 
-  style-loader@4.0.0(webpack@5.96.1):
+  style-loader@4.0.0(webpack@5.96.1(esbuild@0.25.0)):
     dependencies:
       webpack: 5.96.1(esbuild@0.25.0)
 

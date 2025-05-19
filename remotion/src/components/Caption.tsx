@@ -78,6 +78,7 @@ export const Caption: React.FC<{ captions: CaptionType }> = ({ captions }) => {
     startMs: Math.round(w.start * 1000),
     endMs: Math.round(w.end * 1000),
     timestampMs: Math.round(((w.start + w.end) / 2) * 1000),
+    confidence: 1,
   }))
 
   // Split into TikTok-style pages

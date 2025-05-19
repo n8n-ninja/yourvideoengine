@@ -43,6 +43,8 @@ const uuid_1 = require("uuid");
 const path = __importStar(require("path"));
 // We'll initialize the S3 client later with the correct region
 let s3Client;
+// Ajouter la constante CloudFront
+const CLOUDFRONT_URL = process.env.CLOUDFRONT_URL || "https://diwa7aolcke5u.cloudfront.net/";
 const handler = async (event) => {
     try {
         // Ajouter plus de logs pour debugging
@@ -202,8 +204,10 @@ const handler = async (event) => {
             }
         }
         // Generate the public URL with the correct region string
-        const s3Url = `https://${bucketName}.s3.${regionString}.amazonaws.com/${key}`;
-        console.log("Generated S3 URL:", s3Url);
+        // const s3Url = `https://${bucketName}.s3.${regionString}.amazonaws.com/${key}`
+        // Utiliser CloudFront à la place de l'URL S3
+        const cloudfrontUrl = `${CLOUDFRONT_URL.replace(/\/$/, "")}/${key}`;
+        console.log("Generated CloudFront URL:", cloudfrontUrl);
         return {
             statusCode: 200,
             headers: {
@@ -213,7 +217,7 @@ const handler = async (event) => {
             },
             body: JSON.stringify({
                 message: "File uploaded successfully",
-                fileUrl: s3Url,
+                fileUrl: cloudfrontUrl,
             }),
         };
     }
