@@ -13,12 +13,7 @@
     "noUnusedLocals": true,
     "noErrorTruncation": true,
     "paths": {
-      "@/*": ["./src/*"],
-      "@components/*": ["./src/components/*"],
-      "@layout": ["./src/components/layout/index.ts"],
-      "@animations/*": ["./src/components/animations/*"],
-      "@theme/*": ["./src/theme/*"],
-      "@utils/*": ["./src/Utils/*"]
+      "@/*": ["./src/*"]
     }
   },
   "exclude": ["remotion.config.ts"]
