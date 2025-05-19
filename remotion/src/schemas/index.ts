@@ -24,3 +24,5 @@ export type {
   TransitionReveal,
 } from "./transition-reveal"
 export type { Keyframe } from "./keyframe"
+export { ImagesSchema } from "./image"
+export type { Image, Images } from "./image"

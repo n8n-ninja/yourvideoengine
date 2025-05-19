@@ -12,6 +12,7 @@ import { getPosition } from "@/utils/getPosition"
 import { TRANSITION_REVEAL_TYPES } from "@/schemas/transition-reveal"
 import type { z } from "zod"
 import { Overlay as OverlayType } from "@/schemas/overlay"
+import { Image } from "./Image"
 
 const elementComponentMap = {
   camera: (element: any) => <Camera {...element} />,
@@ -21,6 +22,7 @@ const elementComponentMap = {
   scanline: (element: any) => <Overlay overlay={element as OverlayType} />,
   vignette: (element: any) => <Overlay overlay={element as OverlayType} />,
   color: (element: any) => <Overlay overlay={element as OverlayType} />,
+  image: (element: any) => <Image image={element} />,
 } as const
 
 type ElementType = keyof typeof elementComponentMap

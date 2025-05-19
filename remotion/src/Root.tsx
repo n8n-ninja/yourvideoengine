@@ -28,7 +28,7 @@ export const RemotionRoot: React.FC = () => {
         {
           type: "camera",
           videoUrl:
-            "https://diwa7aolcke5u.cloudfront.net/uploads/4fce909b-5604-4f8d-8a86-d5962d7313a8.mp4",
+            "https://diwa7aolcke5u.cloudfront.net/uploads/1747680671222-IMG_1402.JPG",
           position: {
             top: 0,
             left: 0,
@@ -57,6 +57,19 @@ export const RemotionRoot: React.FC = () => {
             { time: 1, value: { scale: 1.4, volume: 0 } },
             { time: 2, value: { scale: 1, volume: 1 } },
           ],
+        },
+        {
+          type: "image",
+          url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747680671222-IMG_1402.JPG",
+          position: {
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: 10,
+            verticalAlign: "center",
+          },
+          style:
+            "box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5); border: 10px solid red; border-radius: 100px;",
         },
         {
           type: "title",

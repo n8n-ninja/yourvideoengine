@@ -19,6 +19,10 @@ import { cameraContainerStyle, cameraVideoStyle } from "@/styles/default-style"
  * @param loop Optional loop for the video.
  * @returns A Video element that fills its parent (object-fit: cover) and animates inside a fixed container.
  */
+const isImage = (url: string) => {
+  return /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(url)
+}
+
 const CameraComponent: React.FC<Camera> = ({
   videoUrl,
   keyFrames,
@@ -61,13 +65,22 @@ const CameraComponent: React.FC<Camera> = ({
 
   return (
     <div style={cameraContainerStyle}>
-      <Video
-        src={videoUrl}
-        playbackRate={speed}
-        volume={(_) => (typeof kfVolume === "number" ? kfVolume : volume)}
-        loop={loop}
-        style={videoStyle}
-      />
+      {isImage(videoUrl) ? (
+        <img
+          src={videoUrl}
+          alt="Camera content"
+          style={videoStyle}
+          draggable={false}
+        />
+      ) : (
+        <Video
+          src={videoUrl}
+          playbackRate={speed}
+          volume={(_) => (typeof kfVolume === "number" ? kfVolume : volume)}
+          loop={loop}
+          style={videoStyle}
+        />
+      )}
     </div>
   )
 }

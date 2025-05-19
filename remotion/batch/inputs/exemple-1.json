@@ -5,7 +5,7 @@
       "timeline": [
         {
           "type": "camera",
-          "videoUrl": "https://diwa7aolcke5u.cloudfront.net/uploads/4fce909b-5604-4f8d-8a86-d5962d7313a8.mp4",
+          "videoUrl": "https://diwa7aolcke5u.cloudfront.net/uploads/1747680671222-IMG_1402.JPG",
           "position": {
             "top": 0,
             "left": 0,
@@ -98,5 +98,13 @@
       ],
       "transition": { "type": "fade", "duration": 1 }
     }
-  ]
+  ],
+  "global": {
+    "sounds": [
+      {
+        "name": "woosh-1.mp3",
+        "url": "https://diwa7aolcke5u.cloudfront.net/uploads/4fce909b-5604-4f8d-8a86-d5962d7313a8.mp4"
+      }
+    ]
+  }
 }
