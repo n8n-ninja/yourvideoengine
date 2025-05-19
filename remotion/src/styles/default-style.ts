@@ -86,20 +86,3 @@ export const colorOverlayStyle: CSSProperties = {
   zIndex: 10,
   transition: "none",
 }
-
-export type Theme = {
-  caption?: {
-    boxStyle?: CSSProperties
-    textStyle?: CSSProperties
-    activeWordStyle?: CSSProperties
-  }
-  title?: {
-    style?: CSSProperties
-  }
-  overlay?: {
-    scanline?: CSSProperties
-    vignette?: CSSProperties
-    color?: CSSProperties
-  }
-  // Extend for other types as needed
-}

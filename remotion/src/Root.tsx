@@ -68,6 +68,30 @@ export const RemotionRoot: React.FC = () => {
             bottom: 10,
             verticalAlign: "center",
           },
+          effects: [
+            {
+              type: "wobble",
+              options: { amplitude: 50, speed: 50, axis: "x" },
+            },
+            // { type: "pulse", options: { amplitude: 0.15, speed: 1.5 } },
+            // { type: "pop", options: { amplitude: 10, speed: 30 } },
+            // {
+            //   type: "shake",
+            //   options: { amplitude: 12, speed: 10 },
+            // },
+            // {
+            //   type: "blink",
+            //   options: { speed: 9, minOpacity: 0, maxOpacity: 0.6 },
+            // },
+            // {
+            //   type: "pointer",
+            //   options: {
+            //     direction: "bottom-right",
+            //     speed: 2,
+            //     amplitude: 100,
+            //   },
+            // },
+          ],
           style:
             "box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5); border: 10px solid red; border-radius: 100px;",
         },

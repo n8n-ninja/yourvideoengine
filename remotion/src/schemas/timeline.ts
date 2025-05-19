@@ -11,22 +11,25 @@ import {
   VignetteOverlaySchema,
   ColorOverlaySchema,
 } from "./overlay"
+import { EffectsSchema } from "./effect"
 const TitleSchema = TitlesSchema.element
 
+const WithEffectsSchema = z.object({ effects: EffectsSchema.optional() })
+
 export const TimelineElementSchema = z.discriminatedUnion("type", [
-  CameraSchema.extend({
+  CameraSchema.merge(WithEffectsSchema).extend({
     type: z.literal("camera"),
     timing: TimingSchema.optional(),
     transition: TransitionSchema.optional(),
     position: PositionSchema.optional(),
   }),
-  CaptionSchema.extend({
+  CaptionSchema.merge(WithEffectsSchema).extend({
     type: z.literal("caption"),
     timing: TimingSchema.optional(),
     transition: TransitionSchema.optional(),
     position: PositionSchema.optional(),
   }),
-  TitleSchema.extend({
+  TitleSchema.merge(WithEffectsSchema).extend({
     type: z.literal("title"),
     timing: TimingSchema.optional(),
     transition: TransitionSchema.optional(),
@@ -37,9 +40,9 @@ export const TimelineElementSchema = z.discriminatedUnion("type", [
     timing: TimingSchema.optional(),
     transition: TransitionSchema.optional(),
   }),
-  ScanlineOverlaySchema,
-  VignetteOverlaySchema,
-  ColorOverlaySchema,
+  ScanlineOverlaySchema.merge(WithEffectsSchema),
+  VignetteOverlaySchema.merge(WithEffectsSchema),
+  ColorOverlaySchema.merge(WithEffectsSchema),
 ])
 
 export const SceneSchema = z.object({

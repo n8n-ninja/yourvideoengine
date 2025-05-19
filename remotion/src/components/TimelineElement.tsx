@@ -1,5 +1,5 @@
 import React from "react"
-import { Sequence, useVideoConfig } from "remotion"
+import { Sequence, useVideoConfig, useCurrentFrame } from "remotion"
 import { TimelineElementSchema } from "@/schemas/timeline"
 import { Camera } from "./Camera"
 import { Caption } from "./Caption"
@@ -13,6 +13,7 @@ import { TRANSITION_REVEAL_TYPES } from "@/schemas/transition-reveal"
 import type { z } from "zod"
 import { Overlay as OverlayType } from "@/schemas/overlay"
 import { Image } from "./Image"
+import { applyEffects } from "@/utils/effects"
 
 const elementComponentMap = {
   camera: (element: any) => <Camera {...element} />,
@@ -31,6 +32,7 @@ export const TimelineElementRenderer: React.FC<{
   element: z.infer<typeof TimelineElementSchema>
 }> = ({ element }) => {
   const { fps, durationInFrames } = useVideoConfig()
+  const frame = useCurrentFrame()
 
   const timing = useTiming(
     element.timing
@@ -67,6 +69,10 @@ export const TimelineElementRenderer: React.FC<{
 
   const containerStyle = (element as any).containerStyle ?? {}
 
+  // Appliquer les effets si présents
+  const effects = (element as any).effects
+  const styleWithEffects = applyEffects(effects, frame)
+
   if (!timing.visible) return null
 
   const renderVisualElement = (key: ElementType, child: React.ReactNode) => {
@@ -75,7 +81,7 @@ export const TimelineElementRenderer: React.FC<{
         <div
           style={{ ...transitionStyle, ...positionStyle, ...containerStyle }}
         >
-          {child}
+          <div style={styleWithEffects}>{child}</div>
         </div>
       </Sequence>
     )
