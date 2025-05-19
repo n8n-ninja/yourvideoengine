@@ -1,7 +1,6 @@
 import React from "react"
-import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion"
+import { useCurrentFrame, useVideoConfig } from "remotion"
 import { createTikTokStyleCaptions } from "@remotion/captions"
-import { getPosition } from "@/utils/getPosition"
 import { parseStyleString } from "@/utils/getStyle"
 import { Caption as CaptionType } from "@/schemas"
 
@@ -10,7 +9,6 @@ import { Caption as CaptionType } from "@/schemas"
  *
  * @param captions An object of type CaptionType containing:
  *   - words: Array of word objects with timing and optional confidence.
- *   - position: (optional) Positioning for the caption container.
  *   - boxStyle: (optional) Style for the caption box (object or CSS string).
  *   - textStyle: (optional) Style for the text (object or CSS string).
  *   - activeWordStyle: (optional) Style for the active word (object or CSS string).
@@ -24,9 +22,6 @@ export const Caption: React.FC<{ captions: CaptionType }> = ({ captions }) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
   const currentTime = frame / fps
-
-  // Container positioning style
-  const containerStyle = getPosition(captions.position ?? {})
 
   // Box (container) style
   let resolvedBoxStyle: React.CSSProperties = {
@@ -109,32 +104,29 @@ export const Caption: React.FC<{ captions: CaptionType }> = ({ captions }) => {
   }
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "transparent" }}>
-      <div style={containerStyle}>
-        {activePage && (
-          <div style={resolvedBoxStyle}>
-            {activePage.tokens.map((token, i) => {
-              const isActive =
-                currentMs >= token.fromMs && currentMs < token.toMs
-              return (
-                <span
-                  key={`${activePageIndex}-${i}`}
-                  style={{
-                    ...resolvedTextStyle,
-                    ...(isActive ? resolvedActiveWordStyle : {}),
-                    opacity: 1,
-                    display: "inline-block",
-                    marginRight:
-                      i !== activePage.tokens.length - 1 ? "0.32em" : undefined,
-                  }}
-                >
-                  {token.text.trim()}
-                </span>
-              )
-            })}
-          </div>
-        )}
-      </div>
-    </AbsoluteFill>
+    <div>
+      {activePage && (
+        <div style={resolvedBoxStyle}>
+          {activePage.tokens.map((token, i) => {
+            const isActive = currentMs >= token.fromMs && currentMs < token.toMs
+            return (
+              <span
+                key={`${activePageIndex}-${i}`}
+                style={{
+                  ...resolvedTextStyle,
+                  ...(isActive ? resolvedActiveWordStyle : {}),
+                  opacity: 1,
+
+                  marginRight:
+                    i !== activePage.tokens.length - 1 ? "0.32em" : undefined,
+                }}
+              >
+                {token.text.trim()}
+              </span>
+            )
+          })}
+        </div>
+      )}
+    </div>
   )
 }

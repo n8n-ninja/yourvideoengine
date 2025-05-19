@@ -10,11 +10,10 @@ import { cameraContainerStyle, cameraVideoStyle } from "@/styles/default-style"
  * Supports offsetX, offsetY, style, frameStyle, speed, volume, and loop for fine positioning, custom styles, and playback options.
  *
  * @param videoUrl The video source URL.
- * @param animationKeyframes Optional array of keyframes for camera effects.
+ * @param keyFrames Optional array of keyframes for camera effects.
  * @param offsetX Optional X offset for fine positioning.
  * @param offsetY Optional Y offset for fine positioning.
  * @param style Optional style string for custom styles.
- * @param frameStyle Optional frame style string for custom styles.
  * @param speed Optional playback rate for the video.
  * @param volume Optional volume for the video.
  * @param loop Optional loop for the video.
@@ -22,23 +21,19 @@ import { cameraContainerStyle, cameraVideoStyle } from "@/styles/default-style"
  */
 const CameraComponent: React.FC<Camera> = ({
   videoUrl,
-  animationKeyframes,
+  keyFrames,
   offsetX = 0,
   offsetY = 0,
   style,
-  frameStyle,
   speed = 1,
   volume = 1,
   loop = false,
 }) => {
   const userStyle = style ? parseStyleString(style) : {}
-  const frameUserStyle = frameStyle ? parseStyleString(frameStyle) : {}
 
   const interpolated =
     useKeyframes<Record<string, number | string | undefined>>(
-      animationKeyframes && animationKeyframes.length > 0
-        ? animationKeyframes
-        : [],
+      keyFrames && keyFrames.length > 0 ? keyFrames : [],
     ) || {}
 
   const {
@@ -53,7 +48,7 @@ const CameraComponent: React.FC<Camera> = ({
   const scaleBlur = 1 + (isNaN(blurNum) ? 0 : blurNum / 80)
   const finalScale = (isNaN(scaleNum) ? 1 : scaleNum) * scaleBlur
 
-  const hasKeyframes = !!animationKeyframes && animationKeyframes.length > 0
+  const hasKeyframes = !!keyFrames && keyFrames.length > 0
 
   const videoStyle = {
     ...cameraVideoStyle,
@@ -64,13 +59,8 @@ const CameraComponent: React.FC<Camera> = ({
     ...userStyle,
   }
 
-  const containerStyle = {
-    ...cameraContainerStyle,
-    ...frameUserStyle,
-  }
-
   return (
-    <div style={containerStyle}>
+    <div style={cameraContainerStyle}>
       <Video
         src={videoUrl}
         playbackRate={speed}

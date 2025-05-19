@@ -37,7 +37,7 @@ export const RemotionRoot: React.FC = () => {
             bottom: 50,
             verticalAlign: "center",
           },
-          animationKeyframes: [
+          keyFrames: [
             { time: 0, value: { scale: 1, blur: 10 } },
             { time: 1, value: { scale: 1.2, blur: 0 } },
           ],
@@ -54,29 +54,73 @@ export const RemotionRoot: React.FC = () => {
             bottom: 0,
             verticalAlign: "center",
           },
-          animationKeyframes: [
+          keyFrames: [
             { time: 1, value: { scale: 1.4, volume: 0 } },
             { time: 2, value: { scale: 1, volume: 1 } },
           ],
         },
-        // {
-        //   type: "caption",
-        //   timing: { start: 1, duration: 2 },
-        //   words: [
-        //     { word: "Hello", start: 0, end: 1 },
-        //     { word: "world", start: 1, end: 2 },
-        //   ],
-        // },
-        // {
-        //   type: "title",
-        //   timing: { start: 1, duration: 2 },
-        //   title: "Bienvenue !",
-        // },
-        // {
-        //   type: "sound",
-        //   timing: { start: 0, duration: 3 },
-        //   sound: "woosh-1.mp3",
-        // },
+        {
+          type: "title",
+          title:
+            "Bienvenue sur terre la vie est belle et bien faite de miracle.",
+          position: {
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: 40,
+            verticalAlign: "center",
+          },
+          containerStyle: {
+            backgroundColor: "red",
+          },
+          timing: {
+            start: 1,
+            duration: 2,
+          },
+          transition: {
+            duration: 0.4,
+            type: "fade",
+          },
+        },
+        {
+          type: "caption",
+          timing: { start: 1, duration: 2 },
+          words: [
+            { word: "Hello", start: 0, end: 1 },
+            { word: "world", start: 1, end: 2 },
+          ],
+          position: {
+            top: 50,
+            verticalAlign: "center",
+          },
+        },
+        {
+          type: "scanline",
+          timing: { start: 1, duration: 3 },
+          transition: {
+            type: "fade",
+            duration: 2.4,
+          },
+          position: {
+            top: 40,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            verticalAlign: "center",
+          },
+          opacity: 1,
+          intensity: 90,
+          size: 50,
+          color: "red",
+        },
+        {
+          type: "sound",
+          timing: { start: 0, duration: 3 },
+          transition: {
+            duration: 2.4,
+          },
+          sound: "woosh-1.mp3",
+        },
       ],
       transition: { type: "fade", duration: 1 },
     },

@@ -6,7 +6,11 @@ import { SoundSchema } from "./sound"
 import { TimingSchema } from "./timing"
 import { TransitionSchema } from "./transition"
 import { PositionSchema } from "./position"
-
+import {
+  ScanlineOverlaySchema,
+  VignetteOverlaySchema,
+  ColorOverlaySchema,
+} from "./overlay"
 const TitleSchema = TitlesSchema.element
 
 export const TimelineElementSchema = z.discriminatedUnion("type", [
@@ -33,6 +37,9 @@ export const TimelineElementSchema = z.discriminatedUnion("type", [
     timing: TimingSchema.optional(),
     transition: TransitionSchema.optional(),
   }),
+  ScanlineOverlaySchema,
+  VignetteOverlaySchema,
+  ColorOverlaySchema,
 ])
 
 export const SceneSchema = z.object({

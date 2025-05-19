@@ -1,49 +1,30 @@
 import React from "react"
-import { AbsoluteFill, Sequence, useVideoConfig } from "remotion"
+import { Sequence, useVideoConfig } from "remotion"
 import { TimelineElementSchema } from "@/schemas/timeline"
 import { Camera } from "./Camera"
 import { Caption } from "./Caption"
 import { Sound } from "./Sound"
-// import { Overlay } from './Overlay' // à ajouter plus tard
+import { Overlay } from "./Overlay"
 import { Title } from "./Title"
 import { useTiming } from "@/hooks/useTiming"
 import { useRevealTransition } from "@/hooks/useRevealTransition"
 import { getPosition } from "@/utils/getPosition"
-// TypeScript type
+import { TRANSITION_REVEAL_TYPES } from "@/schemas/transition-reveal"
 import type { z } from "zod"
-import type { Transition } from "@/schemas/transition"
-import type { TransitionReveal } from "@/schemas/transition-reveal"
+import { Overlay as OverlayType } from "@/schemas/overlay"
 
-// Helper pour convertir une transition générique en TransitionReveal compatible
-const toRevealTransition = (
-  transition: Transition | undefined,
-): TransitionReveal => {
-  if (!transition) return {}
-  // Mappe les types connus
-  if (transition.type === "fade") {
-    return { type: "fade", duration: transition.duration }
-  }
-  if (transition.type === "slide") {
-    // Par défaut slide-left, ou mappe direction si dispo
-    let slideType: TransitionReveal["type"] = "slide-left"
-    if (transition.direction === "from-right") slideType = "slide-right"
-    if (transition.direction === "from-top") slideType = "slide-up"
-    if (transition.direction === "from-bottom") slideType = "slide-down"
-    return { type: slideType, duration: transition.duration }
-  }
-  // Les types suivants ne sont pas dans TransitionSchema, donc on ne les traite pas ici
-  // if (
-  //   transition.type === "zoom-in" ||
-  //   transition.type === "zoom-out" ||
-  //   transition.type === "blur"
-  // ) {
-  //   return { type: transition.type, duration: transition.duration }
-  // }
-  // fallback: pas de transition visuelle
-  return {}
-}
+const elementComponentMap = {
+  camera: (element: any) => <Camera {...element} />,
+  caption: (element: any) => <Caption captions={element} />,
+  title: (element: any) => <Title title={element} />,
+  sound: (element: any) => <Sound sounds={[element]} />,
+  scanline: (element: any) => <Overlay overlay={element as OverlayType} />,
+  vignette: (element: any) => <Overlay overlay={element as OverlayType} />,
+  color: (element: any) => <Overlay overlay={element as OverlayType} />,
+} as const
 
-// Helper pour le rendu d'un élément
+type ElementType = keyof typeof elementComponentMap
+
 export const TimelineElementRenderer: React.FC<{
   element: z.infer<typeof TimelineElementSchema>
 }> = ({ element }) => {
@@ -61,70 +42,47 @@ export const TimelineElementRenderer: React.FC<{
           duration: durationInFrames / fps,
         },
   )
-  const revealTransition = toRevealTransition(
-    element.transition as Transition | undefined,
-  )
+
+  const allowedRevealTypes = [...TRANSITION_REVEAL_TYPES]
+
+  const safeRevealTransition =
+    element.transition &&
+    typeof element.transition === "object" &&
+    allowedRevealTypes.includes((element.transition as any).type)
+      ? (element.transition as any)
+      : {}
+
   const { style: transitionStyle } = useRevealTransition({
-    transition: revealTransition,
+    transition: safeRevealTransition,
     startFrame: timing.startFrame,
     endFrame: timing.endFrame,
   })
 
-  // Position (pour les éléments visuels)
   const positionStyle =
     "position" in element && element.position
       ? getPosition(element.position)
       : {}
 
+  const containerStyle = (element as any).containerStyle ?? {}
+
   if (!timing.visible) return null
 
-  // Dispatch sur le bon composant métier
-  switch (element.type) {
-    case "camera":
-      return (
-        <Sequence
-          from={timing.startFrame}
-          durationInFrames={timing.totalFrames}
+  const renderVisualElement = (key: ElementType, child: React.ReactNode) => {
+    return (
+      <Sequence from={timing.startFrame} durationInFrames={timing.totalFrames}>
+        <div
+          style={{ ...transitionStyle, ...positionStyle, ...containerStyle }}
         >
-          <div style={{ ...transitionStyle, ...positionStyle }}>
-            <Camera {...element} />
-          </div>
-        </Sequence>
-      )
-    case "caption":
-      return (
-        <Sequence
-          from={timing.startFrame}
-          durationInFrames={timing.totalFrames}
-        >
-          <AbsoluteFill style={{ ...transitionStyle, ...positionStyle }}>
-            <Caption captions={element} />
-          </AbsoluteFill>
-        </Sequence>
-      )
-    case "title":
-      return (
-        <Sequence
-          from={timing.startFrame}
-          durationInFrames={timing.totalFrames}
-        >
-          <AbsoluteFill style={{ ...transitionStyle, ...positionStyle }}>
-            <Title titles={[element]} />
-          </AbsoluteFill>
-        </Sequence>
-      )
-    case "sound":
-      return (
-        <Sequence
-          from={timing.startFrame}
-          durationInFrames={timing.totalFrames}
-        >
-          <Sound sounds={[element]} />
-        </Sequence>
-      )
-    // case 'overlay':
-    //   return ...
-    default:
-      return null
+          {child}
+        </div>
+      </Sequence>
+    )
   }
+
+  const type = element.type as ElementType
+  if (type in elementComponentMap) {
+    return renderVisualElement(type, elementComponentMap[type](element))
+  }
+
+  return null
 }
