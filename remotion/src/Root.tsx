@@ -131,27 +131,11 @@ export const RemotionRoot: React.FC = () => {
     scenes.reduce((acc, scene) => acc + (scene.duration ?? 0), 0) * fps,
   )
 
-  // Demo theme
-  // const theme = {
-  //   caption: {
-  //     boxStyle: { backgroundColor: "#1e293b" },
-  //     textStyle: { color: "#fbbf24" },
-  //     activeWordStyle: { color: "#ef4444" },
-  //   },
-  //   title: {
-  //     style: {
-  //       color: "#22d3ee",
-  //       textShadow: "0 2px 30px #000, 0 1px 10px #000",
-  //     },
-  //   },
-  //   overlay: {
-  //     scanline: {
-  //       background:
-  //         "repeating-linear-gradient(to bottom, #22d3ee, #0ea5e9 10px, #0e7490 20px)",
-  //     },
-  //     color: { backgroundColor: "#fbbf24", opacity: 0.2 },
-  //   },
-  // }
+  const theme = {
+    caption: {
+      boxStyle: { backgroundColor: "pink" },
+    },
+  }
 
   return (
     <Composition
@@ -165,6 +149,7 @@ export const RemotionRoot: React.FC = () => {
       defaultProps={{
         scenes,
         globalTimeline,
+        theme,
       }}
     />
   )
