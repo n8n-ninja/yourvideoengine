@@ -28,6 +28,7 @@ export const CameraSchema = z.object({
   speed: z.number().optional(),
   volume: z.number().optional(),
   loop: z.boolean().optional(),
+  frameStyle: z.string().optional(),
 })
 
 /**

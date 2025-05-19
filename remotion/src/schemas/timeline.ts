@@ -12,28 +12,27 @@ const TitleSchema = TitlesSchema.element
 export const TimelineElementSchema = z.discriminatedUnion("type", [
   CameraSchema.extend({
     type: z.literal("camera"),
-    timing: TimingSchema,
+    timing: TimingSchema.optional(),
     transition: TransitionSchema.optional(),
     position: PositionSchema.optional(),
   }),
   CaptionSchema.extend({
     type: z.literal("caption"),
-    timing: TimingSchema,
+    timing: TimingSchema.optional(),
     transition: TransitionSchema.optional(),
     position: PositionSchema.optional(),
   }),
   TitleSchema.extend({
     type: z.literal("title"),
-    timing: TimingSchema,
+    timing: TimingSchema.optional(),
     transition: TransitionSchema.optional(),
     position: PositionSchema.optional(),
   }),
   SoundSchema.extend({
     type: z.literal("sound"),
-    timing: TimingSchema,
+    timing: TimingSchema.optional(),
     transition: TransitionSchema.optional(),
   }),
-  // Overlay: à ajouter plus tard avec un schéma Zod dédié
 ])
 
 export const SceneSchema = z.object({

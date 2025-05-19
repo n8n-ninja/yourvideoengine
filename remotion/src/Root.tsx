@@ -2,56 +2,12 @@ import React from "react"
 import "./fonts.css"
 import { Composition, getInputProps } from "remotion"
 import { z } from "zod"
-import { TimelineElementRenderer } from "./components/timeline-element-renderer"
 import {
-  SceneSchema,
-  TimelineElementSchema,
-  ProjectSchema,
-} from "@/schemas/timeline"
-import { TransitionSeries, linearTiming } from "@remotion/transitions"
-import { fade } from "@remotion/transitions/fade"
-
-// Types
-type Scene = z.infer<typeof SceneSchema>
-type TimelineElement = z.infer<typeof TimelineElementSchema>
-
-// Composant qui reçoit les props
-const ProjectComposition: React.FC<{
-  scenes: Scene[]
-  globalTimeline?: TimelineElement[]
-  fps: number
-}> = ({ scenes, globalTimeline, fps }) => {
-  return (
-    <>
-      <TransitionSeries>
-        {scenes.map((scene: Scene, sceneIdx: number) => (
-          <React.Fragment key={sceneIdx}>
-            <TransitionSeries.Sequence
-              durationInFrames={Math.round((scene.duration ?? 0) * fps)}
-            >
-              {scene.timeline.map((element: TimelineElement, i: number) => (
-                <TimelineElementRenderer key={i} element={element} />
-              ))}
-            </TransitionSeries.Sequence>
-            {sceneIdx < scenes.length - 1 && (
-              <TransitionSeries.Transition
-                presentation={fade()}
-                timing={linearTiming({
-                  durationInFrames: Math.round(
-                    (scene.transition?.duration ?? 1) * fps,
-                  ),
-                })}
-              />
-            )}
-          </React.Fragment>
-        ))}
-      </TransitionSeries>
-      {globalTimeline?.map((element: TimelineElement, i: number) => (
-        <TimelineElementRenderer key={`global-${i}`} element={element} />
-      ))}
-    </>
-  )
-}
+  ProjectComposition,
+  Scene,
+  TimelineElement,
+} from "./compositions/ProjectComposition"
+import { ProjectSchema } from "@/schemas/timeline"
 
 export const RemotionRoot: React.FC = () => {
   const inputProps = getInputProps<{
@@ -85,6 +41,7 @@ export const RemotionRoot: React.FC = () => {
             { time: 0, value: { scale: 1, blur: 10 } },
             { time: 1, value: { scale: 1.2, blur: 0 } },
           ],
+          volume: 0,
         },
         {
           type: "camera",
@@ -98,10 +55,9 @@ export const RemotionRoot: React.FC = () => {
             verticalAlign: "center",
           },
           animationKeyframes: [
-            { time: 0, value: { scale: 1.4 } },
-            { time: 1, value: { scale: 1 } },
+            { time: 1, value: { scale: 1.4, volume: 0 } },
+            { time: 2, value: { scale: 1, volume: 1 } },
           ],
-          volume: 0,
         },
         // {
         //   type: "caption",
