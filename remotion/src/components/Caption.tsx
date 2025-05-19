@@ -3,6 +3,12 @@ import { useCurrentFrame, useVideoConfig } from "remotion"
 import { createTikTokStyleCaptions } from "@remotion/captions"
 import { parseStyleString } from "@/utils/getStyle"
 import { Caption as CaptionType } from "@/schemas"
+import {
+  captionBoxStyle,
+  captionTextStyle,
+  captionActiveWordStyle,
+} from "@/styles/default-style"
+import { useTheme } from "./theme-context"
 
 /**
  * Caption: displays TikTok-style synchronized captions with dynamic styles and active word highlighting.
@@ -18,54 +24,39 @@ import { Caption as CaptionType } from "@/schemas"
  * @returns An AbsoluteFill with styled captions, or nothing if no active page.
  */
 export const Caption: React.FC<{ captions: CaptionType }> = ({ captions }) => {
+  const theme = useTheme()
   // Current frame and video config
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
   const currentTime = frame / fps
 
   // Box (container) style
-  let resolvedBoxStyle: React.CSSProperties = {
-    backgroundColor: "rgba(0,0,0,0.7)",
-    borderRadius: 18,
-    padding: "1.5em 4em",
-    lineHeight: 1.4,
-    textWrap: "balance",
-    textAlign: "center",
-    margin: "30px",
-  }
-
   const boxStyle = captions.boxStyle ? parseStyleString(captions.boxStyle) : {}
-
-  resolvedBoxStyle = { ...resolvedBoxStyle, ...boxStyle }
+  const resolvedBoxStyle = {
+    ...captionBoxStyle,
+    ...theme.caption?.boxStyle,
+    ...boxStyle,
+  }
 
   // Text style
-  let resolvedTextStyle: React.CSSProperties = {
-    color: "#fff",
-    fontFamily: "Montserrat, sans-serif",
-    fontSize: 75,
-    textShadow: "0 2px 30px #000, 0 1px 10px #000",
-    fontWeight: 900,
-    transition:
-      "color 0.12s cubic-bezier(0.4,0,0.2,1), transform 0.12s cubic-bezier(0.4,0,0.2,1)",
-  }
-
   const textStyle = captions.textStyle
     ? parseStyleString(captions.textStyle)
     : {}
-  resolvedTextStyle = { ...resolvedTextStyle, ...textStyle }
-
-  // Active word style
-  let resolvedActiveWordStyle: React.CSSProperties = {
-    color: "#F7C500",
-    textShadow: "0 2px 30px #000, 0 1px 10px #000",
-    fontWeight: 900,
+  const resolvedTextStyle = {
+    ...captionTextStyle,
+    ...theme.caption?.textStyle,
+    ...textStyle,
   }
 
+  // Active word style
   const activeWordStyle = captions.activeWordStyle
     ? parseStyleString(captions.activeWordStyle)
     : {}
-
-  resolvedActiveWordStyle = { ...resolvedActiveWordStyle, ...activeWordStyle }
+  let resolvedActiveWordStyle = {
+    ...captionActiveWordStyle,
+    ...theme.caption?.activeWordStyle,
+    ...activeWordStyle,
+  }
 
   // Map words to TikTok caption objects
   const tiktokCaptions = captions.words.map((w) => ({
@@ -116,7 +107,6 @@ export const Caption: React.FC<{ captions: CaptionType }> = ({ captions }) => {
                   ...resolvedTextStyle,
                   ...(isActive ? resolvedActiveWordStyle : {}),
                   opacity: 1,
-
                   marginRight:
                     i !== activePage.tokens.length - 1 ? "0.32em" : undefined,
                 }}

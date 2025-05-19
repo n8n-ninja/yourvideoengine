@@ -1,10 +1,12 @@
 import React from "react"
 import { TransitionSeries, linearTiming } from "@remotion/transitions"
 import { fade } from "@remotion/transitions/fade"
-import { TimelineElementRenderer } from "../components/timeline-element-renderer"
+import { TimelineElementRenderer } from "../components/TimelineElement"
 import { z } from "zod"
 import { SceneSchema, TimelineElementSchema } from "@/schemas/timeline"
-
+import { ThemeProvider } from "../components/theme-context"
+import type { Theme } from "@/styles/default-style"
+import { useVideoConfig } from "remotion"
 // Types
 export type Scene = z.infer<typeof SceneSchema>
 export type TimelineElement = z.infer<typeof TimelineElementSchema>
@@ -12,10 +14,12 @@ export type TimelineElement = z.infer<typeof TimelineElementSchema>
 export const ProjectComposition: React.FC<{
   scenes: Scene[]
   globalTimeline?: TimelineElement[]
-  fps: number
-}> = ({ scenes, globalTimeline, fps }) => {
+
+  theme?: Theme
+}> = ({ scenes, globalTimeline, theme }) => {
+  const { fps } = useVideoConfig()
   return (
-    <>
+    <ThemeProvider value={theme ?? {}}>
       <TransitionSeries>
         {scenes.map((scene: Scene, sceneIdx: number) => (
           <React.Fragment key={sceneIdx}>
@@ -42,6 +46,6 @@ export const ProjectComposition: React.FC<{
       {globalTimeline?.map((element: TimelineElement, i: number) => (
         <TimelineElementRenderer key={`global-${i}`} element={element} />
       ))}
-    </>
+    </ThemeProvider>
   )
 }

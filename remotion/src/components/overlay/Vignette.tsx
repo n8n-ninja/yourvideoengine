@@ -1,5 +1,7 @@
 import React from "react"
 import { useVideoConfig } from "remotion"
+import { vignetteOverlayStyle } from "@/styles/default-style"
+import { useTheme } from "../theme-context"
 
 /**
  * VignetteOverlayProps: props for the VignetteOverlay component.
@@ -21,6 +23,7 @@ export const VignetteOverlay: React.FC<VignetteOverlayProps> = ({
   color = "#000",
   opacity = 1,
 }) => {
+  const theme = useTheme()
   const { width, height } = useVideoConfig()
   let r = 0,
     g = 0,
@@ -46,13 +49,8 @@ export const VignetteOverlay: React.FC<VignetteOverlayProps> = ({
   return (
     <div
       style={{
-        position: "absolute",
-        left: -2,
-        top: -2,
-        right: -2,
-        bottom: -2,
-        pointerEvents: "none",
-        zIndex: 11,
+        ...vignetteOverlayStyle,
+        ...theme.overlay?.vignette,
         background,
         opacity,
       }}

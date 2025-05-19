@@ -1,9 +1,10 @@
 import React from "react"
 import { titleThemes, letterAnimationPresets } from "./title/themes"
-import { LetterAnimation } from "./title/LetterAnimation"
+import { LetterAnimation } from "./LetterAnimation"
 import { Title as TitleType } from "@/schemas"
 import { parseStyleString } from "@/utils/getStyle"
 import { titleBaseStyle } from "@/styles/default-style"
+import { useTheme } from "./theme-context"
 
 /**
  * Title: renders a single title with theme and animation.
@@ -12,11 +13,13 @@ import { titleBaseStyle } from "@/styles/default-style"
  * @returns A styled h1 element with optional letter animation.
  */
 export const Title: React.FC<{ title: TitleType }> = ({ title }) => {
+  const theme = useTheme()
   const themeStyle =
     title.theme && titleThemes[title.theme] ? titleThemes[title.theme] : {}
   const titleStyle = title.style ? parseStyleString(title.style) : {}
   const style = {
     ...titleBaseStyle,
+    ...theme.title?.style,
     ...themeStyle,
     ...titleStyle,
   }

@@ -1,4 +1,6 @@
 import React from "react"
+import { scanlineOverlayStyle } from "@/styles/default-style"
+import { useTheme } from "../theme-context"
 
 /**
  * ScanlineOverlayProps: props for the ScanlineOverlay component.
@@ -22,17 +24,13 @@ export const ScanlineOverlay: React.FC<ScanlineOverlayProps> = ({
   opacity,
   frame,
 }) => {
+  const theme = useTheme()
   const scanlineOffset = speed ? (frame * speed) % 20 : 0
   return (
     <div
       style={{
-        position: "absolute",
-        left: 0,
-        top: 0,
-        width: "100%",
-        height: "100%",
-        pointerEvents: "none",
-        zIndex: 12,
+        ...scanlineOverlayStyle,
+        ...theme.overlay?.scanline,
         background:
           `repeating-linear-gradient(` +
           `to bottom,` +
@@ -42,9 +40,7 @@ export const ScanlineOverlay: React.FC<ScanlineOverlayProps> = ({
           `rgba(0,0,0,0) ${4 + intensity * 0.2}px` +
           `)`,
         backgroundPositionY: scanlineOffset,
-        mixBlendMode: "screen",
         opacity,
-        transition: "none",
       }}
     />
   )

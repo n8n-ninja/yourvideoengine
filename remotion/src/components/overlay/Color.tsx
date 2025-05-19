@@ -1,4 +1,6 @@
 import React from "react"
+import { colorOverlayStyle } from "@/styles/default-style"
+import { useTheme } from "../theme-context"
 
 /**
  * ColorOverlayProps: props for the ColorOverlay component.
@@ -18,19 +20,14 @@ export const ColorOverlay: React.FC<ColorOverlayProps> = ({
   intensity = 50,
   opacity = 1,
 }) => {
+  const theme = useTheme()
   return (
     <div
       style={{
-        position: "absolute",
-        left: 0,
-        top: 0,
-        width: "100%",
-        height: "100%",
-        pointerEvents: "none",
-        zIndex: 10,
+        ...colorOverlayStyle,
+        ...theme.overlay?.color,
         background: color,
         opacity: Math.min(1, 0.01 * intensity * opacity),
-        transition: "none",
       }}
     />
   )
