@@ -34,11 +34,38 @@ export const interpolateObject = (
   t: number,
 ): Record<string, unknown> => {
   const result: Record<string, unknown> = {}
+  const parseValueWithUnit = (val: string) => {
+    const match = val.trim().match(/^(-?\d+(?:\.\d+)?)([a-zA-Z%]+)$/)
+    if (!match) return null
+    return { num: parseFloat(match[1]), unit: match[2] }
+  }
   for (const key of Object.keys(a)) {
-    if (typeof a[key] === "number" && typeof b[key] === "number") {
-      result[key] = lerp(a[key] as number, b[key] as number, t)
+    const aVal = a[key]
+    const bVal = b[key]
+    if (typeof aVal === "number" && typeof bVal === "number") {
+      result[key] = lerp(aVal as number, bVal as number, t)
+    } else if (
+      typeof aVal === "string" &&
+      typeof bVal === "string" &&
+      aVal.trim().endsWith("%") &&
+      bVal.trim().endsWith("%")
+    ) {
+      // No interpolation for percent strings, just pick closest
+      result[key] = t < 0.5 ? aVal : bVal
+    } else if (typeof aVal === "string" && typeof bVal === "string") {
+      const aParsed = parseValueWithUnit(aVal)
+      const bParsed = parseValueWithUnit(bVal)
+      if (aParsed && bParsed && aParsed.unit === bParsed.unit) {
+        // Interpolate numeric part, keep unit
+        const interpolatedNum = lerp(aParsed.num, bParsed.num, t)
+        result[key] = `${interpolatedNum}${aParsed.unit}`
+      } else {
+        // Fallback: always pick aVal
+        result[key] = aVal
+      }
     } else {
-      result[key] = a[key]
+      // Fallback: always pick aVal
+      result[key] = aVal
     }
   }
   return result

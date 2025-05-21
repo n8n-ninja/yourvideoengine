@@ -8,7 +8,7 @@ import {
   captionTextStyle,
   captionActiveWordStyle,
 } from "@/styles/default-style"
-import { useTheme } from "./theme-context"
+import { useTheme } from "../contexts/ThemeContext"
 
 /**
  * Caption: displays TikTok-style synchronized captions with dynamic styles and active word highlighting.

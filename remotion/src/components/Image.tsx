@@ -8,13 +8,15 @@ import { parseStyleString } from "@/utils/getStyle"
  */
 export const Image: React.FC<{ image: ImageType }> = ({ image }) => {
   const userStyle = image.style ? parseStyleString(image.style) : {}
+  const objectFit = image.objectFit ?? "cover"
   return (
     <img
       src={image.url}
       alt="Image content"
       style={{
-        maxWidth: "100%",
-        maxHeight: "100%",
+        width: "100%",
+        height: "100%",
+        objectFit,
         ...userStyle,
       }}
       draggable={false}

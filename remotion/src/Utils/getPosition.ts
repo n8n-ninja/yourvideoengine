@@ -15,12 +15,15 @@ export function getPosition({
   horizontalAlign = "center",
   verticalAlign = "center",
 }: Position): React.CSSProperties {
+  const getValue = (val: number | string | undefined) =>
+    typeof val === "string" ? val : `${val}%`
+
   return {
     position: "absolute",
-    top: `${top}%`,
-    left: `${left}%`,
-    right: `${right}%`,
-    bottom: `${bottom}%`,
+    top: getValue(top),
+    left: getValue(left),
+    right: getValue(right),
+    bottom: getValue(bottom),
     display: "flex",
     justifyContent: horizontalAlign,
     alignItems: verticalAlign,

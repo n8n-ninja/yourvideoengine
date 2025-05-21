@@ -4,6 +4,8 @@ import { z } from "zod"
  * Zod schema for a camera configuration.
  * Supports a video URL and optional animation keyframes for camera effects.
  */
+const numberOrString = z.union([z.number(), z.string()])
+
 export const CameraSchema = z.object({
   videoUrl: z.string(),
   onError: z.function().args(z.any()).optional(),
@@ -16,8 +18,8 @@ export const CameraSchema = z.object({
           blur: z.number().optional(),
           rotation: z.number().optional(),
           filter: z.string().optional(),
-          top: z.number().optional(),
-          left: z.number().optional(),
+          top: numberOrString.optional(),
+          left: numberOrString.optional(),
           volume: z.number().optional(),
         }),
       }),

@@ -1,10 +1,10 @@
 import React from "react"
-import { titleThemes } from "./title/themes"
+import { titleThemes } from "../styles/themes"
 import { LetterAnimation } from "./LetterAnimation"
 import { Title as TitleType } from "@/schemas"
 import { parseStyleString } from "@/utils/getStyle"
 import { titleBaseStyle } from "@/styles/default-style"
-import { useTheme } from "./theme-context"
+import { useTheme } from "../contexts/ThemeContext"
 
 /**
  * Title: renders a single title with theme and animation.

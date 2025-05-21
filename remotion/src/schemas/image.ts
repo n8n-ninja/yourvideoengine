@@ -14,6 +14,9 @@ export const ImageSchema = z.object({
   timing: TimingSchema.optional(),
   position: PositionSchema.optional(),
   transition: TransitionSchema.optional(),
+  objectFit: z
+    .enum(["cover", "contain", "fill", "none", "scale-down"])
+    .optional(),
 })
 
 /**

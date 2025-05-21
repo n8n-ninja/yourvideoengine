@@ -46,4 +46,43 @@ describe("interpolateObject", () => {
       y: 10,
     })
   })
+
+  it("interpolates px units", () => {
+    expect(
+      interpolateObject({ left: "100px" }, { left: "200px" }, 0.5),
+    ).toEqual({ left: "150px" })
+  })
+
+  it("interpolates vw units", () => {
+    expect(
+      interpolateObject({ width: "10vw" }, { width: "30vw" }, 0.25),
+    ).toEqual({ width: "15vw" })
+  })
+
+  it("interpolates vh units", () => {
+    expect(
+      interpolateObject({ height: "10vh" }, { height: "30vh" }, 0.75),
+    ).toEqual({ height: "25vh" })
+  })
+
+  it("does not interpolate if units differ", () => {
+    expect(interpolateObject({ left: "100px" }, { left: "50vw" }, 0.5)).toEqual(
+      { left: "100px" },
+    )
+  })
+
+  it("does not interpolate if only one value has unit", () => {
+    expect(interpolateObject({ left: "100px" }, { left: "200" }, 0.5)).toEqual({
+      left: "100px",
+    })
+  })
+
+  it("picks closest for percent strings", () => {
+    expect(interpolateObject({ top: "0%" }, { top: "100%" }, 0.2)).toEqual({
+      top: "0%",
+    })
+    expect(interpolateObject({ top: "0%" }, { top: "100%" }, 0.8)).toEqual({
+      top: "100%",
+    })
+  })
 })

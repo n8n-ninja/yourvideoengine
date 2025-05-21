@@ -16,6 +16,7 @@ import { Image } from "./Image"
 import { applyEffects } from "@/utils/effects"
 import { parseStyleString } from "@/utils/getStyle"
 import { timelineElementContainerStyle } from "@/styles/default-style"
+import { useKeyframes } from "@/hooks/useKeyframes"
 
 const elementComponentMap = {
   camera: (element: any) => <Camera {...element} />,
@@ -71,7 +72,15 @@ export const TimelineElementRenderer: React.FC<{
 
   const positionStyle =
     "position" in element && element.position
-      ? getPosition(element.position)
+      ? (() => {
+          const basePosition = getPosition(element.position)
+          const keyframes = element.position.keyframes
+          if (!keyframes?.length) return basePosition
+
+          const interpolated: Record<string, number | string> =
+            useKeyframes<Record<string, number | string>>(keyframes) || {}
+          return getPosition({ ...element.position, ...interpolated })
+        })()
       : getPosition({})
 
   const rawContainerStyle = element.containerStyle

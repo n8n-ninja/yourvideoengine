@@ -3,7 +3,7 @@ import { TransitionSeries } from "@remotion/transitions"
 import { TimelineElementRenderer } from "../components/TimelineElement"
 import { z } from "zod"
 import { SceneSchema, TimelineElementSchema } from "@/schemas/timeline"
-import { ThemeProvider } from "../components/theme-context"
+import { ThemeProvider } from "../contexts/ThemeContext"
 import type { Theme } from "@/styles/default-style"
 import {
   AbsoluteFill,

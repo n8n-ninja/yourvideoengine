@@ -1,6 +1,6 @@
 import React from "react"
 import { scanlineOverlayStyle } from "@/styles/default-style"
-import { useTheme } from "../theme-context"
+import { useTheme } from "../../contexts/ThemeContext"
 
 /**
  * ScanlineOverlayProps: props for the ScanlineOverlay component.

@@ -3,7 +3,7 @@ import { TimingSchema } from "./timing"
 import { PositionSchema } from "./position"
 import { TransitionSchema } from "./transition"
 import { LetterAnimationConfigSchema } from "./letter-animation"
-import { titleThemes } from "@/components/title/themes"
+import { titleThemes } from "@/styles/themes"
 import { StyleSchema } from "./style"
 const themeNames = Object.keys(titleThemes)
 

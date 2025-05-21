@@ -176,6 +176,30 @@ const cameraScenes: Scene[] = [
       {
         type: "camera",
         videoUrl: VIDEO_URL,
+        position: {
+          bottom: 40,
+          left: 20,
+          right: 20,
+          top: 40,
+          keyframes: [
+            { time: 0, value: { bottom: 0 } },
+            { time: 5, value: { bottom: 100 } },
+          ],
+        },
+      },
+      {
+        type: "title",
+        title: "Boxed moving",
+        position: { verticalAlign: "start" },
+      },
+    ],
+  },
+  {
+    duration: 5,
+    timeline: [
+      {
+        type: "camera",
+        videoUrl: VIDEO_URL,
         offsetY: 300,
         position: { bottom: 40, left: 20, right: 20, top: 40 },
       },

@@ -1,6 +1,6 @@
 import React from "react"
 import { colorOverlayStyle } from "@/styles/default-style"
-import { useTheme } from "../theme-context"
+import { useTheme } from "../../contexts/ThemeContext"
 
 /**
  * ColorOverlayProps: props for the ColorOverlay component.

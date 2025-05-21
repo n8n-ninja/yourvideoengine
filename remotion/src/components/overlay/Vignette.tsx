@@ -1,7 +1,7 @@
 import React from "react"
 import { useVideoConfig } from "remotion"
 import { vignetteOverlayStyle } from "@/styles/default-style"
-import { useTheme } from "../theme-context"
+import { useTheme } from "../../contexts/ThemeContext"
 
 /**
  * VignetteOverlayProps: props for the VignetteOverlay component.
