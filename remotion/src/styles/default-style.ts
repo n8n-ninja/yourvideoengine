@@ -6,8 +6,8 @@ export const timelineElementContainerStyle: CSSProperties = {
 }
 
 export const cameraVideoStyle: CSSProperties = {
-  width: "100%",
-  height: "100%",
+  minWidth: "100%",
+  minHeight: "100%",
   objectFit: "cover",
   display: "block",
   transformOrigin: "50% 50%",

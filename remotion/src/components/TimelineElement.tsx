@@ -95,9 +95,10 @@ export const TimelineElementRenderer: React.FC<{
             ...transitionStyle,
             ...positionStyle,
             ...containerStyle,
+            ...styleWithEffects,
           }}
         >
-          <div style={styleWithEffects}>{child}</div>
+          {child}
         </div>
       </Sequence>
     )

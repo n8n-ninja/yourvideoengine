@@ -44,6 +44,8 @@ const CameraComponent: React.FC<Camera> = ({
     scale = 1,
     blur = 0,
     rotation = 0,
+    left = 0,
+    top = 0,
     filter = "",
     volume: kfVolume,
   } = interpolated
@@ -57,14 +59,14 @@ const CameraComponent: React.FC<Camera> = ({
   const videoStyle = {
     ...cameraVideoStyle,
     transform: hasKeyframes
-      ? `translate(${offsetX}px, ${offsetY}px) scale(${finalScale}) rotate(${rotation}deg)`
-      : `translate(${offsetX}px, ${offsetY}px)`,
+      ? `translate(${left || offsetX}px, ${top || offsetY}px) scale(${finalScale}) rotate(${rotation}deg)`
+      : `translate(${left || offsetX}px, ${top || offsetY}px)`,
     filter: hasKeyframes ? `${filter} blur(${blur}px)` : undefined,
     ...userStyle,
   }
 
   return (
-    <div>
+    <>
       {isImage(videoUrl) ? (
         <img
           src={videoUrl}
@@ -81,7 +83,7 @@ const CameraComponent: React.FC<Camera> = ({
           style={videoStyle}
         />
       )}
-    </div>
+    </>
   )
 }
 
