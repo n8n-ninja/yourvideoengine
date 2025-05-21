@@ -3,14 +3,12 @@ import { TimingSchema } from "./timing"
 import { PositionSchema } from "./position"
 import { TransitionSchema } from "./transition"
 import { LetterAnimationConfigSchema } from "./letter-animation"
-import { titleThemes, letterAnimationPresets } from "@/components/title/themes"
+import { titleThemes } from "@/components/title/themes"
 import { StyleSchema } from "./style"
 const themeNames = Object.keys(titleThemes)
-const animationPresetNames = Object.keys(letterAnimationPresets)
 
-const LetterAnimationSchema = LetterAnimationConfigSchema.extend({
-  preset: z.enum(animationPresetNames as [string, ...string[]]).optional(),
-})
+// LetterAnimationSchema = LetterAnimationConfigSchema (plus de preset)
+const LetterAnimationSchema = LetterAnimationConfigSchema
 
 /**
  * Zod schema for an array of title objects.

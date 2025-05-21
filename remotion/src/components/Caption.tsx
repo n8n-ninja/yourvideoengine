@@ -100,18 +100,24 @@ export const Caption: React.FC<{ captions: CaptionType }> = ({ captions }) => {
         <div style={resolvedBoxStyle}>
           {activePage.tokens.map((token, i) => {
             const isActive = currentMs >= token.fromMs && currentMs < token.toMs
+
+            const baseStyle = { ...resolvedTextStyle }
+            const activeStyle = isActive ? { ...resolvedActiveWordStyle } : {}
+
+            if (baseStyle.transform && activeStyle.transform) {
+              activeStyle.transform = `${baseStyle.transform} ${activeStyle.transform}`
+              delete baseStyle.transform
+            }
+
             return (
               <span
                 key={`${activePageIndex}-${i}`}
                 style={{
-                  ...resolvedTextStyle,
-                  ...(isActive ? resolvedActiveWordStyle : {}),
-                  opacity: 1,
-                  marginRight:
-                    i !== activePage.tokens.length - 1 ? "0.32em" : undefined,
+                  ...baseStyle,
+                  ...activeStyle,
                 }}
               >
-                {token.text.trim()}
+                {token.text}
               </span>
             )
           })}

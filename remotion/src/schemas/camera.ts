@@ -18,6 +18,7 @@ export const CameraSchema = z.object({
           filter: z.string().optional(),
           top: z.number().optional(),
           left: z.number().optional(),
+          volume: z.number().optional(),
         }),
       }),
     )

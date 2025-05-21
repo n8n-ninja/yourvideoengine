@@ -24,7 +24,9 @@ export type {
   TransitionReveal,
 } from "./transition-reveal"
 export type { Keyframe } from "./keyframe"
-export { ImagesSchema } from "./image"
-export type { Image, Images } from "./image"
+export { ImageSchema } from "./image"
+export type { Image } from "./image"
 export { EffectSchema, EffectsSchema } from "./effect"
 export type { Effect, Effects } from "./effect"
+export { SceneSchema, ProjectSchema } from "./timeline"
+export type { Project, Scene, TimelineItem } from "./timeline"

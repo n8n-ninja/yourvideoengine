@@ -16,26 +16,42 @@ if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true })
 }
 
-// 4. Lecture des fichiers JSON
-const jsonFiles = fs
+// 4. Lecture des fichiers JSON et JS
+const inputFiles = fs
   .readdirSync(inputDir)
-  .filter((file) => file.endsWith(".json"))
+  .filter((file) => file.endsWith(".json") || file.endsWith(".js"))
   .map((file) => ({ name: file, fullPath: path.join(inputDir, file) }))
 
-if (jsonFiles.length === 0) {
-  console.log("Aucun fichier JSON trouvé dans", inputDir)
+if (inputFiles.length === 0) {
+  console.log("Aucun fichier .json ou .js trouvé dans", inputDir)
   process.exit(0)
 }
 
-// 5. Boucle sur chaque JSON
-jsonFiles.forEach(({ name, fullPath }) => {
-  const outputName = name.replace(/\.json$/, ".mp4")
+// 5. Boucle sur chaque fichier
+inputFiles.forEach(({ name, fullPath }) => {
+  const outputName = name.replace(/\.(json|js)$/, ".mp4")
   const outputPath = path.join(outputDir, outputName)
   console.log(`\n[Batch] Rendu de ${name} → ${outputName}`)
 
+  let propsString = ""
+  if (name.endsWith(".json")) {
+    propsString = fs.readFileSync(fullPath, "utf8")
+    console.log(`[Batch] Type: JSON`)
+  } else if (name.endsWith(".js")) {
+    // Charger dynamiquement le module JS
+    const mod = require(path.resolve(fullPath))
+    // Prendre export default, ou caption, ou tout l'objet
+    const data = mod.default || mod.caption || mod
+    propsString = JSON.stringify(data)
+    console.log(`[Batch] Type: JS (module)`)
+  } else {
+    console.log(`[Batch] Fichier ignoré: ${name}`)
+    return
+  }
+
   // Commande Remotion CLI
   // --props permet de passer le JSON comme props à la composition
-  const cmd = `npx remotion render ${composition} ${outputPath} --props='${fs.readFileSync(fullPath, "utf8")}' --root=${remotionRoot}`
+  const cmd = `npx remotion render ${composition} ${outputPath} --props='${propsString}' --root=${remotionRoot}`
   try {
     execSync(cmd, { stdio: "inherit" })
   } catch (err) {

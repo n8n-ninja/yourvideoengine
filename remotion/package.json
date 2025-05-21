@@ -6,17 +6,21 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@react-three/fiber": "8.15.17",
     "@remotion/cli": "4.0.304",
     "@remotion/google-fonts": "4.0.304",
     "@remotion/lambda": "4.0.304",
     "@remotion/motion-blur": "4.0.304",
+    "@remotion/three": "^4.0.304",
     "@remotion/transitions": "4.0.304",
     "@remotion/zod-types": "4.0.304",
     "@types/express": "^5.0.1",
+    "@types/three": "0.155.0",
     "express": "^5.1.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "remotion": "4.0.304",
+    "three": "0.155.0",
     "zod": "3.24.4"
   },
   "devDependencies": {
@@ -40,7 +44,8 @@
     "d": "npx remotion lambda sites create src/index.ts --site-name=yourvideoengine-dev",
     "d:prod": "npx remotion lambda sites create src/index.ts --site-name=yourvideoengine-prod",
     "d:engine": "npx remotion lambda functions deploy --disk 10240 --timeout 900",
-    "test": "vitest"
+    "test": "vitest",
+    "renderbatch": "node batch/render-batch.js"
   },
   "sideEffects": [
     "*.css"

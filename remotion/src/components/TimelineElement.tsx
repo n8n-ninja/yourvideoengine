@@ -14,6 +14,8 @@ import type { z } from "zod"
 import { Overlay as OverlayType } from "@/schemas/overlay"
 import { Image } from "./Image"
 import { applyEffects } from "@/utils/effects"
+import { parseStyleString } from "@/utils/getStyle"
+import { timelineElementContainerStyle } from "@/styles/default-style"
 
 const elementComponentMap = {
   camera: (element: any) => <Camera {...element} />,
@@ -28,8 +30,13 @@ const elementComponentMap = {
 
 type ElementType = keyof typeof elementComponentMap
 
+// Typage propre pour containerStyle
+type TimelineElementWithStyle = z.infer<typeof TimelineElementSchema> & {
+  containerStyle?: React.CSSProperties | string
+}
+
 export const TimelineElementRenderer: React.FC<{
-  element: z.infer<typeof TimelineElementSchema>
+  element: TimelineElementWithStyle
 }> = ({ element }) => {
   const { fps, durationInFrames } = useVideoConfig()
   const frame = useCurrentFrame()
@@ -65,9 +72,13 @@ export const TimelineElementRenderer: React.FC<{
   const positionStyle =
     "position" in element && element.position
       ? getPosition(element.position)
-      : {}
+      : getPosition({})
 
-  const containerStyle = (element as any).containerStyle ?? {}
+  const rawContainerStyle = element.containerStyle
+  const containerStyle =
+    typeof rawContainerStyle === "string"
+      ? parseStyleString(rawContainerStyle)
+      : (rawContainerStyle ?? {})
 
   // Appliquer les effets si présents
   const effects = (element as any).effects
@@ -79,7 +90,12 @@ export const TimelineElementRenderer: React.FC<{
     return (
       <Sequence from={timing.startFrame} durationInFrames={timing.totalFrames}>
         <div
-          style={{ ...transitionStyle, ...positionStyle, ...containerStyle }}
+          style={{
+            ...timelineElementContainerStyle,
+            ...transitionStyle,
+            ...positionStyle,
+            ...containerStyle,
+          }}
         >
           <div style={styleWithEffects}>{child}</div>
         </div>

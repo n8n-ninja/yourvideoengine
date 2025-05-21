@@ -1,5 +1,5 @@
 import React from "react"
-import { titleThemes, letterAnimationPresets } from "./title/themes"
+import { titleThemes } from "./title/themes"
 import { LetterAnimation } from "./LetterAnimation"
 import { Title as TitleType } from "@/schemas"
 import { parseStyleString } from "@/utils/getStyle"
@@ -26,19 +26,14 @@ export const Title: React.FC<{ title: TitleType }> = ({ title }) => {
   let letterAnimationConfig = null
   if (title.letterAnimation) {
     const config = title.letterAnimation
-    const presetConfig = config.preset
-      ? letterAnimationPresets[
-          config.preset as keyof typeof letterAnimationPresets
-        ]
-      : undefined
     letterAnimationConfig = {
-      duration: config.duration ?? presetConfig?.duration ?? 0.3,
-      easing: config.easing ?? presetConfig?.easing ?? "easeOut",
-      stagger: config.stagger ?? presetConfig?.staggerDelay ?? 0.05,
+      duration: config.duration ?? 0.3,
+      easing: config.easing ?? "easeOut",
+      stagger: config.stagger ?? 0.05,
       translateY: config.translateY ?? 20,
     }
   }
-  // return <h1 style={style}>title.title</h1>
+
   return (
     <h1 style={style}>
       {letterAnimationConfig ? (

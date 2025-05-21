@@ -1,9 +1,6 @@
 import { CSSProperties } from "react"
 
-export const cameraContainerStyle: CSSProperties = {
-  width: "100%",
-  height: "100%",
-  position: "relative",
+export const timelineElementContainerStyle: CSSProperties = {
   overflow: "hidden",
   display: "block",
 }
@@ -44,14 +41,14 @@ export const captionTextStyle: CSSProperties = {
   fontSize: 75,
   textShadow: "0 2px 30px #000, 0 1px 10px #000",
   fontWeight: 900,
-  transition:
-    "color 0.12s cubic-bezier(0.4,0,0.2,1), transform 0.12s cubic-bezier(0.4,0,0.2,1)",
+  display: "inline-block",
+  margin: "10px",
+  transition: "all 0.12s cubic-bezier(0.4,0,0.2,1)",
 }
 
 export const captionActiveWordStyle: CSSProperties = {
   color: "#F7C500",
   textShadow: "0 2px 30px #000, 0 1px 10px #000",
-  fontWeight: 900,
 }
 
 export const scanlineOverlayStyle: CSSProperties = {
@@ -85,4 +82,37 @@ export const colorOverlayStyle: CSSProperties = {
   pointerEvents: "none",
   zIndex: 10,
   transition: "none",
+}
+
+export type CaptionTheme = {
+  boxStyle?: React.CSSProperties
+  textStyle?: React.CSSProperties
+  activeWordStyle?: React.CSSProperties
+}
+
+export type CameraTheme = {
+  videoStyle?: React.CSSProperties
+}
+
+export type TitleTheme = {
+  baseStyle?: React.CSSProperties
+}
+
+export type OverlayTheme = {
+  scanlineStyle?: React.CSSProperties
+  vignetteStyle?: React.CSSProperties
+  colorStyle?: React.CSSProperties
+}
+
+export type ImageTheme = {
+  imageStyle?: React.CSSProperties
+}
+
+export type Theme = {
+  caption?: CaptionTheme
+  camera?: CameraTheme
+  title?: TitleTheme
+  overlay?: OverlayTheme
+  image?: ImageTheme
+  containerStyle?: React.CSSProperties
 }

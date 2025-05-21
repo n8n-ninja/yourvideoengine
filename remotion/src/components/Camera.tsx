@@ -3,7 +3,7 @@ import { Video } from "remotion"
 import { Camera } from "@/schemas"
 import { useKeyframes } from "@/hooks/useKeyframes"
 import { parseStyleString } from "@/utils/getStyle"
-import { cameraContainerStyle, cameraVideoStyle } from "@/styles/default-style"
+import { cameraVideoStyle } from "@/styles/default-style"
 
 /**
  * Camera: renders a video with animated camera effects (scale, blur, rotation, filter, volume) using keyframes.
@@ -64,7 +64,7 @@ const CameraComponent: React.FC<Camera> = ({
   }
 
   return (
-    <div style={cameraContainerStyle}>
+    <div>
       {isImage(videoUrl) ? (
         <img
           src={videoUrl}

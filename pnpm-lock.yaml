@@ -297,6 +297,9 @@ importers:
 
   remotion:
     dependencies:
+      '@react-three/fiber':
+        specifier: 8.15.17
+        version: 8.15.17(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.155.0)
       '@remotion/cli':
         specifier: 4.0.304
         version: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -309,6 +312,9 @@ importers:
       '@remotion/motion-blur':
         specifier: 4.0.304
         version: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@remotion/three':
+        specifier: ^4.0.305
+        version: 4.0.305(@react-three/fiber@8.15.17(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.155.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(remotion@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(three@0.155.0)
       '@remotion/transitions':
         specifier: 4.0.304
         version: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -318,6 +324,9 @@ importers:
       '@types/express':
         specifier: ^5.0.1
         version: 5.0.1
+      '@types/three':
+        specifier: 0.155.0
+        version: 0.155.0
       express:
         specifier: ^5.1.0
         version: 5.1.0
@@ -330,6 +339,9 @@ importers:
       remotion:
         specifier: 4.0.304
         version: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      three:
+        specifier: 0.155.0
+        version: 0.155.0
       zod:
         specifier: 3.24.4
         version: 3.24.4
@@ -3098,6 +3110,15 @@ packages:
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
+
+  '@remotion/three@4.0.305':
+    resolution: {integrity: sha512-KZISGDF/w85eVA9Gyn7kzTbIKhCMDlFk0EUcAnzXR41H4nnsBH36eeVsGGq01btw9bIUx/51rLNqEZKOeley0g==}
+    peerDependencies:
+      '@react-three/fiber': '>=8.0.0'
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      remotion: 4.0.305
+      three: '>=0.137.0'
 
   '@remotion/transitions@4.0.304':
     resolution: {integrity: sha512-NovdRBdM78jvyEEPuRbNmKgMqAMqx05XEMMpYhEC+t5eQ76t2drDXphvxMpz0SN0trtNG0DhkqOC1yCM8QcnLQ==}
@@ -12327,7 +12348,7 @@ snapshots:
 
   '@react-three/fiber@8.15.17(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.155.0)':
     dependencies:
-      '@babel/runtime': 7.27.0
+      '@babel/runtime': 7.27.1
       '@types/react-reconciler': 0.26.7
       '@types/webxr': 0.5.22
       base64-js: 1.5.1
@@ -12948,6 +12969,14 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
+
+  '@remotion/three@4.0.305(@react-three/fiber@8.15.17(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.155.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(remotion@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(three@0.155.0)':
+    dependencies:
+      '@react-three/fiber': 8.15.17(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.155.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      remotion: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      three: 0.155.0
 
   '@remotion/transitions@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
@@ -17167,7 +17196,7 @@ snapshots:
 
   media-query-parser@2.0.2:
     dependencies:
-      '@babel/runtime': 7.27.0
+      '@babel/runtime': 7.27.1
 
   media-typer@0.3.0: {}
 
