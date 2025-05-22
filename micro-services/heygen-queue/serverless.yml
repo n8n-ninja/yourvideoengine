@@ -37,19 +37,12 @@ provider:
           Resource: "*"
   apiGateway:
     apiKeys:
-      - heygen-queue-prod-key
+      - heygen-queue-${sls:stage}-key
 
 package:
   individually: true
 
 functions:
-  helloWorld:
-    handler: index.helloWorld
-    events:
-      - http:
-          path: hello
-          method: get
-          cors: true
   enqueueHandler:
     handler: index.enqueueHandler
     events:
@@ -61,22 +54,12 @@ functions:
   worker:
     handler: index.workerHttpHandler
     events:
-      - http:
-          path: worker
-          method: post
-          cors: true
-          private: true
       - schedule:
           rate: rate(1 minute)
           enabled: true
   poll:
     handler: index.pollHttpHandler
     events:
-      - http:
-          path: poll
-          method: post
-          cors: true
-          private: true
       - schedule:
           rate: rate(1 minute)
           enabled: true
