@@ -12,6 +12,7 @@ provider:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1"
     HEYGEN_VIDEOS_TABLE: HeygenVideosTable-${sls:stage}
     HEYGEN_API_KEY: ${env:HEYGEN_API_KEY}
+    HEYGEN_MAX_CONCURRENCY: 3
   iam:
     role:
       statements:
@@ -24,6 +25,19 @@ provider:
             - dynamodb:Scan
           Resource:
             - arn:aws:dynamodb:${self:provider.region}:*:table/HeygenVideosTable-${sls:stage}
+        - Effect: Allow
+          Action:
+            - events:PutRule
+            - events:PutTargets
+            - events:RemoveTargets
+            - events:DeleteRule
+            - events:DescribeRule
+            - events:ListRules
+            - events:ListTargetsByRule
+          Resource: "*"
+  apiGateway:
+    apiKeys:
+      - heygen-queue-prod-key
 
 package:
   individually: true
@@ -43,6 +57,29 @@ functions:
           path: enqueue
           method: post
           cors: true
+          private: true
+  worker:
+    handler: index.workerHttpHandler
+    events:
+      - http:
+          path: worker
+          method: post
+          cors: true
+          private: true
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+  poll:
+    handler: index.pollHttpHandler
+    events:
+      - http:
+          path: poll
+          method: post
+          cors: true
+          private: true
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
 
 plugins:
   - serverless-dotenv-plugin

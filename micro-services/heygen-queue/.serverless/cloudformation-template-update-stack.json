@@ -83,6 +83,18 @@
         "LogGroupName": "/aws/lambda/heygen-queue-dev-enqueueHandler"
       }
     },
+    "WorkerLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/heygen-queue-dev-worker"
+      }
+    },
+    "PollLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/heygen-queue-dev-poll"
+      }
+    },
     "IamRoleLambdaExecution": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -151,6 +163,19 @@
                     "dynamodb:Scan"
                   ],
                   "Resource": "arn:aws:dynamodb:us-east-1:*:table/HeygenVideosTable-dev"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "events:PutRule",
+                    "events:PutTargets",
+                    "events:RemoveTargets",
+                    "events:DeleteRule",
+                    "events:DescribeRule",
+                    "events:ListRules",
+                    "events:ListTargetsByRule"
+                  ],
+                  "Resource": "*"
                 }
               ]
             }
@@ -179,7 +204,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/heygen-queue/dev/1747902087954-2025-05-22T08:21:27.954Z/helloWorld.zip"
+          "S3Key": "serverless/heygen-queue/dev/1747907580259-2025-05-22T09:53:00.259Z/helloWorld.zip"
         },
         "Handler": "index.helloWorld",
         "Runtime": "nodejs18.x",
@@ -190,7 +215,8 @@
           "Variables": {
             "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
             "HEYGEN_VIDEOS_TABLE": "HeygenVideosTable-dev",
-            "HEYGEN_API_KEY": "NTA1ZDliMjc3OTE5NDFmYmIxMGIzZWI3ZTVkZDg4MjAtMTcxOTU5NzI0Nw=="
+            "HEYGEN_API_KEY": "NTA1ZDliMjc3OTE5NDFmYmIxMGIzZWI3ZTVkZDg4MjAtMTcxOTU5NzI0Nw==",
+            "HEYGEN_MAX_CONCURRENCY": "3"
           }
         },
         "Role": {
@@ -211,7 +237,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/heygen-queue/dev/1747902087954-2025-05-22T08:21:27.954Z/enqueueHandler.zip"
+          "S3Key": "serverless/heygen-queue/dev/1747907580259-2025-05-22T09:53:00.259Z/enqueueHandler.zip"
         },
         "Handler": "index.enqueueHandler",
         "Runtime": "nodejs18.x",
@@ -222,7 +248,8 @@
           "Variables": {
             "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
             "HEYGEN_VIDEOS_TABLE": "HeygenVideosTable-dev",
-            "HEYGEN_API_KEY": "NTA1ZDliMjc3OTE5NDFmYmIxMGIzZWI3ZTVkZDg4MjAtMTcxOTU5NzI0Nw=="
+            "HEYGEN_API_KEY": "NTA1ZDliMjc3OTE5NDFmYmIxMGIzZWI3ZTVkZDg4MjAtMTcxOTU5NzI0Nw==",
+            "HEYGEN_MAX_CONCURRENCY": "3"
           }
         },
         "Role": {
@@ -236,24 +263,184 @@
         "EnqueueHandlerLogGroup"
       ]
     },
-    "HelloWorldLambdaVersionYDjuibovKV0o5fONSVRJNio7kjJPjvMe4RdY3M0zlM": {
+    "WorkerLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/heygen-queue/dev/1747907580259-2025-05-22T09:53:00.259Z/worker.zip"
+        },
+        "Handler": "index.workerHttpHandler",
+        "Runtime": "nodejs18.x",
+        "FunctionName": "heygen-queue-dev-worker",
+        "MemorySize": 256,
+        "Timeout": 30,
+        "Environment": {
+          "Variables": {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "HEYGEN_VIDEOS_TABLE": "HeygenVideosTable-dev",
+            "HEYGEN_API_KEY": "NTA1ZDliMjc3OTE5NDFmYmIxMGIzZWI3ZTVkZDg4MjAtMTcxOTU5NzI0Nw==",
+            "HEYGEN_MAX_CONCURRENCY": "3"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "WorkerLogGroup"
+      ]
+    },
+    "PollLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/heygen-queue/dev/1747907580259-2025-05-22T09:53:00.259Z/poll.zip"
+        },
+        "Handler": "index.pollHttpHandler",
+        "Runtime": "nodejs18.x",
+        "FunctionName": "heygen-queue-dev-poll",
+        "MemorySize": 256,
+        "Timeout": 30,
+        "Environment": {
+          "Variables": {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "HEYGEN_VIDEOS_TABLE": "HeygenVideosTable-dev",
+            "HEYGEN_API_KEY": "NTA1ZDliMjc3OTE5NDFmYmIxMGIzZWI3ZTVkZDg4MjAtMTcxOTU5NzI0Nw==",
+            "HEYGEN_MAX_CONCURRENCY": "3"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "PollLogGroup"
+      ]
+    },
+    "HelloWorldLambdaVersionfysn6NdlWhTIGfyEd6T2O091qxVuywY67d5nTG60WPo": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "HelloWorldLambdaFunction"
         },
-        "CodeSha256": "Qz2YHZe9Ro86kohSr3/OeV7iOQ+A+HzuQepyKnnvdII="
+        "CodeSha256": "QiFmk4XkfLPBAkK8bHuy7dP35CxETteUkdYu7Pzs3bE="
       }
     },
-    "EnqueueHandlerLambdaVersionoXqvHAf9NfNXwQ0Yat8R3hgarKDe2dg205b0J8yhe0": {
+    "EnqueueHandlerLambdaVersionpF5LZyyCr6LxoQMph7E7FYhkzYj2E7ZZWvIc8ZwOUU": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "EnqueueHandlerLambdaFunction"
         },
-        "CodeSha256": "Qz2YHZe9Ro86kohSr3/OeV7iOQ+A+HzuQepyKnnvdII="
+        "CodeSha256": "QiFmk4XkfLPBAkK8bHuy7dP35CxETteUkdYu7Pzs3bE="
+      }
+    },
+    "WorkerLambdaVersionyI9jVA3pB5WjURcTBlvIhsNZOK0aKB9UWcIcPZj0jK4": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "WorkerLambdaFunction"
+        },
+        "CodeSha256": "QiFmk4XkfLPBAkK8bHuy7dP35CxETteUkdYu7Pzs3bE="
+      }
+    },
+    "PollLambdaVersionJX3guSGxAmjMWzqTD04sPqT51JOzgUFuYZSkHITU8Y": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "PollLambdaFunction"
+        },
+        "CodeSha256": "QiFmk4XkfLPBAkK8bHuy7dP35CxETteUkdYu7Pzs3bE="
+      }
+    },
+    "WorkerEventsRuleSchedule1": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": "rate(1 minute)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "WorkerLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "workerSchedule"
+          }
+        ]
+      }
+    },
+    "WorkerLambdaPermissionEventsRuleSchedule1": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "WorkerLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "WorkerEventsRuleSchedule1",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "PollEventsRuleSchedule1": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": "rate(1 minute)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "PollLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "pollSchedule"
+          }
+        ]
+      }
+    },
+    "PollLambdaPermissionEventsRuleSchedule1": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "PollLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "PollEventsRuleSchedule1",
+            "Arn"
+          ]
+        }
       }
     },
     "ApiGatewayRestApi": {
@@ -293,6 +480,36 @@
           ]
         },
         "PathPart": "enqueue",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceWorker": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "worker",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourcePoll": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "poll",
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         }
@@ -388,6 +605,96 @@
         }
       }
     },
+    "ApiGatewayMethodWorkerOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+              },
+              "ResponseTemplates": {
+                "application/json": ""
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceWorker"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodPollOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+              },
+              "ResponseTemplates": {
+                "application/json": ""
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourcePoll"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
     "ApiGatewayMethodHelloGet": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
@@ -445,7 +752,7 @@
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         },
-        "ApiKeyRequired": false,
+        "ApiKeyRequired": true,
         "AuthorizationType": "NONE",
         "Integration": {
           "IntegrationHttpMethod": "POST",
@@ -480,7 +787,99 @@
         "EnqueueHandlerLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1747902086932": {
+    "ApiGatewayMethodWorkerPost": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "POST",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceWorker"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": true,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "WorkerLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      },
+      "DependsOn": [
+        "WorkerLambdaPermissionApiGateway"
+      ]
+    },
+    "ApiGatewayMethodPollPost": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "POST",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourcePoll"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": true,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "PollLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      },
+      "DependsOn": [
+        "PollLambdaPermissionApiGateway"
+      ]
+    },
+    "ApiGatewayDeployment1747907579426": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -491,9 +890,57 @@
       "DependsOn": [
         "ApiGatewayMethodHelloOptions",
         "ApiGatewayMethodEnqueueOptions",
+        "ApiGatewayMethodWorkerOptions",
+        "ApiGatewayMethodPollOptions",
         "ApiGatewayMethodHelloGet",
-        "ApiGatewayMethodEnqueuePost"
+        "ApiGatewayMethodEnqueuePost",
+        "ApiGatewayMethodWorkerPost",
+        "ApiGatewayMethodPollPost"
       ]
+    },
+    "ApiGatewayApiKey1": {
+      "Type": "AWS::ApiGateway::ApiKey",
+      "Properties": {
+        "Enabled": true,
+        "Name": "heygen-queue-prod-key",
+        "StageKeys": [
+          {
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "StageName": "dev"
+          }
+        ]
+      },
+      "DependsOn": "ApiGatewayDeployment1747907579426"
+    },
+    "ApiGatewayUsagePlan": {
+      "Type": "AWS::ApiGateway::UsagePlan",
+      "DependsOn": "ApiGatewayDeployment1747907579426",
+      "Properties": {
+        "ApiStages": [
+          {
+            "ApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "Stage": "dev"
+          }
+        ],
+        "Description": "Usage plan for heygen-queue dev stage",
+        "UsagePlanName": "heygen-queue-dev"
+      }
+    },
+    "ApiGatewayUsagePlanKey1": {
+      "Type": "AWS::ApiGateway::UsagePlanKey",
+      "Properties": {
+        "KeyId": {
+          "Ref": "ApiGatewayApiKey1"
+        },
+        "KeyType": "API_KEY",
+        "UsagePlanId": {
+          "Ref": "ApiGatewayUsagePlan"
+        }
+      }
     },
     "HelloWorldLambdaPermissionApiGateway": {
       "Type": "AWS::Lambda::Permission",
@@ -569,6 +1016,80 @@
         }
       }
     },
+    "WorkerLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "WorkerLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "PollLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "PollLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
     "HeygenVideosTable": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
@@ -609,7 +1130,7 @@
     "HelloWorldLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "HelloWorldLambdaVersionYDjuibovKV0o5fONSVRJNio7kjJPjvMe4RdY3M0zlM"
+        "Ref": "HelloWorldLambdaVersionfysn6NdlWhTIGfyEd6T2O091qxVuywY67d5nTG60WPo"
       },
       "Export": {
         "Name": "sls-heygen-queue-dev-HelloWorldLambdaFunctionQualifiedArn"
@@ -618,10 +1139,28 @@
     "EnqueueHandlerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "EnqueueHandlerLambdaVersionoXqvHAf9NfNXwQ0Yat8R3hgarKDe2dg205b0J8yhe0"
+        "Ref": "EnqueueHandlerLambdaVersionpF5LZyyCr6LxoQMph7E7FYhkzYj2E7ZZWvIc8ZwOUU"
       },
       "Export": {
         "Name": "sls-heygen-queue-dev-EnqueueHandlerLambdaFunctionQualifiedArn"
+      }
+    },
+    "WorkerLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "WorkerLambdaVersionyI9jVA3pB5WjURcTBlvIhsNZOK0aKB9UWcIcPZj0jK4"
+      },
+      "Export": {
+        "Name": "sls-heygen-queue-dev-WorkerLambdaFunctionQualifiedArn"
+      }
+    },
+    "PollLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "PollLambdaVersionJX3guSGxAmjMWzqTD04sPqT51JOzgUFuYZSkHITU8Y"
+      },
+      "Export": {
+        "Name": "sls-heygen-queue-dev-PollLambdaFunctionQualifiedArn"
       }
     },
     "ServiceEndpoint": {

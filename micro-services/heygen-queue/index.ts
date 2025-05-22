@@ -72,6 +72,12 @@ export const enqueueHandler = async (
       }),
     )
   }
+  // Appel direct du worker pour lancer le traitement immédiatement
+  try {
+    await workerHandler()
+  } catch (err) {
+    console.error("Could not trigger worker immediately:", err)
+  }
   return {
     statusCode: 200,
     headers: { "Content-Type": "application/json" },
@@ -83,6 +89,7 @@ const MAX_CONCURRENCY = parseInt(process.env.HEYGEN_MAX_CONCURRENCY ?? "1", 10)
 const MAX_RETRIES = parseInt(process.env.HEYGEN_MAX_RETRIES ?? "3", 10)
 const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY
 const HEYGEN_API_URL = "https://api.heygen.com/v2/video/generate"
+const HEYGEN_STATUS_URL = "https://api.heygen.com/v1/video_status.get"
 
 export const workerHandler = async (): Promise<void> => {
   if (!TABLE_NAME) throw new Error("HEYGEN_VIDEOS_TABLE not set")
@@ -227,6 +234,172 @@ export const workerHttpHandler = async (
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: "workerHandler triggered" }),
+    }
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: (error as Error).message }),
+    }
+  }
+}
+
+const checkCompletion = async (
+  projectId: string,
+  client: DynamoDBClient,
+): Promise<{ allReady: boolean; callbackUrl?: string; videos: any[] }> => {
+  if (!TABLE_NAME) throw new Error("HEYGEN_VIDEOS_TABLE not set")
+  const res = await client.send(
+    new ScanCommand({
+      TableName: TABLE_NAME,
+      FilterExpression: "#pk = :pk",
+      ExpressionAttributeNames: { "#pk": "pk" },
+      ExpressionAttributeValues: { ":pk": { S: `PROJECT#${projectId}` } },
+    }),
+  )
+  const items = res.Items ?? []
+  const allReady =
+    items.length > 0 && items.every((item) => item.status?.S === "ready")
+  const callbackUrl = items[0]?.callbackUrl?.S
+  // Map videos to a clean array
+  const videos = items.map((item) => ({
+    videoId: item.sk?.S?.replace("VIDEO#", ""),
+    heygenId: item.heygenId?.S,
+    status: item.status?.S,
+    attempts: parseInt(item.attempts?.N ?? "0", 10),
+    params: item.params?.S ? JSON.parse(item.params.S) : {},
+    createdAt: item.createdAt?.S,
+    updatedAt: item.updatedAt?.S,
+    heygenData: item.heygenData?.S ? JSON.parse(item.heygenData.S) : null,
+  }))
+  return { allReady, callbackUrl, videos }
+}
+
+export const pollHandler = async (): Promise<void> => {
+  if (!TABLE_NAME) throw new Error("HEYGEN_VIDEOS_TABLE not set")
+  const client = new DynamoDBClient({})
+  // 1. Get all videos with status = 'processing'
+  const processingRes = await client.send(
+    new ScanCommand({
+      TableName: TABLE_NAME,
+      FilterExpression: "#status = :processing",
+      ExpressionAttributeNames: { "#status": "status" },
+      ExpressionAttributeValues: { ":processing": { S: "processing" } },
+    }),
+  )
+  const processingVideos = processingRes.Items ?? []
+  const now = new Date().toISOString()
+  const completedProjects = new Set<string>()
+  for (const item of processingVideos) {
+    const projectId = item.pk.S?.replace("PROJECT#", "") ?? ""
+    const videoId = item.sk.S?.replace("VIDEO#", "") ?? ""
+    const heygenId = item.heygenId?.S
+    const params = item.params?.S ? JSON.parse(item.params.S) : {}
+    const attempts = parseInt(item.attempts?.N ?? "0", 10)
+    const callbackUrl = item.callbackUrl?.S ?? ""
+    const apiKey = params.apiKey || HEYGEN_API_KEY
+    const pk = item.pk?.S ?? ""
+    const sk = item.sk?.S ?? ""
+    if (!heygenId || !apiKey || !pk || !sk) continue
+    // 2. Call HeyGen status API
+    let status: string | undefined
+    let heygenData: any = null
+    try {
+      const res = await fetch(`${HEYGEN_STATUS_URL}?video_id=${heygenId}`, {
+        method: "GET",
+        headers: {
+          "X-Api-Key": apiKey,
+          Accept: "application/json",
+        },
+      })
+      const data = (await res.json()) as { data?: any }
+      status = data.data?.status
+      heygenData = data.data ?? null
+    } catch {
+      // ignore error, will retry next poll
+      continue
+    }
+    if (status === "completed") {
+      // 3. Mark video as ready and store heygenData
+      await client.send(
+        new UpdateItemCommand({
+          TableName: TABLE_NAME,
+          Key: { pk: { S: pk }, sk: { S: sk } },
+          UpdateExpression:
+            "SET #status = :r, #updatedAt = :u, #heygenData = :d",
+          ExpressionAttributeNames: {
+            "#status": "status",
+            "#updatedAt": "updatedAt",
+            "#heygenData": "heygenData",
+          },
+          ExpressionAttributeValues: {
+            ":r": { S: "ready" },
+            ":u": { S: now },
+            ":d": { S: JSON.stringify(heygenData) },
+          },
+        }),
+      )
+      // 4. Check if all videos for the project are ready
+      if (!completedProjects.has(projectId)) {
+        const {
+          allReady,
+          callbackUrl: cb,
+          videos,
+        } = await checkCompletion(projectId, client)
+        if (allReady && cb) {
+          completedProjects.add(projectId)
+          // 5. Call callbackUrl
+          try {
+            await fetch(cb, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ projectId, videos }),
+            })
+          } catch {}
+        }
+      }
+    } else if (status === "failed") {
+      const newAttempts = attempts + 1
+      await client.send(
+        new UpdateItemCommand({
+          TableName: TABLE_NAME,
+          Key: { pk: { S: pk }, sk: { S: sk } },
+          UpdateExpression:
+            "SET #attempts = :a, #updatedAt = :u" +
+            (newAttempts >= MAX_RETRIES ? ", #status = :f" : ", #status = :p"),
+          ExpressionAttributeNames: {
+            "#attempts": "attempts",
+            "#updatedAt": "updatedAt",
+            "#status": "status",
+          },
+          ExpressionAttributeValues: {
+            ":a": { N: newAttempts.toString() },
+            ":u": { S: now },
+            ":f": { S: "failed" },
+            ":p": { S: "pending" },
+          },
+        }),
+      )
+    }
+    // else: still processing, do nothing
+  }
+  // Ajout : relancer le worker après chaque polling
+  try {
+    await workerHandler()
+  } catch (err) {
+    console.error("Could not trigger worker after polling:", err)
+  }
+}
+
+export const pollHttpHandler = async (
+  event: APIGatewayProxyEvent,
+): Promise<APIGatewayProxyResult> => {
+  try {
+    await pollHandler()
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "pollHandler triggered" }),
     }
   } catch (error) {
     return {

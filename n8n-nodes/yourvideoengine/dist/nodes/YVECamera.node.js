@@ -8,8 +8,8 @@ class YVECamera {
             name: "yveCamera",
             icon: "file:camera.svg",
             group: ["transform"],
-            version: 1,
-            description: "Pilot Remotion CameraZoom composition with keyframes.",
+            version: 2,
+            description: "Trigger HeyGen video creation via custom Lambda.",
             defaults: {
                 name: "YVE Camera",
             },
@@ -17,21 +17,103 @@ class YVECamera {
             outputs: ["main" /* NodeConnectionType.Main */],
             properties: [
                 {
-                    displayName: "Video URL",
-                    name: "videoUrl",
+                    displayName: "Avatar ID",
+                    name: "avatar_id",
                     type: "string",
                     default: "",
-                    placeholder: "https://...",
-                    description: "URL of the video to process.",
                     required: true,
+                    description: "HeyGen avatar_id",
                 },
                 {
-                    displayName: "Keyframes (JSON Array)",
-                    name: "keyframes",
-                    type: "json",
-                    default: "[]",
-                    description: "Array of keyframe objects for CameraZoom (see Remotion docs).",
+                    displayName: "Avatar Style",
+                    name: "avatar_style",
+                    type: "string",
+                    default: "normal",
+                    required: false,
+                    description: "HeyGen avatar_style (optional)",
+                },
+                {
+                    displayName: "Input Text",
+                    name: "input_text",
+                    type: "string",
+                    default: "",
                     required: true,
+                    description: "Text to be spoken by the avatar",
+                },
+                {
+                    displayName: "Voice ID",
+                    name: "voice_id",
+                    type: "string",
+                    default: "",
+                    required: true,
+                    description: "HeyGen voice_id",
+                },
+                {
+                    displayName: "Speed",
+                    name: "speed",
+                    type: "number",
+                    default: 1.0,
+                    required: false,
+                    description: "Speech speed (optional)",
+                },
+                {
+                    displayName: "Width",
+                    name: "width",
+                    type: "number",
+                    default: 1280,
+                    required: false,
+                    description: "Video width (optional)",
+                },
+                {
+                    displayName: "Height",
+                    name: "height",
+                    type: "number",
+                    default: 720,
+                    required: false,
+                    description: "Video height (optional)",
+                },
+                {
+                    displayName: "Project ID",
+                    name: "projectId",
+                    type: "string",
+                    default: "",
+                    required: false,
+                    description: "Project ID (optional, will use workflow run ID if empty)",
+                    displayOptions: {
+                        show: {
+                        // n8n advanced options
+                        },
+                    },
+                },
+                {
+                    displayName: "Custom HeyGen API Key",
+                    name: "apiKey",
+                    type: "string",
+                    default: "",
+                    required: false,
+                    description: "Custom HeyGen API Key (optional)",
+                    displayOptions: {
+                        show: {
+                        // n8n advanced options
+                        },
+                    },
+                },
+                {
+                    displayName: "Environment",
+                    name: "environment",
+                    type: "options",
+                    options: [
+                        { name: "Production", value: "prod" },
+                        { name: "Development", value: "dev" },
+                    ],
+                    default: "prod",
+                    required: false,
+                    description: "Choose environment (prod/dev)",
+                    displayOptions: {
+                        show: {
+                        // n8n advanced options
+                        },
+                    },
                 },
             ],
         };
@@ -40,96 +122,60 @@ class YVECamera {
         const items = this.getInputData();
         const returnData = [];
         for (let i = 0; i < items.length; i++) {
-            const videoUrl = this.getNodeParameter("videoUrl", i);
-            let keyframes = this.getNodeParameter("keyframes", i);
-            if (typeof keyframes === "string") {
-                try {
-                    keyframes = JSON.parse(keyframes);
-                }
-                catch (e) {
-                    throw new Error("Keyframes is not valid JSON: " + e);
-                }
+            const avatar_id = this.getNodeParameter("avatar_id", i);
+            const avatar_style = this.getNodeParameter("avatar_style", i);
+            const input_text = this.getNodeParameter("input_text", i);
+            const voice_id = this.getNodeParameter("voice_id", i);
+            const speed = this.getNodeParameter("speed", i);
+            const width = this.getNodeParameter("width", i);
+            const height = this.getNodeParameter("height", i);
+            let projectId = this.getNodeParameter("projectId", i, "");
+            const apiKey = this.getNodeParameter("apiKey", i, "");
+            const environment = this.getNodeParameter("environment", i, "prod");
+            // Use workflow run id if projectId not provided
+            if (!projectId) {
+                const globalData = this.getWorkflowStaticData("global");
+                const nodeData = this.getWorkflowStaticData("node");
+                projectId =
+                    globalData?.$execution?.id ||
+                        nodeData?.$execution?.id ||
+                        `run-${Date.now()}`;
             }
-            // Get video duration (optional, can be improved)
-            let duration = 0;
-            try {
-                const body = { url: videoUrl };
-                const durationResponse = await this.helpers.httpRequest({
-                    method: "POST",
-                    url: `http://n04sg488kwcss8ow04kk4c8k.91.107.237.123.sslip.io/duration`,
-                    headers: {
-                        Authorization: "Bearer sk_live_2b87210c8f3e4d3e9a23a09d5cf7d144",
-                    },
-                    body,
-                    json: true,
-                });
-                duration = durationResponse.duration;
-            }
-            catch (e) {
-                // fallback: 0
-            }
-            const inputProps = {
-                videoUrl,
-                keyframes,
+            // n8n provides $execution.resumeUrl for callback
+            const globalData = this.getWorkflowStaticData("global");
+            const nodeData = this.getWorkflowStaticData("node");
+            const callbackUrl = globalData?.$execution
+                ?.resumeUrl ||
+                nodeData?.$execution
+                    ?.resumeUrl ||
+                "";
+            const endpointUrl = environment === "dev"
+                ? "https://lh2xhhl3vg.execute-api.us-east-1.amazonaws.com/dev/enqueue"
+                : "https://lh2xhhl3vg.execute-api.us-east-1.amazonaws.com/prod/enqueue";
+            const params = {
+                avatar_id,
+                avatar_style,
+                input_text,
+                voice_id,
+                speed,
+                width,
+                height,
             };
-            const remotionPayload = {
-                serveUrl: "https://remotionlambda-useast1-xw8v2xhmyv.s3.us-east-1.amazonaws.com/sites/yourvideoengine/index.html",
-                composition: "CameraZoom",
-                framesPerLambda: 12,
-                inputProps: inputProps,
-                durationInFrames: duration ? Math.round(duration * 30) : undefined,
+            if (apiKey) {
+                params.apiKey = apiKey;
+            }
+            const payload = {
+                projectId,
+                callbackUrl,
+                params,
             };
-            // Remotion response
-            const remotionResponse = await this.helpers.httpRequest({
+            const response = await this.helpers.httpRequest({
                 method: "POST",
-                url: "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/render",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: remotionPayload,
+                url: endpointUrl,
+                body: payload,
                 json: true,
             });
-            // Output file
-            let outputFile = null;
-            let statusData = null;
-            if (remotionResponse.statusUrl) {
-                const statusUrl = remotionResponse.statusUrl;
-                const start = Date.now();
-                const timeout = 5 * 60 * 1000; // 5 minutes
-                while (Date.now() - start < timeout) {
-                    await new Promise((r) => setTimeout(r, 10000)); // 10s
-                    try {
-                        statusData = await this.helpers.httpRequest({
-                            method: "GET",
-                            url: statusUrl,
-                            json: true,
-                        });
-                        if (statusData.done && statusData.outputFile) {
-                            outputFile = statusData.outputFile;
-                            break;
-                        }
-                    }
-                    catch (e) {
-                        break;
-                    }
-                }
-            }
-            if (outputFile) {
-                returnData.push({
-                    json: {
-                        video_url: outputFile,
-                        status: statusData,
-                    },
-                });
-            }
-            else {
-                returnData.push({
-                    json: {
-                        remotion: remotionResponse,
-                        status: statusData,
-                    },
-                });
-            }
+            returnData.push({ json: response });
         }
         return this.prepareOutputData(returnData);
     }

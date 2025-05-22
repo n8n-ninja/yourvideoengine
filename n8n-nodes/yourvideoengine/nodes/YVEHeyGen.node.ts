@@ -1,20 +1,10 @@
 import {
   INodeType,
   INodeTypeDescription,
-  INodeExecutionData,
   IExecuteFunctions,
   NodeConnectionType,
-  IDataObject,
+  INodeExecutionData,
 } from "n8n-workflow"
-
-type HeyGenGenerateResponse = {
-  data?: { video_id: string }
-  [key: string]: unknown
-}
-type HeyGenStatusResponse = {
-  data?: { status: string }
-  [key: string]: unknown
-}
 
 export class YVEHeyGen implements INodeType {
   description: INodeTypeDescription = {
@@ -22,44 +12,37 @@ export class YVEHeyGen implements INodeType {
     name: "yveHeyGen",
     group: ["transform"],
     icon: "file:heygen.svg",
-    version: 1,
-    description: "Create videos with HeyGen avatars",
+    version: 2,
+    description: "Trigger HeyGen video creation via custom Lambda.",
     defaults: {
       name: "YVE HeyGen",
     },
     inputs: [NodeConnectionType.Main],
     outputs: [NodeConnectionType.Main],
-    credentials: [
-      {
-        name: "YVEHeyGenApi",
-        required: true,
-      },
-    ],
     properties: [
-      {
-        displayName: "Operation",
-        name: "operation",
-        type: "options",
-        options: [
-          {
-            name: "Create Video",
-            value: "createVideo",
-            description:
-              "Create a video with an avatar and voice using HeyGen.",
-          },
-        ],
-        default: "createVideo",
-        required: true,
-        description:
-          "The operation to perform. Only 'Create Video' is currently supported.",
-      },
       {
         displayName: "Avatar ID",
         name: "avatar_id",
         type: "string",
         default: "",
         required: true,
-        description: "The unique ID of the HeyGen avatar to use in the video.",
+        description: "HeyGen avatar_id",
+      },
+      {
+        displayName: "Avatar Style",
+        name: "avatar_style",
+        type: "string",
+        default: "normal",
+        required: false,
+        description: "HeyGen avatar_style (optional)",
+      },
+      {
+        displayName: "Input Text",
+        name: "input_text",
+        type: "string",
+        default: "",
+        required: true,
+        description: "Text to be spoken by the avatar",
       },
       {
         displayName: "Voice ID",
@@ -67,20 +50,7 @@ export class YVEHeyGen implements INodeType {
         type: "string",
         default: "",
         required: true,
-        description:
-          "The unique ID of the HeyGen voice to use for speech synthesis.",
-      },
-      {
-        displayName: "Text",
-        name: "text",
-        type: "string",
-        typeOptions: {
-          rows: 6,
-        },
-        default: "",
-        required: true,
-        description:
-          "The text to be spoken in the video (max 1500 characters).",
+        description: "HeyGen voice_id",
       },
       {
         displayName: "Additional Options",
@@ -93,65 +63,74 @@ export class YVEHeyGen implements INodeType {
             displayName: "Speed",
             name: "speed",
             type: "number",
-            default: 1,
-            description:
-              "Voice speed. 1 is normal speed. Values < 1 are slower, > 1 are faster.",
+            default: 1.0,
+            description: "Speech speed (optional)",
           },
           {
-            displayName: "Title",
-            name: "title",
+            displayName: "Project ID",
+            name: "projectId",
             type: "string",
             default: "",
-            description: "Optional title for the generated video.",
+            description:
+              "Project ID (optional, will use workflow run ID if empty)",
           },
           {
-            displayName: "Emotion",
-            name: "emotion",
+            displayName: "Custom HeyGen API Key",
+            name: "apiKey",
+            type: "string",
+            default: "",
+            description: "Custom HeyGen API Key (optional)",
+          },
+          {
+            displayName: "Environment",
+            name: "environment",
             type: "options",
             options: [
-              { name: "Excited", value: "Excited" },
-              { name: "Friendly", value: "Friendly" },
-              { name: "Serious", value: "Serious" },
-              { name: "Soothing", value: "Soothing" },
-              { name: "Broadcaster", value: "Broadcaster" },
+              { name: "Production", value: "prod" },
+              { name: "Development", value: "dev" },
             ],
-            default: "",
-            description:
-              "Voice emotion, if supported by the selected voice. Not all voices support all emotions.",
+            default: "prod",
+            description: "Choose environment (prod/dev)",
           },
           {
-            displayName: "Folder ID",
-            name: "folder_id",
+            displayName: "Callback URL",
+            name: "callbackUrl",
             type: "string",
             default: "",
-            description: "Optional HeyGen folder ID to organize the video.",
-          },
-          {
-            displayName: "Width",
-            name: "width",
-            type: "number",
-            default: 1080,
-            description:
-              "Width of the generated video in pixels (e.g., 1080 for portrait).",
-          },
-          {
-            displayName: "Height",
-            name: "height",
-            type: "number",
-            default: 1920,
-            description:
-              "Height of the generated video in pixels (e.g., 1920 for portrait).",
-          },
-          {
-            displayName: "Caption",
-            name: "caption",
-            type: "boolean",
-            default: false,
-            description:
-              "If true, generate a caption file (subtitles) with the video.",
+            description: "Override callback URL (optional)",
           },
         ],
         description: "Optional advanced options for video generation.",
+      },
+      {
+        displayName: "Width",
+        name: "width",
+        type: "number",
+        default: 1280,
+        required: false,
+        description: "Video width (optional)",
+      },
+      {
+        displayName: "Height",
+        name: "height",
+        type: "number",
+        default: 720,
+        required: false,
+        description: "Video height (optional)",
+      },
+      {
+        displayName: "Resume Url",
+        name: "resumeUrl",
+        type: "string",
+        default: "={{$execution.resumeUrl}}",
+        required: true,
+      },
+      {
+        displayName: "Execution Id",
+        name: "executionId",
+        type: "string",
+        default: "={{$execution.id}}",
+        required: true,
       },
     ],
   }
@@ -159,157 +138,62 @@ export class YVEHeyGen implements INodeType {
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     const items = this.getInputData()
     const returnData: INodeExecutionData[] = []
-
-    // Get credentials
-    const credentials = (await this.getCredentials("YVEHeyGenApi")) as any
-
-    const apiKey = credentials.apiKey ?? ""
-
-    if (!apiKey) {
-      throw new Error(
-        "[YVEHeyGen] No API key found in credentials. Please check your credential configuration.",
-      )
-    }
-
     for (let i = 0; i < items.length; i++) {
       const avatar_id = this.getNodeParameter("avatar_id", i) as string
+      const avatar_style = this.getNodeParameter("avatar_style", i) as string
+      const input_text = this.getNodeParameter("input_text", i) as string
       const voice_id = this.getNodeParameter("voice_id", i) as string
-      const text = this.getNodeParameter("text", i) as string
-      if (text.length > 1500) {
-        throw new Error("Text must not exceed 1500 characters.")
+      const options = this.getNodeParameter("options", i, {}) as Record<
+        string,
+        unknown
+      >
+      const speed = (options.speed as number) ?? 1.0
+      let projectId = (options.projectId as string) ?? ""
+      const apiKey = (options.apiKey as string) ?? ""
+      const environment = (options.environment as string) ?? "prod"
+      const resumeUrl = this.getNodeParameter("resumeUrl", i) as string
+      const executionId = this.getNodeParameter("executionId", i) as string
+      let callbackUrl = (options.callbackUrl as string) ?? ""
+      if (!callbackUrl) {
+        callbackUrl = resumeUrl
       }
-      const options = this.getNodeParameter("options", i, {}) as IDataObject
-      const speed = (options.speed as number) ?? 1
-      const title = (options.title as string) ?? ""
-      const emotion = (options.emotion as string) ?? ""
-      const folder_id = (options.folder_id as string) ?? ""
-      const width = (options.width as number) ?? 1080
-      const height = (options.height as number) ?? 1920
-      const caption = (options.caption as boolean) ?? false
+      // Use executionId if projectId not provided
+      if (!projectId) {
+        projectId = executionId
+      }
 
-      const voice: Record<string, unknown> = {
-        type: "text",
-        input_text: text,
+      const params: Record<string, unknown> = {
+        avatar_id,
+        avatar_style,
+        input_text,
         voice_id,
         speed,
+        width: this.getNodeParameter("width", i) as number,
+        height: this.getNodeParameter("height", i) as number,
       }
-      if (emotion) {
-        voice.emotion = emotion
+      if (apiKey) {
+        params.apiKey = apiKey
       }
-
-      const body: Record<string, unknown> = {
-        video_inputs: [
-          {
-            character: {
-              type: "avatar",
-              avatar_id,
-              avatar_style: "normal",
-            },
-            voice,
-          },
-        ],
-        dimension: {
-          width,
-          height,
+      const payload = {
+        projectId,
+        callbackUrl,
+        params,
+      }
+      const endpointUrl =
+        environment === "dev"
+          ? "https://lh2xhhl3vg.execute-api.us-east-1.amazonaws.com/dev/enqueue"
+          : "https://lh2xhhl3vg.execute-api.us-east-1.amazonaws.com/prod/enqueue"
+      const response = await this.helpers.httpRequest({
+        method: "POST",
+        url: endpointUrl,
+        body: payload,
+        json: true,
+        headers: {
+          "X-Api-Key": "t1U7r2TUopagmyvGqYJXE4lWrQ6Lzsc48a1pZ0J7",
         },
-      }
-      if (title) {
-        body.title = title
-      }
-      if (folder_id) {
-        body.folder_id = folder_id
-      }
-      if (caption) {
-        body.caption = true
-      }
-
-      let response: HeyGenGenerateResponse
-      try {
-        response = (await this.helpers.httpRequest({
-          method: "POST",
-          url: "https://api.heygen.com/v2/video/generate",
-          headers: {
-            "X-Api-Key": apiKey,
-            "Content-Type": "application/json",
-          },
-          body,
-          json: true,
-        })) as HeyGenGenerateResponse
-      } catch (err: any) {
-        let status = err?.response?.status || err?.response?.statusCode
-        let body = err?.response?.body
-        let msg = err?.message || "Unknown error"
-        throw new Error(
-          `[YVEHeyGen] API error: ${msg}${status ? ` (status: ${status})` : ""}${body ? ` - ${typeof body === "string" ? body : JSON.stringify(body)}` : ""}`,
-        )
-      }
-
-      const videoId = response.data?.video_id
-
-      let statusResponse: HeyGenStatusResponse | null = null
-      const pollingStart = Date.now()
-      const pollingTimeout = 10 * 60 * 1000 // 10 minutes
-      while (true) {
-        await new Promise((resolve) => setTimeout(resolve, 10000))
-        try {
-          statusResponse = (await this.helpers.httpRequest({
-            method: "GET",
-            url: `https://api.heygen.com/v1/video_status.get?video_id=${videoId}`,
-            headers: {
-              "X-Api-Key": apiKey,
-              Accept: "application/json",
-            },
-            json: true,
-          })) as HeyGenStatusResponse
-        } catch (err: any) {
-          let status = err?.response?.status || err?.response?.statusCode
-          let body = err?.response?.body
-          let msg = err?.message || "Unknown error"
-          throw new Error(
-            `[YVEHeyGen] Polling error: ${msg}${status ? ` (status: ${status})` : ""}${body ? ` - ${typeof body === "string" ? body : JSON.stringify(body)}` : ""}`,
-          )
-        }
-        const status = statusResponse.data?.status
-        if (status === "completed") {
-          break
-        }
-        if (status === "failed" || status === "error") {
-          throw new Error(
-            `[YVEHeyGen] Video generation failed: ${(statusResponse.data as any)?.error || "Unknown error"}`,
-          )
-        }
-        if (Date.now() - pollingStart > pollingTimeout) {
-          throw new Error(
-            "[YVEHeyGen] Polling timed out after 10 minutes. Video generation did not complete in time.",
-          )
-        }
-      }
-
-      if (statusResponse && typeof statusResponse === "object") {
-        const d = statusResponse.data
-          ? (statusResponse.data as Record<string, any>)
-          : {}
-        if (d.error) {
-          throw new Error(`[YVEHeyGen] API returned error: ${d.error}`)
-        }
-        returnData.push({
-          json: {
-            video_url: d.video_url ?? null,
-            duration: d.duration ?? null,
-            data: {
-              caption_url: d.caption_url ?? null,
-              created_at: d.created_at ?? null,
-              id: d.id ?? null,
-              thumbnail_url: d.thumbnail_url ?? null,
-              video_url_caption: d.video_url_caption ?? null,
-            },
-          },
-        })
-      } else {
-        throw new Error("[YVEHeyGen] No valid response from HeyGen status API.")
-      }
+      })
+      returnData.push({ json: response })
     }
-
-    return [returnData]
+    return this.prepareOutputData(returnData)
   }
 }
