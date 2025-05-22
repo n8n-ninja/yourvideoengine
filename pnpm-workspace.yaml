@@ -6,3 +6,4 @@ packages:
   - studios/*
   - packages/*
   - n8n-nodes/*
+  - micro-services/*

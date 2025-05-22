@@ -1,20 +1,24 @@
 {
   "name": "heygen-queue",
   "version": "1.0.0",
-  "description": "AWS Lambda hello world for heygen-queue",
+  "description": "AWS Lambda heygen-queue with esbuild bundling",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "d": "tsc && serverless deploy"
+    "d": "dotenv -e .env -- serverless deploy",
+    "d:prod": "dotenv -e .env -- serverless deploy --stage prod"
   },
   "dependencies": {
-    "aws-lambda": "^1.0.7",
-    "serverless-plugin-typescript": "^2.1.5"
+    "@aws-sdk/client-dynamodb": "^3.812.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.125",
     "@types/node": "^20.8.7",
+    "dotenv-cli": "^8.0.0",
+    "esbuild": "^0.25.4",
     "serverless": "^3.35.2",
+    "serverless-dotenv-plugin": "^6.0.0",
+    "serverless-esbuild": "^1.55.0",
     "typescript": "^5.2.2"
   }
 }

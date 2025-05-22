@@ -10,6 +10,20 @@ provider:
   timeout: 30
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1"
+    HEYGEN_VIDEOS_TABLE: HeygenVideosTable-${sls:stage}
+    HEYGEN_API_KEY: ${env:HEYGEN_API_KEY}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:GetItem
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/HeygenVideosTable-${sls:stage}
 
 package:
   individually: true
@@ -22,10 +36,41 @@ functions:
           path: hello
           method: get
           cors: true
+  enqueueHandler:
+    handler: index.enqueueHandler
+    events:
+      - http:
+          path: enqueue
+          method: post
+          cors: true
 
 plugins:
-  - serverless-plugin-typescript
+  - serverless-dotenv-plugin
+  - serverless-esbuild
 
 custom:
-  serverlessPluginTypescript:
-    tsConfigFileLocation: "./tsconfig.json"
+  esbuild:
+    bundle: true
+    minify: false
+    sourcemap: true
+    target: node18
+    platform: node
+    concurrency: 10
+
+resources:
+  Resources:
+    HeygenVideosTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: HeygenVideosTable-${sls:stage}
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: sk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+          - AttributeName: sk
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
