@@ -14,6 +14,7 @@ import effect from "../batch/inputs/effect"
 import title from "../batch/inputs/title"
 import camera from "../batch/inputs/camera"
 import position from "../batch/inputs/position"
+import image from "../batch/inputs/image"
 
 export const RemotionRoot: React.FC = () => {
   const inputProps = getInputProps<{
@@ -133,6 +134,23 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={{
           background: "#1A1728",
           scenes: position.scenes,
+          globalTimeline,
+          theme,
+        }}
+      />
+
+      <Composition
+        id="DemoImage"
+        component={ProjectComposition}
+        durationInFrames={100}
+        fps={fps}
+        width={width}
+        height={height}
+        schema={ProjectSchema}
+        calculateMetadata={calculateMetadata}
+        defaultProps={{
+          background: "#1A1728",
+          scenes: image.scenes,
           globalTimeline,
           theme,
         }}

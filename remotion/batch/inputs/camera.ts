@@ -183,7 +183,7 @@ const cameraScenes: Scene[] = [
           top: 40,
           keyframes: [
             { time: 0, value: { bottom: 0 } },
-            { time: 5, value: { bottom: 100 } },
+            { time: 5, value: { bottom: 30 } },
           ],
         },
       },
