@@ -33,7 +33,7 @@
           ]
         }
       },
-      "stage": "prod",
+      "stage": "dev",
       "versionFunctions": true,
       "deploymentBucketObject": {
         "name": "manu-remotion-deployments"
@@ -140,7 +140,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "manu-remotion-deployments",
-                "S3Key": "serverless/remotion-api/prod/1747668583590-2025-05-19T15:29:43.590Z/remotion-api.zip"
+                "S3Key": "serverless/remotion-api/prod/1747927254553-2025-05-22T15:20:54.553Z/remotion-api.zip"
               },
               "Handler": "handler.renderVideo",
               "Runtime": "nodejs18.x",
@@ -168,7 +168,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "manu-remotion-deployments",
-                "S3Key": "serverless/remotion-api/prod/1747668583590-2025-05-19T15:29:43.590Z/remotion-api.zip"
+                "S3Key": "serverless/remotion-api/prod/1747927254553-2025-05-22T15:20:54.553Z/remotion-api.zip"
               },
               "Handler": "handler.getStatus",
               "Runtime": "nodejs18.x",
@@ -191,24 +191,24 @@
               "GetStatusLogGroup"
             ]
           },
-          "RenderVideoLambdaVersionCsmrxsaoLU0MbhiWc2GabcNDruYk2UjOIzzTKsj16sM": {
+          "RenderVideoLambdaVersionTh1W74IYVm3bXDAxpvGaQOPttsLWAizVB4EJAseVt0": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "RenderVideoLambdaFunction"
               },
-              "CodeSha256": "+ngGSxaGPYjsoqvxkAPqwEt5HvLh0yBVjqzkBoT44FI="
+              "CodeSha256": "z3YyQ/+wSz682z2iMze1RD57VKvaHTDhWtCPLlBQtxo="
             }
           },
-          "GetStatusLambdaVersionXuzmGnwagZ9LRc2TVAs8lEEyzCarejrlnKQNk6QDY": {
+          "GetStatusLambdaVersiont86a7NjTBvzp4swz6y6v3SafVdgu867ekv8TOk7E5QA": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetStatusLambdaFunction"
               },
-              "CodeSha256": "+ngGSxaGPYjsoqvxkAPqwEt5HvLh0yBVjqzkBoT44FI="
+              "CodeSha256": "z3YyQ/+wSz682z2iMze1RD57VKvaHTDhWtCPLlBQtxo="
             }
           },
           "ApiGatewayRestApi": {
@@ -361,7 +361,7 @@
               "Name": "remotion-api-prod | Validate request body and querystring parameters"
             }
           },
-          "ApiGatewayDeployment1747668574092": {
+          "ApiGatewayDeployment1747927245032": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -459,7 +459,7 @@
           "RenderVideoLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "RenderVideoLambdaVersionCsmrxsaoLU0MbhiWc2GabcNDruYk2UjOIzzTKsj16sM"
+              "Ref": "RenderVideoLambdaVersionTh1W74IYVm3bXDAxpvGaQOPttsLWAizVB4EJAseVt0"
             },
             "Export": {
               "Name": "sls-remotion-api-prod-RenderVideoLambdaFunctionQualifiedArn"
@@ -468,7 +468,7 @@
           "GetStatusLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetStatusLambdaVersionXuzmGnwagZ9LRc2TVAs8lEEyzCarejrlnKQNk6QDY"
+              "Ref": "GetStatusLambdaVersiont86a7NjTBvzp4swz6y6v3SafVdgu867ekv8TOk7E5QA"
             },
             "Export": {
               "Name": "sls-remotion-api-prod-GetStatusLambdaFunctionQualifiedArn"
@@ -529,7 +529,7 @@
         "timeout": 29,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "RenderVideoLambdaVersionCsmrxsaoLU0MbhiWc2GabcNDruYk2UjOIzzTKsj16sM"
+        "versionLogicalId": "RenderVideoLambdaVersionTh1W74IYVm3bXDAxpvGaQOPttsLWAizVB4EJAseVt0"
       },
       "getStatus": {
         "handler": "handler.getStatus",
@@ -553,11 +553,11 @@
         "timeout": 29,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "GetStatusLambdaVersionXuzmGnwagZ9LRc2TVAs8lEEyzCarejrlnKQNk6QDY"
+        "versionLogicalId": "GetStatusLambdaVersiont86a7NjTBvzp4swz6y6v3SafVdgu867ekv8TOk7E5QA"
       }
     },
     "configValidationMode": "warn",
-    "serviceFilename": "serverless",
+    "serviceFilename": "serverless.yml",
     "initialServerlessConfig": {
       "service": "remotion-api",
       "provider": {
@@ -570,13 +570,12 @@
         "$ref": "$[\"service\"][\"custom\"]"
       }
     },
-    "appId": null,
-    "orgId": null,
     "layers": {},
+    "isDashboardMonitoringPreconfigured": false,
     "artifact": "/Users/manu/work/02_yourvideoengine/remotion-api/.serverless/remotion-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/remotion-api/prod/1747668583590-2025-05-19T15:29:43.590Z",
+    "artifactDirectoryName": "serverless/remotion-api/prod/1747927254553-2025-05-22T15:20:54.553Z",
     "artifact": "remotion-api.zip"
   }
 }

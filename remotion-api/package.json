@@ -8,5 +8,8 @@
   "dependencies": {
     "@remotion/lambda": "4.0.304",
     "remotion": "4.0.304"
+  },
+  "devDependencies": {
+    "serverless-esbuild": "^1.44.0"
   }
 }

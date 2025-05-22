@@ -41,6 +41,7 @@ interface EnqueueVideoInput {
   projectId: string
   callbackUrl: string
   params: Record<string, unknown>
+  slug?: string
 }
 
 const TABLE_NAME = process.env.HEYGEN_VIDEOS_TABLE
@@ -75,6 +76,7 @@ export const mapDynamoItemToVideo = (item: any) => ({
   video_url: item.video_url?.S,
   duration: item.duration?.N ? parseFloat(item.duration.N) : undefined,
   caption_url: item.caption_url?.S,
+  slug: item.slug?.S,
 })
 
 // --- Calcul du nombre de slots disponibles ---
@@ -138,6 +140,7 @@ export const enqueueHandler = async (
             params: { S: JSON.stringify(video.params) },
             createdAt: { S: now },
             updatedAt: { S: now },
+            ...(video.slug ? { slug: { S: video.slug } } : {}),
           },
         }),
       )
@@ -246,7 +249,7 @@ export const workerHandler = async (): Promise<void> => {
     const videoId = item.sk.S?.replace("VIDEO#", "") ?? ""
     const params = item.params?.S ? JSON.parse(item.params.S) : {}
     const attempts = parseInt(item.attempts?.N ?? "0", 10)
-    const callbackUrl = item.callbackUrl?.S ?? ""
+
     // API key: params.apiKey > env
     const apiKey = params.apiKey || HEYGEN_API_KEY
     if (!apiKey) continue
@@ -258,7 +261,7 @@ export const workerHandler = async (): Promise<void> => {
           character: {
             type: "avatar",
             avatar_id: params.avatar_id,
-            avatar_style: params.avatar_style ?? "normal",
+            avatar_style: "normal",
           },
           voice: {
             type: "text",
@@ -269,8 +272,8 @@ export const workerHandler = async (): Promise<void> => {
         },
       ],
       dimension: {
-        width: params.width ?? 1280,
-        height: params.height ?? 720,
+        width: params.width ?? 1080,
+        height: params.height ?? 1920,
       },
     }
     let heygenId = ""
@@ -536,6 +539,7 @@ export const pollHandler = async (): Promise<void> => {
                   video_url: v.video_url,
                   duration: v.duration,
                   caption_url: v.caption_url,
+                  slug: v.slug,
                 })),
               }),
             })

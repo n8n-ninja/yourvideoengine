@@ -41,6 +41,16 @@ describe("validateEnqueueVideoInput", () => {
       }),
     ).toBe(true)
   })
+  it("returns true for valid input with slug", () => {
+    expect(
+      validateEnqueueVideoInput({
+        projectId: "p1",
+        callbackUrl: "cb",
+        params: { foo: "bar" },
+        slug: "intro",
+      }),
+    ).toBe(true)
+  })
   it("returns false for missing projectId", () => {
     expect(validateEnqueueVideoInput({ callbackUrl: "cb", params: {} })).toBe(
       false,
@@ -69,6 +79,7 @@ describe("mapDynamoItemToVideo", () => {
       createdAt: { S: "2024-01-01" },
       updatedAt: { S: "2024-01-02" },
       heygenData: { S: '{"url":"u"}' },
+      slug: { S: "intro" },
     }
     expect(mapDynamoItemToVideo(item)).toEqual({
       videoId: "123",
@@ -79,6 +90,30 @@ describe("mapDynamoItemToVideo", () => {
       createdAt: "2024-01-01",
       updatedAt: "2024-01-02",
       heygenData: { url: "u" },
+      slug: "intro",
+    })
+  })
+  it("handles missing slug gracefully", () => {
+    const item = {
+      sk: { S: "VIDEO#123" },
+      heygenId: { S: "h1" },
+      status: { S: "ready" },
+      attempts: { N: "2" },
+      params: { S: '{"foo":"bar"}' },
+      createdAt: { S: "2024-01-01" },
+      updatedAt: { S: "2024-01-02" },
+      heygenData: { S: '{"url":"u"}' },
+    }
+    expect(mapDynamoItemToVideo(item)).toEqual({
+      videoId: "123",
+      heygenId: "h1",
+      status: "ready",
+      attempts: 2,
+      params: { foo: "bar" },
+      createdAt: "2024-01-01",
+      updatedAt: "2024-01-02",
+      heygenData: { url: "u" },
+      slug: undefined,
     })
   })
 })

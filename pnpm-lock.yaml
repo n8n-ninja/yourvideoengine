@@ -386,6 +386,9 @@ importers:
       '@react-three/fiber':
         specifier: 8.15.17
         version: 8.15.17(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.155.0)
+      '@remotion/captions':
+        specifier: 4.0.304
+        version: 4.0.304
       '@remotion/cli':
         specifier: 4.0.304
         version: 4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -471,6 +474,10 @@ importers:
       remotion:
         specifier: 4.0.304
         version: 4.0.304(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+    devDependencies:
+      serverless-esbuild:
+        specifier: ^1.44.0
+        version: 1.55.0(esbuild@0.25.4)
 
   studios/client1:
     dependencies:
@@ -3447,6 +3454,9 @@ packages:
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
+
+  '@remotion/captions@4.0.304':
+    resolution: {integrity: sha512-cmkkKNJ47/e5WyxyOzm8fpqL06yjqdqGOuszG6TBmWJn6i+KPlkTiKM6TqVqGvgBy+4WSCeQ18OsEHzN78bm5A==}
 
   '@remotion/cli@4.0.304':
     resolution: {integrity: sha512-kn9+IsYmsBPg71fFA3ikGxlT0qYZH4SlD/5XOJMxXcPruO4Pa35DjJZLrf9qlDVZqv68cPFhd3L5Dd7aCWlqhg==}
@@ -15201,6 +15211,8 @@ snapshots:
       - uglify-js
       - utf-8-validate
       - webpack-cli
+
+  '@remotion/captions@4.0.304': {}
 
   '@remotion/cli@4.0.304(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
