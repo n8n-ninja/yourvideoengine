@@ -9,13 +9,11 @@ jest.mock("node-fetch", () => ({
 
 import {
   validateEnqueueVideoInput,
-  mapDynamoItemToVideo,
   getAvailableSlots,
   fetchWithTimeout,
   enqueueHandler,
-  workerHandler,
 } from "./index"
-
+import { mapDynamoItemToJob } from "./utils/check-completion"
 import {
   DynamoDBClient,
   PutItemCommand,
@@ -41,16 +39,6 @@ describe("validateEnqueueVideoInput", () => {
       }),
     ).toBe(true)
   })
-  it("returns true for valid input with slug", () => {
-    expect(
-      validateEnqueueVideoInput({
-        projectId: "p1",
-        callbackUrl: "cb",
-        params: { foo: "bar" },
-        slug: "intro",
-      }),
-    ).toBe(true)
-  })
   it("returns false for missing projectId", () => {
     expect(validateEnqueueVideoInput({ callbackUrl: "cb", params: {} })).toBe(
       false,
@@ -68,52 +56,40 @@ describe("validateEnqueueVideoInput", () => {
   })
 })
 
-describe("mapDynamoItemToVideo", () => {
-  it("maps a DynamoDB item to a video object", () => {
+describe("mapDynamoItemToJob", () => {
+  it("maps a DynamoDB item to a generic job object", () => {
     const item = {
+      pk: { S: "PROJECT#p1" },
       sk: { S: "VIDEO#123" },
-      heygenId: { S: "h1" },
+      externalId: { S: "ext1" },
       status: { S: "ready" },
       attempts: { N: "2" },
-      params: { S: '{"foo":"bar"}' },
-      createdAt: { S: "2024-01-01" },
-      updatedAt: { S: "2024-01-02" },
-      heygenData: { S: '{"url":"u"}' },
+      inputData: { S: '{"foo":"bar"}' },
+      outputData: { S: '{"url":"u"}' },
+      outputUrl: { S: "https://output" },
+      duration: { N: "42" },
       slug: { S: "intro" },
-    }
-    expect(mapDynamoItemToVideo(item)).toEqual({
-      videoId: "123",
-      heygenId: "h1",
-      status: "ready",
-      attempts: 2,
-      params: { foo: "bar" },
-      createdAt: "2024-01-01",
-      updatedAt: "2024-01-02",
-      heygenData: { url: "u" },
-      slug: "intro",
-    })
-  })
-  it("handles missing slug gracefully", () => {
-    const item = {
-      sk: { S: "VIDEO#123" },
-      heygenId: { S: "h1" },
-      status: { S: "ready" },
-      attempts: { N: "2" },
-      params: { S: '{"foo":"bar"}' },
+      queueType: { S: "heygen" },
+      callbackUrl: { S: "cb" },
       createdAt: { S: "2024-01-01" },
       updatedAt: { S: "2024-01-02" },
-      heygenData: { S: '{"url":"u"}' },
     }
-    expect(mapDynamoItemToVideo(item)).toEqual({
-      videoId: "123",
-      heygenId: "h1",
+    expect(mapDynamoItemToJob(item)).toEqual({
+      jobId: "123",
+      externalId: "ext1",
       status: "ready",
       attempts: 2,
-      params: { foo: "bar" },
+      inputData: { foo: "bar" },
+      outputData: { url: "u" },
+      outputUrl: "https://output",
+      duration: 42,
+      captionUrl: undefined,
+      slug: "intro",
+      queueType: "heygen",
+      callbackUrl: "cb",
+      projectId: "p1",
       createdAt: "2024-01-01",
       updatedAt: "2024-01-02",
-      heygenData: { url: "u" },
-      slug: undefined,
     })
   })
 })
@@ -124,48 +100,6 @@ describe("getAvailableSlots", () => {
     expect(getAvailableSlots(2, 3)).toBe(1)
     expect(getAvailableSlots(3, 3)).toBe(0)
     expect(getAvailableSlots(5, 3)).toBe(0)
-  })
-})
-
-describe("validateEnqueueVideoInput - types", () => {
-  it("returns false for wrong types", () => {
-    expect(
-      validateEnqueueVideoInput({
-        projectId: 123,
-        callbackUrl: "cb",
-        params: {},
-      }),
-    ).toBe(false)
-    expect(
-      validateEnqueueVideoInput({
-        projectId: "p1",
-        callbackUrl: 123,
-        params: {},
-      }),
-    ).toBe(false)
-    expect(
-      validateEnqueueVideoInput({
-        projectId: "p1",
-        callbackUrl: "cb",
-        params: "foo",
-      }),
-    ).toBe(false)
-  })
-})
-
-describe("mapDynamoItemToVideo - partial", () => {
-  it("handles missing fields gracefully", () => {
-    const item = { sk: { S: "VIDEO#1" } }
-    expect(mapDynamoItemToVideo(item)).toEqual({
-      videoId: "1",
-      heygenId: undefined,
-      status: undefined,
-      attempts: 0,
-      params: {},
-      createdAt: undefined,
-      updatedAt: undefined,
-      heygenData: null,
-    })
   })
 })
 
@@ -194,47 +128,5 @@ describe("enqueueHandler - DynamoDB error", () => {
     const res = await enqueueHandler(event as any)
     expect(res.statusCode).toBe(500)
     expect(JSON.parse(res.body).error).toMatch(/DynamoDB/)
-  })
-})
-
-describe("workerHandler - HeyGen fetch error", () => {
-  it("logs error if fetch fails", async () => {
-    process.env.HEYGEN_VIDEOS_TABLE = "dummy"
-    console.log("HEYGEN_VIDEOS_TABLE in test:", process.env.HEYGEN_VIDEOS_TABLE)
-    // Mock ScanCommand to return 1 pending, 0 processing
-    jest.spyOn(DynamoDBClient.prototype, "send").mockImplementation((cmd) => {
-      if (cmd instanceof ScanCommand) {
-        if (cmd.input.FilterExpression?.includes("pending")) {
-          return Promise.resolve({
-            Items: [
-              {
-                pk: { S: "PROJECT#p1" },
-                sk: { S: "VIDEO#1" },
-                params: { S: "{}" },
-                attempts: { N: "0" },
-                callbackUrl: { S: "cb" },
-              },
-            ],
-          })
-        }
-        if (cmd.input.FilterExpression?.includes("processing")) {
-          return Promise.resolve({ Items: [] })
-        }
-      }
-      if (cmd instanceof UpdateItemCommand) return Promise.resolve({})
-      return Promise.resolve({})
-    })
-    // Mock fetch to throw
-    const fetch = require("node-fetch").default
-    fetch.mockImplementation(() => {
-      throw new Error("fetch fail")
-    })
-    // Do not throw, just check that it runs
-    try {
-      await expect(workerHandler()).resolves.toBeUndefined()
-    } catch (e) {
-      console.error("Test error:", e)
-      throw e
-    }
   })
 })

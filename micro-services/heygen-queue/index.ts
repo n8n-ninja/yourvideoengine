@@ -7,6 +7,11 @@ import {
 } from "@aws-sdk/client-dynamodb"
 import { v4 as uuidv4 } from "uuid"
 import fetch, { RequestInit } from "node-fetch"
+import { handleRemotionJob, pollRemotionHandler } from "./queues/remotion-queue"
+import { handleFluxJob, pollFluxHandler } from "./queues/flux-queue"
+import { handleRunwayJob, pollRunwayHandler } from "./queues/runway-queue"
+import { handleAppifyJob, pollAppifyHandler } from "./queues/appify-queue"
+import { handleHeygenJob, pollHeygenHandler } from "./queues/heygen-queue"
 
 // --- Utilitaire fetch avec timeout ---
 const fetchWithTimeout = async (
@@ -20,21 +25,6 @@ const fetchWithTimeout = async (
       setTimeout(() => reject(new Error("Timeout")), timeout),
     ),
   ])
-}
-
-export const helloWorld = async (
-  event: APIGatewayProxyEvent,
-): Promise<APIGatewayProxyResult> => {
-  return {
-    statusCode: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Methods": "OPTIONS,GET",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ message: "Hello world! This is a test" }),
-  }
 }
 
 interface EnqueueVideoInput {
@@ -85,6 +75,35 @@ export const getAvailableSlots = (
   maxConcurrency: number,
 ): number => {
   return Math.max(0, maxConcurrency - processingCount)
+}
+
+// --- Config de queues centralisée ---
+const queueConfigs = {
+  heygen: {
+    maxConcurrency: 2,
+    handler: handleHeygenJob,
+    poller: pollHeygenHandler,
+  },
+  remotion: {
+    maxConcurrency: 1,
+    handler: handleRemotionJob,
+    poller: pollRemotionHandler,
+  },
+  flux: {
+    maxConcurrency: 2,
+    handler: handleFluxJob,
+    poller: pollFluxHandler,
+  },
+  runway: {
+    maxConcurrency: 2,
+    handler: handleRunwayJob,
+    poller: pollRunwayHandler,
+  },
+  appify: {
+    maxConcurrency: 1,
+    handler: handleAppifyJob,
+    poller: pollAppifyHandler,
+  },
 }
 
 export const enqueueHandler = async (
@@ -141,6 +160,7 @@ export const enqueueHandler = async (
             createdAt: { S: now },
             updatedAt: { S: now },
             ...(video.slug ? { slug: { S: video.slug } } : {}),
+            queueType: { S: "remotion" },
           },
         }),
       )
@@ -191,212 +211,65 @@ export const enqueueHandler = async (
 export const workerHandler = async (): Promise<void> => {
   if (!TABLE_NAME) throw new Error("HEYGEN_VIDEOS_TABLE not set")
   const client = new DynamoDBClient({})
-  // 1. Get all videos with status = 'pending'
-  let pendingRes
-  try {
-    pendingRes = await client.send(
-      new ScanCommand({
-        TableName: TABLE_NAME,
-        FilterExpression: "#status = :pending",
-        ExpressionAttributeNames: { "#status": "status" },
-        ExpressionAttributeValues: { ":pending": { S: "pending" } },
-      }),
-    )
-  } catch (err) {
-    console.error(
-      JSON.stringify({
-        event: "dynamodb-scan-error",
-        error: (err as Error).message,
-        type: "pending",
-        timestamp: new Date().toISOString(),
-      }),
-    )
-    return
-  }
-  const pendingVideos = pendingRes.Items ?? []
-
-  // 2. Get all videos with status = 'processing'
-  let processingRes
-  try {
-    processingRes = await client.send(
-      new ScanCommand({
-        TableName: TABLE_NAME,
-        FilterExpression: "#status = :processing",
-        ExpressionAttributeNames: { "#status": "status" },
-        ExpressionAttributeValues: { ":processing": { S: "processing" } },
-      }),
-    )
-  } catch (err) {
-    console.error(
-      JSON.stringify({
-        event: "dynamodb-scan-error",
-        error: (err as Error).message,
-        type: "processing",
-        timestamp: new Date().toISOString(),
-      }),
-    )
-    return
-  }
-  const processingCount = (processingRes.Items ?? []).length
-  const availableSlots = getAvailableSlots(processingCount, MAX_CONCURRENCY)
-  if (availableSlots === 0) return
-
-  // 3. Launch up to availableSlots videos
-  const toLaunch = pendingVideos.slice(0, availableSlots)
-  const now = new Date().toISOString()
-  for (const item of toLaunch) {
-    const projectId = item.pk.S?.replace("PROJECT#", "") ?? ""
-    const videoId = item.sk.S?.replace("VIDEO#", "") ?? ""
-    const params = item.params?.S ? JSON.parse(item.params.S) : {}
-    const attempts = parseInt(item.attempts?.N ?? "0", 10)
-
-    // API key: params.apiKey > env
-    const apiKey = params.apiKey || HEYGEN_API_KEY
-    if (!apiKey) continue
-
-    // Build HeyGen payload
-    const payload = {
-      video_inputs: [
-        {
-          character: {
-            type: "avatar",
-            avatar_id: params.avatar_id,
-            avatar_style: "normal",
-          },
-          voice: {
-            type: "text",
-            input_text: params.input_text,
-            voice_id: params.voice_id,
-            speed: params.speed ?? 1.0,
-          },
-        },
-      ],
-      dimension: {
-        width: params.width ?? 1080,
-        height: params.height ?? 1920,
-      },
-    }
-    let heygenId = ""
-    let failed = false
+  for (const [queueType, config] of Object.entries(queueConfigs)) {
+    // 1. Get all jobs with status = 'pending' and queueType
+    let pendingRes
     try {
-      // --- Appel HeyGen avec timeout et log structuré ---
-      const res = await fetchWithTimeout(HEYGEN_API_URL, {
-        method: "POST",
-        headers: {
-          "X-Api-Key": apiKey,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      })
-      type HeygenResponse = { data?: { video_id?: string } }
-      const data = (await res.json()) as HeygenResponse
-      if (!res.ok || !data.data?.video_id) {
-        failed = true
-        console.error(
-          JSON.stringify({
-            event: "heygen-api-error",
-            projectId,
-            videoId,
-            status: res.status,
-            body: await res.text(),
-            timestamp: now,
-          }),
-        )
-      } else {
-        heygenId = data.data.video_id
-        console.log(
-          JSON.stringify({
-            event: "heygen-api-success",
-            projectId,
-            videoId,
-            heygenId,
-            timestamp: now,
-          }),
-        )
-      }
-    } catch (err) {
-      failed = true
-      console.error(
-        JSON.stringify({
-          event: "heygen-api-exception",
-          error: (err as Error).message,
-          projectId,
-          videoId,
-          timestamp: now,
-        }),
-      )
-    }
-    // Update DynamoDB
-    const pk = item.pk?.S ?? ""
-    const sk = item.sk?.S ?? ""
-    if (!pk || !sk) continue
-    if (failed) {
-      const newAttempts = attempts + 1
-      try {
-        await client.send(
-          new UpdateItemCommand({
-            TableName: TABLE_NAME,
-            Key: { pk: { S: pk }, sk: { S: sk } },
-            UpdateExpression:
-              "SET #attempts = :a, #updatedAt = :u" +
-              (newAttempts >= MAX_RETRIES ? ", #status = :f" : ""),
-            ExpressionAttributeNames: {
-              "#attempts": "attempts",
-              "#updatedAt": "updatedAt",
-              ...(newAttempts >= MAX_RETRIES ? { "#status": "status" } : {}),
-            },
-            ExpressionAttributeValues: {
-              ":a": { N: newAttempts.toString() },
-              ":u": { S: now },
-              ...(newAttempts >= MAX_RETRIES ? { ":f": { S: "failed" } } : {}),
-            },
-          }),
-        )
-      } catch (err) {
-        console.error(
-          JSON.stringify({
-            event: "dynamodb-update-error",
-            error: (err as Error).message,
-            projectId,
-            videoId,
-            timestamp: now,
-          }),
-        )
-      }
-      continue
-    }
-    // Success: set to processing
-    try {
-      await client.send(
-        new UpdateItemCommand({
+      pendingRes = await client.send(
+        new ScanCommand({
           TableName: TABLE_NAME,
-          Key: { pk: { S: pk }, sk: { S: sk } },
-          UpdateExpression:
-            "SET #status = :p, #heygenId = :h, #attempts = :a, #updatedAt = :u",
+          FilterExpression: "#status = :pending AND #queueType = :queueType",
           ExpressionAttributeNames: {
             "#status": "status",
-            "#heygenId": "heygenId",
-            "#attempts": "attempts",
-            "#updatedAt": "updatedAt",
+            "#queueType": "queueType",
           },
           ExpressionAttributeValues: {
-            ":p": { S: "processing" },
-            ":h": { S: heygenId },
-            ":a": { N: (attempts + 1).toString() },
-            ":u": { S: now },
+            ":pending": { S: "pending" },
+            ":queueType": { S: queueType },
           },
         }),
       )
     } catch (err) {
-      console.error(
-        JSON.stringify({
-          event: "dynamodb-update-error",
-          error: (err as Error).message,
-          projectId,
-          videoId,
-          timestamp: now,
+      continue
+    }
+    const pendingJobs = pendingRes.Items ?? []
+    // 2. Get all jobs with status = 'processing' and queueType
+    let processingRes
+    try {
+      processingRes = await client.send(
+        new ScanCommand({
+          TableName: TABLE_NAME,
+          FilterExpression: "#status = :processing AND #queueType = :queueType",
+          ExpressionAttributeNames: {
+            "#status": "status",
+            "#queueType": "queueType",
+          },
+          ExpressionAttributeValues: {
+            ":processing": { S: "processing" },
+            ":queueType": { S: queueType },
+          },
         }),
       )
+    } catch (err) {
+      continue
+    }
+    const processingCount = (processingRes.Items ?? []).length
+    const availableSlots = getAvailableSlots(
+      processingCount,
+      config.maxConcurrency,
+    )
+    if (availableSlots === 0) continue
+    // 3. Launch up to availableSlots jobs
+    const toLaunch = pendingJobs.slice(0, availableSlots)
+    for (const item of toLaunch) {
+      const job = {
+        ...item,
+        params: item.params?.S ? JSON.parse(item.params.S) : {},
+        pk: item.pk?.S ?? "",
+        sk: item.sk?.S ?? "",
+        attempts: parseInt(item.attempts?.N ?? "0", 10),
+      }
+      await config.handler(job, client, TABLE_NAME)
     }
   }
 }
@@ -442,159 +315,9 @@ const checkCompletion = async (
   return { allReady, callbackUrl, videos }
 }
 
-export const pollHandler = async (): Promise<void> => {
-  if (!TABLE_NAME) throw new Error("HEYGEN_VIDEOS_TABLE not set")
-  const client = new DynamoDBClient({})
-  // 1. Get all videos with status = 'processing'
-  const processingRes = await client.send(
-    new ScanCommand({
-      TableName: TABLE_NAME,
-      FilterExpression: "#status = :processing",
-      ExpressionAttributeNames: { "#status": "status" },
-      ExpressionAttributeValues: { ":processing": { S: "processing" } },
-    }),
-  )
-  const processingVideos = processingRes.Items ?? []
-  const now = new Date().toISOString()
-  const completedProjects = new Set<string>()
-  for (const item of processingVideos) {
-    const projectId = item.pk.S?.replace("PROJECT#", "") ?? ""
-    const videoId = item.sk.S?.replace("VIDEO#", "") ?? ""
-    const heygenId = item.heygenId?.S
-    const params = item.params?.S ? JSON.parse(item.params.S) : {}
-    const attempts = parseInt(item.attempts?.N ?? "0", 10)
-    const callbackUrl = item.callbackUrl?.S ?? ""
-    const apiKey = params.apiKey || HEYGEN_API_KEY
-    const pk = item.pk?.S ?? ""
-    const sk = item.sk?.S ?? ""
-    if (!heygenId || !apiKey || !pk || !sk) continue
-    // 2. Call HeyGen status API
-    let status: string | undefined
-    let heygenData: any = null
-    try {
-      const res = await fetch(`${HEYGEN_STATUS_URL}?video_id=${heygenId}`, {
-        method: "GET",
-        headers: {
-          "X-Api-Key": apiKey,
-          Accept: "application/json",
-        },
-      })
-      const data = (await res.json()) as { data?: any }
-      status = data.data?.status
-      heygenData = data.data ?? null
-    } catch {
-      // ignore error, will retry next poll
-      continue
-    }
-    if (status === "completed") {
-      // 3. Mark video as ready and store heygenData + champs extraits
-      const video_url = heygenData?.video_url ?? null
-      const duration = heygenData?.duration ?? null
-      const caption_url = heygenData?.caption_url ?? null
-      await client.send(
-        new UpdateItemCommand({
-          TableName: TABLE_NAME,
-          Key: { pk: { S: pk }, sk: { S: sk } },
-          UpdateExpression:
-            "SET #status = :r, #updatedAt = :u, #heygenData = :d, #video_url = :v, #duration = :du, #caption_url = :c",
-          ExpressionAttributeNames: {
-            "#status": "status",
-            "#updatedAt": "updatedAt",
-            "#heygenData": "heygenData",
-            "#video_url": "video_url",
-            "#duration": "duration",
-            "#caption_url": "caption_url",
-          },
-          ExpressionAttributeValues: {
-            ":r": { S: "ready" },
-            ":u": { S: now },
-            ":d": { S: JSON.stringify(heygenData) },
-            ":v": video_url ? { S: video_url } : { NULL: true },
-            ":du":
-              duration !== null && duration !== undefined
-                ? { N: duration.toString() }
-                : { NULL: true },
-            ":c": caption_url ? { S: caption_url } : { NULL: true },
-          },
-        }),
-      )
-      // 4. Check if all videos for the project are ready
-      if (!completedProjects.has(projectId)) {
-        const {
-          allReady,
-          callbackUrl: cb,
-          videos,
-        } = await checkCompletion(projectId, client)
-        if (allReady && cb) {
-          completedProjects.add(projectId)
-          // 5. Call callbackUrl (ne passer que les champs demandés)
-          try {
-            await fetch(cb, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                projectId,
-                videos: videos.map((v) => ({
-                  videoId: v.videoId,
-                  video_url: v.video_url,
-                  duration: v.duration,
-                  caption_url: v.caption_url,
-                  slug: v.slug,
-                })),
-              }),
-            })
-          } catch {}
-        }
-      }
-    } else if (status === "failed") {
-      const newAttempts = attempts + 1
-      await client.send(
-        new UpdateItemCommand({
-          TableName: TABLE_NAME,
-          Key: { pk: { S: pk }, sk: { S: sk } },
-          UpdateExpression:
-            "SET #attempts = :a, #updatedAt = :u" +
-            (newAttempts >= MAX_RETRIES ? ", #status = :f" : ", #status = :p"),
-          ExpressionAttributeNames: {
-            "#attempts": "attempts",
-            "#updatedAt": "updatedAt",
-            "#status": "status",
-          },
-          ExpressionAttributeValues: {
-            ":a": { N: newAttempts.toString() },
-            ":u": { S: now },
-            ":f": { S: "failed" },
-            ":p": { S: "pending" },
-          },
-        }),
-      )
-    }
-    // else: still processing, do nothing
-  }
-  // Ajout : relancer le worker après chaque polling
-  try {
-    await workerHandler()
-  } catch (err) {
-    console.error("Could not trigger worker after polling:", err)
-  }
-}
-
-export const pollHttpHandler = async (
-  event: APIGatewayProxyEvent,
-): Promise<APIGatewayProxyResult> => {
-  try {
-    await pollHandler()
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: "pollHandler triggered" }),
-    }
-  } catch (error) {
-    return {
-      statusCode: 500,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: (error as Error).message }),
-    }
+export const pollAllQueuesHandler = async (): Promise<void> => {
+  for (const { poller } of Object.values(queueConfigs)) {
+    if (poller) await poller()
   }
 }
 
