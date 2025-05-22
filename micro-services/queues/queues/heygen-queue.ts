@@ -6,7 +6,7 @@ import {
   getProcessingJobs,
 } from "../utils/generic-queue"
 
-const TABLE_NAME = process.env.HEYGEN_VIDEOS_TABLE
+const TABLE_NAME = process.env.QUEUES_TABLE
 const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY
 const HEYGEN_API_URL = "https://api.heygen.com/v2/video/generate"
 const HEYGEN_STATUS_URL = "https://api.heygen.com/v1/video_status.get"
@@ -65,7 +65,7 @@ export const handleHeygenJob = async (
 }
 
 export const pollHeygenHandler = async (): Promise<void> => {
-  if (!TABLE_NAME) throw new Error("HEYGEN_VIDEOS_TABLE not set")
+  if (!TABLE_NAME) throw new Error("QUEUES_TABLE not set")
   const client = new DynamoDBClient({})
   const processingJobs = await getProcessingJobs({
     client,

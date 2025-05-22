@@ -6,7 +6,7 @@ import {
   getProcessingJobs,
 } from "../utils/generic-queue"
 
-const TABLE_NAME = process.env.HEYGEN_VIDEOS_TABLE
+const TABLE_NAME = process.env.QUEUES_TABLE
 const REMOTION_RENDER_URL =
   "https://0lxwxeqkpl.execute-api.us-east-1.amazonaws.com/prod/render"
 const REMOTION_STATUS_URL =
@@ -43,7 +43,7 @@ export const handleRemotionJob = async (
 }
 
 export const pollRemotionHandler = async (): Promise<void> => {
-  if (!TABLE_NAME) throw new Error("HEYGEN_VIDEOS_TABLE not set")
+  if (!TABLE_NAME) throw new Error("QUEUES_TABLE not set")
   const client = new DynamoDBClient({})
   const processingJobs = await getProcessingJobs({
     client,

@@ -1,6 +1,6 @@
 import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb"
 
-const TABLE_NAME = process.env.HEYGEN_VIDEOS_TABLE
+const TABLE_NAME = process.env.QUEUES_TABLE
 
 export const mapDynamoItemToJob = (item: any) => ({
   jobId: item.sk?.S?.replace("VIDEO#", ""),
@@ -24,7 +24,7 @@ export const checkCompletion = async (
   projectId: string,
   client: DynamoDBClient,
 ): Promise<{ allReady: boolean; callbackUrl?: string; jobs: any[] }> => {
-  if (!TABLE_NAME) throw new Error("HEYGEN_VIDEOS_TABLE not set")
+  if (!TABLE_NAME) throw new Error("QUEUES_TABLE not set")
   const res = await client.send(
     new ScanCommand({
       TableName: TABLE_NAME,

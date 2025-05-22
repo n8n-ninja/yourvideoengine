@@ -32,9 +32,10 @@ interface EnqueueVideoInput {
   callbackUrl: string
   params: Record<string, unknown>
   slug?: string
+  queueType?: string
 }
 
-const TABLE_NAME = process.env.HEYGEN_VIDEOS_TABLE
+const TABLE_NAME = process.env.QUEUES_TABLE
 const MAX_CONCURRENCY = parseInt(process.env.HEYGEN_MAX_CONCURRENCY ?? "1", 10)
 const MAX_RETRIES = parseInt(process.env.HEYGEN_MAX_RETRIES ?? "3", 10)
 const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY
@@ -145,6 +146,13 @@ export const enqueueHandler = async (
         body: JSON.stringify({ error: "Invalid video input" }),
       }
     }
+    if (!video.queueType) {
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: "Missing queueType in job" }),
+      }
+    }
     const videoId = uuidv4()
     try {
       await client.send(
@@ -160,7 +168,7 @@ export const enqueueHandler = async (
             createdAt: { S: now },
             updatedAt: { S: now },
             ...(video.slug ? { slug: { S: video.slug } } : {}),
-            queueType: { S: "remotion" },
+            queueType: { S: video.queueType },
           },
         }),
       )
@@ -209,7 +217,7 @@ export const enqueueHandler = async (
 }
 
 export const workerHandler = async (): Promise<void> => {
-  if (!TABLE_NAME) throw new Error("HEYGEN_VIDEOS_TABLE not set")
+  if (!TABLE_NAME) throw new Error("QUEUES_TABLE not set")
   const client = new DynamoDBClient({})
   for (const [queueType, config] of Object.entries(queueConfigs)) {
     // 1. Get all jobs with status = 'pending' and queueType
@@ -297,7 +305,7 @@ const checkCompletion = async (
   projectId: string,
   client: DynamoDBClient,
 ): Promise<{ allReady: boolean; callbackUrl?: string; videos: any[] }> => {
-  if (!TABLE_NAME) throw new Error("HEYGEN_VIDEOS_TABLE not set")
+  if (!TABLE_NAME) throw new Error("QUEUES_TABLE not set")
   const res = await client.send(
     new ScanCommand({
       TableName: TABLE_NAME,
@@ -318,6 +326,25 @@ const checkCompletion = async (
 export const pollAllQueuesHandler = async (): Promise<void> => {
   for (const { poller } of Object.values(queueConfigs)) {
     if (poller) await poller()
+  }
+}
+
+export const pollHttpHandler = async (
+  event: APIGatewayProxyEvent,
+): Promise<APIGatewayProxyResult> => {
+  try {
+    await pollAllQueuesHandler()
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "All pollers triggered" }),
+    }
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: (error as Error).message }),
+    }
   }
 }
 

@@ -6,7 +6,7 @@ import {
 import { checkCompletion } from "../utils/check-completion"
 
 const MAX_RETRIES = parseInt(process.env.HEYGEN_MAX_RETRIES ?? "3", 10)
-const TABLE_NAME = process.env.HEYGEN_VIDEOS_TABLE
+const TABLE_NAME = process.env.QUEUES_TABLE
 
 export const handleAppifyJob = async (
   job: any,
@@ -48,7 +48,7 @@ export const handleAppifyJob = async (
 }
 
 export const pollAppifyHandler = async (): Promise<void> => {
-  if (!TABLE_NAME) throw new Error("HEYGEN_VIDEOS_TABLE not set")
+  if (!TABLE_NAME) throw new Error("QUEUES_TABLE not set")
   const client = new DynamoDBClient({})
   // 1. Get all jobs with status = 'processing' and queueType = 'appify'
   const processingRes = await client.send(

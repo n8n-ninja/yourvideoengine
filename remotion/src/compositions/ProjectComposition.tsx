@@ -19,9 +19,8 @@ export const calculateMetadata: CalculateMetadataFunction<{
 }> = ({ props, defaultProps, abortSignal }) => {
   return {
     // Change the metadata
-    durationInFrames: props.scenes.reduce(
-      (acc, scene) => acc + (scene.duration ?? 0) * 30,
-      0,
+    durationInFrames: Math.round(
+      props.scenes.reduce((acc, scene) => acc + (scene.duration ?? 0) * 30, 0),
     ),
   }
 }

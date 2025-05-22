@@ -1,4 +1,4 @@
-service: heygen-queue
+service: queues
 
 frameworkVersion: "3"
 
@@ -10,7 +10,7 @@ provider:
   timeout: 30
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1"
-    HEYGEN_VIDEOS_TABLE: HeygenVideosTable-${sls:stage}
+    QUEUES_TABLE: QueuesTable-${sls:stage}
     HEYGEN_API_KEY: ${env:HEYGEN_API_KEY}
     HEYGEN_MAX_CONCURRENCY: 3
   iam:
@@ -24,7 +24,7 @@ provider:
             - dynamodb:Query
             - dynamodb:Scan
           Resource:
-            - arn:aws:dynamodb:${self:provider.region}:*:table/HeygenVideosTable-${sls:stage}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/QueuesTable-${sls:stage}
         - Effect: Allow
           Action:
             - events:PutRule
@@ -37,7 +37,7 @@ provider:
           Resource: "*"
   apiGateway:
     apiKeys:
-      - heygen-queue-${sls:stage}-key
+      - queue-${sls:stage}-key
 
 package:
   individually: true
@@ -79,10 +79,10 @@ custom:
 
 resources:
   Resources:
-    HeygenVideosTable:
+    QueuesTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: HeygenVideosTable-${sls:stage}
+        TableName: QueuesTable-${sls:stage}
         AttributeDefinitions:
           - AttributeName: pk
             AttributeType: S

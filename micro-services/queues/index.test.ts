@@ -1,4 +1,4 @@
-process.env.HEYGEN_VIDEOS_TABLE = "dummy"
+process.env.QUEUES_TABLE = "dummy"
 
 jest.mock("node-fetch", () => ({
   __esModule: true,
@@ -118,7 +118,7 @@ describe("enqueueHandler - DynamoDB error", () => {
   it("returns 500 if DynamoDB put fails", async () => {
     const event = {
       body: JSON.stringify([
-        { projectId: "p1", callbackUrl: "cb", params: {} },
+        { projectId: "p1", callbackUrl: "cb", params: {}, queueType: "heygen" },
       ]),
     }
     // Mock DynamoDBClient.send to throw

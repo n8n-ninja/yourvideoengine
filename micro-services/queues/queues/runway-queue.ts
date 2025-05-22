@@ -6,9 +6,9 @@ import {
 import { checkCompletion } from "../utils/check-completion"
 
 const MAX_RETRIES = parseInt(process.env.HEYGEN_MAX_RETRIES ?? "3", 10)
-const TABLE_NAME = process.env.HEYGEN_VIDEOS_TABLE
+const TABLE_NAME = process.env.QUEUES_TABLE
 
-export const handleFluxJob = async (
+export const handleRunwayJob = async (
   job: any,
   client: DynamoDBClient,
   tableName: string,
@@ -19,7 +19,7 @@ export const handleFluxJob = async (
   // Fake API call
   await new Promise((resolve) => setTimeout(resolve, 500))
   // Générer un externalId et outputData fake
-  const externalId = `flux-fake-id-${Date.now()}`
+  const externalId = `runway-fake-id-${Date.now()}`
   const outputData = { status: "started", externalId }
   await client.send(
     new UpdateItemCommand({
@@ -47,10 +47,10 @@ export const handleFluxJob = async (
   )
 }
 
-export const pollFluxHandler = async (): Promise<void> => {
-  if (!TABLE_NAME) throw new Error("HEYGEN_VIDEOS_TABLE not set")
+export const pollRunwayHandler = async (): Promise<void> => {
+  if (!TABLE_NAME) throw new Error("QUEUES_TABLE not set")
   const client = new DynamoDBClient({})
-  // 1. Get all jobs with status = 'processing' and queueType = 'flux'
+  // 1. Get all jobs with status = 'processing' and queueType = 'runway'
   const processingRes = await client.send(
     new ScanCommand({
       TableName: TABLE_NAME,
@@ -61,7 +61,7 @@ export const pollFluxHandler = async (): Promise<void> => {
       },
       ExpressionAttributeValues: {
         ":processing": { S: "processing" },
-        ":queueType": { S: "flux" },
+        ":queueType": { S: "runway" },
       },
     }),
   )
@@ -80,7 +80,7 @@ export const pollFluxHandler = async (): Promise<void> => {
     const outputData = {
       status: "done",
       externalId,
-      url: `https://fake.flux/${externalId}`,
+      url: `https://fake.runway/${externalId}`,
     }
     const outputUrl = outputData.url
     const duration = 42

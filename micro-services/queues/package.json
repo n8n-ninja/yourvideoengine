@@ -1,7 +1,7 @@
 {
-  "name": "heygen-queue",
+  "name": "queues",
   "version": "1.0.0",
-  "description": "AWS Lambda heygen-queue with esbuild bundling",
+  "description": "AWS Lambda queues with esbuild bundling",
   "main": "index.js",
   "scripts": {
     "d": "dotenv -e .env -- serverless deploy",

@@ -74,19 +74,19 @@
     "EnqueueHandlerLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/heygen-queue-prod-enqueueHandler"
+        "LogGroupName": "/aws/lambda/queues-prod-enqueueHandler"
       }
     },
     "WorkerLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/heygen-queue-prod-worker"
+        "LogGroupName": "/aws/lambda/queues-prod-worker"
       }
     },
     "PollLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/heygen-queue-prod-poll"
+        "LogGroupName": "/aws/lambda/queues-prod-poll"
       }
     },
     "IamRoleLambdaExecution": {
@@ -114,7 +114,7 @@
               "Fn::Join": [
                 "-",
                 [
-                  "heygen-queue",
+                  "queues",
                   "prod",
                   "lambda"
                 ]
@@ -132,7 +132,7 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/heygen-queue-prod*:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/queues-prod*:*"
                     }
                   ]
                 },
@@ -143,7 +143,7 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/heygen-queue-prod*:*:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/queues-prod*:*:*"
                     }
                   ]
                 },
@@ -156,7 +156,7 @@
                     "dynamodb:Query",
                     "dynamodb:Scan"
                   ],
-                  "Resource": "arn:aws:dynamodb:us-east-1:*:table/HeygenVideosTable-prod"
+                  "Resource": "arn:aws:dynamodb:us-east-1:*:table/QueuesTable-prod"
                 },
                 {
                   "Effect": "Allow",
@@ -180,7 +180,7 @@
           "Fn::Join": [
             "-",
             [
-              "heygen-queue",
+              "queues",
               "prod",
               {
                 "Ref": "AWS::Region"
@@ -198,17 +198,17 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/heygen-queue/prod/1747920810605-2025-05-22T13:33:30.605Z/enqueueHandler.zip"
+          "S3Key": "serverless/queues/prod/1747947251924-2025-05-22T20:54:11.924Z/enqueueHandler.zip"
         },
         "Handler": "index.enqueueHandler",
         "Runtime": "nodejs18.x",
-        "FunctionName": "heygen-queue-prod-enqueueHandler",
+        "FunctionName": "queues-prod-enqueueHandler",
         "MemorySize": 256,
         "Timeout": 30,
         "Environment": {
           "Variables": {
             "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
-            "HEYGEN_VIDEOS_TABLE": "HeygenVideosTable-prod",
+            "QUEUES_TABLE": "QueuesTable-prod",
             "HEYGEN_API_KEY": "NTA1ZDliMjc3OTE5NDFmYmIxMGIzZWI3ZTVkZDg4MjAtMTcxOTU5NzI0Nw==",
             "HEYGEN_MAX_CONCURRENCY": "3"
           }
@@ -231,17 +231,17 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/heygen-queue/prod/1747920810605-2025-05-22T13:33:30.605Z/worker.zip"
+          "S3Key": "serverless/queues/prod/1747947251924-2025-05-22T20:54:11.924Z/worker.zip"
         },
         "Handler": "index.workerHttpHandler",
         "Runtime": "nodejs18.x",
-        "FunctionName": "heygen-queue-prod-worker",
+        "FunctionName": "queues-prod-worker",
         "MemorySize": 256,
         "Timeout": 30,
         "Environment": {
           "Variables": {
             "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
-            "HEYGEN_VIDEOS_TABLE": "HeygenVideosTable-prod",
+            "QUEUES_TABLE": "QueuesTable-prod",
             "HEYGEN_API_KEY": "NTA1ZDliMjc3OTE5NDFmYmIxMGIzZWI3ZTVkZDg4MjAtMTcxOTU5NzI0Nw==",
             "HEYGEN_MAX_CONCURRENCY": "3"
           }
@@ -264,17 +264,17 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/heygen-queue/prod/1747920810605-2025-05-22T13:33:30.605Z/poll.zip"
+          "S3Key": "serverless/queues/prod/1747947251924-2025-05-22T20:54:11.924Z/poll.zip"
         },
         "Handler": "index.pollHttpHandler",
         "Runtime": "nodejs18.x",
-        "FunctionName": "heygen-queue-prod-poll",
+        "FunctionName": "queues-prod-poll",
         "MemorySize": 256,
         "Timeout": 30,
         "Environment": {
           "Variables": {
             "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
-            "HEYGEN_VIDEOS_TABLE": "HeygenVideosTable-prod",
+            "QUEUES_TABLE": "QueuesTable-prod",
             "HEYGEN_API_KEY": "NTA1ZDliMjc3OTE5NDFmYmIxMGIzZWI3ZTVkZDg4MjAtMTcxOTU5NzI0Nw==",
             "HEYGEN_MAX_CONCURRENCY": "3"
           }
@@ -290,34 +290,34 @@
         "PollLogGroup"
       ]
     },
-    "EnqueueHandlerLambdaVersionnAkHKFRtSVlTUJSLudvvAD5RUzjPIxPsTUB19Bf9I": {
+    "EnqueueHandlerLambdaVersionqAWFxSXTYL5l5UY7qjza9yA3WLbIJq5MlPHMloBvjPk": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "EnqueueHandlerLambdaFunction"
         },
-        "CodeSha256": "6odLj2OQ17HHZMFp1V9wN+AafrbcxgQtq1cixtjpv70="
+        "CodeSha256": "2uYoHW0fj1LfZl3jkA1HkFkTmSQn9j/CQ/HuRSu7gnc="
       }
     },
-    "WorkerLambdaVersionbSFL0gO9n4FuZ0yzP25TwdYUYdIeafQe5OVbafosjQ": {
+    "WorkerLambdaVersionSzvdm4k45iIlpACeYiK240uRy1GzYcf2kGGyp9llDQ": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "WorkerLambdaFunction"
         },
-        "CodeSha256": "6odLj2OQ17HHZMFp1V9wN+AafrbcxgQtq1cixtjpv70="
+        "CodeSha256": "2uYoHW0fj1LfZl3jkA1HkFkTmSQn9j/CQ/HuRSu7gnc="
       }
     },
-    "PollLambdaVersionkdbxiJu83oDFgiMjtsdar6CesRsTQEfq0UZpbhR0": {
+    "PollLambdaVersionNPQ5BlTzhwzwWGMa2VEd6hG6PmZwbU1HngPyGg8Vww": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "PollLambdaFunction"
         },
-        "CodeSha256": "6odLj2OQ17HHZMFp1V9wN+AafrbcxgQtq1cixtjpv70="
+        "CodeSha256": "2uYoHW0fj1LfZl3jkA1HkFkTmSQn9j/CQ/HuRSu7gnc="
       }
     },
     "WorkerEventsRuleSchedule1": {
@@ -397,7 +397,7 @@
     "ApiGatewayRestApi": {
       "Type": "AWS::ApiGateway::RestApi",
       "Properties": {
-        "Name": "prod-heygen-queue",
+        "Name": "prod-queues",
         "EndpointConfiguration": {
           "Types": [
             "EDGE"
@@ -512,7 +512,7 @@
         "EnqueueHandlerLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1747920809789": {
+    "ApiGatewayDeployment1747947251082": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -529,7 +529,7 @@
       "Type": "AWS::ApiGateway::ApiKey",
       "Properties": {
         "Enabled": true,
-        "Name": "heygen-queue-prod-key",
+        "Name": "queue-prod-key",
         "StageKeys": [
           {
             "RestApiId": {
@@ -539,11 +539,11 @@
           }
         ]
       },
-      "DependsOn": "ApiGatewayDeployment1747920809789"
+      "DependsOn": "ApiGatewayDeployment1747947251082"
     },
     "ApiGatewayUsagePlan": {
       "Type": "AWS::ApiGateway::UsagePlan",
-      "DependsOn": "ApiGatewayDeployment1747920809789",
+      "DependsOn": "ApiGatewayDeployment1747947251082",
       "Properties": {
         "ApiStages": [
           {
@@ -553,8 +553,8 @@
             "Stage": "prod"
           }
         ],
-        "Description": "Usage plan for heygen-queue prod stage",
-        "UsagePlanName": "heygen-queue-prod"
+        "Description": "Usage plan for queues prod stage",
+        "UsagePlanName": "queues-prod"
       }
     },
     "ApiGatewayUsagePlanKey1": {
@@ -606,10 +606,10 @@
         }
       }
     },
-    "HeygenVideosTable": {
+    "QueuesTable": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
-        "TableName": "HeygenVideosTable-prod",
+        "TableName": "QueuesTable-prod",
         "AttributeDefinitions": [
           {
             "AttributeName": "pk",
@@ -640,34 +640,34 @@
         "Ref": "ServerlessDeploymentBucket"
       },
       "Export": {
-        "Name": "sls-heygen-queue-prod-ServerlessDeploymentBucketName"
+        "Name": "sls-queues-prod-ServerlessDeploymentBucketName"
       }
     },
     "EnqueueHandlerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "EnqueueHandlerLambdaVersionnAkHKFRtSVlTUJSLudvvAD5RUzjPIxPsTUB19Bf9I"
+        "Ref": "EnqueueHandlerLambdaVersionqAWFxSXTYL5l5UY7qjza9yA3WLbIJq5MlPHMloBvjPk"
       },
       "Export": {
-        "Name": "sls-heygen-queue-prod-EnqueueHandlerLambdaFunctionQualifiedArn"
+        "Name": "sls-queues-prod-EnqueueHandlerLambdaFunctionQualifiedArn"
       }
     },
     "WorkerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "WorkerLambdaVersionbSFL0gO9n4FuZ0yzP25TwdYUYdIeafQe5OVbafosjQ"
+        "Ref": "WorkerLambdaVersionSzvdm4k45iIlpACeYiK240uRy1GzYcf2kGGyp9llDQ"
       },
       "Export": {
-        "Name": "sls-heygen-queue-prod-WorkerLambdaFunctionQualifiedArn"
+        "Name": "sls-queues-prod-WorkerLambdaFunctionQualifiedArn"
       }
     },
     "PollLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PollLambdaVersionkdbxiJu83oDFgiMjtsdar6CesRsTQEfq0UZpbhR0"
+        "Ref": "PollLambdaVersionNPQ5BlTzhwzwWGMa2VEd6hG6PmZwbU1HngPyGg8Vww"
       },
       "Export": {
-        "Name": "sls-heygen-queue-prod-PollLambdaFunctionQualifiedArn"
+        "Name": "sls-queues-prod-PollLambdaFunctionQualifiedArn"
       }
     },
     "ServiceEndpoint": {
@@ -693,7 +693,7 @@
         ]
       },
       "Export": {
-        "Name": "sls-heygen-queue-prod-ServiceEndpoint"
+        "Name": "sls-queues-prod-ServiceEndpoint"
       }
     }
   }

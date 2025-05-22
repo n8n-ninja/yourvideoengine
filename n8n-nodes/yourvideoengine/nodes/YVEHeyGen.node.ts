@@ -163,15 +163,19 @@ export class YVEHeyGen implements INodeType {
         projectId,
         callbackUrl,
         params,
+        queueType: "heygen",
       }
-      const endpointUrl =
-        environment === "dev"
-          ? "https://lh2xhhl3vg.execute-api.us-east-1.amazonaws.com/dev/enqueue"
-          : "https://6kyvzj370d.execute-api.us-east-1.amazonaws.com/prod/enqueue"
-      const xApiKey =
-        environment === "dev"
-          ? "qnl3TD13zr5J2vyXvgqxOaxJpqd42MIS2OvsbMgL"
-          : "e4LzjxD3X75isLViwSRGA9QFeC6LYEbG5Roqlsmq"
+      let endpointUrl = ""
+      let xApiKey = ""
+      if (environment === "dev") {
+        endpointUrl =
+          "https://yxtfn5gmm9.execute-api.us-east-1.amazonaws.com/dev/enqueue"
+        xApiKey = "qopmdRGiCu1Jj2jhDYNyA9p90j4yfkOC825qlgQx"
+      } else {
+        endpointUrl =
+          "https://r2ds9ljpij.execute-api.us-east-1.amazonaws.com/prod/enqueue"
+        xApiKey = "ErQ9qRJaTb1FgvdwbYXMo8Jm4j8dd1nY1f2cD1GY"
+      }
       const response = await this.helpers.httpRequest({
         method: "POST",
         url: endpointUrl,

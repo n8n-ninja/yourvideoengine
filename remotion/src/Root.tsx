@@ -46,6 +46,7 @@ export const RemotionRoot: React.FC = () => {
         width={width}
         height={height}
         schema={ProjectSchema}
+        calculateMetadata={calculateMetadata}
         defaultProps={{
           scenes,
           globalTimeline,
@@ -55,25 +56,44 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="DemoSceneTest"
         component={ProjectComposition}
-        durationInFrames={totalFrames}
         fps={fps}
         width={width}
         height={height}
         schema={ProjectSchema}
+        calculateMetadata={calculateMetadata}
         defaultProps={{
           background: "#1A1728",
           scenes: [
             {
-              duration: 0.2,
+              duration: 2.187,
               timeline: [
                 {
                   type: "camera",
-                  timing: {
-                    start: 0,
-                    end: 100,
-                  },
                   videoUrl:
-                    "https://files2.heygen.ai/aws_pacific/avatar_tmp/c330096d4fe2412196a174937603458f/afb22e4fc5ae4adcac619e1b1388d427.mp4?Expires=1748526298&Signature=eRch2WSnhw0iAGOtDZL2zo35TV7XK-oAGfa8FZSEx8Y8GPWsztNJSBlMKre~Zi9nNfhErUUSuWMzFB5iefuF5RbcQ0Luw9Y6OSo5Rk75NsCcS11sLwnsMmZVJOhB-~GsETrEK4E--PUrdtTmjicVGm~T2PC70WZ67PquJy7xe6I9W4GThYpvijTdQagS5Wfm1aX9nXjMVbdFMjSen3TPjT0IxvBhFceAUa65NlJsegF8~vX1IgCNcWBX-9TR12zmnoLGOe-0LXQWnYPIMjeUXT3HSPAjMPtDpnySUyhWNvFfrS3ZNYmUWdHOApSrjlc9smxTl8VzOH1AsHo4m6bEUw__&Key-Pair-Id=K38HBHX5LX3X2H",
+                    "https://files2.heygen.ai/aws_pacific/avatar_tmp/c330096d4fe2412196a174937603458f/14559ba5dd6341599bbbdc24c1e51e6f.mp4?Expires=1748552412&Signature=FGKlJoXiiyOlHn2IiWB652qV9e~0gp5mcUVmrQlOFZUMG3M1Vu84ALVsYOR~DR6MgHAFmyZI4CPLLo2FmHPbmOcZQJeaYjdIKDyp~X5QgcnyBnPnq2FLjZSbLcK4p~4I5JEsgoe9WzAs418POWudriqooOgIRgtQo7DPq7HJIr5AOcv0FAtnf7kYtLDaMR6NitOrafiv6QzIW8DzukCTX4bEXXXRL1bJ-76LCwHVECLfwH6JROQ-pmZUdOy1vHCRPlYni4GTIeRvxiKA0xOPVWPhRjOY4nZM6-mk4wnfFL7LNffblgsC6-rV8jJmrZxCITvuwi0fnRISfPw3~WNxEQ__&Key-Pair-Id=K38HBHX5LX3X2H",
+                },
+                {
+                  type: "caption",
+                  words: [
+                    {
+                      word: "hello",
+                      start: 0.24,
+                      end: 0.64,
+                      confidence: 0.6826452,
+                    },
+                    {
+                      word: "salutu",
+                      start: 0.64,
+                      end: 1.12,
+                      confidence: 0.60326016,
+                    },
+                    {
+                      word: "fabienne",
+                      start: 1.12,
+                      end: 1.52,
+                      confidence: 0.760355,
+                    },
+                  ],
                 },
               ],
             },
