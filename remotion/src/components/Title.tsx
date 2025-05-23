@@ -40,7 +40,6 @@ export const Title: React.FC<{ title: TitleType }> = ({ title }) => {
         <LetterAnimation
           text={title.title || ""}
           config={letterAnimationConfig}
-          titleStart={title.timing?.start ?? 0}
         />
       ) : (
         title.title

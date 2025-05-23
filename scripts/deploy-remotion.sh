@@ -51,8 +51,24 @@ deploy_frontend() {
   
   # Deploy engine regardless of environment (shared)
   print_header "Deploying Remotion engine"
-  npm run d:engine
-  
+  ENGINE_OUTPUT=$(npm run d:engine 2>&1)
+
+  # Extraire le nom de la Lambda depuis la sortie
+  LAMBDA_NAME=$(echo "$ENGINE_OUTPUT" | grep -oE 'Already exists as [^ ]+' | awk '{print $4}')
+  if [ -z "$LAMBDA_NAME" ]; then
+    LAMBDA_NAME=$(echo "$ENGINE_OUTPUT" | grep -oE 'Deployed as [^ ]+' | awk '{print $3}')
+  fi
+
+  if [ -z "$LAMBDA_NAME" ]; then
+    echo "❌ Impossible de trouver le nom de la Lambda Remotion dans la sortie CLI"
+    exit 1
+  fi
+
+  echo "Remotion Lambda function name: $LAMBDA_NAME"
+
+
+  export REMOTION_LAMBDA_FUNCTION_NAME="$LAMBDA_NAME"
+
   cd "${ROOT_DIR}"
   echo -e "${GREEN}Frontend deployment complete!${NC}"
 }
@@ -81,4 +97,31 @@ print_header "Deployment Summary"
 echo -e "Environment: ${GREEN}$ENV${NC}"
 echo -e "Components deployed: ${GREEN}$COMPONENT${NC}"
 echo ""
+
+# Always print API URLs
+if [ "$ENV" == "prod" ]; then
+  RENDER_URL="https://0lxwxeqkpl.execute-api.us-east-1.amazonaws.com/prod/render"
+  STATUS_URL="https://0lxwxeqkpl.execute-api.us-east-1.amazonaws.com/prod/status"
+else
+  RENDER_URL="https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/render"
+  STATUS_URL="https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/status"
+fi
+
+echo -e "${YELLOW}Remotion Render URL:${NC}  ${GREEN}${RENDER_URL}${NC}"
+echo -e "${YELLOW}Remotion Status URL:${NC}  ${GREEN}${STATUS_URL}${NC}"
+echo ""
+
+CONFIG_FILE="remotion-config.$ENV.json"
+cat > "${ROOT_DIR}/$CONFIG_FILE" <<EOF
+{
+  "remotionLambdaFunctionName": "$LAMBDA_NAME",
+  "serveUrl": "https://remotionlambda-useast1-xw8v2xhmyv.s3.us-east-1.amazonaws.com/sites/yourvideoengine-$ENV",
+  "renderUrl": "$RENDER_URL",
+  "statusUrl": "$STATUS_URL"
+}
+EOF
+
+cp "${ROOT_DIR}/$CONFIG_FILE" "${ROOT_DIR}/remotion-api/$CONFIG_FILE"
+cp "${ROOT_DIR}/$CONFIG_FILE" "${ROOT_DIR}/remotion/$CONFIG_FILE"
+
 echo -e "${GREEN}Deployment completed successfully!${NC}" 

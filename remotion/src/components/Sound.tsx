@@ -1,17 +1,13 @@
 import React from "react"
-import {
-  AbsoluteFill,
-  Audio,
-  Sequence,
-  useVideoConfig,
-  staticFile,
-} from "remotion"
+import { AbsoluteFill, Audio, Sequence, useVideoConfig } from "remotion"
+
 import { z } from "zod"
 import { useTiming } from "@/hooks/useTiming"
 import { ProgressEasingSchema, TimingSchema } from "@/schemas"
 import { useProgressEasing } from "@/hooks/useProgressEasing"
 import { useKeyframes } from "@/hooks/useKeyframes"
 import { Keyframe } from "@/schemas"
+import { getAudio } from "@/utils/getFile"
 
 /**
  * SoundSchema: zod schema for sound props validation.
@@ -53,40 +49,26 @@ const SoundItem: React.FC<{ sound: SoundType; fps: number }> = ({ sound }) => {
   const dynamicVolume = useKeyframes<number>(keyframes ?? [])
   const volume = dynamicVolume ?? sound.volume ?? 1
 
-  // Timing for the sound
-  const timing = useTiming({
-    start: sound.timing?.start ?? 0,
-    end: sound.timing?.end,
-    duration: sound.timing?.duration,
-  })
-
   // Resolve sound source (local or remote)
-  const soundSrc =
-    sound.sound && sound.sound.startsWith("http")
-      ? sound.sound
-      : staticFile(`/sound/${sound.sound ?? ""}`)
+  const soundSrc = getAudio(sound.sound)
 
   // Progress and transition for fade in/out
   const { phase, progressIn, progressOut } = useProgressEasing({
     transition: sound.transition,
-    startFrame: timing.startFrame,
-    endFrame: timing.endFrame,
+    startFrame: 0,
+    endFrame: -0.01,
   })
 
   const volumeAmplifier =
     phase === "in" ? progressIn : phase === "out" ? progressOut : 1
 
-  if (!timing.visible) return null
-
   return (
-    <Sequence from={timing.startFrame} durationInFrames={timing.totalFrames}>
-      <Audio
-        src={soundSrc}
-        loop={sound.loop}
-        playbackRate={sound.pitch ?? 1}
-        volume={() => volume * volumeAmplifier}
-      />
-    </Sequence>
+    <Audio
+      src={soundSrc}
+      loop={sound.loop}
+      playbackRate={sound.pitch ?? 1}
+      volume={() => volume * volumeAmplifier}
+    />
   )
 }
 
@@ -99,10 +81,10 @@ const SoundItem: React.FC<{ sound: SoundType; fps: number }> = ({ sound }) => {
 export const Sound: React.FC<{ sounds: SoundType[] }> = ({ sounds }) => {
   const { fps } = useVideoConfig()
   return (
-    <AbsoluteFill>
+    <>
       {sounds.map((sound, i) => (
         <SoundItem key={i} sound={sound} fps={fps} />
       ))}
-    </AbsoluteFill>
+    </>
   )
 }

@@ -41,7 +41,6 @@ const captionDemos: TimelineItem[][] = [
       type: "title",
       title: "Simple captions",
       position: { bottom: 75 },
-      style: "fontWeight: 400; fontSize: 70px",
     },
     {
       type: "caption",
@@ -55,7 +54,6 @@ const captionDemos: TimelineItem[][] = [
       type: "title",
       title: "Captions with long sentences",
       position: { bottom: 75 },
-      style: "fontWeight: 400; fontSize: 70px",
     },
     {
       type: "caption",
@@ -69,7 +67,6 @@ const captionDemos: TimelineItem[][] = [
       type: "title",
       title: "Or word by word",
       position: { bottom: 75 },
-      style: "fontWeight: 400; fontSize: 70px",
     },
     {
       type: "caption",
@@ -83,7 +80,6 @@ const captionDemos: TimelineItem[][] = [
       type: "title",
       title: "Custom color",
       position: { bottom: 75 },
-      style: "fontWeight: 400; fontSize: 70px",
     },
     {
       type: "caption",
@@ -98,7 +94,6 @@ const captionDemos: TimelineItem[][] = [
       type: "title",
       title: "Uppercase",
       position: { bottom: 75 },
-      style: "fontWeight: 400; fontSize: 70px",
     },
     {
       type: "caption",
@@ -113,7 +108,6 @@ const captionDemos: TimelineItem[][] = [
       type: "title",
       title: "MultiColors",
       position: { bottom: 75 },
-      style: "fontWeight: 400; fontSize: 70px",
     },
     {
       type: "caption",
@@ -127,7 +121,6 @@ const captionDemos: TimelineItem[][] = [
       type: "title",
       title: "Active word effects",
       position: { bottom: 75 },
-      style: "fontWeight: 400; fontSize: 70px",
     },
     {
       type: "caption",
@@ -143,7 +136,6 @@ const captionDemos: TimelineItem[][] = [
       type: "title",
       title: "No active word effects",
       position: { bottom: 75 },
-      style: "fontWeight: 400; fontSize: 70px",
     },
     {
       type: "caption",
@@ -159,7 +151,6 @@ const captionDemos: TimelineItem[][] = [
       type: "title",
       title: "Custom container styling",
       position: { bottom: 75 },
-      style: "fontWeight: 400; fontSize: 70px",
     },
     {
       type: "caption",
@@ -178,7 +169,6 @@ const captionDemos: TimelineItem[][] = [
       type: "title",
       title: "Bottom align",
       position: { bottom: 75 },
-      style: "fontWeight: 400; fontSize: 70px",
     },
     {
       type: "caption",
@@ -191,7 +181,6 @@ const captionDemos: TimelineItem[][] = [
       type: "title",
       title: "top align",
       position: { top: 75 },
-      style: "fontWeight: 400; fontSize: 70px",
     },
     {
       type: "caption",
@@ -219,7 +208,6 @@ const captionDemos: TimelineItem[][] = [
       type: "title",
       title: "Float effect",
       position: { bottom: 75 },
-      style: "fontWeight: 400; fontSize: 70px",
     },
     {
       type: "caption",
@@ -233,7 +221,6 @@ const captionDemos: TimelineItem[][] = [
       type: "title",
       title: "Tilt3D effect",
       position: { bottom: 75 },
-      style: "fontWeight: 400; fontSize: 70px",
     },
     {
       type: "caption",

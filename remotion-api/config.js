@@ -1,17 +1,23 @@
+const fs = require("fs")
+const path = require("path")
+
+const env = process.env.REMOTION_ENV || "dev"
+const configPath = path.join(__dirname, `remotion-config.${env}.json`)
+let remotionConfig = {}
+if (fs.existsSync(configPath)) {
+  remotionConfig = JSON.parse(fs.readFileSync(configPath, "utf8"))
+}
+
 const environments = {
   dev: {
-    remotionLambdaFunctionName:
-      "remotion-render-4-0-304-mem2048mb-disk10240mb-900sec",
+    remotionLambdaFunctionName: remotionConfig.remotionLambdaFunctionName,
     remotionUrl: "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev",
-    serveUrl:
-      "https://remotionlambda-useast1-xw8v2xhmyv.s3.us-east-1.amazonaws.com/sites/yourvideoengine-dev/index.html", // Replace with your actual dev site URL
+    serveUrl: remotionConfig.serveUrl,
   },
   prod: {
-    remotionLambdaFunctionName:
-      "remotion-render-4-0-304-mem2048mb-disk10240mb-900sec",
+    remotionLambdaFunctionName: remotionConfig.remotionLambdaFunctionName,
     remotionUrl: "https://0lxwxeqkpl.execute-api.us-east-1.amazonaws.com/prod",
-    serveUrl:
-      "https://remotionlambda-useast1-xw8v2xhmyv.s3.us-east-1.amazonaws.com/sites/yourvideoengine-prod/index.html", // Replace with your actual prod site URL
+    serveUrl: remotionConfig.serveUrl,
   },
 }
 

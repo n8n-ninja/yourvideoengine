@@ -30,12 +30,27 @@ export const startJobGeneric = async ({
     externalId = res.externalId
     outputData = res.outputData
     bucketName = res.bucketName
-    if (!externalId) failed = true
+    if (!externalId) {
+      failed = true
+      console.error(
+        "[startJobGeneric] Pas de externalId dans la réponse API:",
+        JSON.stringify(res),
+      )
+    }
   } catch (err) {
     failed = true
+    console.error("[startJobGeneric] Erreur lors de l'appel API:", err)
   }
   if (failed) {
     const newAttempts = attempts + 1
+    console.error(
+      "[startJobGeneric] Job échoué, attempts:",
+      newAttempts,
+      "pk:",
+      pk,
+      "sk:",
+      sk,
+    )
     await client.send(
       new UpdateItemCommand({
         TableName: tableName,
@@ -127,7 +142,9 @@ export const pollJobGeneric = async ({
     outputData = res.outputData
     outputUrl = res.outputUrl
     duration = res.duration
-  } catch {
+    console.log("[pollJobGeneric] Résultat pollApi:", JSON.stringify(res))
+  } catch (err) {
+    console.error("[pollJobGeneric] Erreur lors du polling:", err)
     return
   }
   if (done && !failed) {
@@ -171,6 +188,16 @@ export const pollJobGeneric = async ({
     }
   } else if (failed) {
     const newAttempts = attempts + 1
+    console.error(
+      "[pollJobGeneric] Job failed, attempts:",
+      newAttempts,
+      "pk:",
+      pk,
+      "sk:",
+      sk,
+      "outputData:",
+      JSON.stringify(outputData),
+    )
     await client.send(
       new UpdateItemCommand({
         TableName: tableName,

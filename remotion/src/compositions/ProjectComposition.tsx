@@ -36,6 +36,7 @@ export const calculateMetadata: CalculateMetadataFunction<{
       duration += scene.duration ?? 0
     }
   })
+
   return {
     durationInFrames: Math.round(duration * 30),
   }
