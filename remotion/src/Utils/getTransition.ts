@@ -4,7 +4,6 @@ import { slide } from "@remotion/transitions/slide"
 import { flip } from "@remotion/transitions/flip"
 import { clockWipe } from "@remotion/transitions/clock-wipe"
 import { TransitionPresentation } from "@remotion/transitions"
-import { staticFile } from "remotion"
 import { addSound } from "./addSound"
 import { Transition } from "@/schemas"
 
@@ -47,7 +46,7 @@ export const getTransition = (
   if (transition.sound) {
     presentation = addSound(
       presentation as TransitionPresentation<Record<string, unknown>>,
-      staticFile(`/sound/${transition.sound}`),
+      transition.sound,
     )
   }
 

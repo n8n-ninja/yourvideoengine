@@ -17,13 +17,13 @@ export const TRANSITION_REVEAL_TYPES = [
 /**
  * Type representing a supported reveal transition type.
  */
-export type TransitionRevealType = (typeof TRANSITION_REVEAL_TYPES)[number]
+export type RevealType = (typeof TRANSITION_REVEAL_TYPES)[number]
 
 /**
  * Zod schema for a reveal transition configuration.
  * Supports in/out types, easings, and durations.
  */
-export const TransitionRevealSchema = z.object({
+export const RevealSchema = z.object({
   type: z.enum(TRANSITION_REVEAL_TYPES).optional(),
   easing: z.string().optional(),
   duration: z.number().optional(),
@@ -40,4 +40,4 @@ export const TransitionRevealSchema = z.object({
 /**
  * Type inferred from TransitionRevealSchema.
  */
-export type TransitionReveal = z.infer<typeof TransitionRevealSchema>
+export type Reveal = z.infer<typeof RevealSchema>

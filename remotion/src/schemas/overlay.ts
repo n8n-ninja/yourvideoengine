@@ -1,11 +1,11 @@
 import { z } from "zod"
 import { TimingSchema } from "./timing"
-import { TransitionSchema } from "./transition"
+import { RevealSchema } from "./reveal"
 
 export const ScanlineOverlaySchema = z.object({
   type: z.literal("scanline"),
   timing: TimingSchema,
-  transition: TransitionSchema,
+  reveal: RevealSchema,
   opacity: z.number().optional(),
   intensity: z.number(),
   color: z.string().optional(),
@@ -16,7 +16,7 @@ export const ScanlineOverlaySchema = z.object({
 export const VignetteOverlaySchema = z.object({
   type: z.literal("vignette"),
   timing: TimingSchema,
-  transition: TransitionSchema,
+  reveal: RevealSchema,
   opacity: z.number().optional(),
   intensity: z.number().optional(),
   size: z.number().optional(),
@@ -26,7 +26,7 @@ export const VignetteOverlaySchema = z.object({
 export const ColorOverlaySchema = z.object({
   type: z.literal("color"),
   timing: TimingSchema,
-  transition: TransitionSchema,
+  reveal: RevealSchema,
   opacity: z.number().optional(),
   color: z.string().optional(),
   intensity: z.number().optional(),

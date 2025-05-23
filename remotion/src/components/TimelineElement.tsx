@@ -9,7 +9,7 @@ import { Title } from "./Title"
 import { useTiming } from "@/hooks/useTiming"
 import { useRevealTransition } from "@/hooks/useRevealTransition"
 import { getPosition } from "@/utils/getPosition"
-import { TRANSITION_REVEAL_TYPES } from "@/schemas/transition-reveal"
+import { TRANSITION_REVEAL_TYPES } from "@/schemas/reveal"
 import type { z } from "zod"
 import { Overlay as OverlayType } from "@/schemas/overlay"
 import { Image } from "./Image"
@@ -58,10 +58,10 @@ export const TimelineElementRenderer: React.FC<{
   const allowedRevealTypes = [...TRANSITION_REVEAL_TYPES]
 
   const safeRevealTransition =
-    element.transition &&
-    typeof element.transition === "object" &&
-    allowedRevealTypes.includes((element.transition as any).type)
-      ? (element.transition as any)
+    element.reveal &&
+    typeof element.reveal === "object" &&
+    allowedRevealTypes.includes((element.reveal as any).type)
+      ? (element.reveal as any)
       : {}
 
   const { style: transitionStyle } = useRevealTransition({

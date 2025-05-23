@@ -150,7 +150,7 @@ const cameraScenes: Scene[] = [
         title: "With Timing and Transition",
         containerStyle:
           "background-color: orange; padding: 10px; border-radius: 10px; box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);",
-        transition: {
+        reveal: {
           type: "fade",
           duration: 1,
         },

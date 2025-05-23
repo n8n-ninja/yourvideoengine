@@ -14,7 +14,7 @@ const effectScenes: Scene[] = [
         objectFit: "contain",
         url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747685664336-hugging-emoji.webp",
         timing: { start: 0.2, end: -0.4 },
-        transition: { type: "fade", duration: 0.2 },
+        reveal: { type: "fade", duration: 0.2 },
         effects: [{ type: "float", options: { amplitude: 0.5, speed: 0.5 } }],
       },
     ],
@@ -32,7 +32,7 @@ const effectScenes: Scene[] = [
         objectFit: "contain",
         url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747685664336-hugging-emoji.webp",
         timing: { start: 0.2, end: -0.4 },
-        transition: { type: "fade", duration: 0.2 },
+        reveal: { type: "fade", duration: 0.2 },
         effects: [{ type: "shake", options: { amplitude: 0.5, speed: 0.5 } }],
       },
     ],
@@ -50,7 +50,7 @@ const effectScenes: Scene[] = [
         objectFit: "contain",
         url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747685664336-hugging-emoji.webp",
         timing: { start: 0.2, end: -0.4 },
-        transition: { type: "fade", duration: 0.2 },
+        reveal: { type: "fade", duration: 0.2 },
         effects: [{ type: "zoom", options: { amplitude: 0.5 } }],
       },
     ],
@@ -68,7 +68,7 @@ const effectScenes: Scene[] = [
         objectFit: "contain",
         url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747685664336-hugging-emoji.webp",
         timing: { start: 0.2, end: -0.4 },
-        transition: { type: "fade", duration: 0.2 },
+        reveal: { type: "fade", duration: 0.2 },
         effects: [{ type: "fade", options: { duration: 0.5 } }],
       },
     ],
@@ -86,7 +86,7 @@ const effectScenes: Scene[] = [
         objectFit: "contain",
         url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747685664336-hugging-emoji.webp",
         timing: { start: 0.2, end: -0.4 },
-        transition: { type: "fade", duration: 0.2 },
+        reveal: { type: "fade", duration: 0.2 },
         effects: [{ type: "blur", options: { amount: 0.8 } }],
       },
     ],
@@ -104,7 +104,7 @@ const effectScenes: Scene[] = [
         objectFit: "contain",
         url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747685664336-hugging-emoji.webp",
         timing: { start: 0.2, end: -0.4 },
-        transition: { type: "fade", duration: 0.2 },
+        reveal: { type: "fade", duration: 0.2 },
         effects: [{ type: "grayscale", options: { amount: 0.8 } }],
       },
     ],
@@ -122,7 +122,7 @@ const effectScenes: Scene[] = [
         objectFit: "contain",
         url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747685664336-hugging-emoji.webp",
         timing: { start: 0.2, end: -0.4 },
-        transition: { type: "fade", duration: 0.2 },
+        reveal: { type: "fade", duration: 0.2 },
         effects: [{ type: "sepia", options: { amount: 0.8 } }],
       },
     ],
@@ -140,7 +140,7 @@ const effectScenes: Scene[] = [
         objectFit: "contain",
         url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747685664336-hugging-emoji.webp",
         timing: { start: 0.2, end: -0.4 },
-        transition: { type: "fade", duration: 0.2 },
+        reveal: { type: "fade", duration: 0.2 },
         effects: [{ type: "rotate", options: { angle: 0.5 } }],
       },
     ],
@@ -177,7 +177,7 @@ const effectScenes: Scene[] = [
         objectFit: "contain",
         url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747685664336-hugging-emoji.webp",
         timing: { start: 0.2, end: -0.4 },
-        transition: { type: "fade", duration: 0.2 },
+        reveal: { type: "fade", duration: 0.2 },
         effects: [
           {
             type: "rotate",
@@ -200,7 +200,7 @@ const effectScenes: Scene[] = [
         objectFit: "contain",
         url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747685664336-hugging-emoji.webp",
         timing: { start: 0.2, end: -0.4 },
-        transition: { type: "fade", duration: 0.2 },
+        reveal: { type: "fade", duration: 0.2 },
         effects: [
           {
             type: "pointer",
@@ -223,7 +223,7 @@ const effectScenes: Scene[] = [
         objectFit: "contain",
         url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747685664336-hugging-emoji.webp",
         timing: { start: 0.2, end: -0.4 },
-        transition: { type: "fade", duration: 0.2 },
+        reveal: { type: "fade", duration: 0.2 },
         effects: [
           { type: "pop", options: { amplitude: 0.5, speed: 0.5, mode: "pop" } },
         ],
@@ -243,7 +243,7 @@ const effectScenes: Scene[] = [
         objectFit: "contain",
         url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747685664336-hugging-emoji.webp",
         timing: { start: 0.2, end: -0.4 },
-        transition: { type: "fade", duration: 0.2 },
+        reveal: { type: "fade", duration: 0.2 },
         effects: [
           {
             type: "pulse",
@@ -266,7 +266,7 @@ const effectScenes: Scene[] = [
         objectFit: "contain",
         url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747685664336-hugging-emoji.webp",
         timing: { start: 0.2, end: -0.4 },
-        transition: { type: "fade", duration: 0.2 },
+        reveal: { type: "fade", duration: 0.2 },
         effects: [
           {
             type: "wobble",
@@ -289,7 +289,7 @@ const effectScenes: Scene[] = [
         objectFit: "contain",
         url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747685664336-hugging-emoji.webp",
         timing: { start: 0.2, end: -0.4 },
-        transition: { type: "fade", duration: 0.2 },
+        reveal: { type: "fade", duration: 0.2 },
         effects: [
           {
             type: "swing3D",
@@ -317,7 +317,7 @@ const effectScenes: Scene[] = [
         objectFit: "contain",
         url: "https://diwa7aolcke5u.cloudfront.net/uploads/1747685664336-hugging-emoji.webp",
         timing: { start: 0.2, end: -0.4 },
-        transition: { type: "fade", duration: 0.2 },
+        reveal: { type: "fade", duration: 0.2 },
         effects: [
           {
             type: "tilt3D",

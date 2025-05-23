@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { TimingSchema } from "./timing"
 import { PositionSchema } from "./position"
-import { TransitionSchema } from "./transition"
+import { RevealSchema } from "./reveal"
 import { LetterAnimationConfigSchema } from "./letter-animation"
 import { titleThemes } from "@/styles/themes"
 import { StyleSchema } from "./style"
@@ -21,8 +21,8 @@ export const TitlesSchema = z.array(
     timing: TimingSchema.optional(),
     position: PositionSchema.optional(),
     style: StyleSchema.optional(),
-    transition: TransitionSchema.optional(),
     letterAnimation: LetterAnimationSchema.optional(),
+    reveal: RevealSchema.optional(),
   }),
 )
 

@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { TimingSchema } from "./timing"
 import { PositionSchema } from "./position"
-import { TransitionSchema } from "./transition"
+import { RevealSchema } from "./reveal"
 import { StyleSchema } from "./style"
 
 /**
@@ -13,7 +13,7 @@ export const ImageSchema = z.object({
   style: StyleSchema.optional(),
   timing: TimingSchema.optional(),
   position: PositionSchema.optional(),
-  transition: TransitionSchema.optional(),
+  reveal: RevealSchema.optional(),
   objectFit: z
     .enum(["cover", "contain", "fill", "none", "scale-down"])
     .optional(),

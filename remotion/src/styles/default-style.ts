@@ -95,7 +95,7 @@ export type CameraTheme = {
 }
 
 export type TitleTheme = {
-  baseStyle?: React.CSSProperties
+  style?: React.CSSProperties
 }
 
 export type OverlayTheme = {

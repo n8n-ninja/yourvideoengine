@@ -93,7 +93,7 @@ const imageScenes: Scene[] = [
           bottom: 5,
           top: 50,
         },
-        transition: { type: "fade", duration: 0.5 },
+        reveal: { type: "fade", duration: 0.5 },
       },
       {
         type: "title",
@@ -177,7 +177,7 @@ const imageScenes: Scene[] = [
       },
     ],
   },
-  // 6. Deux images avec timing et transition
+  // 6. Deux images avec timing et reveal
   {
     duration: 4,
     timeline: [
@@ -186,11 +186,11 @@ const imageScenes: Scene[] = [
         url: IMAGE_URL,
         position: { left: 10, top: 10, right: 10, bottom: 10 },
         timing: { start: 0, end: 2.5 },
-        transition: { type: "fade", duration: 0.5 },
+        reveal: { type: "fade", duration: 0.5 },
       },
       {
         type: "title",
-        title: "With transition",
+        title: "With reveal",
         position: { verticalAlign: "start" },
       },
     ],

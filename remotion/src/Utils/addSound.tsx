@@ -3,6 +3,7 @@ import {
   TransitionPresentationComponentProps,
 } from "@remotion/transitions"
 import { Audio } from "remotion"
+import { getAudio } from "./getFile"
 
 /**
  * Wraps a Remotion transition presentation to add a sound effect when entering.
@@ -24,10 +25,11 @@ export function addSound<T extends Record<string, unknown>>(
   const NewComponent: React.FC<TransitionPresentationComponentProps<T>> = (
     p,
   ) => {
+    const audioSrc = getAudio(src)
     return (
       <>
         {p.presentationDirection === "entering" ? (
-          <Audio src={src} volume={0.2} />
+          <Audio src={audioSrc} volume={0.2} />
         ) : null}
         <C {...p} />
       </>

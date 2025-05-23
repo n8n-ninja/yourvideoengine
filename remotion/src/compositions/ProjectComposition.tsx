@@ -1,10 +1,20 @@
 import React from "react"
-import { TransitionSeries } from "@remotion/transitions"
+import { TransitionSeries, linearTiming } from "@remotion/transitions"
 import { TimelineElementRenderer } from "../components/TimelineElement"
 import { z } from "zod"
-import { SceneSchema, TimelineElementSchema } from "@/schemas/timeline"
+import {
+  SceneSchema,
+  TimelineElementSchema,
+  SceneOrTransition,
+  Scene as SceneType,
+  TransitionScene,
+} from "@/schemas/timeline"
 import { ThemeProvider } from "../contexts/ThemeContext"
 import type { Theme } from "@/styles/default-style"
+
+import { getTransition } from "../utils/getTransition"
+import { addSound } from "../utils/addSound"
+
 import {
   AbsoluteFill,
   useVideoConfig,
@@ -15,7 +25,7 @@ export type Scene = z.infer<typeof SceneSchema>
 export type TimelineElement = z.infer<typeof TimelineElementSchema>
 
 export const calculateMetadata: CalculateMetadataFunction<{
-  scenes: Scene[]
+  scenes: SceneOrTransition[]
 }> = ({ props, defaultProps, abortSignal }) => {
   return {
     // Change the metadata
@@ -26,14 +36,13 @@ export const calculateMetadata: CalculateMetadataFunction<{
 }
 
 export const ProjectComposition: React.FC<{
-  scenes: Scene[]
+  scenes: SceneOrTransition[]
   globalTimeline?: TimelineElement[]
   theme?: Theme
   background?: string // facultatif
 }> = ({ scenes, globalTimeline, theme, background }) => {
   const { fps } = useVideoConfig()
 
-  console.log(background)
   // Composant pour gérer le fond
   const BackgroundRenderer: React.FC<{ background?: string }> = ({
     background,
@@ -80,27 +89,41 @@ export const ProjectComposition: React.FC<{
       <div className="relative w-full h-full">
         <BackgroundRenderer background={background} />
         <TransitionSeries>
-          {scenes.map((scene: Scene, sceneIdx: number) => (
-            <React.Fragment key={sceneIdx}>
+          {scenes.map((item: SceneOrTransition, idx: number) => {
+            if ("type" in item && item.type === "transition") {
+              const t = item as TransitionScene
+              const transitionObj = {
+                type: t.animation,
+                duration: t.duration,
+                direction: t.direction,
+                wipeDirection: t.wipeDirection,
+                sound: t.sound,
+              }
+              const presentation = t.sound
+                ? addSound(getTransition(transitionObj), t.sound)
+                : getTransition(transitionObj)
+              return (
+                <TransitionSeries.Transition
+                  key={idx}
+                  presentation={presentation}
+                  timing={linearTiming({
+                    durationInFrames: Math.round((t.duration ?? 1) * fps),
+                  })}
+                />
+              )
+            }
+            const s = item as SceneType
+            return (
               <TransitionSeries.Sequence
-                durationInFrames={Math.round((scene.duration ?? 0) * fps)}
+                key={idx}
+                durationInFrames={Math.round((s.duration ?? 0) * fps)}
               >
-                {scene.timeline.map((element: TimelineElement, i: number) => (
+                {s.timeline.map((element: TimelineElement, i: number) => (
                   <TimelineElementRenderer key={i} element={element} />
                 ))}
               </TransitionSeries.Sequence>
-              {/* {sceneIdx < scenes.length - 1 && (
-                <TransitionSeries.Transition
-                  presentation={fade()}
-                  timing={linearTiming({
-                    durationInFrames: Math.round(
-                      (scene.transition?.duration ?? ) * fps,
-                    ),
-                  })}
-                />
-              )} */}
-            </React.Fragment>
-          ))}
+            )
+          })}
         </TransitionSeries>
         {globalTimeline?.map((element: TimelineElement, i: number) => (
           <TimelineElementRenderer key={`global-${i}`} element={element} />

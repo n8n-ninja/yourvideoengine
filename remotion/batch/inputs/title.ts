@@ -76,7 +76,7 @@ const titleScenes: Scene[] = [
       {
         type: "title",
         title: "With Transition",
-        transition: { type: "fade", duration: 0.5 },
+        reveal: { type: "fade", duration: 0.5 },
       },
     ],
   },
@@ -114,7 +114,7 @@ const titleScenes: Scene[] = [
         title: "Full Combo!",
         style: "font-size: 100px; text-shadow: 0 0 20px #00fff7;",
         position: { verticalAlign: "center" },
-        transition: { type: "fade", duration: 0.5 },
+        reveal: { type: "fade", duration: 0.5 },
         timing: { start: 0.2, end: 2.8 },
         letterAnimation: {
           duration: 0.7,
