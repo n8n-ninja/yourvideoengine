@@ -3,7 +3,7 @@ import { Sequence, useVideoConfig, useCurrentFrame } from "remotion"
 import { TimelineElementSchema } from "@/schemas/timeline"
 import { Camera } from "./Camera"
 import { Caption } from "./Caption"
-import { Sound } from "./Sound"
+import { Audio } from "./Audio"
 import { Overlay } from "./Overlay"
 import { Title } from "./Title"
 import { useTiming } from "@/hooks/useTiming"
@@ -17,19 +17,48 @@ import { applyEffects } from "@/utils/effects"
 import { parseStyleString } from "@/utils/getStyle"
 import { timelineElementContainerStyle } from "@/styles/default-style"
 import { useKeyframes } from "@/hooks/useKeyframes"
+import { useProgressEasing } from "@/hooks/useProgressEasing"
 
-const elementComponentMap = {
-  camera: (element: any) => <Camera {...element} />,
-  caption: (element: any) => <Caption captions={element} />,
-  title: (element: any) => <Title title={element} />,
-  sound: (element: any) => <Sound sounds={[element]} />,
-  scanline: (element: any) => <Overlay overlay={element as OverlayType} />,
-  vignette: (element: any) => <Overlay overlay={element as OverlayType} />,
-  color: (element: any) => <Overlay overlay={element as OverlayType} />,
-  image: (element: any) => <Image image={element} />,
-} as const
+type ElementType =
+  | "camera"
+  | "caption"
+  | "title"
+  | "sound"
+  | "scanline"
+  | "vignette"
+  | "color"
+  | "image"
+type ElementComponent = (
+  element: any,
+  revealProgress?: number,
+) => React.ReactNode
 
-type ElementType = keyof typeof elementComponentMap
+const elementComponentMap: Record<ElementType, ElementComponent> = {
+  camera: (element, revealProgress) => (
+    <Camera {...element} revealProgress={revealProgress} />
+  ),
+  caption: (element, revealProgress) => (
+    <Caption captions={element} revealProgress={revealProgress} />
+  ),
+  title: (element, revealProgress) => (
+    <Title title={element} revealProgress={revealProgress} />
+  ),
+  sound: (element, revealProgress) => (
+    <Audio audio={element} revealProgress={revealProgress} />
+  ),
+  scanline: (element, revealProgress) => (
+    <Overlay overlay={element} revealProgress={revealProgress} />
+  ),
+  vignette: (element, revealProgress) => (
+    <Overlay overlay={element} revealProgress={revealProgress} />
+  ),
+  color: (element, revealProgress) => (
+    <Overlay overlay={element} revealProgress={revealProgress} />
+  ),
+  image: (element, revealProgress) => (
+    <Image image={element} revealProgress={revealProgress} />
+  ),
+}
 
 // Typage propre pour containerStyle
 type TimelineElementWithStyle = z.infer<typeof TimelineElementSchema> & {
@@ -70,6 +99,16 @@ export const TimelineElementRenderer: React.FC<{
     endFrame: timing.endFrame,
   })
 
+  const { phase, progressIn, progressOut } = useProgressEasing({
+    transition: safeRevealTransition,
+    startFrame: timing.startFrame,
+    endFrame: timing.endFrame,
+  })
+
+  console.log(phase, progressIn, progressOut)
+  const revealProgress =
+    phase === "in" ? progressIn : phase === "out" ? progressOut : 1
+
   const positionStyle =
     "position" in element && element.position
       ? (() => {
@@ -95,7 +134,7 @@ export const TimelineElementRenderer: React.FC<{
 
   if (!timing.visible) return null
 
-  const renderVisualElement = (key: ElementType, child: React.ReactNode) => {
+  const renderElementContainer = (key: ElementType, child: React.ReactNode) => {
     return (
       <Sequence from={timing.startFrame} durationInFrames={timing.totalFrames}>
         <div
@@ -114,8 +153,12 @@ export const TimelineElementRenderer: React.FC<{
   }
 
   const type = element.type as ElementType
+
   if (type in elementComponentMap) {
-    return renderVisualElement(type, elementComponentMap[type](element))
+    return renderElementContainer(
+      type,
+      elementComponentMap[type](element, revealProgress),
+    )
   }
 
   return null

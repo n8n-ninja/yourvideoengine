@@ -17,13 +17,14 @@ import { cameraVideoStyle } from "@/styles/default-style"
  * @param speed Optional playback rate for the video.
  * @param volume Optional volume for the video.
  * @param loop Optional loop for the video.
+ * @param revealProgress Optional progress for revealing the video.
  * @returns A Video element that fills its parent (object-fit: cover) and animates inside a fixed container.
  */
 const isImage = (url: string) => {
   return /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(url)
 }
 
-const CameraComponent: React.FC<Camera> = ({
+const CameraComponent: React.FC<Camera & { revealProgress?: number }> = ({
   videoUrl,
   keyFrames,
   offsetX = 0,
@@ -32,6 +33,7 @@ const CameraComponent: React.FC<Camera> = ({
   speed = 1,
   volume = 1,
   loop = false,
+  revealProgress = 1,
 }) => {
   const userStyle = style ? parseStyleString(style) : {}
 

@@ -6,7 +6,10 @@ import { parseStyleString } from "@/utils/getStyle"
  * Image: affiche une image avec style custom.
  * @param image L'objet image à afficher (type ImageType)
  */
-export const Image: React.FC<{ image: ImageType }> = ({ image }) => {
+export const Image: React.FC<{ image: ImageType; revealProgress?: number }> = ({
+  image,
+  revealProgress = 1,
+}) => {
   const userStyle = image.style ? parseStyleString(image.style) : {}
   const objectFit = image.objectFit ?? "cover"
   return (

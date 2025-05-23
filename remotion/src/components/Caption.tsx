@@ -23,7 +23,10 @@ import { useTheme } from "../contexts/ThemeContext"
  *
  * @returns An AbsoluteFill with styled captions, or nothing if no active page.
  */
-export const Caption: React.FC<{ captions: CaptionType }> = ({ captions }) => {
+export const Caption: React.FC<{
+  captions: CaptionType
+  revealProgress?: number
+}> = ({ captions, revealProgress = 1 }) => {
   const theme = useTheme()
   // Current frame and video config
   const frame = useCurrentFrame()

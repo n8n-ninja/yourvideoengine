@@ -1656,11 +1656,11 @@ const shawheen = {
     {
       type: "sound",
       sound: "https://files.catbox.moe/mbgrk0.mp3",
-      timing: { start: 10 },
+      timing: { start: 3 },
       volume: 0.2,
       transition: {
         type: "fade",
-        duration: 5,
+        duration: 2,
       },
     },
   ],
