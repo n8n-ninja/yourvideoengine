@@ -6,8 +6,8 @@
     "d": "serverless deploy"
   },
   "dependencies": {
-    "@remotion/lambda": "4.0.304",
-    "remotion": "4.0.304"
+    "@remotion/lambda": "4.0.306",
+    "remotion": "4.0.306"
   },
   "devDependencies": {
     "serverless-esbuild": "^1.44.0"
