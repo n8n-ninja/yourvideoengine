@@ -27,11 +27,17 @@ export type TimelineElement = z.infer<typeof TimelineElementSchema>
 export const calculateMetadata: CalculateMetadataFunction<{
   scenes: SceneOrTransition[]
 }> = ({ props, defaultProps, abortSignal }) => {
+  let duration = 0
+  props.scenes.forEach((scene, idx) => {
+    if ("type" in scene && scene.type === "transition") {
+      if (idx > 0 && idx < props.scenes.length - 1)
+        duration -= scene.duration ?? 0
+    } else {
+      duration += scene.duration ?? 0
+    }
+  })
   return {
-    // Change the metadata
-    durationInFrames: Math.round(
-      props.scenes.reduce((acc, scene) => acc + (scene.duration ?? 0) * 30, 0),
-    ),
+    durationInFrames: Math.round(duration * 30),
   }
 }
 
@@ -102,6 +108,7 @@ export const ProjectComposition: React.FC<{
               const presentation = t.sound
                 ? addSound(getTransition(transitionObj), t.sound)
                 : getTransition(transitionObj)
+
               return (
                 <TransitionSeries.Transition
                   key={idx}

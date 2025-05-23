@@ -74,7 +74,7 @@ export const SceneSchema = z.object({
 // TransitionScene: une "scène" spéciale pour les transitions
 export const TransitionSceneSchema = z.object({
   type: z.literal("transition"),
-  animation: z.enum(["fade", "wipe", "slide", "flip", "clockWipe", "zoom"]),
+  animation: z.enum(["fade", "wipe", "slide", "flip", "clockWipe"]),
   duration: z.number().optional(),
   direction: z
     .enum(["from-left", "from-right", "from-top", "from-bottom"])

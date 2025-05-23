@@ -1,6 +1,6 @@
 import React from "react"
-import "./fonts.css"
-import { Composition, getInputProps } from "remotion"
+import "./styles/fonts.css"
+import { Composition, Folder, getInputProps } from "remotion"
 import {
   ProjectComposition,
   TimelineElement,
@@ -8,13 +8,13 @@ import {
 import { ProjectSchema } from "@/schemas/timeline"
 import { calculateMetadata } from "./compositions/ProjectComposition"
 import { SceneOrTransition } from "@/schemas/timeline"
-import transition from "../batch/inputs/transition"
-import caption from "../batch/inputs/caption"
-import effect from "../batch/inputs/effect"
-import title from "../batch/inputs/title"
-import camera from "../batch/inputs/camera"
-import position from "../batch/inputs/position"
-import image from "../batch/inputs/image"
+import transition from "../demo/transition"
+import caption from "../demo/caption"
+import effect from "../demo/effect"
+import title from "../demo/title"
+import camera from "../demo/camera"
+import position from "../demo/position"
+import image from "../demo/image"
 
 const demoScenes: SceneOrTransition[] = [
   {
@@ -84,7 +84,7 @@ export const RemotionRoot: React.FC = () => {
       />
 
       <Composition
-        id="DemoSceneTest"
+        id="Playground"
         component={ProjectComposition}
         fps={fps}
         width={width}
@@ -98,124 +98,126 @@ export const RemotionRoot: React.FC = () => {
         }}
       />
 
-      <Composition
-        id="DemoSceneTransition"
-        component={ProjectComposition}
-        durationInFrames={100}
-        fps={fps}
-        width={width}
-        height={height}
-        schema={ProjectSchema}
-        calculateMetadata={calculateMetadata}
-        defaultProps={{
-          background: "#1A1728",
-          scenes: transition.scenes,
-          globalTimeline,
-          theme,
-        }}
-      />
+      <Folder name="Features">
+        <Composition
+          id="DemoSceneTransition"
+          component={ProjectComposition}
+          durationInFrames={100}
+          fps={fps}
+          width={width}
+          height={height}
+          schema={ProjectSchema}
+          calculateMetadata={calculateMetadata}
+          defaultProps={{
+            background: "#1A1728",
+            scenes: transition.scenes,
+            globalTimeline,
+            theme,
+          }}
+        />
 
-      <Composition
-        id="DemoCaption"
-        component={ProjectComposition}
-        durationInFrames={100}
-        fps={fps}
-        width={width}
-        height={height}
-        schema={ProjectSchema}
-        calculateMetadata={calculateMetadata}
-        defaultProps={{
-          background: "#1A1728",
-          scenes: caption.scenes,
-          globalTimeline,
-          theme,
-        }}
-      />
+        <Composition
+          id="DemoCaption"
+          component={ProjectComposition}
+          durationInFrames={100}
+          fps={fps}
+          width={width}
+          height={height}
+          schema={ProjectSchema}
+          calculateMetadata={calculateMetadata}
+          defaultProps={{
+            background: "#1A1728",
+            scenes: caption.scenes,
+            globalTimeline,
+            theme,
+          }}
+        />
 
-      <Composition
-        id="DemoEffect"
-        component={ProjectComposition}
-        durationInFrames={100}
-        fps={fps}
-        width={width}
-        height={height}
-        schema={ProjectSchema}
-        calculateMetadata={calculateMetadata}
-        defaultProps={{
-          background: "#1A1728",
-          scenes: effect.scenes,
-          globalTimeline,
-          theme,
-        }}
-      />
+        <Composition
+          id="DemoEffect"
+          component={ProjectComposition}
+          durationInFrames={100}
+          fps={fps}
+          width={width}
+          height={height}
+          schema={ProjectSchema}
+          calculateMetadata={calculateMetadata}
+          defaultProps={{
+            background: "#1A1728",
+            scenes: effect.scenes,
+            globalTimeline,
+            theme,
+          }}
+        />
 
-      <Composition
-        id="DemoTitle"
-        component={ProjectComposition}
-        durationInFrames={100}
-        fps={fps}
-        width={width}
-        height={height}
-        schema={ProjectSchema}
-        calculateMetadata={calculateMetadata}
-        defaultProps={{
-          background: "#1A1728",
-          scenes: title.scenes,
-          globalTimeline,
-          theme,
-        }}
-      />
+        <Composition
+          id="DemoTitle"
+          component={ProjectComposition}
+          durationInFrames={100}
+          fps={fps}
+          width={width}
+          height={height}
+          schema={ProjectSchema}
+          calculateMetadata={calculateMetadata}
+          defaultProps={{
+            background: "#1A1728",
+            scenes: title.scenes,
+            globalTimeline,
+            theme,
+          }}
+        />
 
-      <Composition
-        id="DemoCamera"
-        component={ProjectComposition}
-        durationInFrames={100}
-        fps={fps}
-        width={width}
-        height={height}
-        schema={ProjectSchema}
-        calculateMetadata={calculateMetadata}
-        defaultProps={{
-          background: "#1A1728",
-          scenes: camera.scenes,
-          globalTimeline,
-          theme,
-        }}
-      />
+        <Composition
+          id="DemoCamera"
+          component={ProjectComposition}
+          durationInFrames={100}
+          fps={fps}
+          width={width}
+          height={height}
+          schema={ProjectSchema}
+          calculateMetadata={calculateMetadata}
+          defaultProps={{
+            background: "#1A1728",
+            scenes: camera.scenes,
+            globalTimeline,
+            theme,
+          }}
+        />
 
-      <Composition
-        id="DemoPosition"
-        component={ProjectComposition}
-        durationInFrames={100}
-        fps={fps}
-        width={width}
-        height={height}
-        schema={ProjectSchema}
-        calculateMetadata={calculateMetadata}
-        defaultProps={{
-          background: "#1A1728",
-          scenes: position.scenes,
-          globalTimeline,
-          theme,
-        }}
-      />
+        <Composition
+          id="DemoPosition"
+          component={ProjectComposition}
+          durationInFrames={100}
+          fps={fps}
+          width={width}
+          height={height}
+          schema={ProjectSchema}
+          calculateMetadata={calculateMetadata}
+          defaultProps={{
+            background: "#1A1728",
+            scenes: position.scenes,
+            globalTimeline,
+            theme,
+          }}
+        />
 
-      <Composition
-        id="DemoImage"
-        component={ProjectComposition}
-        durationInFrames={100}
-        fps={fps}
-        width={width}
-        height={height}
-        schema={ProjectSchema}
-        calculateMetadata={calculateMetadata}
-        defaultProps={{
-          background: "#1A1728",
-          scenes: image.scenes,
-          globalTimeline,
-          theme,
-        }}
-      />
+        <Composition
+          id="DemoImage"
+          component={ProjectComposition}
+          durationInFrames={100}
+          fps={fps}
+          width={width}
+          height={height}
+          schema={ProjectSchema}
+          calculateMetadata={calculateMetadata}
+          defaultProps={{
+            background: "#1A1728",
+            scenes: image.scenes,
+            globalTimeline,
+            theme,
+          }}
+        />
+      </Folder>
     </>
   )
 }
