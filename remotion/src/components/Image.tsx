@@ -1,5 +1,5 @@
 import React from "react"
-import { ImageElement } from "@/schemas/timeline-element"
+import { ImageLayerType } from "@/schemas/project"
 import { parseStyleString } from "@/utils/getStyle"
 
 /**
@@ -8,7 +8,7 @@ import { parseStyleString } from "@/utils/getStyle"
  * @param revealProgress La progression de révélation de l'image
  */
 export const Image: React.FC<{
-  image: ImageElement
+  image: ImageLayerType
   revealProgress?: number
 }> = ({ image, revealProgress = 1 }) => {
   const { url, objectFit = "cover", style } = image

@@ -1,9 +1,15 @@
-import { Scene } from "@/schemas/index_2"
+import { Composition } from "remotion"
+import { SceneType } from "@/schemas/project"
+import {
+  ProjectComposition,
+  calculateMetadata,
+} from "@/compositions/ProjectComposition"
+import { Storyboard } from "@/schemas/project"
 
-const effectScenes: Scene[] = [
+const scenes: SceneType[] = [
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Float",
@@ -21,7 +27,7 @@ const effectScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Shake",
@@ -39,7 +45,7 @@ const effectScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Zoom",
@@ -57,7 +63,7 @@ const effectScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "fade",
@@ -75,7 +81,7 @@ const effectScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Blur",
@@ -93,7 +99,7 @@ const effectScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Grayscale",
@@ -111,7 +117,7 @@ const effectScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Sepia",
@@ -129,7 +135,7 @@ const effectScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Rotate",
@@ -147,7 +153,7 @@ const effectScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Rotate (oscillate)",
@@ -166,7 +172,7 @@ const effectScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Rotate (step)",
@@ -189,7 +195,7 @@ const effectScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Pointer",
@@ -212,7 +218,7 @@ const effectScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Pop",
@@ -232,7 +238,7 @@ const effectScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Pulse",
@@ -255,7 +261,7 @@ const effectScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Wobble",
@@ -278,7 +284,7 @@ const effectScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Swing3D",
@@ -306,7 +312,7 @@ const effectScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Tilt3D",
@@ -334,8 +340,28 @@ const effectScenes: Scene[] = [
   },
 ]
 
-const effect = {
-  scenes: effectScenes,
+export const DemoEffect = ({
+  fps = 30,
+  width = 1080,
+  height = 1920,
+}: {
+  fps?: number
+  width?: number
+  height?: number
+}) => {
+  return (
+    <Composition
+      id="DemoEffect"
+      component={ProjectComposition}
+      durationInFrames={scenes.length * 30}
+      fps={fps}
+      width={width}
+      height={height}
+      schema={Storyboard}
+      calculateMetadata={calculateMetadata}
+      defaultProps={{
+        tracks: scenes,
+      }}
+    />
+  )
 }
-
-export default effect

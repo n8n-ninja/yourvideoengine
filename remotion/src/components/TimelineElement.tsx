@@ -1,19 +1,25 @@
 import React from "react"
 import { Sequence, useCurrentFrame } from "remotion"
-import { TimelineElement } from "@/schemas/timeline-element"
+
+import { LayerType } from "@/schemas/project"
+import type { Position } from "@/schemas/position"
+
+import { Audio } from "./Audio"
 import { Camera } from "./Camera"
 import { Caption } from "./Caption"
-import { Audio } from "./Audio"
-import { Title } from "./Title"
-import { useTiming } from "@/hooks/useTiming"
-import { getPosition } from "@/utils/getPosition"
 import { Image } from "./Image"
-import { applyEffects } from "@/utils/effects"
-import { parseStyleString } from "@/utils/getStyle"
-import { timelineElementContainerStyle } from "@/styles/default-style"
-import { useKeyframes } from "@/hooks/useKeyframes"
+import { Title } from "./Title"
+
+import { useTiming } from "@/hooks/useTiming"
+
 import { useElementReveal } from "@/hooks/useElementReveal"
-import type { Position } from "@/schemas/position"
+import { useKeyframes } from "@/hooks/useKeyframes"
+
+import { applyEffects } from "@/utils/effects"
+import { getPosition } from "@/utils/getPosition"
+import { parseStyleString } from "@/utils/getStyle"
+
+import { timelineElementContainerStyle } from "@/styles/default-style"
 
 const getPositionStyle = (position?: Position) => {
   if (position) {
@@ -29,7 +35,7 @@ const getPositionStyle = (position?: Position) => {
 
 // Composant de routage dédié
 const TimelineElementRouter: React.FC<{
-  element: TimelineElement
+  element: LayerType
   revealProgress?: number
 }> = ({ element, revealProgress }) => {
   switch (element.type) {
@@ -49,7 +55,7 @@ const TimelineElementRouter: React.FC<{
 }
 
 export const TimelineElementRenderer: React.FC<{
-  element: TimelineElement
+  element: LayerType
 }> = ({ element }) => {
   const frame = useCurrentFrame()
   const timing = useTiming(element.timing)

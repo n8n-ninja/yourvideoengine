@@ -7,7 +7,8 @@ import { themeNames } from "@/styles/title-themes"
 import { EffectsSchema } from "./effect"
 import { LetterAnimationConfigSchema } from "@/components/LetterAnimation"
 
-const BaseElementSchema = z.object({
+const BaseLayer = z.object({
+  id: z.string().uuid().optional(),
   timing: TimingSchema.optional(),
   position: PositionSchema.optional(),
   reveal: RevealSchema.optional(),
@@ -15,7 +16,7 @@ const BaseElementSchema = z.object({
   effects: EffectsSchema.optional(),
 })
 
-export const TitleSchema = z
+export const TitleLayer = z
   .object({
     type: z.literal("title"),
     title: z.string(),
@@ -23,9 +24,9 @@ export const TitleSchema = z
     style: StyleSchema.optional(),
     letterAnimation: LetterAnimationConfigSchema.optional(),
   })
-  .merge(BaseElementSchema)
+  .merge(BaseLayer)
 
-export const CaptionSchema = z
+export const CaptionLayer = z
   .object({
     type: z.literal("caption"),
     boxStyle: StyleSchema.optional(),
@@ -41,9 +42,9 @@ export const CaptionSchema = z
       }),
     ),
   })
-  .merge(BaseElementSchema)
+  .merge(BaseLayer)
 
-export const ImageSchema = z
+export const ImageLayer = z
   .object({
     type: z.literal("image"),
     url: z.string(),
@@ -52,9 +53,9 @@ export const ImageSchema = z
       .optional(),
     style: StyleSchema.optional(),
   })
-  .merge(BaseElementSchema)
+  .merge(BaseLayer)
 
-export const AudioSchema = z
+export const AudioLayer = z
   .object({
     type: z.literal("audio"),
     sound: z.string(),
@@ -71,9 +72,9 @@ export const AudioSchema = z
       )
       .optional(),
   })
-  .merge(BaseElementSchema)
+  .merge(BaseLayer)
 
-export const CameraSchema = z
+export const CameraLayer = z
   .object({
     type: z.literal("camera"),
     url: z.string(),
@@ -101,20 +102,61 @@ export const CameraSchema = z
       )
       .optional(),
   })
-  .merge(BaseElementSchema)
+  .merge(BaseLayer)
 
-export const TimelineElementSchema = z.discriminatedUnion("type", [
-  CameraSchema,
-  ImageSchema,
-  TitleSchema,
-  AudioSchema,
-  CaptionSchema,
+export const Layer = z.discriminatedUnion("type", [
+  CameraLayer,
+  ImageLayer,
+  TitleLayer,
+  AudioLayer,
+  CaptionLayer,
 ])
 
-export type AudioElement = z.infer<typeof AudioSchema>
-export type TitleElement = z.infer<typeof TitleSchema>
-export type CaptionElement = z.infer<typeof CaptionSchema>
-export type ImageElement = z.infer<typeof ImageSchema>
-export type CameraElement = z.infer<typeof CameraSchema>
+export const Scene = z.object({
+  id: z.string().uuid().optional(),
+  type: z.literal("scene").optional(),
+  duration: z.number(),
+  layers: z.array(Layer),
+})
 
-export type TimelineElement = z.infer<typeof TimelineElementSchema>
+export const Transition = z.object({
+  id: z.string().uuid().optional(),
+  type: z.literal("transition"),
+  animation: z.enum(["fade", "wipe", "slide", "flip", "clockWipe"]),
+  duration: z.number().optional(),
+  direction: z
+    .enum(["from-left", "from-right", "from-top", "from-bottom"])
+    .optional(),
+  wipeDirection: z
+    .enum([
+      "from-left",
+      "from-right",
+      "from-top",
+      "from-bottom",
+      "from-top-left",
+      "from-top-right",
+      "from-bottom-left",
+      "from-bottom-right",
+    ])
+    .optional(),
+  sound: z.string().optional(),
+})
+
+export const Segment = z.discriminatedUnion("type", [Scene, Transition])
+
+export const Storyboard = z.object({
+  tracks: z.array(Segment).optional(),
+  overlay: Scene.optional(),
+  fps: z.number().optional(),
+})
+
+export type AudioLayerType = z.infer<typeof AudioLayer>
+export type TitleLayerType = z.infer<typeof TitleLayer>
+export type CaptionLayerType = z.infer<typeof CaptionLayer>
+export type ImageLayerType = z.infer<typeof ImageLayer>
+export type CameraLayerType = z.infer<typeof CameraLayer>
+export type LayerType = z.infer<typeof Layer>
+export type SceneType = z.infer<typeof Scene>
+export type TransitionType = z.infer<typeof Transition>
+export type SegmentType = z.infer<typeof Segment>
+export type StoryboardType = z.infer<typeof Storyboard>

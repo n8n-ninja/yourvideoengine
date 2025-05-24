@@ -50,36 +50,3 @@ export const captionActiveWordStyle: CSSProperties = {
   color: "#F7C500",
   textShadow: "0 2px 30px #000, 0 1px 10px #000",
 }
-
-export type CaptionTheme = {
-  boxStyle?: React.CSSProperties
-  textStyle?: React.CSSProperties
-  activeWordStyle?: React.CSSProperties
-}
-
-export type CameraTheme = {
-  videoStyle?: React.CSSProperties
-}
-
-export type TitleTheme = {
-  style?: React.CSSProperties
-}
-
-export type OverlayTheme = {
-  scanlineStyle?: React.CSSProperties
-  vignetteStyle?: React.CSSProperties
-  colorStyle?: React.CSSProperties
-}
-
-export type ImageTheme = {
-  imageStyle?: React.CSSProperties
-}
-
-export type Theme = {
-  caption?: CaptionTheme
-  camera?: CameraTheme
-  title?: TitleTheme
-  overlay?: OverlayTheme
-  image?: ImageTheme
-  containerStyle?: React.CSSProperties
-}

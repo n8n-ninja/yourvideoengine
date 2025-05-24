@@ -1,5 +1,10 @@
-import { Scene } from "@/schemas/index_2"
-import type { TransitionScene } from "@/schemas/timeline"
+import { Composition } from "remotion"
+import { SegmentType } from "@/schemas/project"
+import {
+  ProjectComposition,
+  calculateMetadata,
+} from "@/compositions/ProjectComposition"
+import { Storyboard } from "@/schemas/project"
 import {
   VIDEO_THAIS_1_URL,
   VIDEO_THAIS_2_URL,
@@ -8,7 +13,7 @@ import {
   VIDEO_THAIS_5_URL,
 } from "./urls"
 
-const transitionScenes: (Scene | TransitionScene)[] = [
+const scenes: SegmentType[] = [
   {
     type: "transition",
     animation: "clockWipe",
@@ -16,7 +21,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_THAIS_1_URL,
@@ -31,7 +36,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_THAIS_2_URL,
@@ -47,7 +52,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_THAIS_3_URL,
@@ -63,7 +68,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_THAIS_5_URL,
@@ -79,7 +84,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_THAIS_4_URL,
@@ -95,7 +100,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_THAIS_5_URL,
@@ -111,7 +116,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_THAIS_5_URL,
@@ -127,7 +132,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_THAIS_1_URL,
@@ -143,7 +148,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_THAIS_2_URL,
@@ -158,7 +163,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_THAIS_3_URL,
@@ -173,8 +178,28 @@ const transitionScenes: (Scene | TransitionScene)[] = [
   },
 ]
 
-const transition = {
-  scenes: transitionScenes,
+export const DemoTransition = ({
+  fps = 30,
+  width = 1080,
+  height = 1920,
+}: {
+  fps?: number
+  width?: number
+  height?: number
+}) => {
+  return (
+    <Composition
+      id="DemoTransition"
+      component={ProjectComposition}
+      durationInFrames={scenes.length * 30}
+      fps={fps}
+      width={width}
+      height={height}
+      schema={Storyboard}
+      calculateMetadata={calculateMetadata}
+      defaultProps={{
+        tracks: scenes,
+      }}
+    />
+  )
 }
-
-export default transition

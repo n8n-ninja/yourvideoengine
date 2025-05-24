@@ -1,4 +1,10 @@
-import { Scene } from "@/schemas/index_2"
+import { Composition } from "remotion"
+import { SceneType } from "@/schemas/project"
+import {
+  ProjectComposition,
+  calculateMetadata,
+} from "@/compositions/ProjectComposition"
+import { Storyboard } from "@/schemas/project"
 
 const VIDEO_URL =
   "https://diwa7aolcke5u.cloudfront.net/uploads/4e629c9b-f4f9-4628-9cc5-d561d477dbdd.mp4"
@@ -7,11 +13,10 @@ const IMAGE_URL =
 const IMAGE_URL_2 =
   "https://diwa7aolcke5u.cloudfront.net/uploads/1747833511389-CleanShot%202025-05-21%20at%2015.18.21.png@2x.png"
 
-const cameraScenes: Scene[] = [
-  // 1. Vidéo de fond simple
+const scenes: SceneType[] = [
   {
     duration: 5,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_URL,
@@ -25,7 +30,7 @@ const cameraScenes: Scene[] = [
   },
   {
     duration: 5,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_URL,
@@ -44,7 +49,7 @@ const cameraScenes: Scene[] = [
   },
   {
     duration: 5,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_URL,
@@ -62,7 +67,7 @@ const cameraScenes: Scene[] = [
   },
   {
     duration: 5,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_URL,
@@ -80,7 +85,7 @@ const cameraScenes: Scene[] = [
   },
   {
     duration: 5,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: IMAGE_URL,
@@ -94,7 +99,7 @@ const cameraScenes: Scene[] = [
   },
   {
     duration: 5,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: IMAGE_URL,
@@ -111,10 +116,10 @@ const cameraScenes: Scene[] = [
       },
     ],
   },
-  // 4. Vidéo avec keyframes de volume (contrôle du son)
+
   {
     duration: 5,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_URL,
@@ -133,7 +138,7 @@ const cameraScenes: Scene[] = [
   },
   {
     duration: 5,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: IMAGE_URL_2,
@@ -157,7 +162,7 @@ const cameraScenes: Scene[] = [
   },
   {
     duration: 5,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_URL,
@@ -172,7 +177,7 @@ const cameraScenes: Scene[] = [
   },
   {
     duration: 5,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_URL,
@@ -196,7 +201,7 @@ const cameraScenes: Scene[] = [
   },
   {
     duration: 5,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_URL,
@@ -212,7 +217,7 @@ const cameraScenes: Scene[] = [
   },
   {
     duration: 5,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_URL,
@@ -228,7 +233,7 @@ const cameraScenes: Scene[] = [
   },
   {
     duration: 5,
-    timeline: [
+    layers: [
       {
         type: "camera",
         url: VIDEO_URL,
@@ -244,8 +249,24 @@ const cameraScenes: Scene[] = [
   },
 ]
 
-const camera = {
-  scenes: cameraScenes,
+export const DemoCamera: React.FC<{
+  fps?: number
+  width?: number
+  height?: number
+}> = ({ fps = 30, width = 1080, height = 1920 }) => {
+  return (
+    <Composition
+      id="DemoCamera"
+      component={ProjectComposition}
+      durationInFrames={100}
+      fps={fps}
+      width={width}
+      height={height}
+      schema={Storyboard}
+      calculateMetadata={calculateMetadata}
+      defaultProps={{
+        tracks: scenes,
+      }}
+    />
+  )
 }
-
-export default camera

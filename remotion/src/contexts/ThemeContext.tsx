@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react"
-import type { Theme } from "@/styles/default-style"
+import type { GlobalTheme } from "@/schemas/theme"
 
-const ThemeContext = createContext<Theme>({})
+const ThemeContext = createContext<GlobalTheme>({})
 
 export const ThemeProvider = ThemeContext.Provider
 export const useTheme = () => useContext(ThemeContext)

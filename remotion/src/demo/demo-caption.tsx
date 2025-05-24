@@ -1,4 +1,10 @@
-import { Scene, TimelineItem } from "@/schemas/index_2"
+import { Composition } from "remotion"
+import { SceneType } from "@/schemas/project"
+import {
+  ProjectComposition,
+  calculateMetadata,
+} from "@/compositions/ProjectComposition"
+import { Storyboard } from "@/schemas/project"
 
 const sampleWords = [
   { word: "an", start: 0.24, end: 0.56, confidence: 0.9003301 },
@@ -23,20 +29,19 @@ const sampleWords = [
 const CAMERA_URL =
   "https://diwa7aolcke5u.cloudfront.net/uploads/4e629c9b-f4f9-4628-9cc5-d561d477dbdd.mp4"
 
-const makeScene = (timeline: TimelineItem[], duration = 8): Scene => ({
+const makeScene = (timeline: any[], duration = 8): SceneType => ({
   duration,
-  timeline: [
+  layers: [
     {
       type: "camera",
       url: CAMERA_URL,
-    } as TimelineItem,
+    },
     ...timeline,
   ],
 })
 
-const captionDemos: TimelineItem[][] = [
-  // Démo de base
-  [
+const scenes: SceneType[] = [
+  makeScene([
     {
       type: "title",
       title: "Simple captions",
@@ -48,8 +53,8 @@ const captionDemos: TimelineItem[][] = [
       combineTokensWithinMilliseconds: 800,
       position: { top: 50 },
     },
-  ],
-  [
+  ]),
+  makeScene([
     {
       type: "title",
       title: "Captions with long sentences",
@@ -61,8 +66,8 @@ const captionDemos: TimelineItem[][] = [
       combineTokensWithinMilliseconds: 2000,
       position: { top: 50 },
     },
-  ],
-  [
+  ]),
+  makeScene([
     {
       type: "title",
       title: "Or word by word",
@@ -74,8 +79,8 @@ const captionDemos: TimelineItem[][] = [
       combineTokensWithinMilliseconds: 0,
       position: { top: 50 },
     },
-  ],
-  [
+  ]),
+  makeScene([
     {
       type: "title",
       title: "Custom color",
@@ -88,8 +93,8 @@ const captionDemos: TimelineItem[][] = [
       activeWordStyle: "color: #E16E79",
       position: { top: 50 },
     },
-  ],
-  [
+  ]),
+  makeScene([
     {
       type: "title",
       title: "Uppercase",
@@ -102,8 +107,8 @@ const captionDemos: TimelineItem[][] = [
       textStyle: "textTransform: uppercase;",
       position: { top: 50 },
     },
-  ],
-  [
+  ]),
+  makeScene([
     {
       type: "title",
       title: "MultiColors",
@@ -115,8 +120,8 @@ const captionDemos: TimelineItem[][] = [
       position: { top: 50 },
       multiColors: ["#008F3E", "#FF321A", "#25789E"],
     },
-  ],
-  [
+  ]),
+  makeScene([
     {
       type: "title",
       title: "Active word effects",
@@ -130,8 +135,8 @@ const captionDemos: TimelineItem[][] = [
       position: { top: 50, left: 50, right: 50, bottom: 50 },
       activeWordStyle: "color: #00CF00; transform: scale(1.2) skewX(-10deg);",
     },
-  ],
-  [
+  ]),
+  makeScene([
     {
       type: "title",
       title: "No active word effects",
@@ -145,8 +150,8 @@ const captionDemos: TimelineItem[][] = [
       textStyle: "color: white; fontFamily: 'Verdana'; fontWeight: 100",
       activeWordStyle: "color: white;",
     },
-  ],
-  [
+  ]),
+  makeScene([
     {
       type: "title",
       title: "Custom container styling",
@@ -163,8 +168,8 @@ const captionDemos: TimelineItem[][] = [
       activeWordStyle:
         "color: white; textDecoration: underline; color: #ed0909;",
     },
-  ],
-  [
+  ]),
+  makeScene([
     {
       type: "title",
       title: "Bottom align",
@@ -175,8 +180,8 @@ const captionDemos: TimelineItem[][] = [
       words: sampleWords,
       position: { bottom: 0, verticalAlign: "end" },
     },
-  ],
-  [
+  ]),
+  makeScene([
     {
       type: "title",
       title: "top align",
@@ -187,8 +192,8 @@ const captionDemos: TimelineItem[][] = [
       words: sampleWords,
       position: { bottom: 50, verticalAlign: "start" },
     },
-  ],
-  [
+  ]),
+  makeScene([
     {
       type: "title",
       title: "Custom alignement",
@@ -202,8 +207,8 @@ const captionDemos: TimelineItem[][] = [
       boxStyle: "textAlign: left; margin: 0; borderRadius: 0; ",
       textStyle: "fontSize: 50px; fontWeight: 400;",
     },
-  ],
-  [
+  ]),
+  makeScene([
     {
       type: "title",
       title: "Float effect",
@@ -215,8 +220,8 @@ const captionDemos: TimelineItem[][] = [
       position: { top: 50 },
       effects: [{ type: "float", options: { amplitude: 0.5, speed: 0.5 } }],
     },
-  ],
-  [
+  ]),
+  makeScene([
     {
       type: "title",
       title: "Tilt3D effect",
@@ -228,11 +233,31 @@ const captionDemos: TimelineItem[][] = [
       position: { top: 50 },
       effects: [{ type: "tilt3D", options: { amplitude: 0.1, speed: 0.1 } }],
     },
-  ],
+  ]),
 ]
 
-const caption = {
-  scenes: captionDemos.map((timeline) => makeScene(timeline as TimelineItem[])),
+export const DemoCaption = ({
+  fps = 30,
+  width = 1080,
+  height = 1920,
+}: {
+  fps?: number
+  width?: number
+  height?: number
+}) => {
+  return (
+    <Composition
+      id="DemoCaption"
+      component={ProjectComposition}
+      durationInFrames={scenes.length * 30}
+      fps={fps}
+      width={width}
+      height={height}
+      schema={Storyboard}
+      calculateMetadata={calculateMetadata}
+      defaultProps={{
+        tracks: scenes,
+      }}
+    />
+  )
 }
-
-export default caption

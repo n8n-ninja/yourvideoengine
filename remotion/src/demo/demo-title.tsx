@@ -1,47 +1,51 @@
-import { Scene } from "@/schemas/index_2"
+import { Composition } from "remotion"
+import { SceneType } from "@/schemas/project"
+import {
+  ProjectComposition,
+  calculateMetadata,
+} from "@/compositions/ProjectComposition"
+import { Storyboard } from "@/schemas/project"
 
-const titleScenes: Scene[] = [
+const scenes: SceneType[] = [
   {
     duration: 3,
-    timeline: [{ type: "title", theme: "minimal", title: "Theme: Minimal" }],
+    layers: [{ type: "title", theme: "minimal", title: "Theme: Minimal" }],
   },
   {
     duration: 3,
-    timeline: [{ type: "title", theme: "impact", title: "Theme: Impact" }],
+    layers: [{ type: "title", theme: "impact", title: "Theme: Impact" }],
   },
   {
     duration: 3,
-    timeline: [{ type: "title", theme: "elegant", title: "Theme: Elegant" }],
+    layers: [{ type: "title", theme: "elegant", title: "Theme: Elegant" }],
   },
   {
     duration: 3,
-    timeline: [{ type: "title", theme: "neon", title: "Theme: Neon" }],
+    layers: [{ type: "title", theme: "neon", title: "Theme: Neon" }],
   },
   {
     duration: 3,
-    timeline: [{ type: "title", theme: "shadow", title: "Theme: Shadow" }],
+    layers: [{ type: "title", theme: "shadow", title: "Theme: Shadow" }],
   },
   {
     duration: 3,
-    timeline: [{ type: "title", theme: "outline", title: "Theme: Outline" }],
+    layers: [{ type: "title", theme: "outline", title: "Theme: Outline" }],
   },
   {
     duration: 3,
-    timeline: [{ type: "title", theme: "gradient", title: "Theme: Gradient" }],
+    layers: [{ type: "title", theme: "gradient", title: "Theme: Gradient" }],
   },
   {
     duration: 3,
-    timeline: [{ type: "title", theme: "retro", title: "Theme: Retro" }],
+    layers: [{ type: "title", theme: "retro", title: "Theme: Retro" }],
   },
   {
     duration: 3,
-    timeline: [
-      { type: "title", theme: "cinematic", title: "Theme: Cinematic" },
-    ],
+    layers: [{ type: "title", theme: "cinematic", title: "Theme: Cinematic" }],
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Custom Style",
@@ -52,7 +56,7 @@ const titleScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Position: Center",
@@ -62,7 +66,7 @@ const titleScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Position: End",
@@ -72,7 +76,7 @@ const titleScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "With Transition",
@@ -82,7 +86,7 @@ const titleScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "With Timing",
@@ -92,7 +96,7 @@ const titleScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Custom Letter Animation",
@@ -107,7 +111,7 @@ const titleScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         theme: "neon",
@@ -125,7 +129,7 @@ const titleScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Small Title",
@@ -135,7 +139,7 @@ const titleScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Medium Title",
@@ -145,7 +149,7 @@ const titleScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Large Title",
@@ -155,7 +159,7 @@ const titleScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Huge Title",
@@ -165,7 +169,7 @@ const titleScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Title with Background & Radius",
@@ -176,7 +180,7 @@ const titleScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Title with Float Effect",
@@ -186,7 +190,7 @@ const titleScenes: Scene[] = [
   },
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Title with Tilt3D Effect",
@@ -204,8 +208,28 @@ const titleScenes: Scene[] = [
   },
 ]
 
-const title = {
-  scenes: titleScenes,
+export const DemoTitle = ({
+  fps = 30,
+  width = 1080,
+  height = 1920,
+}: {
+  fps?: number
+  width?: number
+  height?: number
+}) => {
+  return (
+    <Composition
+      id="DemoTitle"
+      component={ProjectComposition}
+      durationInFrames={scenes.length * 30}
+      fps={fps}
+      width={width}
+      height={height}
+      schema={Storyboard}
+      calculateMetadata={calculateMetadata}
+      defaultProps={{
+        tracks: scenes,
+      }}
+    />
+  )
 }
-
-export default title

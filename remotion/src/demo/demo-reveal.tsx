@@ -1,4 +1,10 @@
-import { SceneOrTransition } from "@/schemas/timeline"
+import { Composition } from "remotion"
+import { SceneType } from "@/schemas/project"
+import {
+  ProjectComposition,
+  calculateMetadata,
+} from "@/compositions/ProjectComposition"
+import { Storyboard } from "@/schemas/project"
 import { VIDEO_THAIS_3_URL } from "./urls"
 
 const IMAGE_URL =
@@ -8,11 +14,15 @@ const IMAGE_URL_2 =
 
 const REVEAL_POSITION = { top: 20, left: 20, right: 20, bottom: 20 }
 
-export const revealScenes = [
-  // 1. Pas de reveal
+const COLOR_PURPLE_DATA_URI =
+  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="%234f46e5"/></svg>'
+const COLOR_ORANGE_DATA_URI =
+  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="%23f59e42"/></svg>'
+
+const scenes: SceneType[] = [
   {
     duration: 2.5,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "No reveal",
@@ -26,10 +36,9 @@ export const revealScenes = [
       },
     ],
   },
-  // 2. Reveal in (fade)
   {
     duration: 2.5,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Reveal: Fade In",
@@ -44,10 +53,9 @@ export const revealScenes = [
       },
     ],
   },
-  // 3. Reveal out (slide-up)
   {
     duration: 2.5,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Reveal: Slide Up Out",
@@ -62,10 +70,9 @@ export const revealScenes = [
       },
     ],
   },
-  // 4. Reveal in + out (slide-left, durations différentes)
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Reveal: Slide Left In+Out",
@@ -80,10 +87,9 @@ export const revealScenes = [
       },
     ],
   },
-  // 5. Reveal in (zoom-in) sur image
   {
     duration: 2.5,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Reveal: Zoom In (image)",
@@ -98,10 +104,9 @@ export const revealScenes = [
       },
     ],
   },
-  // 6. Reveal out (blur) sur camera
   {
     duration: 2.5,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Reveal: Blur Out (camera)",
@@ -115,28 +120,26 @@ export const revealScenes = [
       },
     ],
   },
-  // 7. Reveal in (slide-right) sur bloc coloré
   {
     duration: 2.5,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Reveal: Slide Right In (bloc)",
         position: { verticalAlign: "start" },
       },
       {
-        type: "color",
-        color: "#4f46e5",
+        type: "image",
+        url: COLOR_PURPLE_DATA_URI,
         style: "border-radius: 32px;",
         reveal: { type: "slide-right", inDuration: 0.7 },
         position: REVEAL_POSITION,
       },
     ],
   },
-  // 8. Reveal in + out (zoom-out, fade) sur image
   {
     duration: 3,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Reveal: Zoom Out In + Fade Out (image)",
@@ -156,28 +159,26 @@ export const revealScenes = [
       },
     ],
   },
-  // 9. Reveal in (blur) sur bloc coloré
   {
     duration: 2.5,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Reveal: Blur In (bloc)",
         position: { verticalAlign: "start" },
       },
       {
-        type: "color",
-        color: "#f59e42",
+        type: "image",
+        url: COLOR_ORANGE_DATA_URI,
         style: "border-radius: 32px;",
         reveal: { type: "blur", inDuration: 0.7 },
         position: REVEAL_POSITION,
       },
     ],
   },
-  // 10. Reveal in (slide-down) sur camera
   {
     duration: 2.5,
-    timeline: [
+    layers: [
       {
         type: "title",
         title: "Reveal: Slide Down In (camera)",
@@ -191,10 +192,30 @@ export const revealScenes = [
       },
     ],
   },
-] as SceneOrTransition[]
+]
 
-const reveal = {
-  scenes: revealScenes,
+export const DemoReveal = ({
+  fps = 30,
+  width = 1080,
+  height = 1920,
+}: {
+  fps?: number
+  width?: number
+  height?: number
+}) => {
+  return (
+    <Composition
+      id="DemoReveal"
+      component={ProjectComposition}
+      durationInFrames={scenes.length * 30}
+      fps={fps}
+      width={width}
+      height={height}
+      schema={Storyboard}
+      calculateMetadata={calculateMetadata}
+      defaultProps={{
+        tracks: scenes,
+      }}
+    />
+  )
 }
-
-export default reveal

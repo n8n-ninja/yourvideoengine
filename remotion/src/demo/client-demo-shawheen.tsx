@@ -1,16 +1,32 @@
-import { Scene } from "@/schemas/index_2"
-import { SceneOrTransition } from "@/schemas/timeline"
+import { Composition } from "remotion"
+import { Storyboard } from "@/schemas/project"
+import {
+  ProjectComposition,
+  calculateMetadata,
+} from "@/compositions/ProjectComposition"
 
-// https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demohook.mp4
-// https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demobody.mp4
-// https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demooutro.mp4
+const URL_INTRO =
+  "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demohook.mp4"
+const URL_BODY =
+  "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demobody.mp4"
+const URL_OUTRO =
+  "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demooutro.mp4"
 
-// https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo1b7cb741-74bf-40e1-b680-be0d5273f023.mp4
-// https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo2a8cd05d-c9d1-4197-803a-58503f651c2c.mp4
-//
-//
-//
-// https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo7d5342dd-493a-498f-b837-b7b626ec30ed.mp4
+const BROL_URL_1 =
+  "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo1b7cb741-74bf-40e1-b680-be0d5273f023.mp4"
+const BROL_URL_2 =
+  "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo2a8cd05d-c9d1-4197-803a-58503f651c2c.mp4"
+const BROL_URL_3 =
+  "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo3d0a3e33-d053-4e0b-8a21-2cf84c035b02.mp4"
+const BROL_URL_4 =
+  "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo3fe49942-f423-4de9-9ad0-b2a9f9d6e290.mp4"
+const BROL_URL_5 =
+  "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo5788a189-0560-449b-8ac8-fbdf6eda2d4f.mp4"
+const BROL_URL_6 =
+  "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo7d5342dd-493a-498f-b837-b7b626ec30ed.mp4"
+
+const MUSIC_URL =
+  "https://diwa7aolcke5u.cloudfront.net/uploads/1748099564616-mbgrk0.mp3"
 
 const introWords = [
   {
@@ -1335,10 +1351,10 @@ const outroWords = [
   },
 ]
 
-export const shawheenScenes: SceneOrTransition[] = [
+const scenes = [
   {
     duration: 9.057,
-    timeline: [
+    layers: [
       {
         type: "audio",
         sound: "woosh-1.mp3",
@@ -1346,44 +1362,14 @@ export const shawheenScenes: SceneOrTransition[] = [
       },
       {
         type: "camera",
-        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demohook.mp4",
+        url: URL_INTRO,
         keyFrames: [
-          {
-            time: 0,
-            value: {
-              scale: 1,
-            },
-          },
-          {
-            time: 0.1,
-            value: {
-              scale: 1.1,
-            },
-          },
-          {
-            time: 0.4,
-            value: {
-              scale: 1.5,
-            },
-          },
-          {
-            time: 3,
-            value: {
-              scale: 1,
-            },
-          },
-          {
-            time: 4,
-            value: {
-              scale: 1.4,
-            },
-          },
-          {
-            time: -0.01,
-            value: {
-              scale: 1,
-            },
-          },
+          { time: 0, value: { scale: 1 } },
+          { time: 0.1, value: { scale: 1.1 } },
+          { time: 0.4, value: { scale: 1.5 } },
+          { time: 3, value: { scale: 1 } },
+          { time: 4, value: { scale: 1.4 } },
+          { time: -0.01, value: { scale: 1 } },
         ],
       },
       {
@@ -1391,30 +1377,19 @@ export const shawheenScenes: SceneOrTransition[] = [
         words: introWords,
         textStyle: "text-transform: uppercase",
         activeWordStyle: "transform: scale(1.1) skewX(-10deg)",
-        position: {
-          bottom: 70,
-        },
+        position: { bottom: 70 },
       },
       {
         type: "title",
         title: "🏠",
-        position: {
-          top: 60,
-        },
+        position: { top: 60 },
         style: "font-size: 20rem",
         timing: { start: 2.2, duration: 3 },
-        reveal: {
-          type: "zoom-in",
-          duration: 0.35,
-        },
+        reveal: { type: "zoom-in", duration: 0.35 },
         effects: [
           {
             type: "wobble",
-            options: {
-              speed: 0.5,
-              minOpacity: 0.2,
-              maxOpacity: 1,
-            },
+            options: { speed: 0.5, minOpacity: 0.2, maxOpacity: 1 },
           },
         ],
       },
@@ -1433,105 +1408,58 @@ export const shawheenScenes: SceneOrTransition[] = [
   },
   {
     duration: 55.816,
-    timeline: [
+    layers: [
       {
         type: "camera",
-        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demobody.mp4",
-
+        url: URL_BODY,
         keyFrames: [
-          {
-            time: 0,
-            value: {
-              scale: 1,
-            },
-          },
-          {
-            time: 20,
-            value: {
-              scale: 1.4,
-            },
-          },
-          {
-            time: 35,
-            value: {
-              scale: 1,
-            },
-          },
-          {
-            time: 50,
-            value: {
-              scale: 1.6,
-            },
-          },
+          { time: 0, value: { scale: 1 } },
+          { time: 20, value: { scale: 1.4 } },
+          { time: 35, value: { scale: 1 } },
+          { time: 50, value: { scale: 1.6 } },
         ],
       },
       {
         type: "camera",
-        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo1b7cb741-74bf-40e1-b680-be0d5273f023.mp4",
+        url: BROL_URL_1,
         timing: { start: 4, duration: 5 },
-        reveal: {
-          type: "zoom-out",
-          duration: 0.35,
-        },
+        reveal: { type: "zoom-out", duration: 0.35 },
       },
-
       {
         type: "camera",
-        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo2a8cd05d-c9d1-4197-803a-58503f651c2c.mp4",
+        url: BROL_URL_2,
         timing: { start: 10, duration: 3 },
-        position: {
-          top: 0,
-          left: 10,
-          right: 10,
-          bottom: 30,
-        },
-        reveal: {
-          type: "slide-down",
-          duration: 0.35,
-        },
+        position: { top: 0, left: 10, right: 10, bottom: 30 },
+        reveal: { type: "slide-down", duration: 0.35 },
         containerStyle:
           "border-radius: 30px; box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);",
       },
       {
         type: "camera",
-        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo3d0a3e33-d053-4e0b-8a21-2cf84c035b02.mp4",
+        url: BROL_URL_3,
         timing: { start: 19, duration: 5 },
-        reveal: {
-          type: "zoom-out",
-          duration: 0.35,
-        },
+        reveal: { type: "zoom-out", duration: 0.35 },
       },
       {
         type: "camera",
-        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo3fe49942-f423-4de9-9ad0-b2a9f9d6e290.mp4",
+        url: BROL_URL_4,
         timing: { start: 30, duration: 5 },
-        reveal: {
-          type: "zoom-out",
-          duration: 0.35,
-        },
+        reveal: { type: "zoom-out", duration: 0.35 },
       },
       {
         type: "camera",
-        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo5788a189-0560-449b-8ac8-fbdf6eda2d4f.mp4",
+        url: BROL_URL_5,
         timing: { start: 40, duration: 4 },
-        reveal: {
-          type: "zoom-in",
-          duration: 0.35,
-        },
+        reveal: { type: "zoom-in", duration: 0.35 },
       },
       {
         type: "camera",
-        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo7d5342dd-493a-498f-b837-b7b626ec30ed.mp4",
+        url: BROL_URL_6,
         timing: { start: 50, duration: 4 },
-        position: {
-          bottom: 60,
-        },
+        position: { bottom: 60 },
         containerStyle:
           "border-radius: 30px; box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);",
-        reveal: {
-          type: "fade",
-          duration: 0.35,
-        },
+        reveal: { type: "fade", duration: 0.35 },
       },
       {
         type: "caption",
@@ -1540,9 +1468,7 @@ export const shawheenScenes: SceneOrTransition[] = [
         textStyle: "text-transform: uppercase",
         combineTokensWithinMilliseconds: 800,
         activeWordStyle: "transform: scale(1.3) skewX(-10deg)",
-        position: {
-          top: 70,
-        },
+        position: { top: 70 },
         multiColors: ["#d47e1c", "#d41c5c", "#1c90d4"],
       },
     ],
@@ -1555,56 +1481,25 @@ export const shawheenScenes: SceneOrTransition[] = [
   },
   {
     duration: 15.614,
-    timeline: [
+    layers: [
       {
         type: "camera",
-        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demooutro.mp4",
+        url: URL_OUTRO,
         keyFrames: [
-          {
-            time: 0,
-            value: {
-              scale: 1.5,
-            },
-          },
-          {
-            time: 0.1,
-            value: {
-              scale: 1.55,
-            },
-          },
-          {
-            time: 3,
-            value: {
-              scale: 1,
-            },
-          },
-
-          {
-            time: -0.01,
-            value: {
-              scale: 1.3,
-            },
-          },
+          { time: 0, value: { scale: 1.5 } },
+          { time: 0.1, value: { scale: 1.55 } },
+          { time: 3, value: { scale: 1 } },
+          { time: -0.01, value: { scale: 1.3 } },
         ],
       },
       {
         type: "title",
         title: "@Shawheen",
-        position: {
-          top: 80,
-          left: 10,
-          right: 10,
-          bottom: 10,
-        },
+        position: { top: 80, left: 10, right: 10, bottom: 10 },
         timing: { start: 3 },
-
-        reveal: {
-          type: "slide-up",
-          duration: 0.35,
-        },
+        reveal: { type: "slide-up", duration: 0.35 },
         containerStyle:
           "background-color: #d41c5c; border: 3px solid white; box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.5);",
-
         effects: [
           {
             type: "pointer",
@@ -1616,14 +1511,9 @@ export const shawheenScenes: SceneOrTransition[] = [
       {
         type: "title",
         title: "XXX-YYY-ZZZ",
-        position: {
-          top: 90,
-        },
+        position: { top: 90 },
         timing: { start: 5 },
-        reveal: {
-          type: "fade",
-          duration: 0.35,
-        },
+        reveal: { type: "fade", duration: 0.35 },
         style: "text-transform: uppercase; font-weight: 500; font-size: 3rem",
       },
       {
@@ -1631,30 +1521,48 @@ export const shawheenScenes: SceneOrTransition[] = [
         words: outroWords,
         textStyle: "text-transform: uppercase",
         activeWordStyle: "transform: scale(1.1) skewX(-10deg)",
-        position: {
-          bottom: 70,
-        },
+        position: { bottom: 70 },
       },
     ],
   },
 ]
 
-// ADD MUSIC https://files.catbox.moe/mbgrk0.mp3
-
-const shawheen = {
-  scenes: shawheenScenes,
-  globalTimeline: [
-    {
-      type: "sound",
-      sound: "https://files.catbox.moe/mbgrk0.mp3",
-      timing: { start: 3 },
-      volume: 0.2,
-      transition: {
-        type: "fade",
-        duration: 2,
-      },
-    },
-  ],
+export const ClientDemoShawheen = ({
+  fps = 30,
+  width = 1080,
+  height = 1920,
+}: {
+  fps?: number
+  width?: number
+  height?: number
+}) => {
+  return (
+    <Composition
+      id="ClientDemoShawheen"
+      component={ProjectComposition}
+      durationInFrames={Math.ceil(
+        scenes.reduce((acc, s) => acc + (s.duration ?? 0), 0) * fps,
+      )}
+      fps={fps}
+      width={width}
+      height={height}
+      schema={Storyboard}
+      calculateMetadata={calculateMetadata}
+      defaultProps={{
+        tracks: scenes,
+        overlay: [
+          {
+            type: "sound",
+            sound: MUSIC_URL,
+            timing: { start: 3 },
+            volume: 0.2,
+            transition: {
+              type: "fade",
+              duration: 2,
+            },
+          },
+        ],
+      }}
+    />
+  )
 }
-
-export default shawheen

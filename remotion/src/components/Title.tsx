@@ -1,7 +1,7 @@
 import React from "react"
 import { titleThemes } from "../styles/title-themes"
 import { LetterAnimation } from "./LetterAnimation"
-import { TitleElement } from "@/schemas/timeline-element"
+import { TitleLayerType } from "@/schemas/project"
 import { parseStyleString } from "@/utils/getStyle"
 import { titleBaseStyle } from "@/styles/default-style"
 import { useTheme } from "../contexts/ThemeContext"
@@ -14,7 +14,7 @@ import { useTheme } from "../contexts/ThemeContext"
  * @returns A styled h1 element with optional letter animation.
  */
 export const Title: React.FC<{
-  title: TitleElement
+  title: TitleLayerType
   revealProgress?: number
 }> = ({ title, revealProgress = 1 }) => {
   const theme = useTheme()
