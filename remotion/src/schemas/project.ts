@@ -59,6 +59,13 @@ export const CaptionLayer = z
           .optional(),
       })
       .optional(),
+    dynamicFontSize: z
+      .object({
+        min: z.number(),
+        moy: z.number(),
+        max: z.number(),
+      })
+      .optional(),
   })
   .merge(BaseLayer)
 

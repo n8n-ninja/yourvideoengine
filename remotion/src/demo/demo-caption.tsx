@@ -83,6 +83,62 @@ const scenes: SceneType[] = [
   makeScene([
     {
       type: "title",
+      title: "Jumping background",
+      position: { bottom: 75 },
+    },
+    {
+      type: "caption",
+      words: sampleWords,
+      position: { top: 50 },
+      highlightActiveWordBackground: true,
+      boxStyle: "background: transparent;",
+      activeWord: {
+        style: "color: white",
+        background: {
+          style: "background: #FF321A;",
+          padding: {
+            x: 20,
+            y: 10,
+          },
+        },
+      },
+    },
+  ]),
+  makeScene([
+    {
+      type: "title",
+      title: "Size variation",
+      position: { bottom: 75 },
+    },
+    {
+      type: "caption",
+      words: sampleWords,
+      position: { top: 50, left: 10, right: 10 },
+      dynamicFontSize: {
+        min: 4,
+        moy: 5,
+        max: 8,
+      },
+      containerStyle: "overflow: visible;",
+      combineTokensWithinMilliseconds: 1000,
+      boxStyle: "background: transparent;",
+      textStyle: "fontSize: 100px;",
+      activeWord: {
+        style: "color: white",
+        background: {
+          style: "background: #FF321A;",
+          padding: {
+            x: 20,
+            y: 10,
+          },
+        },
+      },
+    },
+  ]),
+
+  makeScene([
+    {
+      type: "title",
       title: "Custom color",
       position: { bottom: 75 },
     },
@@ -232,30 +288,6 @@ const scenes: SceneType[] = [
       words: sampleWords,
       position: { top: 50 },
       effects: [{ type: "tilt3D", options: { amplitude: 0.1, speed: 0.1 } }],
-    },
-  ]),
-  makeScene([
-    {
-      type: "title",
-      title: "Active word background (animated highlight)",
-      position: { bottom: 75 },
-    },
-    {
-      type: "caption",
-      words: sampleWords,
-      position: { top: 50 },
-      highlightActiveWordBackground: true,
-      boxStyle: "background: transparent;",
-      activeWord: {
-        style: "color: white",
-        background: {
-          style: "background: #FF321A;",
-          padding: {
-            x: 20,
-            y: 10,
-          },
-        },
-      },
     },
   ]),
 ]

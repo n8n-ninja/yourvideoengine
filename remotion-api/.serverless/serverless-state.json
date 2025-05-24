@@ -140,7 +140,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "manu-remotion-deployments",
-                "S3Key": "serverless/remotion-api/prod/1748103138032-2025-05-24T16:12:18.032Z/remotion-api.zip"
+                "S3Key": "serverless/remotion-api/prod/1748104559104-2025-05-24T16:35:59.104Z/remotion-api.zip"
               },
               "Handler": "handler.renderVideo",
               "Runtime": "nodejs18.x",
@@ -168,7 +168,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "manu-remotion-deployments",
-                "S3Key": "serverless/remotion-api/prod/1748103138032-2025-05-24T16:12:18.032Z/remotion-api.zip"
+                "S3Key": "serverless/remotion-api/prod/1748104559104-2025-05-24T16:35:59.104Z/remotion-api.zip"
               },
               "Handler": "handler.getStatus",
               "Runtime": "nodejs18.x",
@@ -361,7 +361,7 @@
               "Name": "remotion-api-prod | Validate request body and querystring parameters"
             }
           },
-          "ApiGatewayDeployment1748103129255": {
+          "ApiGatewayDeployment1748104550235": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -575,7 +575,7 @@
     "artifact": "/Users/manu/work/02_yourvideoengine/remotion-api/.serverless/remotion-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/remotion-api/prod/1748103138032-2025-05-24T16:12:18.032Z",
+    "artifactDirectoryName": "serverless/remotion-api/prod/1748104559104-2025-05-24T16:35:59.104Z",
     "artifact": "remotion-api.zip"
   }
 }

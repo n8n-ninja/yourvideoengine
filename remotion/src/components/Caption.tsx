@@ -180,6 +180,67 @@ export const Caption: React.FC<{
     return { padX: 0, padY: 0 }
   }
 
+  // --- Définition des tailles de texte dynamiques ---
+
+  // Tailles en em, centrées sur 1em, amplitude contrôlée
+
+  const fontSizes = [
+    captions.dynamicFontSize?.min,
+    captions.dynamicFontSize?.moy,
+    captions.dynamicFontSize?.max,
+  ]
+
+  // Attribution intelligente des tailles de mots pour chaque page
+  const getWordSizeMap = (tokens: { text: string }[], pageSeed: number) => {
+    const n = tokens.length
+    if (!captions.dynamicFontSize) return Array(n).fill(1) // fallback : tout moyen
+    if (n === 1) return [2] // un seul mot, il est gros
+
+    // Indices des mots courts et longs
+    const shortIdx: number[] = []
+    const longIdx: number[] = []
+    for (let i = 0; i < n; i++) {
+      if (tokens[i].text.trim().length <= 4) shortIdx.push(i)
+      else longIdx.push(i)
+    }
+    // Toujours au moins un mot gros (max) : le plus long, ou un long au hasard
+    let maxIdx = 0
+    if (longIdx.length > 0) {
+      // Prendre le plus long parmi les longs
+      maxIdx = longIdx.reduce((a, b) =>
+        tokens[a].text.length >= tokens[b].text.length ? a : b,
+      )
+    } else {
+      // Si que des courts, prendre le plus long quand même
+      maxIdx = tokens.reduce(
+        (a, b, i) => (tokens[a].text.length >= b.text.length ? a : i),
+        0,
+      )
+    }
+    // Attribution initiale : tout le monde moyen
+    const sizeMap = Array(n).fill(1)
+    // Mots courts : min
+    shortIdx.forEach((i) => (sizeMap[i] = 0))
+    // Mot max : max
+    sizeMap[maxIdx] = 2
+    // Mélange léger pour dynamisme (sauf le max qui reste max)
+    const indices = Array.from({ length: n }, (_, i) => i).filter(
+      (i) => i !== maxIdx,
+    )
+    // Shuffle simple avec seed
+    let s = pageSeed
+    for (let i = indices.length - 1; i > 0; i--) {
+      s = (s * 9301 + 49297) % 233280
+      const j = Math.floor((s / 233280) * (i + 1))
+      ;[indices[i], indices[j]] = [indices[j], indices[i]]
+    }
+    // Si il y a plusieurs courts, on peut en mettre un en moyen pour éviter que tout soit min
+    if (shortIdx.length > 1) {
+      sizeMap[shortIdx[indices[0] % shortIdx.length]] = 1
+    }
+    return sizeMap
+  }
+
   return (
     <div>
       {activePage && (
@@ -215,15 +276,27 @@ export const Caption: React.FC<{
               delete baseStyle.transform
             }
 
+            let styleWithFontSize = {
+              ...baseStyle,
+              ...activeStyle,
+              position: "relative",
+            } as React.CSSProperties
+            if (captions.dynamicFontSize) {
+              // Attribution intelligente des tailles sur la page
+              const sizeMap = getWordSizeMap(
+                activePage.tokens,
+                activePageIndex + 1,
+              )
+              const sizeIdx = sizeMap[i]
+              const fontSize = fontSizes[sizeIdx]
+              styleWithFontSize.fontSize = `${fontSize}em`
+            }
+
             return (
               <span
                 key={`${activePageIndex}-${i}`}
                 ref={(el) => (wordRefs.current[i] = el)}
-                style={{
-                  ...baseStyle,
-                  ...activeStyle,
-                  position: "relative",
-                }}
+                style={styleWithFontSize}
               >
                 {token.text}
               </span>
