@@ -2,7 +2,6 @@ import React from "react"
 import { Sequence, useCurrentFrame } from "remotion"
 
 import { LayerType } from "@/schemas/project"
-import type { Position } from "@/schemas/position"
 
 import { Audio } from "./Audio"
 import { Camera } from "./Camera"
@@ -13,15 +12,12 @@ import { Title } from "./Title"
 import { useTiming } from "@/hooks/useTiming"
 
 import { useElementReveal } from "@/hooks/useElementReveal"
-import { useKeyframes } from "@/hooks/useKeyframes"
-
 import { applyEffects } from "@/utils/effects"
 import { getPosition } from "@/utils/getPosition"
 import { parseStyleString } from "@/utils/getStyle"
 
 import { timelineElementContainerStyle } from "@/styles/default-style"
 
-// Composant de routage dédié
 const LayerRouter: React.FC<{
   element: LayerType
   revealProgress?: number
