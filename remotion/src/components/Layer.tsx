@@ -21,20 +21,8 @@ import { parseStyleString } from "@/utils/getStyle"
 
 import { timelineElementContainerStyle } from "@/styles/default-style"
 
-const getPositionStyle = (position?: Position) => {
-  if (position) {
-    const basePosition = getPosition(position)
-    const keyframes = position.keyframes
-    if (!keyframes?.length) return basePosition
-    const interpolated: Record<string, number | string> =
-      useKeyframes<Record<string, number | string>>(keyframes) || {}
-    return getPosition({ ...position, ...interpolated })
-  }
-  return getPosition({})
-}
-
 // Composant de routage dédié
-const TimelineElementRouter: React.FC<{
+const LayerRouter: React.FC<{
   element: LayerType
   revealProgress?: number
 }> = ({ element, revealProgress }) => {
@@ -54,7 +42,7 @@ const TimelineElementRouter: React.FC<{
   }
 }
 
-export const TimelineElementRenderer: React.FC<{
+export const Layer: React.FC<{
   element: LayerType
 }> = ({ element }) => {
   const frame = useCurrentFrame()
@@ -63,9 +51,8 @@ export const TimelineElementRenderer: React.FC<{
     reveal: element.reveal,
     timing: timing,
   })
-  const positionStyle = element.position
-    ? getPositionStyle(element.position)
-    : {}
+  const positionStyle = getPosition(element.position)
+
   const rawContainerStyle = (element as { containerStyle?: string })
     .containerStyle
   const containerStyle =
@@ -86,10 +73,7 @@ export const TimelineElementRenderer: React.FC<{
           ...styleWithEffects,
         }}
       >
-        <TimelineElementRouter
-          element={element}
-          revealProgress={revealProgress}
-        />
+        <LayerRouter element={element} revealProgress={revealProgress} />
       </div>
     </Sequence>
   )

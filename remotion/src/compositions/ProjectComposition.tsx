@@ -7,11 +7,10 @@ import type {
   SceneType,
 } from "@/schemas/project"
 import type { GlobalTheme } from "@/schemas/theme"
-import { TimelineElementRenderer } from "@/components/TimelineElement"
+import { Layer } from "@/components/Layer"
 import { ThemeProvider } from "@/contexts/ThemeContext"
 import { getTransition } from "@/utils/getTransition"
 import { addSound } from "@/utils/addSound"
-
 import {
   AbsoluteFill,
   useVideoConfig,
@@ -47,7 +46,7 @@ export const calculateMetadata: CalculateMetadataFunction<{
 
 export const ProjectComposition: React.FC<{
   tracks?: SegmentType[]
-  overlay?: LayerType[]
+  overlay?: SceneType
   theme?: GlobalTheme
   background?: string
   fps?: number
@@ -65,6 +64,7 @@ export const ProjectComposition: React.FC<{
     <ThemeProvider value={theme ?? {}}>
       <div className="relative w-full h-full">
         <BackgroundRenderer background={background} />
+
         <TransitionSeries>
           {tracks?.map((item: SegmentType, idx: number) => {
             if ("type" in item && item.type === "transition") {
@@ -97,14 +97,15 @@ export const ProjectComposition: React.FC<{
                 durationInFrames={Math.round((s.duration ?? 0) * fps)}
               >
                 {s.layers.map((element: LayerType, i: number) => (
-                  <TimelineElementRenderer key={i} element={element} />
+                  <Layer key={i} element={element} />
                 ))}
               </TransitionSeries.Sequence>
             )
           })}
         </TransitionSeries>
-        {overlay?.map((element: LayerType, i: number) => (
-          <TimelineElementRenderer key={`global-${i}`} element={element} />
+
+        {overlay?.layers.map((element: LayerType, i: number) => (
+          <Layer key={`global-${i}`} element={element} />
         ))}
       </div>
     </ThemeProvider>

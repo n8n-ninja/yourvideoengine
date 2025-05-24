@@ -16,6 +16,7 @@ import { DemoReveal } from "./demo/demo-reveal"
 import { DemoSound } from "./demo/demo-sound"
 import { DemoTitle } from "./demo/demo-title"
 import { DemoTransition } from "./demo/demo-tansition"
+import { DemoOverlayOnly } from "./demo/demo-overlay-only"
 import { ClientDemoShawheen } from "./demo/client-demo-shawheen"
 
 export const RemotionRoot: React.FC = () => {
@@ -48,6 +49,7 @@ export const RemotionRoot: React.FC = () => {
       </Folder>
 
       <Folder name="TechnicalDemo">
+        <DemoOverlayOnly />
         <DemoCamera />
         <DemoCaption />
         <DemoEffect />

@@ -9,7 +9,14 @@ import { Storyboard } from "@/schemas/project"
 const scenes: SceneType[] = [
   {
     duration: 3,
-    layers: [{ type: "title", theme: "minimal", title: "Theme: Minimal" }],
+    layers: [
+      {
+        type: "title",
+        theme: "minimal",
+        title: "Theme: Minimal",
+        containerStyle: "border: 1px solid red;",
+      },
+    ],
   },
   {
     duration: 3,
