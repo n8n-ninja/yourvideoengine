@@ -8,6 +8,7 @@ import { Camera } from "./Camera"
 import { Caption } from "./Caption"
 import { Image } from "./Image"
 import { Title } from "./Title"
+import { Emoji } from "./Emoji"
 
 import { useTiming } from "@/hooks/useTiming"
 
@@ -33,6 +34,8 @@ const LayerRouter: React.FC<{
       return <Audio audio={element} revealProgress={revealProgress} />
     case "image":
       return <Image image={element} />
+    case "emoji":
+      return <Emoji emoji={element} />
     default:
       return null
   }

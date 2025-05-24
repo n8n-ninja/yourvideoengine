@@ -11,7 +11,7 @@
       "timeout": 29,
       "deploymentBucket": "manu-remotion-deployments",
       "environment": {
-        "REMOTION_ENV": "prod"
+        "REMOTION_ENV": "dev"
       },
       "iam": {
         "role": {
@@ -45,13 +45,13 @@
           "RenderVideoLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/remotion-api-prod-renderVideo"
+              "LogGroupName": "/aws/lambda/remotion-api-dev-renderVideo"
             }
           },
           "GetStatusLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/remotion-api-prod-getStatus"
+              "LogGroupName": "/aws/lambda/remotion-api-dev-getStatus"
             }
           },
           "IamRoleLambdaExecution": {
@@ -80,7 +80,7 @@
                       "-",
                       [
                         "remotion-api",
-                        "prod",
+                        "dev",
                         "lambda"
                       ]
                     ]
@@ -97,7 +97,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/remotion-api-prod*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/remotion-api-dev*:*"
                           }
                         ]
                       },
@@ -108,7 +108,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/remotion-api-prod*:*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/remotion-api-dev*:*:*"
                           }
                         ]
                       },
@@ -125,7 +125,7 @@
                   "-",
                   [
                     "remotion-api",
-                    "prod",
+                    "dev",
                     {
                       "Ref": "AWS::Region"
                     },
@@ -140,16 +140,16 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "manu-remotion-deployments",
-                "S3Key": "serverless/remotion-api/prod/1748104559104-2025-05-24T16:35:59.104Z/remotion-api.zip"
+                "S3Key": "serverless/remotion-api/dev/1748106657683-2025-05-24T17:10:57.683Z/remotion-api.zip"
               },
               "Handler": "handler.renderVideo",
               "Runtime": "nodejs18.x",
-              "FunctionName": "remotion-api-prod-renderVideo",
+              "FunctionName": "remotion-api-dev-renderVideo",
               "MemorySize": 1024,
               "Timeout": 29,
               "Environment": {
                 "Variables": {
-                  "REMOTION_ENV": "prod"
+                  "REMOTION_ENV": "dev"
                 }
               },
               "Role": {
@@ -168,16 +168,16 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "manu-remotion-deployments",
-                "S3Key": "serverless/remotion-api/prod/1748104559104-2025-05-24T16:35:59.104Z/remotion-api.zip"
+                "S3Key": "serverless/remotion-api/dev/1748106657683-2025-05-24T17:10:57.683Z/remotion-api.zip"
               },
               "Handler": "handler.getStatus",
               "Runtime": "nodejs18.x",
-              "FunctionName": "remotion-api-prod-getStatus",
+              "FunctionName": "remotion-api-dev-getStatus",
               "MemorySize": 1024,
               "Timeout": 29,
               "Environment": {
                 "Variables": {
-                  "REMOTION_ENV": "prod"
+                  "REMOTION_ENV": "dev"
                 }
               },
               "Role": {
@@ -191,7 +191,7 @@
               "GetStatusLogGroup"
             ]
           },
-          "RenderVideoLambdaVersionIdwnQEF3EF46ZGiwYgastUhZ5w9PGQp4cGHFgHuWGQ": {
+          "RenderVideoLambdaVersionJ3suhd522rlmMRfT9LTGBh1OZRH4VE3CmXTtdvK0Os": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
@@ -201,7 +201,7 @@
               "CodeSha256": "EsQJNJr9cQog5VN2I+XrS5sjLghHEO2LbPOEGxSE1rA="
             }
           },
-          "GetStatusLambdaVersionBLO4Z58lwypKECwnLOTChqepRvBp9fuLf9YX1ezyA": {
+          "GetStatusLambdaVersioniJKRkuUBi4RR3Dmw9UYjuDIHqxYuZD9cp7XpnfZeA": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
@@ -214,7 +214,7 @@
           "ApiGatewayRestApi": {
             "Type": "AWS::ApiGateway::RestApi",
             "Properties": {
-              "Name": "prod-remotion-api",
+              "Name": "dev-remotion-api",
               "EndpointConfiguration": {
                 "Types": [
                   "EDGE"
@@ -358,16 +358,16 @@
               },
               "ValidateRequestBody": true,
               "ValidateRequestParameters": true,
-              "Name": "remotion-api-prod | Validate request body and querystring parameters"
+              "Name": "remotion-api-dev | Validate request body and querystring parameters"
             }
           },
-          "ApiGatewayDeployment1748104550235": {
+          "ApiGatewayDeployment1748106648729": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               },
-              "StageName": "prod"
+              "StageName": "dev"
             },
             "DependsOn": [
               "ApiGatewayMethodRenderPost",
@@ -453,25 +453,25 @@
           "ServerlessDeploymentBucketName": {
             "Value": "manu-remotion-deployments",
             "Export": {
-              "Name": "sls-remotion-api-prod-ServerlessDeploymentBucketName"
+              "Name": "sls-remotion-api-dev-ServerlessDeploymentBucketName"
             }
           },
           "RenderVideoLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "RenderVideoLambdaVersionIdwnQEF3EF46ZGiwYgastUhZ5w9PGQp4cGHFgHuWGQ"
+              "Ref": "RenderVideoLambdaVersionJ3suhd522rlmMRfT9LTGBh1OZRH4VE3CmXTtdvK0Os"
             },
             "Export": {
-              "Name": "sls-remotion-api-prod-RenderVideoLambdaFunctionQualifiedArn"
+              "Name": "sls-remotion-api-dev-RenderVideoLambdaFunctionQualifiedArn"
             }
           },
           "GetStatusLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetStatusLambdaVersionBLO4Z58lwypKECwnLOTChqepRvBp9fuLf9YX1ezyA"
+              "Ref": "GetStatusLambdaVersioniJKRkuUBi4RR3Dmw9UYjuDIHqxYuZD9cp7XpnfZeA"
             },
             "Export": {
-              "Name": "sls-remotion-api-prod-GetStatusLambdaFunctionQualifiedArn"
+              "Name": "sls-remotion-api-dev-GetStatusLambdaFunctionQualifiedArn"
             }
           },
           "ServiceEndpoint": {
@@ -492,12 +492,12 @@
                   {
                     "Ref": "AWS::URLSuffix"
                   },
-                  "/prod"
+                  "/dev"
                 ]
               ]
             },
             "Export": {
-              "Name": "sls-remotion-api-prod-ServiceEndpoint"
+              "Name": "sls-remotion-api-dev-ServiceEndpoint"
             }
           }
         }
@@ -523,13 +523,13 @@
             }
           }
         ],
-        "name": "remotion-api-prod-renderVideo",
+        "name": "remotion-api-dev-renderVideo",
         "package": {},
         "memory": 1024,
         "timeout": 29,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "RenderVideoLambdaVersionIdwnQEF3EF46ZGiwYgastUhZ5w9PGQp4cGHFgHuWGQ"
+        "versionLogicalId": "RenderVideoLambdaVersionJ3suhd522rlmMRfT9LTGBh1OZRH4VE3CmXTtdvK0Os"
       },
       "getStatus": {
         "handler": "handler.getStatus",
@@ -547,13 +547,13 @@
             }
           }
         ],
-        "name": "remotion-api-prod-getStatus",
+        "name": "remotion-api-dev-getStatus",
         "package": {},
         "memory": 1024,
         "timeout": 29,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "GetStatusLambdaVersionBLO4Z58lwypKECwnLOTChqepRvBp9fuLf9YX1ezyA"
+        "versionLogicalId": "GetStatusLambdaVersioniJKRkuUBi4RR3Dmw9UYjuDIHqxYuZD9cp7XpnfZeA"
       }
     },
     "configValidationMode": "warn",
@@ -575,7 +575,7 @@
     "artifact": "/Users/manu/work/02_yourvideoengine/remotion-api/.serverless/remotion-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/remotion-api/prod/1748104559104-2025-05-24T16:35:59.104Z",
+    "artifactDirectoryName": "serverless/remotion-api/dev/1748106657683-2025-05-24T17:10:57.683Z",
     "artifact": "remotion-api.zip"
   }
 }

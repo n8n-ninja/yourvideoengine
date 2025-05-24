@@ -129,12 +129,20 @@ export const CameraLayer = z
   })
   .merge(BaseLayer)
 
+export const EmojiLayer = z
+  .object({
+    type: z.literal("emoji"),
+    emoji: z.string(),
+  })
+  .merge(BaseLayer)
+
 export const Layer = z.discriminatedUnion("type", [
   CameraLayer,
   ImageLayer,
   TitleLayer,
   AudioLayer,
   CaptionLayer,
+  EmojiLayer,
 ])
 
 export const Scene = z.object({
@@ -180,6 +188,7 @@ export type TitleLayerType = z.infer<typeof TitleLayer>
 export type CaptionLayerType = z.infer<typeof CaptionLayer>
 export type ImageLayerType = z.infer<typeof ImageLayer>
 export type CameraLayerType = z.infer<typeof CameraLayer>
+export type EmojiLayerType = z.infer<typeof EmojiLayer>
 export type LayerType = z.infer<typeof Layer>
 export type SceneType = z.infer<typeof Scene>
 export type TransitionType = z.infer<typeof Transition>

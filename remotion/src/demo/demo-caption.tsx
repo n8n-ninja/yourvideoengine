@@ -254,7 +254,6 @@ const scenes: SceneType[] = [
       type: "title",
       title: "Custom alignement",
       position: { bottom: 75 },
-      style: "fontWeight: 400; fontSize: 70px; ",
     },
     {
       type: "caption",

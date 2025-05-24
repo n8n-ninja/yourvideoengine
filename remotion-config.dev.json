@@ -1,6 +1,0 @@
-{
-  "remotionLambdaFunctionName": "remotion-render-4-0-306-mem2048mb-disk10240mb-900sec",
-  "serveUrl": "https://remotionlambda-useast1-xw8v2xhmyv.s3.us-east-1.amazonaws.com/sites/yourvideoengine-dev",
-  "renderUrl": "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/render",
-  "statusUrl": "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/status"
-}
