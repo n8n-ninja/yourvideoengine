@@ -1,39 +1,38 @@
 import React from "react"
 import { Audio as AudioComponent } from "remotion"
-import { Sound as SoundType } from "@/schemas"
+import { AudioElement } from "@/schemas/timeline-element"
+import { Keyframe } from "@/schemas/keyframe"
 import { useKeyframes } from "@/hooks/useKeyframes"
-import { Keyframe } from "@/schemas"
 import { getAudio } from "@/utils/getFile"
 
 /**
  * AudioItem: renders a single audio with timing, volume keyframes, and transitions.
  *
- * @param audio The audio object to render (SoundType).
+ * @param audio The audio object containing sound, volume, loop, pitch, and volumes.
  * @param revealProgress The multiplier for the dynamic volume.
  * @returns An Audio element, or null if not visible.
  */
 export const Audio: React.FC<{
-  audio: SoundType
+  audio: AudioElement
   revealProgress?: number
 }> = ({ audio, revealProgress = 1 }) => {
-  console.log(revealProgress)
+  const { sound: url, volume = 1, loop = false, pitch = 1, volumes } = audio
   // Dynamic volume with keyframes
-  const keyframes: Keyframe<number>[] | undefined = audio.volumes?.map((v) => ({
+  const keyframes: Keyframe<number>[] | undefined = volumes?.map((v) => ({
     time: v.time,
     value: v.value,
   }))
   const dynamicVolume = useKeyframes<number>(keyframes ?? [])
-  const volume = (dynamicVolume ?? audio.volume ?? 1) * revealProgress
+  const finalVolume = (dynamicVolume ?? volume ?? 1) * revealProgress
 
-  // Resolve audio source (local or remote)
-  const audioSrc = getAudio(audio.sound)
+  const audioSrc = getAudio(url)
 
   return (
     <AudioComponent
       src={audioSrc}
-      loop={audio.loop}
-      playbackRate={audio.pitch ?? 1}
-      volume={volume}
+      loop={loop}
+      playbackRate={pitch}
+      volume={finalVolume}
     />
   )
 }

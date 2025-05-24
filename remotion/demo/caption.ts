@@ -1,4 +1,4 @@
-import { Scene, TimelineItem } from "@/schemas"
+import { Scene, TimelineItem } from "@/schemas/index_2"
 
 const sampleWords = [
   { word: "an", start: 0.24, end: 0.56, confidence: 0.9003301 },
@@ -28,7 +28,7 @@ const makeScene = (timeline: TimelineItem[], duration = 8): Scene => ({
   timeline: [
     {
       type: "camera",
-      videoUrl: CAMERA_URL,
+      url: CAMERA_URL,
     } as TimelineItem,
     ...timeline,
   ],

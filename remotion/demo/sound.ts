@@ -1,4 +1,4 @@
-import { Scene } from "@/schemas"
+import { Scene } from "@/schemas/index_2"
 import { SceneOrTransition } from "@/schemas/timeline"
 
 export const shawheenScenes: SceneOrTransition[] = [
@@ -11,7 +11,7 @@ export const shawheenScenes: SceneOrTransition[] = [
       //   timing: { start: 0.05, duration: 39.057 },
       // },
       {
-        type: "sound",
+        type: "audio",
         sound: "https://files.catbox.moe/mbgrk0.mp3",
         timing: { start: 3 },
         volume: 1,
@@ -22,8 +22,7 @@ export const shawheenScenes: SceneOrTransition[] = [
       },
       {
         type: "camera",
-        videoUrl:
-          "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demohook.mp4",
+        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demohook.mp4",
       },
     ],
   },

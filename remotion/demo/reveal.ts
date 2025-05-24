@@ -109,7 +109,7 @@ export const revealScenes = [
       },
       {
         type: "camera",
-        videoUrl: VIDEO_THAIS_3_URL,
+        url: VIDEO_THAIS_3_URL,
         reveal: { type: "blur", outDuration: 0.7 },
         position: REVEAL_POSITION,
       },
@@ -185,7 +185,7 @@ export const revealScenes = [
       },
       {
         type: "camera",
-        videoUrl: VIDEO_THAIS_3_URL,
+        url: VIDEO_THAIS_3_URL,
         reveal: { type: "slide-down", inDuration: 0.7 },
         position: REVEAL_POSITION,
       },

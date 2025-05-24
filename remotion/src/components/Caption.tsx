@@ -2,7 +2,7 @@ import React from "react"
 import { useCurrentFrame, useVideoConfig } from "remotion"
 import { createTikTokStyleCaptions } from "@remotion/captions"
 import { parseStyleString } from "@/utils/getStyle"
-import { Caption as CaptionType } from "@/schemas"
+import { CaptionElement } from "@/schemas/timeline-element"
 import {
   captionBoxStyle,
   captionTextStyle,
@@ -24,7 +24,7 @@ import { useTheme } from "../contexts/ThemeContext"
  * @returns An AbsoluteFill with styled captions, or nothing if no active page.
  */
 export const Caption: React.FC<{
-  captions: CaptionType
+  captions: CaptionElement
   revealProgress?: number
 }> = ({ captions, revealProgress = 1 }) => {
   const theme = useTheme()

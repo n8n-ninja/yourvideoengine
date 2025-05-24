@@ -1,4 +1,4 @@
-import { Scene } from "@/schemas"
+import { Scene } from "@/schemas/index_2"
 import { SceneOrTransition } from "@/schemas/timeline"
 
 // https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demohook.mp4
@@ -1340,14 +1340,13 @@ export const shawheenScenes: SceneOrTransition[] = [
     duration: 9.057,
     timeline: [
       {
-        type: "sound",
+        type: "audio",
         sound: "woosh-1.mp3",
         timing: { start: 0.05, duration: 9.057 },
       },
       {
         type: "camera",
-        videoUrl:
-          "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demohook.mp4",
+        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demohook.mp4",
         keyFrames: [
           {
             time: 0,
@@ -1420,7 +1419,7 @@ export const shawheenScenes: SceneOrTransition[] = [
         ],
       },
       {
-        type: "sound",
+        type: "audio",
         sound: "slow-woosh-5.mp3",
         timing: { start: 1.2 },
       },
@@ -1437,8 +1436,7 @@ export const shawheenScenes: SceneOrTransition[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl:
-          "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demobody.mp4",
+        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demobody.mp4",
 
         keyFrames: [
           {
@@ -1469,8 +1467,7 @@ export const shawheenScenes: SceneOrTransition[] = [
       },
       {
         type: "camera",
-        videoUrl:
-          "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo1b7cb741-74bf-40e1-b680-be0d5273f023.mp4",
+        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo1b7cb741-74bf-40e1-b680-be0d5273f023.mp4",
         timing: { start: 4, duration: 5 },
         reveal: {
           type: "zoom-out",
@@ -1480,8 +1477,7 @@ export const shawheenScenes: SceneOrTransition[] = [
 
       {
         type: "camera",
-        videoUrl:
-          "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo2a8cd05d-c9d1-4197-803a-58503f651c2c.mp4",
+        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo2a8cd05d-c9d1-4197-803a-58503f651c2c.mp4",
         timing: { start: 10, duration: 3 },
         position: {
           top: 0,
@@ -1493,13 +1489,12 @@ export const shawheenScenes: SceneOrTransition[] = [
           type: "slide-down",
           duration: 0.35,
         },
-        style:
+        containerStyle:
           "border-radius: 30px; box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);",
       },
       {
         type: "camera",
-        videoUrl:
-          "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo3d0a3e33-d053-4e0b-8a21-2cf84c035b02.mp4",
+        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo3d0a3e33-d053-4e0b-8a21-2cf84c035b02.mp4",
         timing: { start: 19, duration: 5 },
         reveal: {
           type: "zoom-out",
@@ -1508,8 +1503,7 @@ export const shawheenScenes: SceneOrTransition[] = [
       },
       {
         type: "camera",
-        videoUrl:
-          "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo3fe49942-f423-4de9-9ad0-b2a9f9d6e290.mp4",
+        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo3fe49942-f423-4de9-9ad0-b2a9f9d6e290.mp4",
         timing: { start: 30, duration: 5 },
         reveal: {
           type: "zoom-out",
@@ -1518,8 +1512,7 @@ export const shawheenScenes: SceneOrTransition[] = [
       },
       {
         type: "camera",
-        videoUrl:
-          "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo5788a189-0560-449b-8ac8-fbdf6eda2d4f.mp4",
+        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo5788a189-0560-449b-8ac8-fbdf6eda2d4f.mp4",
         timing: { start: 40, duration: 4 },
         reveal: {
           type: "zoom-in",
@@ -1528,13 +1521,12 @@ export const shawheenScenes: SceneOrTransition[] = [
       },
       {
         type: "camera",
-        videoUrl:
-          "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo7d5342dd-493a-498f-b837-b7b626ec30ed.mp4",
+        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo7d5342dd-493a-498f-b837-b7b626ec30ed.mp4",
         timing: { start: 50, duration: 4 },
         position: {
           bottom: 60,
         },
-        style:
+        containerStyle:
           "border-radius: 30px; box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);",
         reveal: {
           type: "fade",
@@ -1566,8 +1558,7 @@ export const shawheenScenes: SceneOrTransition[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl:
-          "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demooutro.mp4",
+        url: "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demooutro.mp4",
         keyFrames: [
           {
             time: 0,

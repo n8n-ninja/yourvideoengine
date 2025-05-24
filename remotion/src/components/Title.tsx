@@ -1,7 +1,7 @@
 import React from "react"
-import { titleThemes } from "../styles/themes"
+import { titleThemes } from "../styles/title-themes"
 import { LetterAnimation } from "./LetterAnimation"
-import { Title as TitleType } from "@/schemas"
+import { TitleElement } from "@/schemas/timeline-element"
 import { parseStyleString } from "@/utils/getStyle"
 import { titleBaseStyle } from "@/styles/default-style"
 import { useTheme } from "../contexts/ThemeContext"
@@ -10,13 +10,11 @@ import { useTheme } from "../contexts/ThemeContext"
  * Title: renders a single title with theme and animation.
  *
  * @param title The title object to render (TitleType).
- * @param fadeProgress The fade progress of the title (number, optional).
  * @param revealProgress The reveal progress of the title (number, optional, default 1).
  * @returns A styled h1 element with optional letter animation.
  */
 export const Title: React.FC<{
-  title: TitleType
-  fadeProgress?: number
+  title: TitleElement
   revealProgress?: number
 }> = ({ title, revealProgress = 1 }) => {
   const theme = useTheme()

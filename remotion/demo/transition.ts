@@ -1,4 +1,4 @@
-import { Scene } from "@/schemas"
+import { Scene } from "@/schemas/index_2"
 import type { TransitionScene } from "@/schemas/timeline"
 import {
   VIDEO_THAIS_1_URL,
@@ -19,7 +19,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_THAIS_1_URL,
+        url: VIDEO_THAIS_1_URL,
       },
       { type: "title", title: "Transition between scenes" },
     ],
@@ -34,7 +34,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_THAIS_2_URL,
+        url: VIDEO_THAIS_2_URL,
       },
       { type: "title", title: "Transition: Fade" },
     ],
@@ -50,7 +50,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_THAIS_3_URL,
+        url: VIDEO_THAIS_3_URL,
       },
       { type: "title", title: "Transition: Slide" },
     ],
@@ -66,7 +66,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_THAIS_5_URL,
+        url: VIDEO_THAIS_5_URL,
       },
       { type: "title", title: "Transition: Slide Bottom" },
     ],
@@ -82,7 +82,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_THAIS_4_URL,
+        url: VIDEO_THAIS_4_URL,
       },
       { type: "title", title: "Transition: With sound" },
     ],
@@ -98,7 +98,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_THAIS_5_URL,
+        url: VIDEO_THAIS_5_URL,
       },
       { type: "title", title: "Transition: Flip" },
     ],
@@ -114,7 +114,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_THAIS_5_URL,
+        url: VIDEO_THAIS_5_URL,
       },
       { type: "title", title: "Transition: Flip Left" },
     ],
@@ -130,7 +130,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_THAIS_1_URL,
+        url: VIDEO_THAIS_1_URL,
       },
       { type: "title", title: "Transition: Wipe" },
     ],
@@ -146,7 +146,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_THAIS_2_URL,
+        url: VIDEO_THAIS_2_URL,
       },
       { type: "title", title: "Transition: Wipe Left" },
     ],
@@ -161,7 +161,7 @@ const transitionScenes: (Scene | TransitionScene)[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_THAIS_3_URL,
+        url: VIDEO_THAIS_3_URL,
       },
       { type: "title", title: "End of the transition demo" },
     ],

@@ -5,7 +5,7 @@ import { flip } from "@remotion/transitions/flip"
 import { clockWipe } from "@remotion/transitions/clock-wipe"
 import { TransitionPresentation } from "@remotion/transitions"
 import { addSound } from "./addSound"
-import { Transition } from "@/schemas"
+import { Transition } from "@/schemas/index_2"
 
 /**
  * Returns a Remotion transition presentation based on the given transition config.

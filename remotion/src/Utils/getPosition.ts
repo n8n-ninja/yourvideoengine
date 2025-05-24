@@ -1,4 +1,4 @@
-import { Position } from "@/schemas"
+import { Position } from "@/schemas/index_2"
 
 /**
  * Computes the absolute positioning style for a component based on the given position config.

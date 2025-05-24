@@ -6,7 +6,7 @@ import { slide } from "@remotion/transitions/slide"
 import { flip } from "@remotion/transitions/flip"
 import { clockWipe } from "@remotion/transitions/clock-wipe"
 import { addSound } from "../addSound"
-import type { Transition } from "@/schemas"
+import type { Transition } from "@/schemas/index_2"
 
 vi.mock("@remotion/transitions/fade", () => ({ fade: vi.fn(() => "fade") }))
 vi.mock("@remotion/transitions/wipe", () => ({ wipe: vi.fn(() => "wipe") }))

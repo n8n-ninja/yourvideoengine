@@ -1,5 +1,5 @@
 import { Easing, interpolate } from "remotion"
-import { ProgressEasing } from "@/schemas"
+import { ProgressEasing } from "@/schemas/index_2"
 
 function getEasingFn(easing?: string) {
   switch (easing) {

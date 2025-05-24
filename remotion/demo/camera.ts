@@ -1,4 +1,4 @@
-import { Scene } from "@/schemas"
+import { Scene } from "@/schemas/index_2"
 
 const VIDEO_URL =
   "https://diwa7aolcke5u.cloudfront.net/uploads/4e629c9b-f4f9-4628-9cc5-d561d477dbdd.mp4"
@@ -14,7 +14,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_URL,
+        url: VIDEO_URL,
       },
       {
         type: "title",
@@ -28,7 +28,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_URL,
+        url: VIDEO_URL,
         keyFrames: [
           { time: 0, value: { scale: 1 } },
           { time: 2.5, value: { scale: 1.5 } },
@@ -47,7 +47,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_URL,
+        url: VIDEO_URL,
         keyFrames: [
           { time: 0, value: { blur: 10 } },
           { time: 2.5, value: { blur: 20 } },
@@ -65,7 +65,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_URL,
+        url: VIDEO_URL,
         keyFrames: [
           { time: 0, value: { scale: 2, top: 500 } },
           { time: 5, value: { scale: 2, top: 0 } },
@@ -83,7 +83,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: IMAGE_URL,
+        url: IMAGE_URL,
       },
       {
         type: "title",
@@ -97,7 +97,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: IMAGE_URL,
+        url: IMAGE_URL,
         keyFrames: [
           { time: 0, value: { scale: 1, blur: 0 } },
           { time: 2.5, value: { scale: 1.5, blur: 10 } },
@@ -117,7 +117,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_URL,
+        url: VIDEO_URL,
         keyFrames: [
           { time: 1, value: { volume: 0 } },
           { time: 2.5, value: { volume: 1 } },
@@ -136,7 +136,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: IMAGE_URL_2,
+        url: IMAGE_URL_2,
         position: { bottom: 50 },
         keyFrames: [
           { time: 0, value: { scale: 1 } },
@@ -145,7 +145,7 @@ const cameraScenes: Scene[] = [
       },
       {
         type: "camera",
-        videoUrl: VIDEO_URL,
+        url: VIDEO_URL,
         position: { top: 50 },
       },
       {
@@ -160,7 +160,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_URL,
+        url: VIDEO_URL,
         position: { bottom: 40, left: 20, right: 20, top: 40 },
       },
       {
@@ -175,7 +175,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_URL,
+        url: VIDEO_URL,
         position: {
           bottom: 40,
           left: 20,
@@ -199,7 +199,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_URL,
+        url: VIDEO_URL,
         offsetY: 300,
         position: { bottom: 40, left: 20, right: 20, top: 40 },
       },
@@ -215,7 +215,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_URL,
+        url: VIDEO_URL,
         position: { bottom: -5, left: -5, right: -5, top: -5 },
         effects: [{ type: "float", options: { amplitude: 0.5 } }],
       },
@@ -231,7 +231,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_URL,
+        url: VIDEO_URL,
         position: { bottom: -5, left: -5, right: -5, top: -5 },
         effects: [{ type: "tilt3D", options: { amplitude: 0.1, speed: 0.1 } }],
       },

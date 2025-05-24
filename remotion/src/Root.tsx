@@ -66,8 +66,8 @@ export const RemotionRoot: React.FC = () => {
         calculateMetadata={calculateMetadata}
         defaultProps={{
           background: "#1A1728",
-          scenes: sound.scenes,
-          globalTimeline: sound.globalTimeline,
+          scenes: shawheen.scenes,
+          globalTimeline: globalTimeline,
         }}
       />
 

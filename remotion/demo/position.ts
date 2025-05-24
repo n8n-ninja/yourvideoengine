@@ -1,4 +1,4 @@
-import { Scene } from "@/schemas"
+import { Scene } from "@/schemas/index_2"
 
 const VIDEO_URL =
   "https://diwa7aolcke5u.cloudfront.net/uploads/4e629c9b-f4f9-4628-9cc5-d561d477dbdd.mp4"
@@ -12,7 +12,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_URL,
+        url: VIDEO_URL,
       },
       {
         type: "title",
@@ -26,7 +26,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_URL,
+        url: VIDEO_URL,
         position: {
           bottom: 0,
           left: 0,
@@ -50,7 +50,7 @@ const cameraScenes: Scene[] = [
     timeline: [
       {
         type: "camera",
-        videoUrl: VIDEO_URL,
+        url: VIDEO_URL,
         position: {
           bottom: 0,
           left: 0,

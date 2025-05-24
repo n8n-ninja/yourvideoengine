@@ -79,3 +79,5 @@ export const titleThemes: Record<string, React.CSSProperties> = {
     textShadow: "0 2px 30px rgba(0,0,0,0.8)",
   },
 }
+
+export const themeNames = Object.keys(titleThemes) as [string, ...string[]]

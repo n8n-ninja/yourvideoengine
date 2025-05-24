@@ -1,4 +1,4 @@
-import { Keyframe } from "@/schemas"
+import { Keyframe } from "@/schemas/index_2"
 import { lerp, interpolateObject } from "./math"
 
 /**

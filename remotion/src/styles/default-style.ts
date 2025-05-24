@@ -51,39 +51,6 @@ export const captionActiveWordStyle: CSSProperties = {
   textShadow: "0 2px 30px #000, 0 1px 10px #000",
 }
 
-export const scanlineOverlayStyle: CSSProperties = {
-  position: "absolute",
-  left: 0,
-  top: 0,
-  width: "100%",
-  height: "100%",
-  pointerEvents: "none",
-  zIndex: 12,
-  mixBlendMode: "screen",
-  transition: "none",
-}
-
-export const vignetteOverlayStyle: CSSProperties = {
-  position: "absolute",
-  left: -2,
-  top: -2,
-  right: -2,
-  bottom: -2,
-  pointerEvents: "none",
-  zIndex: 11,
-}
-
-export const colorOverlayStyle: CSSProperties = {
-  position: "absolute",
-  left: 0,
-  top: 0,
-  width: "100%",
-  height: "100%",
-  pointerEvents: "none",
-  zIndex: 10,
-  transition: "none",
-}
-
 export type CaptionTheme = {
   boxStyle?: React.CSSProperties
   textStyle?: React.CSSProperties

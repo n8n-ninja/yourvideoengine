@@ -1,6 +1,6 @@
 import React from "react"
 import { Video } from "remotion"
-import { Camera } from "@/schemas"
+import { CameraElement } from "@/schemas/timeline-element"
 import { useKeyframes } from "@/hooks/useKeyframes"
 import { parseStyleString } from "@/utils/getStyle"
 import { cameraVideoStyle } from "@/styles/default-style"
@@ -9,7 +9,7 @@ import { cameraVideoStyle } from "@/styles/default-style"
  * Camera: renders a video with animated camera effects (scale, blur, rotation, filter, volume) using keyframes.
  * Supports offsetX, offsetY, style, frameStyle, speed, volume, and loop for fine positioning, custom styles, and playback options.
  *
- * @param videoUrl The video source URL.
+ * @param url The video source URL.
  * @param keyFrames Optional array of keyframes for camera effects.
  * @param offsetX Optional X offset for fine positioning.
  * @param offsetY Optional Y offset for fine positioning.
@@ -24,17 +24,20 @@ const isImage = (url: string) => {
   return /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(url)
 }
 
-const CameraComponent: React.FC<Camera & { revealProgress?: number }> = ({
-  videoUrl,
-  keyFrames,
-  offsetX = 0,
-  offsetY = 0,
-  style,
-  speed = 1,
-  volume = 1,
-  loop = false,
-  revealProgress = 1,
-}) => {
+const CameraComponent: React.FC<{
+  camera: CameraElement
+  revealProgress?: number
+}> = ({ camera, revealProgress = 1 }) => {
+  const {
+    url,
+    keyFrames,
+    offsetX = 0,
+    offsetY = 0,
+    style,
+    speed = 1,
+    volume = 1,
+    loop = false,
+  } = camera
   const userStyle = style ? parseStyleString(style) : {}
 
   const interpolated =
@@ -69,16 +72,16 @@ const CameraComponent: React.FC<Camera & { revealProgress?: number }> = ({
 
   return (
     <>
-      {isImage(videoUrl) ? (
+      {isImage(url) ? (
         <img
-          src={videoUrl}
+          src={url}
           alt="Camera content"
           style={videoStyle}
           draggable={false}
         />
       ) : (
         <Video
-          src={videoUrl}
+          src={url}
           playbackRate={speed}
           volume={(_) => (typeof kfVolume === "number" ? kfVolume : volume)}
           loop={loop}

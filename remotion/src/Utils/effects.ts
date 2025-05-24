@@ -1,5 +1,5 @@
 import { CSSProperties } from "react"
-import { Effect } from "@/schemas"
+import { Effect } from "@/schemas/index_2"
 
 const FLOAT_AMPLITUDE = 120 // px
 const FLOAT_SPEED = 10
