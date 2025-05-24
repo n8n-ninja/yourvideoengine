@@ -1550,18 +1550,20 @@ export const ClientDemoShawheen = ({
       calculateMetadata={calculateMetadata}
       defaultProps={{
         tracks: scenes,
-        overlay: [
-          {
-            type: "sound",
-            sound: MUSIC_URL,
-            timing: { start: 3 },
-            volume: 0.2,
-            transition: {
-              type: "fade",
-              duration: 2,
+        overlay: {
+          layers: [
+            {
+              type: "sound",
+              sound: MUSIC_URL,
+              timing: { start: 3 },
+              volume: 0.2,
+              transition: {
+                type: "fade",
+                duration: 2,
+              },
             },
-          },
-        ],
+          ],
+        },
       }}
     />
   )

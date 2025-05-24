@@ -33,12 +33,21 @@ export const Caption: React.FC<{
   const { fps } = useVideoConfig()
   const currentTime = frame / fps
 
+  // Récupération des nouvelles options depuis captions
+  const highlightActiveWordBackground =
+    !!captions.activeWord?.background?.style ||
+    !!captions.activeWord?.background?.padding
+  const activeWordBackgroundStyle = captions.activeWord?.background?.style
+  const activeWordBackgroundPadding = captions.activeWord?.background?.padding
+
   // Box (container) style
   const boxStyle = captions.boxStyle ? parseStyleString(captions.boxStyle) : {}
   const resolvedBoxStyle = {
     ...captionBoxStyle,
     ...theme.caption?.boxStyle,
     ...boxStyle,
+    position: "relative" as const, // Pour le background absolu
+    display: "inline-block",
   }
 
   // Text style
@@ -49,16 +58,38 @@ export const Caption: React.FC<{
     ...captionTextStyle,
     ...theme.caption?.textStyle,
     ...textStyle,
+    position: "relative" as const,
+    zIndex: 1,
   }
 
   // Active word style
-  const activeWordStyle = captions.activeWordStyle
-    ? parseStyleString(captions.activeWordStyle)
+  const activeWordStyle = captions.activeWord?.style
+    ? parseStyleString(captions.activeWord?.style)
     : {}
   let resolvedActiveWordStyle = {
     ...captionActiveWordStyle,
     ...theme.caption?.activeWordStyle,
     ...activeWordStyle,
+    position: "relative" as const,
+    zIndex: 2,
+  }
+
+  // Background style for active word
+  const defaultActiveWordBackgroundStyle: React.CSSProperties = {
+    background: "rgba(0,0,0,0.7)",
+    borderRadius: "0.5em",
+    transition: "all 0.25s cubic-bezier(0.4,0,0.2,1)",
+    position: "absolute" as const,
+    zIndex: 0,
+    pointerEvents: "none",
+  }
+  const parsedActiveWordBackgroundStyle: React.CSSProperties =
+    typeof activeWordBackgroundStyle === "string"
+      ? (parseStyleString(activeWordBackgroundStyle) as React.CSSProperties)
+      : activeWordBackgroundStyle || {}
+  const resolvedActiveWordBackgroundStyle: React.CSSProperties = {
+    ...defaultActiveWordBackgroundStyle,
+    ...parsedActiveWordBackgroundStyle,
   }
 
   // Map words to TikTok caption objects
@@ -97,17 +128,89 @@ export const Caption: React.FC<{
     }
   }
 
+  // --- Mesure du mot actif ---
+  const [activeWordRect, setActiveWordRect] = React.useState<{
+    left: number
+    top: number
+    width: number
+    height: number
+  } | null>(null)
+  const wordRefs = React.useRef<(HTMLSpanElement | null)[]>([])
+  React.useEffect(() => {
+    if (!highlightActiveWordBackground || !activePage) {
+      setActiveWordRect(null)
+      return
+    }
+    const idx = activePage.tokens.findIndex(
+      (token) => currentMs >= token.fromMs && currentMs < token.toMs,
+    )
+    if (idx === -1) {
+      setActiveWordRect(null)
+      return
+    }
+    const el = wordRefs.current[idx]
+    if (el) {
+      // Gestion du padding
+      const { padX, padY } = getActiveWordPadding()
+      setActiveWordRect({
+        left: el.offsetLeft - padX,
+        top: el.offsetTop - padY,
+        width: el.offsetWidth + 2 * padX,
+        height: el.offsetHeight + 2 * padY,
+      })
+    }
+  }, [
+    activePage,
+    currentMs,
+    highlightActiveWordBackground,
+    activeWordBackgroundPadding,
+  ])
+
+  const getActiveWordPadding = () => {
+    if (typeof activeWordBackgroundPadding === "number")
+      return {
+        padX: activeWordBackgroundPadding,
+        padY: activeWordBackgroundPadding,
+      }
+    if (activeWordBackgroundPadding)
+      return {
+        padX: activeWordBackgroundPadding.x ?? 0,
+        padY: activeWordBackgroundPadding.y ?? 0,
+      }
+    return { padX: 0, padY: 0 }
+  }
+
   return (
     <div>
       {activePage && (
         <div style={resolvedBoxStyle}>
+          {/* Background animé du mot actif */}
+          {highlightActiveWordBackground && activeWordRect && (
+            <div
+              style={{
+                ...resolvedActiveWordBackgroundStyle,
+                left: activeWordRect.left,
+                top: activeWordRect.top,
+                width: activeWordRect.width,
+                height: activeWordRect.height,
+              }}
+              aria-hidden="true"
+            />
+          )}
           {activePage.tokens.map((token, i) => {
             const isActive = currentMs >= token.fromMs && currentMs < token.toMs
 
-            const baseStyle = { ...resolvedTextStyle }
-            const activeStyle = isActive ? { ...resolvedActiveWordStyle } : {}
+            const baseStyle = { ...resolvedTextStyle } as React.CSSProperties
+            const activeStyle = isActive
+              ? ({ ...resolvedActiveWordStyle } as React.CSSProperties)
+              : ({} as React.CSSProperties)
 
-            if (baseStyle.transform && activeStyle.transform) {
+            if (
+              baseStyle.transform &&
+              activeStyle.transform &&
+              typeof baseStyle.transform === "string" &&
+              typeof activeStyle.transform === "string"
+            ) {
               activeStyle.transform = `${baseStyle.transform} ${activeStyle.transform}`
               delete baseStyle.transform
             }
@@ -115,9 +218,11 @@ export const Caption: React.FC<{
             return (
               <span
                 key={`${activePageIndex}-${i}`}
+                ref={(el) => (wordRefs.current[i] = el)}
                 style={{
                   ...baseStyle,
                   ...activeStyle,
+                  position: "relative",
                 }}
               >
                 {token.text}

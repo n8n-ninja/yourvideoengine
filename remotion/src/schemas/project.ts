@@ -31,7 +31,6 @@ export const CaptionLayer = z
     type: z.literal("caption"),
     boxStyle: StyleSchema.optional(),
     textStyle: StyleSchema.optional(),
-    activeWordStyle: StyleSchema.optional(),
     multiColors: z.array(z.string()).optional(),
     combineTokensWithinMilliseconds: z.number().optional(),
     words: z.array(
@@ -41,6 +40,25 @@ export const CaptionLayer = z
         end: z.number(),
       }),
     ),
+    activeWord: z
+      .object({
+        style: StyleSchema.optional(),
+        background: z
+          .object({
+            style: StyleSchema.optional(),
+            padding: z
+              .union([
+                z.number(),
+                z.object({
+                  x: z.number().optional(),
+                  y: z.number().optional(),
+                }),
+              ])
+              .optional(),
+          })
+          .optional(),
+      })
+      .optional(),
   })
   .merge(BaseLayer)
 

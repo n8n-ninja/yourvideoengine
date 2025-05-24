@@ -234,6 +234,30 @@ const scenes: SceneType[] = [
       effects: [{ type: "tilt3D", options: { amplitude: 0.1, speed: 0.1 } }],
     },
   ]),
+  makeScene([
+    {
+      type: "title",
+      title: "Active word background (animated highlight)",
+      position: { bottom: 75 },
+    },
+    {
+      type: "caption",
+      words: sampleWords,
+      position: { top: 50 },
+      highlightActiveWordBackground: true,
+      boxStyle: "background: transparent;",
+      activeWord: {
+        style: "color: white",
+        background: {
+          style: "background: #FF321A;",
+          padding: {
+            x: 20,
+            y: 10,
+          },
+        },
+      },
+    },
+  ]),
 ]
 
 export const DemoCaption = ({
