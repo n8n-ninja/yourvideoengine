@@ -1,25 +1,27 @@
 import React from "react"
 import { Composition, Folder, getInputProps } from "remotion"
 import { Storyboard, LayerType, SegmentType } from "@/schemas/project"
+import "./styles/fonts.css"
+
 import {
   ProjectComposition,
   calculateMetadata,
 } from "@/compositions/ProjectComposition"
-import { DemoCamera } from "@/demo/demo-camera"
-import { DemoCaption } from "@/demo/demo-caption"
+import { DemoCamera } from "@/compositions/demo/demo-camera"
+import { DemoCaption } from "@/compositions/demo/demo-caption"
 
-import "./styles/fonts.css"
-import { DemoEffect } from "./demo/demo-effect"
-import { DemoImage } from "./demo/demo-image"
-import { DemoPosition } from "./demo/demo-position"
-import { DemoReveal } from "./demo/demo-reveal"
-import { DemoSound } from "./demo/demo-sound"
-import { DemoTitle } from "./demo/demo-title"
-import { DemoTransition } from "./demo/demo-tansition"
-import { DemoOverlayOnly } from "./demo/demo-overlay-only"
-import { DemoEmoji } from "./demo/demo-emoji"
-import { DemoBackground } from "./demo/demo-background"
-import { ClientDemoShawheen } from "./demo/client-demo-shawheen"
+import { DemoEffect } from "@/compositions/demo/demo-effect"
+import { DemoImage } from "@/compositions/demo/demo-image"
+import { DemoPosition } from "@/compositions/demo/demo-position"
+import { DemoReveal } from "@/compositions/demo/demo-reveal"
+import { DemoSound } from "@/compositions/demo/demo-sound"
+import { DemoTitle } from "@/compositions/demo/demo-title"
+import { DemoTransition } from "@/compositions/demo/demo-tansition"
+import { DemoOverlayOnly } from "@/compositions/demo/demo-overlay-only"
+import { DemoEmoji } from "@/compositions/demo/demo-emoji"
+import { DemoBackground } from "@/compositions/demo/demo-background"
+import { ClientDemoShawheen } from "@/compositions/demo/client-demo-shawheen"
+import { TemplateBasic3Shots } from "@/compositions/templates/3shots-basic"
 
 export const RemotionRoot: React.FC = () => {
   const inputProps = getInputProps<{
@@ -45,6 +47,10 @@ export const RemotionRoot: React.FC = () => {
         schema={Storyboard}
         calculateMetadata={calculateMetadata}
       />
+
+      <Folder name="Projects">
+        <TemplateBasic3Shots />
+      </Folder>
 
       <Folder name="ClientDemo">
         <ClientDemoShawheen />

@@ -27,6 +27,12 @@ export const TitleLayer = z
   })
   .merge(BaseLayer)
 
+export const Word = z.object({
+  word: z.string(),
+  start: z.number(),
+  end: z.number(),
+})
+
 export const CaptionLayer = z
   .object({
     type: z.literal("caption"),
@@ -34,13 +40,7 @@ export const CaptionLayer = z
     textStyle: StyleSchema.optional(),
     multiColors: z.array(z.string()).optional(),
     combineTokensWithinMilliseconds: z.number().optional(),
-    words: z.array(
-      z.object({
-        word: z.string(),
-        start: z.number(),
-        end: z.number(),
-      }),
-    ),
+    words: z.array(Word),
     activeWord: z
       .object({
         style: StyleSchema.optional(),

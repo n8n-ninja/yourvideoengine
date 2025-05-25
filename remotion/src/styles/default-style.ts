@@ -42,7 +42,7 @@ export const captionTextStyle: CSSProperties = {
   textShadow: "0 2px 30px #000, 0 1px 10px #000",
   fontWeight: 900,
   display: "inline-block",
-  margin: "10px",
+  margin: "0em 0.1em",
   transition: "all 0.12s cubic-bezier(0.4,0,0.2,1)",
 }
 

@@ -46,6 +46,7 @@ export const Layer: React.FC<{
   element: LayerType
 }> = ({ element }) => {
   const frame = useCurrentFrame()
+
   const timing = useTiming(element.timing)
   const { style: transitionStyle, revealProgress } = useElementReveal({
     reveal: element.reveal,
