@@ -2,13 +2,14 @@ import React from "react"
 import { Sequence, useCurrentFrame } from "remotion"
 
 import { LayerType } from "@/schemas/project"
+import type { EmojiLayerType } from "@/schemas/project"
 
-import { Audio } from "./Audio"
-import { Camera } from "./Camera"
-import { Caption } from "./Caption"
-import { Image } from "./Image"
-import { Title } from "./Title"
-import { Emoji } from "./Emoji"
+import { Audio } from "./LayerAudio"
+import { Camera } from "./LayerCamera"
+import { Caption } from "./LayerCaption"
+import { Image } from "./LayerImage"
+import { Title } from "./LayerTitle"
+import { Emoji } from "./LayerEmoji"
 
 import { useTiming } from "@/hooks/useTiming"
 
@@ -35,7 +36,7 @@ const LayerRouter: React.FC<{
     case "image":
       return <Image image={element} />
     case "emoji":
-      return <Emoji emoji={element} />
+      return <Emoji emoji={element as EmojiLayerType} />
     default:
       return null
   }

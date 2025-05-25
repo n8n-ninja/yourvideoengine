@@ -6,6 +6,7 @@ import { StyleSchema } from "./style"
 import { themeNames } from "@/styles/title-themes"
 import { EffectsSchema } from "./effect"
 import { LetterAnimationConfigSchema } from "@/components/LetterAnimation"
+import { AnimatedEmoji } from "@remotion/animated-emoji"
 
 const BaseLayer = z.object({
   id: z.string().uuid().optional(),
@@ -183,14 +184,31 @@ export const Storyboard = z.object({
   fps: z.number().optional(),
 })
 
+export const BackgroundSchema = z.object({
+  backgroundColor: z.union([z.string(), z.array(z.string())]).optional(),
+  backgroundGradient: z.string().optional(),
+  backgroundImage: z.string().optional(),
+  backgroundVideo: z.string().optional(),
+  animationSpeed: z.number().optional(),
+  animationType: z.enum(["crossfade", "hard"]).optional(),
+})
+
+export type StoryboardType = z.infer<typeof Storyboard>
+
+export type SegmentType = z.infer<typeof Segment>
+export type SceneType = z.infer<typeof Scene>
+export type TransitionType = z.infer<typeof Transition>
+
+export type LayerType = z.infer<typeof Layer>
+
 export type AudioLayerType = z.infer<typeof AudioLayer>
 export type TitleLayerType = z.infer<typeof TitleLayer>
 export type CaptionLayerType = z.infer<typeof CaptionLayer>
 export type ImageLayerType = z.infer<typeof ImageLayer>
 export type CameraLayerType = z.infer<typeof CameraLayer>
-export type EmojiLayerType = z.infer<typeof EmojiLayer>
-export type LayerType = z.infer<typeof Layer>
-export type SceneType = z.infer<typeof Scene>
-export type TransitionType = z.infer<typeof Transition>
-export type SegmentType = z.infer<typeof Segment>
-export type StoryboardType = z.infer<typeof Storyboard>
+type EmojiName = React.ComponentProps<typeof AnimatedEmoji>["emoji"]
+export type EmojiLayerType = Omit<z.infer<typeof EmojiLayer>, "emoji"> & {
+  emoji: EmojiName
+}
+
+export type BackgroundType = z.infer<typeof BackgroundSchema>

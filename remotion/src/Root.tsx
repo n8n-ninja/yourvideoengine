@@ -18,6 +18,7 @@ import { DemoTitle } from "./demo/demo-title"
 import { DemoTransition } from "./demo/demo-tansition"
 import { DemoOverlayOnly } from "./demo/demo-overlay-only"
 import { DemoEmoji } from "./demo/demo-emoji"
+import { DemoBackground } from "./demo/demo-background"
 import { ClientDemoShawheen } from "./demo/client-demo-shawheen"
 
 export const RemotionRoot: React.FC = () => {
@@ -61,6 +62,14 @@ export const RemotionRoot: React.FC = () => {
         <DemoTitle />
         <DemoTransition />
         <DemoEmoji />
+        <Folder name="Background">
+          <DemoBackground bgKey={0} />
+          <DemoBackground bgKey={1} />
+          <DemoBackground bgKey={2} />
+          <DemoBackground bgKey={3} />
+          <DemoBackground bgKey={4} />
+          <DemoBackground bgKey={5} />
+        </Folder>
       </Folder>
     </>
   )

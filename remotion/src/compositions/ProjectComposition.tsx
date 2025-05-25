@@ -5,20 +5,17 @@ import type {
   LayerType,
   TransitionType,
   SceneType,
+  BackgroundType,
 } from "@/schemas/project"
-import type { GlobalTheme } from "@/schemas/theme"
 import { Layer } from "@/components/Layer"
 import { getTransition } from "@/utils/getTransition"
 import { addSound } from "@/utils/addSound"
-import {
-  AbsoluteFill,
-  useVideoConfig,
-  CalculateMetadataFunction,
-} from "remotion"
+import { useVideoConfig, CalculateMetadataFunction } from "remotion"
+import { Background } from "@/components/Background"
 
 export const calculateMetadata: CalculateMetadataFunction<{
   tracks?: SegmentType[]
-  overlay?: SceneType
+  duration?: number
   fps?: number
 }> = ({ props, defaultProps, abortSignal }) => {
   let duration = 0
@@ -32,8 +29,8 @@ export const calculateMetadata: CalculateMetadataFunction<{
         duration += track.duration ?? 0
       }
     })
-  } else if (props.overlay && props.overlay.duration) {
-    duration = props.overlay.duration
+  } else if (props.duration) {
+    duration = props.duration
   } else {
     duration = 1
   }
@@ -45,23 +42,16 @@ export const calculateMetadata: CalculateMetadataFunction<{
 
 export const ProjectComposition: React.FC<{
   tracks?: SegmentType[]
-  overlay?: SceneType
-  theme?: GlobalTheme
-  background?: string
+  overlays?: LayerType[]
+  background?: BackgroundType
   fps?: number
-}> = ({ tracks, overlay, theme, background }) => {
+  duration?: number
+}> = ({ tracks, overlays, background, duration }) => {
   const { fps } = useVideoConfig()
-
-  // Composant pour gérer le fond
-  const BackgroundRenderer: React.FC<{ background?: string }> = ({
-    background,
-  }) => {
-    return <AbsoluteFill style={{ background }} />
-  }
 
   return (
     <div className="relative w-full h-full">
-      <BackgroundRenderer background={background} />
+      <Background {...(background ?? {})} />
 
       <TransitionSeries>
         {tracks?.map((item: SegmentType, idx: number) => {
@@ -102,7 +92,7 @@ export const ProjectComposition: React.FC<{
         })}
       </TransitionSeries>
 
-      {overlay?.layers.map((element: LayerType, i: number) => (
+      {overlays?.map((element: LayerType, i: number) => (
         <Layer key={`global-${i}`} element={element} />
       ))}
     </div>
