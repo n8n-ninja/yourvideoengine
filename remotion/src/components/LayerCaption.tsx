@@ -1,7 +1,7 @@
 import React from "react"
 import { useCurrentFrame, useVideoConfig } from "remotion"
 import { createTikTokStyleCaptions } from "@remotion/captions"
-import { parseStyleString } from "@/utils/getStyle"
+import { getStyle } from "@/utils/getStyle"
 import { CaptionLayerType } from "@/schemas/project"
 import {
   captionBoxStyle,
@@ -38,35 +38,25 @@ export const Caption: React.FC<{
   const activeWordBackgroundPadding = captions.activeWord?.background?.padding
 
   // Box (container) style
-  const boxStyle = captions.boxStyle ? parseStyleString(captions.boxStyle) : {}
-  const resolvedBoxStyle = {
+  const resolvedBoxStyle = getStyle(captions.boxStyle, {
     ...captionBoxStyle,
-    ...boxStyle,
     position: "relative" as const, // Pour le background absolu
     display: "inline-block",
-  }
+  })
 
   // Text style
-  const textStyle = captions.textStyle
-    ? parseStyleString(captions.textStyle)
-    : {}
-  const resolvedTextStyle = {
+  const resolvedTextStyle = getStyle(captions.textStyle, {
     ...captionTextStyle,
-    ...textStyle,
     position: "relative" as const,
     zIndex: 1,
-  }
+  })
 
   // Active word style
-  const activeWordStyle = captions.activeWord?.style
-    ? parseStyleString(captions.activeWord?.style)
-    : {}
-  let resolvedActiveWordStyle = {
+  let resolvedActiveWordStyle = getStyle(captions.activeWord?.style, {
     ...captionActiveWordStyle,
-    ...activeWordStyle,
     position: "relative" as const,
     zIndex: 2,
-  }
+  })
 
   // Background style for active word
   const defaultActiveWordBackgroundStyle: React.CSSProperties = {
@@ -78,9 +68,10 @@ export const Caption: React.FC<{
     pointerEvents: "none",
   }
   const parsedActiveWordBackgroundStyle: React.CSSProperties =
-    typeof activeWordBackgroundStyle === "string"
-      ? (parseStyleString(activeWordBackgroundStyle) as React.CSSProperties)
-      : activeWordBackgroundStyle || {}
+    typeof activeWordBackgroundStyle === "string" ||
+    typeof activeWordBackgroundStyle === "object"
+      ? getStyle(activeWordBackgroundStyle)
+      : {}
   const resolvedActiveWordBackgroundStyle: React.CSSProperties = {
     ...defaultActiveWordBackgroundStyle,
     ...parsedActiveWordBackgroundStyle,

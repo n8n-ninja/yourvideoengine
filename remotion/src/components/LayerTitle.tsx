@@ -2,7 +2,7 @@ import React from "react"
 import { titleThemes } from "../styles/title-themes"
 import { LetterAnimation } from "./LetterAnimation"
 import { TitleLayerType } from "@/schemas/project"
-import { parseStyleString } from "@/utils/getStyle"
+import { getStyle } from "@/utils/getStyle"
 import { titleBaseStyle } from "@/styles/default-style"
 
 /**
@@ -18,12 +18,7 @@ export const Title: React.FC<{
 }> = ({ title, revealProgress = 1 }) => {
   const themeStyle =
     title.theme && titleThemes[title.theme] ? titleThemes[title.theme] : {}
-  const titleStyle = title.style ? parseStyleString(title.style) : {}
-  const style = {
-    ...titleBaseStyle,
-    ...themeStyle,
-    ...titleStyle,
-  }
+  const style = getStyle(title.style, { ...titleBaseStyle, ...themeStyle })
   let letterAnimationConfig = null
   if (title.letterAnimation) {
     const config = title.letterAnimation

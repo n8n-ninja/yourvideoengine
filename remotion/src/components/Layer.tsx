@@ -16,7 +16,7 @@ import { useTiming } from "@/hooks/useTiming"
 import { useElementReveal } from "@/hooks/useElementReveal"
 import { applyEffects } from "@/utils/effects"
 import { getPosition } from "@/utils/getPosition"
-import { parseStyleString } from "@/utils/getStyle"
+import { getStyle } from "@/utils/getStyle"
 
 import { timelineElementContainerStyle } from "@/styles/default-style"
 
@@ -53,12 +53,10 @@ export const Layer: React.FC<{
   })
   const positionStyle = getPosition(element.position)
 
-  const rawContainerStyle = (element as { containerStyle?: string })
-    .containerStyle
-  const containerStyle =
-    typeof rawContainerStyle === "string"
-      ? parseStyleString(rawContainerStyle)
-      : (rawContainerStyle ?? {})
+  const rawContainerStyle = (
+    element as { containerStyle?: string | Record<string, string | number> }
+  ).containerStyle
+  const containerStyle = getStyle(rawContainerStyle)
   const effects = (element as any).effects
   const styleWithEffects = applyEffects(effects, frame)
   if (!timing.visible) return null

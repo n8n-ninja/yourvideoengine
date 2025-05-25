@@ -22,17 +22,20 @@ export function parseStyleString(style: string): React.CSSProperties {
 }
 
 /**
- * Merges a user style string with a base style.
- * If userStyle is a string, it is parsed as CSS. If undefined, returns baseStyle.
+ * Merges a user style (string or object) with a base style.
+ * If userStyle is a string, it is parsed as CSS. If it's an object, it is merged directly. If undefined, returns baseStyle.
  *
- * @param userStyle The user style string.
+ * @param userStyle The user style (string or object).
  * @param baseStyle The base style (default: empty object).
  * @returns The merged React.CSSProperties object.
  */
 export function getStyle(
-  userStyle: string | undefined,
+  userStyle: string | Record<string, string | number> | undefined,
   baseStyle: React.CSSProperties = {},
 ): React.CSSProperties {
   if (!userStyle) return baseStyle
-  return { ...baseStyle, ...parseStyleString(userStyle) }
+  if (typeof userStyle === "string") {
+    return { ...baseStyle, ...parseStyleString(userStyle) }
+  }
+  return { ...baseStyle, ...userStyle }
 }

@@ -1,6 +1,6 @@
 import React from "react"
 import { ImageLayerType } from "@/schemas/project"
-import { parseStyleString } from "@/utils/getStyle"
+import { getStyle } from "@/utils/getStyle"
 
 /**
  * Image: affiche une image avec style custom.
@@ -12,7 +12,7 @@ export const Image: React.FC<{
   revealProgress?: number
 }> = ({ image, revealProgress = 1 }) => {
   const { url, objectFit = "cover", style } = image
-  const userStyle = style ? parseStyleString(style) : {}
+  const userStyle = getStyle(style)
   return (
     <img
       src={url}

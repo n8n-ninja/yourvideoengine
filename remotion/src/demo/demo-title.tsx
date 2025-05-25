@@ -14,7 +14,6 @@ const scenes: SceneType[] = [
         type: "title",
         theme: "minimal",
         title: "Theme: Minimal",
-        containerStyle: "border: 1px solid red;",
       },
     ],
   },

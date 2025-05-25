@@ -2,7 +2,7 @@ import React from "react"
 import { Video } from "remotion"
 import { CameraLayerType } from "@/schemas/project"
 import { useKeyframes } from "@/hooks/useKeyframes"
-import { parseStyleString } from "@/utils/getStyle"
+import { getStyle } from "@/utils/getStyle"
 import { cameraVideoStyle } from "@/styles/default-style"
 
 /**
@@ -38,7 +38,7 @@ const CameraComponent: React.FC<{
     volume = 1,
     loop = false,
   } = camera
-  const userStyle = style ? parseStyleString(style) : {}
+  const userStyle = getStyle(style)
 
   const interpolated =
     useKeyframes<Record<string, number | string | undefined>>(
