@@ -8,7 +8,6 @@ import type {
 } from "@/schemas/project"
 import type { GlobalTheme } from "@/schemas/theme"
 import { Layer } from "@/components/Layer"
-import { ThemeProvider } from "@/contexts/ThemeContext"
 import { getTransition } from "@/utils/getTransition"
 import { addSound } from "@/utils/addSound"
 import {
@@ -61,53 +60,51 @@ export const ProjectComposition: React.FC<{
   }
 
   return (
-    <ThemeProvider value={theme ?? {}}>
-      <div className="relative w-full h-full">
-        <BackgroundRenderer background={background} />
+    <div className="relative w-full h-full">
+      <BackgroundRenderer background={background} />
 
-        <TransitionSeries>
-          {tracks?.map((item: SegmentType, idx: number) => {
-            if ("type" in item && item.type === "transition") {
-              const t = item as TransitionType
-              const transitionObj = {
-                type: t.animation,
-                duration: t.duration,
-                direction: t.direction,
-                wipeDirection: t.wipeDirection,
-                sound: t.sound,
-              }
-              const presentation = t.sound
-                ? addSound(getTransition(transitionObj), t.sound)
-                : getTransition(transitionObj)
-
-              return (
-                <TransitionSeries.Transition
-                  key={idx}
-                  presentation={presentation}
-                  timing={linearTiming({
-                    durationInFrames: Math.round((t.duration ?? 1) * fps),
-                  })}
-                />
-              )
+      <TransitionSeries>
+        {tracks?.map((item: SegmentType, idx: number) => {
+          if ("type" in item && item.type === "transition") {
+            const t = item as TransitionType
+            const transitionObj = {
+              type: t.animation,
+              duration: t.duration,
+              direction: t.direction,
+              wipeDirection: t.wipeDirection,
+              sound: t.sound,
             }
-            const s = item as SceneType
-            return (
-              <TransitionSeries.Sequence
-                key={idx}
-                durationInFrames={Math.round((s.duration ?? 0) * fps)}
-              >
-                {s.layers.map((element: LayerType, i: number) => (
-                  <Layer key={i} element={element} />
-                ))}
-              </TransitionSeries.Sequence>
-            )
-          })}
-        </TransitionSeries>
+            const presentation = t.sound
+              ? addSound(getTransition(transitionObj), t.sound)
+              : getTransition(transitionObj)
 
-        {overlay?.layers.map((element: LayerType, i: number) => (
-          <Layer key={`global-${i}`} element={element} />
-        ))}
-      </div>
-    </ThemeProvider>
+            return (
+              <TransitionSeries.Transition
+                key={idx}
+                presentation={presentation}
+                timing={linearTiming({
+                  durationInFrames: Math.round((t.duration ?? 1) * fps),
+                })}
+              />
+            )
+          }
+          const s = item as SceneType
+          return (
+            <TransitionSeries.Sequence
+              key={idx}
+              durationInFrames={Math.round((s.duration ?? 0) * fps)}
+            >
+              {s.layers.map((element: LayerType, i: number) => (
+                <Layer key={i} element={element} />
+              ))}
+            </TransitionSeries.Sequence>
+          )
+        })}
+      </TransitionSeries>
+
+      {overlay?.layers.map((element: LayerType, i: number) => (
+        <Layer key={`global-${i}`} element={element} />
+      ))}
+    </div>
   )
 }

@@ -8,7 +8,6 @@ import {
   captionTextStyle,
   captionActiveWordStyle,
 } from "@/styles/default-style"
-import { useTheme } from "../contexts/ThemeContext"
 
 /**
  * Caption: displays TikTok-style synchronized captions with dynamic styles and active word highlighting.
@@ -27,8 +26,6 @@ export const Caption: React.FC<{
   captions: CaptionLayerType
   revealProgress?: number
 }> = ({ captions, revealProgress = 1 }) => {
-  const theme = useTheme()
-  // Current frame and video config
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
   const currentTime = frame / fps
@@ -44,7 +41,6 @@ export const Caption: React.FC<{
   const boxStyle = captions.boxStyle ? parseStyleString(captions.boxStyle) : {}
   const resolvedBoxStyle = {
     ...captionBoxStyle,
-    ...theme.caption?.boxStyle,
     ...boxStyle,
     position: "relative" as const, // Pour le background absolu
     display: "inline-block",
@@ -56,7 +52,6 @@ export const Caption: React.FC<{
     : {}
   const resolvedTextStyle = {
     ...captionTextStyle,
-    ...theme.caption?.textStyle,
     ...textStyle,
     position: "relative" as const,
     zIndex: 1,
@@ -68,7 +63,6 @@ export const Caption: React.FC<{
     : {}
   let resolvedActiveWordStyle = {
     ...captionActiveWordStyle,
-    ...theme.caption?.activeWordStyle,
     ...activeWordStyle,
     position: "relative" as const,
     zIndex: 2,

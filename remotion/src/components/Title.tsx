@@ -4,7 +4,6 @@ import { LetterAnimation } from "./LetterAnimation"
 import { TitleLayerType } from "@/schemas/project"
 import { parseStyleString } from "@/utils/getStyle"
 import { titleBaseStyle } from "@/styles/default-style"
-import { useTheme } from "../contexts/ThemeContext"
 
 /**
  * Title: renders a single title with theme and animation.
@@ -17,13 +16,11 @@ export const Title: React.FC<{
   title: TitleLayerType
   revealProgress?: number
 }> = ({ title, revealProgress = 1 }) => {
-  const theme = useTheme()
   const themeStyle =
     title.theme && titleThemes[title.theme] ? titleThemes[title.theme] : {}
   const titleStyle = title.style ? parseStyleString(title.style) : {}
   const style = {
     ...titleBaseStyle,
-    ...theme.title?.style,
     ...themeStyle,
     ...titleStyle,
   }
