@@ -203,7 +203,7 @@ export const getTracks = async (
         id: "intro",
         blocks: [introCamera, hook, introCaption],
       }),
-      transition,
+      // transition,
       createScene({
         id: "body",
         blocks: [bodyCamera, bodyCaption, emoji],
@@ -218,7 +218,6 @@ export const getTracks = async (
 
   const musicTrack = createTrack({
     id: "global",
-
     items: [
       {
         type: "scene",

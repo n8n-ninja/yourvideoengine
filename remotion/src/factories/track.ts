@@ -18,10 +18,12 @@ export const createTrack = (overrides: Partial<TrackType> = {}): TrackType => {
   }
 
   let duration = 0
+
   for (const item of baseTrack.items) {
     if (item.type === "scene") {
       duration += item.duration ?? 0
     } else if (item.type === "transition") {
+      console.log(item.duration)
       duration -= item.duration ?? 0
     }
   }

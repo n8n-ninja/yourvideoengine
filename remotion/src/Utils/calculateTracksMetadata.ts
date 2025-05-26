@@ -7,7 +7,9 @@ export const createCalculateTracksMetadata = <T extends { fps?: number }>(
   return async ({ props }) => {
     const tracks = await getTracks(props)
     return {
-      durationInFrames: Math.round(tracks[0].duration ?? 1) * (props.fps ?? 30),
+      durationInFrames: Math.round(
+        (tracks[0].duration ?? 1) * (props.fps ?? 30),
+      ),
     }
   }
 }
