@@ -2,7 +2,7 @@ import React from "react"
 import { useCurrentFrame, useVideoConfig } from "remotion"
 import { createTikTokStyleCaptions } from "@remotion/captions"
 import { getStyle } from "@/utils/getStyle"
-import { CaptionLayerType } from "@/schemas/project"
+import { CaptionBlockType, Word } from "@/schemas/project"
 import {
   captionBoxStyle,
   captionTextStyle,
@@ -23,7 +23,7 @@ import {
  * @returns An AbsoluteFill with styled captions, or nothing if no active page.
  */
 export const Caption: React.FC<{
-  captions: CaptionLayerType
+  captions: CaptionBlockType
   revealProgress?: number
 }> = ({ captions, revealProgress = 1 }) => {
   const frame = useCurrentFrame()

@@ -1,6 +1,6 @@
 import React from "react"
 import { Video } from "remotion"
-import { CameraLayerType } from "@/schemas/project"
+import { CameraBlockType } from "@/schemas/project"
 import { useKeyframes } from "@/hooks/useKeyframes"
 import { getStyle } from "@/utils/getStyle"
 import { cameraVideoStyle } from "@/styles/default-style"
@@ -25,7 +25,7 @@ const isImage = (url: string) => {
 }
 
 const CameraComponent: React.FC<{
-  camera: CameraLayerType
+  camera: CameraBlockType
   revealProgress?: number
 }> = ({ camera, revealProgress = 1 }) => {
   const {

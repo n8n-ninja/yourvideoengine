@@ -1,6 +1,6 @@
 import React from "react"
 import { Audio as AudioComponent } from "remotion"
-import { AudioLayerType } from "@/schemas/project"
+import { AudioBlockType } from "@/schemas/project"
 import { Keyframe } from "@/schemas/keyframe"
 import { useKeyframes } from "@/hooks/useKeyframes"
 import { getAudio } from "@/utils/getFile"
@@ -13,7 +13,7 @@ import { getAudio } from "@/utils/getFile"
  * @returns An Audio element, or null if not visible.
  */
 export const Audio: React.FC<{
-  audio: AudioLayerType
+  audio: AudioBlockType
   revealProgress?: number
 }> = ({ audio, revealProgress = 1 }) => {
   const { sound: url, volume = 1, loop = false, pitch = 1, volumes } = audio

@@ -1,5 +1,5 @@
 import React from "react"
-import { ImageLayerType } from "@/schemas/project"
+import { ImageBlockType } from "@/schemas/project"
 import { getStyle } from "@/utils/getStyle"
 
 /**
@@ -8,7 +8,7 @@ import { getStyle } from "@/utils/getStyle"
  * @param revealProgress La progression de révélation de l'image
  */
 export const Image: React.FC<{
-  image: ImageLayerType
+  image: ImageBlockType
   revealProgress?: number
 }> = ({ image, revealProgress = 1 }) => {
   const { url, objectFit = "cover", style } = image

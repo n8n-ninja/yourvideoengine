@@ -2,12 +2,12 @@ import React from "react"
 import { Sequence, useCurrentFrame } from "remotion"
 
 import { BlockType, EmojiBlockType } from "@/schemas/project"
-import { Audio } from "./LayerAudio"
-import { Camera } from "./LayerCamera"
-import { Caption } from "./LayerCaption"
-import { Image } from "./LayerImage"
-import { Title } from "./LayerTitle"
-import { Emoji } from "./LayerEmoji"
+import { Audio } from "./blocks/Audio"
+import { Camera } from "./blocks/Camera"
+import { Caption } from "./blocks/Caption"
+import { Image } from "./blocks/Image"
+import { Title } from "./blocks/Title"
+import { Emoji } from "./blocks/Emoji"
 
 import { useTiming } from "@/hooks/useTiming"
 
