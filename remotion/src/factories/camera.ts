@@ -1,13 +1,25 @@
-import { CameraLayerType } from "@/schemas/project"
+import { CameraBlockType } from "@/schemas/project"
 import { v4 as uuidv4 } from "uuid"
+import { parseMedia } from "@remotion/media-parser"
 
-export const createCameraLayer = (
-  overrides: Partial<CameraLayerType> = {},
-): CameraLayerType => {
+export const createCamera = async (
+  overrides: Partial<CameraBlockType> = {},
+): Promise<CameraBlockType> => {
+  if (!overrides.url) {
+    throw new Error("URL is required")
+  }
+
+  const layerDuration = await parseMedia({
+    src: overrides.url,
+    acknowledgeRemotionLicense: true,
+    fields: { durationInSeconds: true },
+  })
+
   return {
     type: "camera",
     id: uuidv4(),
     url: "",
+    duration: layerDuration.durationInSeconds ?? 1,
     style: undefined,
     offsetX: 0,
     offsetY: 0,

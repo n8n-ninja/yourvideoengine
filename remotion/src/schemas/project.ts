@@ -104,6 +104,7 @@ export const CameraBlock = z
   .object({
     type: z.literal("camera"),
     url: z.string(),
+    duration: z.number(),
     style: StyleSchema.optional(),
     offsetX: z.number().optional(),
     offsetY: z.number().optional(),

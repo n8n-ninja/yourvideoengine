@@ -30,7 +30,7 @@ const getBlockDuration = async (block: BlockType): Promise<number> => {
  * Returns a new scene object with duration set.
  */
 const computeSceneDuration = async (scene: SceneType): Promise<SceneType> => {
-  let maxDuration = scene.duration ?? 1
+  let maxDuration = scene.duration ?? 0
   for (const block of scene.blocks) {
     const blockDuration = await getBlockDuration(block)
     if (blockDuration > maxDuration) maxDuration = blockDuration
@@ -88,46 +88,26 @@ const computeTrackDuration = async (track: TrackType): Promise<TrackType> => {
   return { ...(track as object), duration: safeDuration, items: enrichedItems }
 }
 
-/**
- * Assign remaining free time equally to scenes without duration in a track.
- * Returns a new array of tracks with updated scene durations.
- */
-const assignFreeTimeToScenes = (tracks: TrackType[]): TrackType[] => {
-  return tracks.map((track) => {
-    if (!track.items || track.items.length === 0) return track
-    // Find scenes without duration
-    const scenesWithoutDuration = track.items.filter(
-      (item) =>
-        item.type === "scene" &&
-        (!("duration" in item) || !item.duration || item.duration === 0),
-    )
-    // Find all items with a known duration
-    const itemsWithDuration = track.items.filter(
-      (item) => "duration" in item && item.duration && item.duration > 0,
-    )
-    // Sum known durations
-    const knownDurationsSum = itemsWithDuration.reduce(
-      (sum, item) => sum + ("duration" in item ? (item.duration ?? 0) : 0),
-      0,
-    )
-    // Compute free time
-    const freeTime = (track.duration ?? 0) - knownDurationsSum
-    if (scenesWithoutDuration.length > 0 && freeTime > 0) {
-      const durationPerScene = freeTime / scenesWithoutDuration.length
-      const newItems = track.items.map((item) => {
-        if (
-          item.type === "scene" &&
-          (!("duration" in item) || !item.duration || item.duration === 0)
-        ) {
-          // Only add duration to scenes
-          return { ...item, duration: durationPerScene }
-        }
-        return item
-      })
-      return { ...(track as object), items: newItems }
-    }
+// Recalculate the duration of a track from its items (subtracting transitions), only if no explicit duration
+const recalculateTrackDuration = (track: TrackType): TrackType => {
+  if (
+    "duration" in track &&
+    typeof track.duration === "number" &&
+    isFinite(track.duration)
+  ) {
+    // Explicit duration: do not recalculate
     return track
-  })
+  }
+  let total = 0
+  for (const item of track.items ?? []) {
+    const duration = "duration" in item ? (item.duration ?? 0) : 0
+    if (item.type === "transition") {
+      total -= duration
+    } else {
+      total += duration
+    }
+  }
+  return { ...track, duration: Math.max(0, total) }
 }
 
 /**
@@ -135,7 +115,6 @@ const assignFreeTimeToScenes = (tracks: TrackType[]): TrackType[] => {
  * - Computes durations for scenes and transitions.
  * - Subtracts transition durations from track total.
  * - Handles tracks with duration === Infinity by assigning them the max duration of all tracks.
- * - Assigns free time to scenes without duration.
  * Returns a new array of tracks, fully enriched.
  */
 export const calculateDurations = async (
@@ -164,6 +143,54 @@ export const calculateDurations = async (
     return track
   })
 
-  // 4. Assign free time to scenes without duration
-  return assignFreeTimeToScenes(normalizedTracks)
+  // 4. Recalculate track.duration from final items, only for tracks without explicit duration
+  const recalculatedTracks = normalizedTracks.map(recalculateTrackDuration)
+
+  // 5. Distribute free time to scenes
+  return distributeFreeTimeToScenes(recalculatedTracks)
+}
+
+const distributeFreeTimeToScenes = (tracks: TrackType[]): TrackType[] => {
+  return tracks.map((track) => {
+    if (!track.items || track.items.length === 0) return track
+    // Repérer les scenes sans durée
+    const scenesToFill = track.items.filter(
+      (item) =>
+        item.type === "scene" &&
+        (!("duration" in item) || !item.duration || item.duration === 0),
+    )
+    // Somme des durations connues
+    const knownDurationsSum = track.items.reduce(
+      (sum, item) =>
+        sum +
+        ("duration" in item && item.duration && item.duration > 0
+          ? item.duration
+          : 0),
+      0,
+    )
+    const freeTime = (track.duration ?? 0) - knownDurationsSum
+    // GROS LOG DEBUG
+    console.log("[DISTRIBUTE FREE TIME]", {
+      trackId: track.id,
+      trackDuration: track.duration,
+      knownDurationsSum,
+      freeTime,
+      scenesToFill: scenesToFill.length,
+      itemsDurations: track.items.map((i) => i.duration),
+    })
+    if (scenesToFill.length > 0 && freeTime > 0) {
+      const durationPerScene = freeTime / scenesToFill.length
+      const newItems = track.items.map((item) => {
+        if (
+          item.type === "scene" &&
+          (!("duration" in item) || !item.duration || item.duration === 0)
+        ) {
+          return { ...item, duration: durationPerScene }
+        }
+        return item
+      })
+      return { ...track, items: newItems }
+    }
+    return track
+  })
 }

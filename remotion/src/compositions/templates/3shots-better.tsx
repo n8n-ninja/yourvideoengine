@@ -4,16 +4,18 @@ import {
   CaptionBlockType,
   TitleBlockType,
   Word,
-  TransitionType,
-  EmojiBlockType,
   TrackType,
 } from "@/schemas/project"
-import { createCameraLayer } from "@/factories/camera"
+import { createCamera } from "@/factories/camera"
+import { createTransition } from "@/factories/transition"
+import { createEmoji } from "@/factories/emoji"
+import { createAudio } from "@/factories/audio"
+import { createScene } from "@/factories/scene"
 import { RenderTrack } from "@/components/RenderTrack"
 import { words, urls } from "./3shots-basic-defaultProps"
 import { createCaptionLayer } from "@/factories/caption"
 import { createTitleLayer } from "@/factories/title"
-import { calculateDurations } from "@/utils/getDuration"
+import { createTrack } from "@/factories/track"
 import { useState, useEffect } from "react"
 
 export const Schema = z.object({
@@ -99,7 +101,7 @@ export const getTracks = async (
     title: props.visualHook,
   })
 
-  const introCamera = createCameraLayer({
+  const introCamera = await createCamera({
     url: props.introUrl,
     keyFrames: [
       {
@@ -144,29 +146,32 @@ export const getTracks = async (
     words: props.introCaptions,
   })
 
-  const bodyCamera = createCameraLayer({ url: props.bodyUrl })
+  const bodyCamera = await createCamera({
+    url: props.bodyUrl,
+    timing: {
+      duration: 3,
+    },
+  })
 
   const bodyCaption = createCaptionLayer({
     ...captionDefaultProps,
     words: props.bodyCaptions,
   })
 
-  const outroCamera = createCameraLayer({ url: props.outroUrl })
+  const outroCamera = await createCamera({ url: props.outroUrl })
 
   const outroCaption = createCaptionLayer({
     ...captionDefaultProps,
     words: props.outroCaptions,
   })
 
-  const transition: TransitionType = {
-    type: "transition",
+  const transition = createTransition({
     duration: 0.4,
     animation: "wipe",
     sound: "woosh-3.mp3",
-  }
+  })
 
-  const emoji: EmojiBlockType = {
-    type: "emoji",
+  const emoji = createEmoji({
     emoji: "100",
     position: {
       bottom: 40,
@@ -183,51 +188,50 @@ export const getTracks = async (
       type: "slide-down",
       duration: 0.5,
     },
-  }
+  })
 
-  const tracks: TrackType[] = [
-    {
-      id: "global",
-      duration: Infinity,
-      items: [
-        {
-          type: "scene",
-          blocks: [
-            {
-              type: "audio",
-              sound: props.musicUrl,
-              volume: 0.1,
-              reveal: {
-                type: "fade",
-                duration: 0.5,
-              },
-            },
-          ],
-        },
-      ],
+  const music = createAudio({
+    sound: props.musicUrl,
+    volume: 0.1,
+    reveal: {
+      type: "fade",
+      duration: 0.5,
     },
-    {
-      id: "3shots-better",
-      items: [
-        {
-          type: "scene",
-          blocks: [introCamera, hook, introCaption],
-        },
-        transition,
-        {
-          type: "scene",
-          blocks: [bodyCamera, bodyCaption, emoji],
-        },
-        transition,
-        {
-          type: "scene",
-          blocks: [outroCamera, outroCaption],
-        },
-      ],
-    },
-  ]
+  })
 
-  return await calculateDurations(tracks)
+  const mainTrack = createTrack({
+    id: "3shots-better",
+    items: [
+      createScene({
+        id: "intro",
+        blocks: [introCamera, hook, introCaption],
+      }),
+      transition,
+      createScene({
+        id: "body",
+
+        blocks: [bodyCamera, bodyCaption, emoji],
+      }),
+      transition,
+      createScene({
+        id: "outro",
+        blocks: [outroCamera, outroCaption],
+      }),
+    ],
+  })
+
+  const musicTrack = createTrack({
+    id: "global",
+    duration: mainTrack.duration,
+    items: [
+      {
+        type: "scene",
+        blocks: [music],
+      },
+    ],
+  })
+
+  return [musicTrack, mainTrack]
 }
 
 export const Component: React.FC<z.infer<typeof Schema>> = (props) => {
@@ -257,7 +261,7 @@ export const calculateMetadata: CalculateMetadataFunction<
 > = async ({ props, defaultProps, abortSignal }) => {
   const tracks = await getTracks(props)
 
-  console.log(tracks)
+  // console.log(tracks)
   return {
     durationInFrames: Math.round(tracks[0].duration ?? 1) * (props.fps ?? 30),
   }
