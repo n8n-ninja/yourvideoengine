@@ -1,0 +1,10 @@
+{
+  "plugins": ["@remotion"],
+  "overrides": [
+    {
+      "files": ["src/**/*.{ts,tsx}"],
+      "extends": ["plugin:@remotion/recommended"],
+      "parser": "@typescript-eslint/parser",
+    },
+  ],
+}

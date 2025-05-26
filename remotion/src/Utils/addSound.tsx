@@ -26,6 +26,7 @@ export function addSound<T extends Record<string, unknown>>(
     p,
   ) => {
     const audioSrc = getAudio(src)
+
     return (
       <>
         {p.presentationDirection === "entering" ? (

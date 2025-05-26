@@ -23,7 +23,6 @@ export const createTrack = (overrides: Partial<TrackType> = {}): TrackType => {
     if (item.type === "scene") {
       duration += item.duration ?? 0
     } else if (item.type === "transition") {
-      console.log(item.duration)
       duration -= item.duration ?? 0
     }
   }

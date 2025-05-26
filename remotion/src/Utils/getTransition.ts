@@ -44,12 +44,5 @@ export const getTransition = (
     })
   else presentation = fade()
 
-  if (transition.sound) {
-    presentation = addSound(
-      presentation as TransitionPresentation<Record<string, unknown>>,
-      getAudio(transition.sound),
-    )
-  }
-
   return presentation as TransitionPresentation<Record<string, unknown>>
 }

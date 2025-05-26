@@ -75,11 +75,6 @@ describe("getTransition", () => {
     expect(fade).toHaveBeenCalled()
   })
 
-  it("adds sound if transition.sound is set", () => {
-    getTransition({ animation: "fade", sound: "test.mp3" } as TransitionType)
-    expect(addSound).toHaveBeenCalledWith("fade", "/static/sound/test.mp3")
-  })
-
   it("uses default direction for slide/flip/wipe", () => {
     getTransition({ animation: "slide" } as TransitionType)
     expect(slide).toHaveBeenCalledWith({ direction: "from-left" })

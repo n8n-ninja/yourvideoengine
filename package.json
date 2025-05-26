@@ -19,5 +19,8 @@
     "dotenv": "^16.5.0",
     "zod": "^3.24.4",
     "zod-to-json-schema": "^3.24.5"
+  },
+  "dependencies": {
+    "@remotion/media-parser": "4.0.306"
   }
 }

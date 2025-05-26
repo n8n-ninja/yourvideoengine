@@ -209,7 +209,7 @@ export type EmojiBlockType = Omit<z.infer<typeof EmojiBlock>, "emoji"> & {
 }
 export type BackgroundType = z.infer<typeof Background>
 
-export { RevealType } from "./reveal"
+export type { RevealType } from "./reveal"
 export type TransitionReveal = z.infer<typeof RevealSchema>
 export type ProgressEasing = {
   inDuration?: number

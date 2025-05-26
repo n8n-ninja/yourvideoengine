@@ -62,8 +62,9 @@ export const RenderTrack: React.FC<{
         {track.items.map((item: TrackItemType, idx: number) => {
           if ("type" in item && item.type === "transition") {
             const transition = item as TransitionType
-            const transitionObj = {
-              type: transition.animation,
+            const transitionObj: TransitionType = {
+              type: "transition",
+              animation: transition.animation,
               duration: transition.duration,
               direction: transition.direction,
               wipeDirection: transition.wipeDirection,
@@ -88,6 +89,7 @@ export const RenderTrack: React.FC<{
 
           const scene = item as SceneType
           const duration = sceneDurations[idx] ?? 1
+
           return (
             <TransitionSeries.Sequence
               key={idx}

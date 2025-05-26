@@ -34,8 +34,6 @@ export const RenderTracks = <T,>({
     track.duration = duration
   })
 
-  console.log(tracks)
-
   return (
     <AbsoluteFill>
       {tracks.map((track) => (

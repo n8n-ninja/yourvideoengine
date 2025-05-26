@@ -1,5 +1,5 @@
 import React from "react"
-import { Video } from "remotion"
+import { Img, Video } from "remotion"
 import { CameraBlockType } from "@/schemas/project"
 import { useKeyframes } from "@/hooks/useKeyframes"
 import { getStyle } from "@/utils/getStyle"
@@ -73,7 +73,7 @@ const CameraComponent: React.FC<{
   return (
     <>
       {isImage(url) ? (
-        <img
+        <Img
           src={url}
           alt="Camera content"
           style={videoStyle}

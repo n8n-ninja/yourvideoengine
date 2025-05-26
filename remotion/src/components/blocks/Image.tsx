@@ -1,6 +1,7 @@
 import React from "react"
 import { ImageBlockType } from "@/schemas/project"
 import { getStyle } from "@/utils/getStyle"
+import { Img } from "remotion"
 
 /**
  * Image: affiche une image avec style custom.
@@ -14,7 +15,7 @@ export const Image: React.FC<{
   const { url, objectFit = "cover", style } = image
   const userStyle = getStyle(style)
   return (
-    <img
+    <Img
       src={url}
       alt="Image content"
       style={{
