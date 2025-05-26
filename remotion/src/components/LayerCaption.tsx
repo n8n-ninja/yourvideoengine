@@ -145,10 +145,10 @@ export const Caption: React.FC<{
       })
     }
   }, [
-    activePage,
+    // activePage,
     currentMs,
-    highlightActiveWordBackground,
-    activeWordBackgroundPadding,
+    // highlightActiveWordBackground,
+    // activeWordBackgroundPadding,
   ])
 
   const getActiveWordPadding = () => {

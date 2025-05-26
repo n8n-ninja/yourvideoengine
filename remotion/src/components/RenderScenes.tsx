@@ -10,29 +10,7 @@ import { Layer } from "@/components/Layer"
 import { getTransition } from "@/utils/getTransition"
 import { addSound } from "@/utils/addSound"
 import { useVideoConfig } from "remotion"
-// import { parseMedia } from "@remotion/media-parser"
-
-// const getTrackDuration = async (scene: SceneType) => {
-//   let duration = scene.duration ?? 1
-
-//   for (const layer of scene.layers) {
-//     if (layer.type === "camera" && !layer.timing) {
-//       const layerDuration = await parseMedia({
-//         src: layer.url,
-//         acknowledgeRemotionLicense: true,
-//         fields: { durationInSeconds: true },
-//       })
-//       if (
-//         layerDuration.durationInSeconds &&
-//         layerDuration.durationInSeconds > duration
-//       ) {
-//         duration = layerDuration.durationInSeconds
-//       }
-//     }
-//   }
-
-//   return duration
-// }
+import { getSceneDuration } from "@/utils/getSceneDuration"
 
 export const RenderScenes: React.FC<{
   scenes: SegmentType[]
@@ -50,8 +28,8 @@ export const RenderScenes: React.FC<{
         scenes.map(async (item) => {
           if ("type" in item && item.type === "transition") return null
           const s = item as SceneType
-          return 10
-          // return await getTrackDuration(s)
+
+          return await getSceneDuration(s)
         }),
       )
       if (isMounted) {
@@ -71,6 +49,7 @@ export const RenderScenes: React.FC<{
     <TransitionSeries>
       {scenes.map((item: SegmentType, idx: number) => {
         if ("type" in item && item.type === "transition") {
+          console.log(item)
           const t = item as TransitionType
           const transitionObj = {
             type: t.animation,
@@ -97,7 +76,7 @@ export const RenderScenes: React.FC<{
         return (
           <TransitionSeries.Sequence
             key={idx}
-            durationInFrames={Math.round((s.duration ?? 1) * fps)}
+            durationInFrames={Math.round((sceneDurations[idx] ?? 1) * fps)}
           >
             {s.layers.map((element: LayerType, i: number) => (
               <Layer key={i} element={element} />

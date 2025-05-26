@@ -22,6 +22,7 @@ import { DemoEmoji } from "@/compositions/demo/demo-emoji"
 import { DemoBackground } from "@/compositions/demo/demo-background"
 import { ClientDemoShawheen } from "@/compositions/demo/client-demo-shawheen"
 import { TemplateBasic3Shots } from "@/compositions/templates/3shots-basic"
+import { TemplateBasic3ShotsBetter } from "@/compositions/templates/3shots-better"
 
 export const RemotionRoot: React.FC = () => {
   const inputProps = getInputProps<{
@@ -50,6 +51,7 @@ export const RemotionRoot: React.FC = () => {
 
       <Folder name="Projects">
         <TemplateBasic3Shots />
+        <TemplateBasic3ShotsBetter />
       </Folder>
 
       <Folder name="ClientDemo">

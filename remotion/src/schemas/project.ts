@@ -149,7 +149,7 @@ export const Layer = z.discriminatedUnion("type", [
 export const Scene = z.object({
   id: z.string().uuid().optional(),
   type: z.literal("scene").optional(),
-  duration: z.number(),
+  duration: z.number().optional(),
   layers: z.array(Layer),
 })
 
