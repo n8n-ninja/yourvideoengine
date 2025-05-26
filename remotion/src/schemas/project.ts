@@ -8,7 +8,7 @@ import { EffectsSchema } from "./effect"
 import { LetterAnimationConfigSchema } from "@/components/LetterAnimation"
 import { AnimatedEmoji } from "@remotion/animated-emoji"
 
-const BaseLayer = z.object({
+const BaseBlock = z.object({
   id: z.string().uuid().optional(),
   timing: TimingSchema.optional(),
   position: PositionSchema.optional(),
@@ -17,7 +17,7 @@ const BaseLayer = z.object({
   effects: EffectsSchema.optional(),
 })
 
-export const TitleLayer = z
+export const TitleBlock = z
   .object({
     type: z.literal("title"),
     title: z.string(),
@@ -25,7 +25,7 @@ export const TitleLayer = z
     style: StyleSchema.optional(),
     letterAnimation: LetterAnimationConfigSchema.optional(),
   })
-  .merge(BaseLayer)
+  .merge(BaseBlock)
 
 export const Word = z.object({
   word: z.string(),
@@ -33,7 +33,7 @@ export const Word = z.object({
   end: z.number(),
 })
 
-export const CaptionLayer = z
+export const CaptionBlock = z
   .object({
     type: z.literal("caption"),
     boxStyle: StyleSchema.optional(),
@@ -68,9 +68,9 @@ export const CaptionLayer = z
       })
       .optional(),
   })
-  .merge(BaseLayer)
+  .merge(BaseBlock)
 
-export const ImageLayer = z
+export const ImageBlock = z
   .object({
     type: z.literal("image"),
     url: z.string(),
@@ -79,9 +79,9 @@ export const ImageLayer = z
       .optional(),
     style: StyleSchema.optional(),
   })
-  .merge(BaseLayer)
+  .merge(BaseBlock)
 
-export const AudioLayer = z
+export const AudioBlock = z
   .object({
     type: z.literal("audio"),
     sound: z.string(),
@@ -98,9 +98,9 @@ export const AudioLayer = z
       )
       .optional(),
   })
-  .merge(BaseLayer)
+  .merge(BaseBlock)
 
-export const CameraLayer = z
+export const CameraBlock = z
   .object({
     type: z.literal("camera"),
     url: z.string(),
@@ -128,29 +128,29 @@ export const CameraLayer = z
       )
       .optional(),
   })
-  .merge(BaseLayer)
+  .merge(BaseBlock)
 
-export const EmojiLayer = z
+export const EmojiBlock = z
   .object({
     type: z.literal("emoji"),
     emoji: z.string(),
   })
-  .merge(BaseLayer)
+  .merge(BaseBlock)
 
-export const Layer = z.discriminatedUnion("type", [
-  CameraLayer,
-  ImageLayer,
-  TitleLayer,
-  AudioLayer,
-  CaptionLayer,
-  EmojiLayer,
+export const Block = z.discriminatedUnion("type", [
+  CameraBlock,
+  ImageBlock,
+  TitleBlock,
+  AudioBlock,
+  CaptionBlock,
+  EmojiBlock,
 ])
 
 export const Scene = z.object({
   id: z.string().uuid().optional(),
-  type: z.literal("scene").optional(),
+  type: z.literal("scene"),
   duration: z.number().optional(),
-  layers: z.array(Layer),
+  blocks: z.array(Block),
 })
 
 export const Transition = z.object({
@@ -176,15 +176,15 @@ export const Transition = z.object({
   sound: z.string().optional(),
 })
 
-export const Segment = z.discriminatedUnion("type", [Scene, Transition])
+export const TrackItem = z.discriminatedUnion("type", [Scene, Transition])
 
-export const Storyboard = z.object({
-  tracks: z.array(Segment).optional(),
-  overlay: Scene.optional(),
-  fps: z.number().optional(),
+export const Track = z.object({
+  id: z.string().uuid().optional(),
+  duration: z.number().default(0).optional(),
+  items: z.array(TrackItem),
 })
 
-export const BackgroundSchema = z.object({
+export const Background = z.object({
   backgroundColor: z.union([z.string(), z.array(z.string())]).optional(),
   backgroundGradient: z.string().optional(),
   backgroundImage: z.string().optional(),
@@ -193,22 +193,17 @@ export const BackgroundSchema = z.object({
   animationType: z.enum(["crossfade", "hard"]).optional(),
 })
 
-export type StoryboardType = z.infer<typeof Storyboard>
-
-export type SegmentType = z.infer<typeof Segment>
+export type TrackType = z.infer<typeof Track>
+export type TrackItemType = z.infer<typeof TrackItem>
 export type SceneType = z.infer<typeof Scene>
 export type TransitionType = z.infer<typeof Transition>
-
-export type LayerType = z.infer<typeof Layer>
-
-export type AudioLayerType = z.infer<typeof AudioLayer>
-export type TitleLayerType = z.infer<typeof TitleLayer>
-export type CaptionLayerType = z.infer<typeof CaptionLayer>
-export type ImageLayerType = z.infer<typeof ImageLayer>
-export type CameraLayerType = z.infer<typeof CameraLayer>
-type EmojiName = React.ComponentProps<typeof AnimatedEmoji>["emoji"]
-export type EmojiLayerType = Omit<z.infer<typeof EmojiLayer>, "emoji"> & {
-  emoji: EmojiName
+export type BlockType = z.infer<typeof Block>
+export type AudioBlockType = z.infer<typeof AudioBlock>
+export type TitleBlockType = z.infer<typeof TitleBlock>
+export type CaptionBlockType = z.infer<typeof CaptionBlock>
+export type ImageBlockType = z.infer<typeof ImageBlock>
+export type CameraBlockType = z.infer<typeof CameraBlock>
+export type EmojiBlockType = Omit<z.infer<typeof EmojiBlock>, "emoji"> & {
+  emoji: React.ComponentProps<typeof AnimatedEmoji>["emoji"]
 }
-
-export type BackgroundType = z.infer<typeof BackgroundSchema>
+export type BackgroundType = z.infer<typeof Background>

@@ -2,12 +2,12 @@ import { z } from "zod"
 import { AbsoluteFill, Composition, CalculateMetadataFunction } from "remotion"
 import { Word } from "@/schemas/project"
 import { createCameraLayer } from "@/factories/camera"
-import { RenderScenes } from "@/components/RenderScenes"
+import { RenderScenes } from "@/components/RenderTrack"
 import { words, urls } from "./3shots-basic-defaultProps"
 import { createCaptionLayer } from "@/factories/caption"
 import { createTitleLayer } from "@/factories/title"
 import { Audio } from "@/components/LayerAudio"
-import { getSceneDuration } from "@/utils/getSceneDuration"
+import { getSceneDuration } from "@/utils/getDuration"
 
 export const Schema = z.object({
   visualHook: z.string(),

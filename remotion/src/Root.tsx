@@ -1,15 +1,7 @@
 import React from "react"
-import { Composition, Folder, getInputProps } from "remotion"
-import { Storyboard, LayerType, SegmentType } from "@/schemas/project"
-import "./styles/fonts.css"
-
-import {
-  ProjectComposition,
-  calculateMetadata,
-} from "@/compositions/ProjectComposition"
+import { Folder } from "remotion"
 import { DemoCamera } from "@/compositions/demo/demo-camera"
 import { DemoCaption } from "@/compositions/demo/demo-caption"
-
 import { DemoEffect } from "@/compositions/demo/demo-effect"
 import { DemoImage } from "@/compositions/demo/demo-image"
 import { DemoPosition } from "@/compositions/demo/demo-position"
@@ -23,23 +15,22 @@ import { DemoBackground } from "@/compositions/demo/demo-background"
 import { ClientDemoShawheen } from "@/compositions/demo/client-demo-shawheen"
 import { TemplateBasic3Shots } from "@/compositions/templates/3shots-basic"
 import { TemplateBasic3ShotsBetter } from "@/compositions/templates/3shots-better"
+import "./styles/fonts.css"
 
 export const RemotionRoot: React.FC = () => {
-  const inputProps = getInputProps<{
-    fps: number
-    width: number
-    height: number
-    tracks: SegmentType[]
-    overlay?: LayerType[]
-  }>()
+  // const inputProps = getInputProps<{
+  //   fps: number
+  //   width: number
+  //   height: number
+  // }>()
 
-  const fps = inputProps.fps || 30
-  const width = inputProps.width || 1080
-  const height = inputProps.height || 1920
+  // const fps = inputProps.fps || 30
+  // const width = inputProps.width || 1080
+  // const height = inputProps.height || 1920
 
   return (
     <>
-      <Composition
+      {/* <Composition
         id="Edit"
         component={ProjectComposition}
         fps={fps}
@@ -47,7 +38,7 @@ export const RemotionRoot: React.FC = () => {
         height={height}
         schema={Storyboard}
         calculateMetadata={calculateMetadata}
-      />
+      /> */}
 
       <Folder name="Projects">
         <TemplateBasic3Shots />

@@ -1,19 +1,20 @@
 import { z } from "zod"
 import { AbsoluteFill, Composition, CalculateMetadataFunction } from "remotion"
 import {
-  CaptionLayerType,
-  TitleLayerType,
+  CaptionBlockType,
+  TitleBlockType,
   Word,
   TransitionType,
-  EmojiLayerType,
+  EmojiBlockType,
+  TrackType,
 } from "@/schemas/project"
 import { createCameraLayer } from "@/factories/camera"
-import { RenderScenes } from "@/components/RenderScenes"
+import { RenderTrack } from "@/components/RenderTrack"
 import { words, urls } from "./3shots-basic-defaultProps"
 import { createCaptionLayer } from "@/factories/caption"
 import { createTitleLayer } from "@/factories/title"
-import { Audio } from "@/components/LayerAudio"
-import { getSceneDuration } from "@/utils/getSceneDuration"
+import { calculateDurations } from "@/utils/getDuration"
+import { useState, useEffect } from "react"
 
 export const Schema = z.object({
   visualHook: z.string(),
@@ -24,9 +25,10 @@ export const Schema = z.object({
   outroUrl: z.string(),
   outroCaptions: z.array(Word),
   musicUrl: z.string(),
+  fps: z.number().optional(),
 })
 
-const hookDefaultProps: Partial<TitleLayerType> = {
+const hookDefaultProps: Partial<TitleBlockType> = {
   containerStyle: {
     background: "#042d5c80",
   },
@@ -39,7 +41,7 @@ const hookDefaultProps: Partial<TitleLayerType> = {
   },
 }
 
-const captionDefaultProps: Partial<CaptionLayerType> = {
+const captionDefaultProps: Partial<CaptionBlockType> = {
   position: {
     top: 50,
     left: 10,
@@ -89,11 +91,14 @@ const captionDefaultProps: Partial<CaptionLayerType> = {
   ],
 }
 
-export const getTracks = (props: z.infer<typeof Schema>) => {
+export const getTracks = async (
+  props: z.infer<typeof Schema>,
+): Promise<TrackType[]> => {
   const hook = createTitleLayer({
     ...hookDefaultProps,
     title: props.visualHook,
   })
+
   const introCamera = createCameraLayer({
     url: props.introUrl,
     keyFrames: [
@@ -133,16 +138,21 @@ export const getTracks = (props: z.infer<typeof Schema>) => {
       inDuration: 1,
     },
   })
+
   const introCaption = createCaptionLayer({
     ...captionDefaultProps,
     words: props.introCaptions,
   })
+
   const bodyCamera = createCameraLayer({ url: props.bodyUrl })
+
   const bodyCaption = createCaptionLayer({
     ...captionDefaultProps,
     words: props.bodyCaptions,
   })
+
   const outroCamera = createCameraLayer({ url: props.outroUrl })
+
   const outroCaption = createCaptionLayer({
     ...captionDefaultProps,
     words: props.outroCaptions,
@@ -155,7 +165,7 @@ export const getTracks = (props: z.infer<typeof Schema>) => {
     sound: "woosh-3.mp3",
   }
 
-  const emoji: EmojiLayerType = {
+  const emoji: EmojiBlockType = {
     type: "emoji",
     emoji: "100",
     position: {
@@ -175,33 +185,69 @@ export const getTracks = (props: z.infer<typeof Schema>) => {
     },
   }
 
-  return [
-    { layers: [introCamera, hook, introCaption] },
-    transition,
-    { layers: [bodyCamera, bodyCaption, emoji] },
-    transition,
-    { layers: [outroCamera, outroCaption] },
+  const tracks: TrackType[] = [
+    {
+      id: "global",
+      duration: Infinity,
+      items: [
+        {
+          type: "scene",
+          blocks: [
+            {
+              type: "audio",
+              sound: props.musicUrl,
+              volume: 0.1,
+              reveal: {
+                type: "fade",
+                duration: 0.5,
+              },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: "3shots-better",
+      items: [
+        {
+          type: "scene",
+          blocks: [introCamera, hook, introCaption],
+        },
+        transition,
+        {
+          type: "scene",
+          blocks: [bodyCamera, bodyCaption, emoji],
+        },
+        transition,
+        {
+          type: "scene",
+          blocks: [outroCamera, outroCaption],
+        },
+      ],
+    },
   ]
+
+  return await calculateDurations(tracks)
 }
 
 export const Component: React.FC<z.infer<typeof Schema>> = (props) => {
-  const tracks = getTracks(props)
+  const [tracks, setTracks] = useState<TrackType[]>([])
+
+  useEffect(() => {
+    const fetchTracks = async () => {
+      const tracks = await getTracks(props)
+      setTracks(tracks)
+    }
+    fetchTracks()
+  }, [props])
+
+  if (!tracks.length) return null
 
   return (
     <AbsoluteFill>
-      <RenderScenes scenes={tracks} />
-
-      <Audio
-        audio={{
-          type: "audio",
-          sound: props.musicUrl,
-          volume: 0.1,
-          reveal: {
-            type: "fade",
-            duration: 0.5,
-          },
-        }}
-      />
+      {tracks.map((track) => (
+        <RenderTrack key={track.id} track={track} />
+      ))}
     </AbsoluteFill>
   )
 }
@@ -209,23 +255,11 @@ export const Component: React.FC<z.infer<typeof Schema>> = (props) => {
 export const calculateMetadata: CalculateMetadataFunction<
   z.infer<typeof Schema>
 > = async ({ props, defaultProps, abortSignal }) => {
-  const tracks = getTracks(props)
+  const tracks = await getTracks(props)
 
-  const sceneDurations = await Promise.all(
-    tracks.map(async (track) => {
-      if ("type" in track && track.type === "transition") {
-        return -(track.duration ?? 0)
-      } else if ("layers" in track) {
-        return await getSceneDuration(track)
-      }
-      return 0
-    }),
-  )
-
+  console.log(tracks)
   return {
-    durationInFrames: Math.round(
-      sceneDurations.reduce((acc, curr) => acc + curr, 0) * 30,
-    ),
+    durationInFrames: Math.round(tracks[0].duration ?? 1) * (props.fps ?? 30),
   }
 }
 

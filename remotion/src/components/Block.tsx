@@ -1,9 +1,7 @@
 import React from "react"
 import { Sequence, useCurrentFrame } from "remotion"
 
-import { LayerType } from "@/schemas/project"
-import type { EmojiLayerType } from "@/schemas/project"
-
+import { BlockType, EmojiBlockType } from "@/schemas/project"
 import { Audio } from "./LayerAudio"
 import { Camera } from "./LayerCamera"
 import { Caption } from "./LayerCaption"
@@ -21,7 +19,7 @@ import { getStyle } from "@/utils/getStyle"
 import { timelineElementContainerStyle } from "@/styles/default-style"
 
 const LayerRouter: React.FC<{
-  element: LayerType
+  element: BlockType
   revealProgress?: number
 }> = ({ element, revealProgress }) => {
   switch (element.type) {
@@ -36,14 +34,14 @@ const LayerRouter: React.FC<{
     case "image":
       return <Image image={element} />
     case "emoji":
-      return <Emoji emoji={element as EmojiLayerType} />
+      return <Emoji emoji={element as EmojiBlockType} />
     default:
       return null
   }
 }
 
-export const Layer: React.FC<{
-  element: LayerType
+export const Block: React.FC<{
+  element: BlockType
 }> = ({ element }) => {
   const frame = useCurrentFrame()
 

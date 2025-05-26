@@ -7,7 +7,7 @@ import type {
   SceneType,
   BackgroundType,
 } from "@/schemas/project"
-import { Layer } from "@/components/Layer"
+import { Layer } from "@/components/Block"
 import { getTransition } from "@/utils/getTransition"
 import { addSound } from "@/utils/addSound"
 import { useVideoConfig, CalculateMetadataFunction } from "remotion"
