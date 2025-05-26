@@ -1,5 +1,7 @@
 export const VIDEO_THAIS_5_URL = `https://diwa7aolcke5u.cloudfront.net/uploads/0d9256b1c3494d71adc592ffebf7ba85.mp4`
 
+export const visualHook = "Basic editing + caption template"
+
 export const urls = {
   body: "https://diwa7aolcke5u.cloudfront.net/uploads/0d9256b1c3494d71adc592ffebf7ba85.mp4",
   outro:
@@ -209,3 +211,17 @@ export const words = [
     },
   },
 ]
+
+export const musicUrl =
+  "https://diwa7aolcke5u.cloudfront.net/uploads/1748099564616-mbgrk0.mp3"
+
+export const defaultProps = {
+  visualHook,
+  introUrl: urls.intro,
+  introCaptions: words[0].response.words,
+  bodyUrl: urls.body,
+  bodyCaptions: words[1].response.words,
+  outroUrl: urls.outro,
+  outroCaptions: words[2].response.words,
+  musicUrl,
+}

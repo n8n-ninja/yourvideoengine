@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { AbsoluteFill, Composition, CalculateMetadataFunction } from "remotion"
+import { Composition } from "remotion"
 import {
   CaptionBlockType,
   TitleBlockType,
@@ -11,12 +11,12 @@ import { createTransition } from "@/factories/transition"
 import { createEmoji } from "@/factories/emoji"
 import { createAudio } from "@/factories/audio"
 import { createScene } from "@/factories/scene"
-import { RenderTrack } from "@/components/RenderTrack"
 import { words, urls } from "./3shots-basic-defaultProps"
 import { createCaptionLayer } from "@/factories/caption"
 import { createTitleLayer } from "@/factories/title"
 import { createTrack } from "@/factories/track"
-import { useState, useEffect } from "react"
+import { RenderTracks } from "@/components/RenderTracks"
+import { createCalculateTracksMetadata } from "@/utils/calculateTracksMetadata"
 
 export const Schema = z.object({
   visualHook: z.string(),
@@ -29,19 +29,6 @@ export const Schema = z.object({
   musicUrl: z.string(),
   fps: z.number().optional(),
 })
-
-const hookDefaultProps: Partial<TitleBlockType> = {
-  containerStyle: {
-    background: "#042d5c80",
-  },
-  position: {
-    bottom: 80,
-  },
-  reveal: {
-    type: "slide-down",
-    duration: 1,
-  },
-}
 
 const captionDefaultProps: Partial<CaptionBlockType> = {
   position: {
@@ -97,7 +84,17 @@ export const getTracks = async (
   props: z.infer<typeof Schema>,
 ): Promise<TrackType[]> => {
   const hook = createTitleLayer({
-    ...hookDefaultProps,
+    containerStyle: {
+      background: "#042d5c80",
+    },
+    position: {
+      bottom: 80,
+    },
+    reveal: {
+      type: "slide-down",
+      duration: 1,
+    },
+
     title: props.visualHook,
   })
 
@@ -209,7 +206,6 @@ export const getTracks = async (
       transition,
       createScene({
         id: "body",
-
         blocks: [bodyCamera, bodyCaption, emoji],
       }),
       transition,
@@ -222,7 +218,7 @@ export const getTracks = async (
 
   const musicTrack = createTrack({
     id: "global",
-    duration: mainTrack.duration,
+
     items: [
       {
         type: "scene",
@@ -231,46 +227,19 @@ export const getTracks = async (
     ],
   })
 
-  return [musicTrack, mainTrack]
+  return [mainTrack, musicTrack]
 }
 
-export const Component: React.FC<z.infer<typeof Schema>> = (props) => {
-  const [tracks, setTracks] = useState<TrackType[]>([])
+export const Component = (props: z.infer<typeof Schema>) => (
+  <RenderTracks getTracks={getTracks} props={props} />
+)
 
-  useEffect(() => {
-    const fetchTracks = async () => {
-      const tracks = await getTracks(props)
-      setTracks(tracks)
-    }
-    fetchTracks()
-  }, [props])
+export const calculateMetadata = createCalculateTracksMetadata(getTracks)
 
-  if (!tracks.length) return null
-
-  return (
-    <AbsoluteFill>
-      {tracks.map((track) => (
-        <RenderTrack key={track.id} track={track} />
-      ))}
-    </AbsoluteFill>
-  )
-}
-
-export const calculateMetadata: CalculateMetadataFunction<
-  z.infer<typeof Schema>
-> = async ({ props, defaultProps, abortSignal }) => {
-  const tracks = await getTracks(props)
-
-  // console.log(tracks)
-  return {
-    durationInFrames: Math.round(tracks[0].duration ?? 1) * (props.fps ?? 30),
-  }
-}
-
-export const TemplateBasic3ShotsBetter = () => {
+export const Template3shots = () => {
   return (
     <Composition
-      id="3ShotBetter"
+      id="3shots"
       component={Component}
       schema={Schema}
       fps={30}

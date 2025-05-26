@@ -17,6 +17,45 @@ export const RenderTrack: React.FC<{
 }> = ({ track }) => {
   const { fps } = useVideoConfig()
 
+  // Préparation des durées pour chaque scène
+  const scenes: { index: number; scene: SceneType }[] = []
+  const transitions: { index: number; transition: TransitionType }[] = []
+
+  track.items.forEach((item, idx) => {
+    if ("type" in item && item.type === "transition") {
+      transitions.push({ index: idx, transition: item as TransitionType })
+    } else {
+      scenes.push({ index: idx, scene: item as SceneType })
+    }
+  })
+
+  const totalTrackDuration = track.duration ?? 0
+  const totalTransitionsDuration = transitions.reduce(
+    (sum, t) => sum + (t.transition.duration ?? 0),
+    0,
+  )
+  const scenesWithDuration = scenes.filter((s) => s.scene.duration != null)
+  const scenesWithoutDuration = scenes.filter((s) => s.scene.duration == null)
+  const totalScenesWithDuration = scenesWithDuration.reduce(
+    (sum, s) => sum + (s.scene.duration ?? 0),
+    0,
+  )
+  const remainingDuration =
+    totalTrackDuration - totalTransitionsDuration - totalScenesWithDuration
+  const durationForEachSceneWithout =
+    scenesWithoutDuration.length > 0
+      ? Math.max(remainingDuration / scenesWithoutDuration.length, 0)
+      : 0
+
+  // Map index -> duration à utiliser
+  const sceneDurations: Record<number, number> = {}
+  scenesWithDuration.forEach((s) => {
+    sceneDurations[s.index] = s.scene.duration ?? 1
+  })
+  scenesWithoutDuration.forEach((s) => {
+    sceneDurations[s.index] = durationForEachSceneWithout
+  })
+
   return (
     <AbsoluteFill id={track.id}>
       <TransitionSeries>
@@ -46,11 +85,13 @@ export const RenderTrack: React.FC<{
               />
             )
           }
+
           const scene = item as SceneType
+          const duration = sceneDurations[idx] ?? 1
           return (
             <TransitionSeries.Sequence
               key={idx}
-              durationInFrames={(scene.duration ?? 1) * fps}
+              durationInFrames={duration * fps}
             >
               {scene.blocks.map((element: BlockType, i: number) => (
                 <Block key={i} element={element} />

@@ -13,8 +13,7 @@ import { DemoOverlayOnly } from "@/compositions/demo/demo-overlay-only"
 import { DemoEmoji } from "@/compositions/demo/demo-emoji"
 import { DemoBackground } from "@/compositions/demo/demo-background"
 import { ClientDemoShawheen } from "@/compositions/demo/client-demo-shawheen"
-import { TemplateBasic3Shots } from "@/compositions/templates/3shots-basic"
-import { TemplateBasic3ShotsBetter } from "@/compositions/templates/3shots-better"
+import { Template3shots } from "@/compositions/templates/3shots"
 import "./styles/fonts.css"
 
 export const RemotionRoot: React.FC = () => {
@@ -41,8 +40,7 @@ export const RemotionRoot: React.FC = () => {
       /> */}
 
       <Folder name="Projects">
-        <TemplateBasic3Shots />
-        <TemplateBasic3ShotsBetter />
+        <Template3shots />
       </Folder>
 
       <Folder name="ClientDemo">
