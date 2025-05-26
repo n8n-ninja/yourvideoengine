@@ -1,6 +1,6 @@
 import { useCurrentFrame, useVideoConfig } from "remotion"
 import { getProgressEasing } from "@/utils/getProgressEasing"
-import { ProgressEasing } from "@/schemas/index_2"
+import type { ProgressEasing } from "@/schemas/project"
 
 /**
  * React hook to compute progress and phase for an animation with easing at the current video frame.

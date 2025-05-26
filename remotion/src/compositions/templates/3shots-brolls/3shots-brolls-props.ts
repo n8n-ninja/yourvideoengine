@@ -1,31 +1,24 @@
-import { Composition } from "remotion"
-import { Storyboard } from "@/schemas/project"
-import {
-  ProjectComposition,
-  calculateMetadata,
-} from "@/compositions/ProjectComposition"
-
-const URL_INTRO =
+const introUrl =
   "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demohook.mp4"
-const URL_BODY =
+const bodyUrl =
   "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demobody.mp4"
-const URL_OUTRO =
+const outroUrl =
   "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demooutro.mp4"
 
-const BROL_URL_1 =
+const broll1Url =
   "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo1b7cb741-74bf-40e1-b680-be0d5273f023.mp4"
-const BROL_URL_2 =
+const broll2Url =
   "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo2a8cd05d-c9d1-4197-803a-58503f651c2c.mp4"
-const BROL_URL_3 =
+const broll3Url =
   "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo3d0a3e33-d053-4e0b-8a21-2cf84c035b02.mp4"
-const BROL_URL_4 =
+const broll4Url =
   "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo3fe49942-f423-4de9-9ad0-b2a9f9d6e290.mp4"
-const BROL_URL_5 =
+const broll5Url =
   "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo5788a189-0560-449b-8ac8-fbdf6eda2d4f.mp4"
-const BROL_URL_6 =
+const broll6Url =
   "https://diwa7aolcke5u.cloudfront.net/uploads/shawheen-yve-demo7d5342dd-493a-498f-b837-b7b626ec30ed.mp4"
 
-const MUSIC_URL =
+const musicUrl =
   "https://diwa7aolcke5u.cloudfront.net/uploads/1748099564616-mbgrk0.mp3"
 
 const introWords = [
@@ -1351,220 +1344,13 @@ const outroWords = [
   },
 ]
 
-const scenes = [
-  {
-    duration: 9.057,
-    layers: [
-      {
-        type: "audio",
-        sound: "woosh-1.mp3",
-        timing: { start: 0.05, duration: 9.057 },
-      },
-      {
-        type: "camera",
-        url: URL_INTRO,
-        keyFrames: [
-          { time: 0, value: { scale: 1 } },
-          { time: 0.1, value: { scale: 1.1 } },
-          { time: 0.4, value: { scale: 1.5 } },
-          { time: 3, value: { scale: 1 } },
-          { time: 4, value: { scale: 1.4 } },
-          { time: -0.01, value: { scale: 1 } },
-        ],
-      },
-      {
-        type: "caption",
-        words: introWords,
-        textStyle: "text-transform: uppercase",
-        activeWordStyle: "transform: scale(1.1) skewX(-10deg)",
-        position: { bottom: 70 },
-      },
-      {
-        type: "title",
-        title: "🏠",
-        position: { top: 60 },
-        style: "font-size: 20rem",
-        timing: { start: 2.2, duration: 3 },
-        reveal: { type: "zoom-in", duration: 0.35 },
-        effects: [
-          {
-            type: "wobble",
-            options: { speed: 0.5, minOpacity: 0.2, maxOpacity: 1 },
-          },
-        ],
-      },
-      {
-        type: "audio",
-        sound: "slow-woosh-5.mp3",
-        timing: { start: 1.2 },
-      },
-    ],
-  },
-  {
-    type: "transition",
-    animation: "slide",
-    duration: 0.5,
-    sound: "woosh-3.mp3",
-  },
-  {
-    duration: 55.816,
-    layers: [
-      {
-        type: "camera",
-        url: URL_BODY,
-        keyFrames: [
-          { time: 0, value: { scale: 1 } },
-          { time: 20, value: { scale: 1.4 } },
-          { time: 35, value: { scale: 1 } },
-          { time: 50, value: { scale: 1.6 } },
-        ],
-      },
-      {
-        type: "camera",
-        url: BROL_URL_1,
-        timing: { start: 4, duration: 5 },
-        reveal: { type: "zoom-out", duration: 0.35 },
-      },
-      {
-        type: "camera",
-        url: BROL_URL_2,
-        timing: { start: 10, duration: 3 },
-        position: { top: 0, left: 10, right: 10, bottom: 30 },
-        reveal: { type: "slide-down", duration: 0.35 },
-        containerStyle:
-          "border-radius: 30px; box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);",
-      },
-      {
-        type: "camera",
-        url: BROL_URL_3,
-        timing: { start: 19, duration: 5 },
-        reveal: { type: "zoom-out", duration: 0.35 },
-      },
-      {
-        type: "camera",
-        url: BROL_URL_4,
-        timing: { start: 30, duration: 5 },
-        reveal: { type: "zoom-out", duration: 0.35 },
-      },
-      {
-        type: "camera",
-        url: BROL_URL_5,
-        timing: { start: 40, duration: 4 },
-        reveal: { type: "zoom-in", duration: 0.35 },
-      },
-      {
-        type: "camera",
-        url: BROL_URL_6,
-        timing: { start: 50, duration: 4 },
-        position: { bottom: 60 },
-        containerStyle:
-          "border-radius: 30px; box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);",
-        reveal: { type: "fade", duration: 0.35 },
-      },
-      {
-        type: "caption",
-        words: bodyWords,
-        boxStyle: "background-color: transparent",
-        textStyle: "text-transform: uppercase",
-        combineTokensWithinMilliseconds: 800,
-        activeWordStyle: "transform: scale(1.3) skewX(-10deg)",
-        position: { top: 70 },
-        multiColors: ["#d47e1c", "#d41c5c", "#1c90d4"],
-      },
-    ],
-  },
-  {
-    type: "transition",
-    animation: "clockWipe",
-    duration: 0.5,
-    sound: "woosh-3.mp3",
-  },
-  {
-    duration: 15.614,
-    layers: [
-      {
-        type: "camera",
-        url: URL_OUTRO,
-        keyFrames: [
-          { time: 0, value: { scale: 1.5 } },
-          { time: 0.1, value: { scale: 1.55 } },
-          { time: 3, value: { scale: 1 } },
-          { time: -0.01, value: { scale: 1.3 } },
-        ],
-      },
-      {
-        type: "title",
-        title: "@Shawheen",
-        position: { top: 80, left: 10, right: 10, bottom: 10 },
-        timing: { start: 3 },
-        reveal: { type: "slide-up", duration: 0.35 },
-        containerStyle:
-          "background-color: #d41c5c; border: 3px solid white; box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.5);",
-        effects: [
-          {
-            type: "pointer",
-            options: { direction: "bottom", amplitude: 0.5, speed: 0.4 },
-          },
-        ],
-        style: "text-transform: uppercase",
-      },
-      {
-        type: "title",
-        title: "XXX-YYY-ZZZ",
-        position: { top: 90 },
-        timing: { start: 5 },
-        reveal: { type: "fade", duration: 0.35 },
-        style: "text-transform: uppercase; font-weight: 500; font-size: 3rem",
-      },
-      {
-        type: "caption",
-        words: outroWords,
-        textStyle: "text-transform: uppercase",
-        activeWordStyle: "transform: scale(1.1) skewX(-10deg)",
-        position: { bottom: 70 },
-      },
-    ],
-  },
-]
-
-export const ClientDemoShawheen = ({
-  fps = 30,
-  width = 1080,
-  height = 1920,
-}: {
-  fps?: number
-  width?: number
-  height?: number
-}) => {
-  return (
-    <Composition
-      id="ClientDemoShawheen"
-      component={ProjectComposition}
-      durationInFrames={Math.ceil(
-        scenes.reduce((acc, s) => acc + (s.duration ?? 0), 0) * fps,
-      )}
-      fps={fps}
-      width={width}
-      height={height}
-      schema={Storyboard}
-      calculateMetadata={calculateMetadata}
-      defaultProps={{
-        tracks: scenes,
-        overlay: {
-          layers: [
-            {
-              type: "sound",
-              sound: MUSIC_URL,
-              timing: { start: 3 },
-              volume: 0.2,
-              transition: {
-                type: "fade",
-                duration: 2,
-              },
-            },
-          ],
-        },
-      }}
-    />
-  )
+export const defaultProps = {
+  introUrl,
+  introWords,
+  bodyUrl,
+  bodyWords,
+  outroUrl,
+  outroWords,
+  brolUrls: [broll1Url, broll2Url, broll3Url, broll4Url, broll5Url, broll6Url],
+  musicUrl,
 }

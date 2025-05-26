@@ -208,3 +208,18 @@ export type EmojiBlockType = Omit<z.infer<typeof EmojiBlock>, "emoji"> & {
   emoji: React.ComponentProps<typeof AnimatedEmoji>["emoji"]
 }
 export type BackgroundType = z.infer<typeof Background>
+
+export { RevealType } from "./reveal"
+export type TransitionReveal = z.infer<typeof RevealSchema>
+export type ProgressEasing = {
+  inDuration?: number
+  outDuration?: number
+  inEasing?: string
+  outEasing?: string
+  duration?: number
+  easing?: string
+}
+
+export type { Keyframe } from "./keyframe"
+
+export type { Timing } from "./timing"

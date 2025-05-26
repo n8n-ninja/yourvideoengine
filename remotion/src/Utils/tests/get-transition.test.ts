@@ -6,7 +6,7 @@ import { slide } from "@remotion/transitions/slide"
 import { flip } from "@remotion/transitions/flip"
 import { clockWipe } from "@remotion/transitions/clock-wipe"
 import { addSound } from "../addSound"
-import type { Transition } from "@/schemas/index_2"
+import type { TransitionType } from "@/schemas/project"
 
 vi.mock("@remotion/transitions/fade", () => ({ fade: vi.fn(() => "fade") }))
 vi.mock("@remotion/transitions/wipe", () => ({ wipe: vi.fn(() => "wipe") }))
@@ -18,7 +18,10 @@ vi.mock("@remotion/transitions/clock-wipe", () => ({
 vi.mock("../addSound", () => ({
   addSound: vi.fn((pres, sound) => ({ pres, sound })),
 }))
-vi.mock("remotion", () => ({ staticFile: (p: string) => `/static${p}` }))
+vi.mock("remotion", () => ({
+  staticFile: (p: string) =>
+    p.startsWith("audio/") ? `/static/sound/${p.slice(6)}` : `/static${p}`,
+}))
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -26,51 +29,63 @@ beforeEach(() => {
 
 describe("getTransition", () => {
   it("calls wipe with correct direction", () => {
-    getTransition({ type: "wipe", direction: "from-right" } as Transition)
+    getTransition({
+      animation: "wipe",
+      direction: "from-right",
+    } as TransitionType)
     expect(wipe).toHaveBeenCalledWith({ direction: "from-right" })
   })
 
   it("calls wipe with wipeDirection if present", () => {
-    getTransition({ type: "wipe", wipeDirection: "from-top" } as Transition)
+    getTransition({
+      animation: "wipe",
+      wipeDirection: "from-top",
+    } as TransitionType)
     expect(wipe).toHaveBeenCalledWith({ direction: "from-top" })
   })
 
   it("calls slide with correct direction", () => {
-    getTransition({ type: "slide", direction: "from-bottom" } as Transition)
+    getTransition({
+      animation: "slide",
+      direction: "from-bottom",
+    } as TransitionType)
     expect(slide).toHaveBeenCalledWith({ direction: "from-bottom" })
   })
 
   it("calls flip with correct direction", () => {
-    getTransition({ type: "flip", direction: "from-left" } as Transition)
+    getTransition({
+      animation: "flip",
+      direction: "from-left",
+    } as TransitionType)
     expect(flip).toHaveBeenCalledWith({ direction: "from-left" })
   })
 
   it("calls clockWipe with width/height", () => {
-    getTransition({ type: "clockWipe" } as Transition, 123, 456)
+    getTransition({ animation: "clockWipe" } as TransitionType, 123, 456)
     expect(clockWipe).toHaveBeenCalledWith({ width: 123, height: 456 })
   })
 
   it("calls fade for unknown type", () => {
-    getTransition({ type: "unknown" } as unknown as Transition)
+    getTransition({ animation: "unknown" } as unknown as TransitionType)
     expect(fade).toHaveBeenCalled()
   })
 
   it("calls fade if no type", () => {
-    getTransition({} as Transition)
+    getTransition({} as TransitionType)
     expect(fade).toHaveBeenCalled()
   })
 
   it("adds sound if transition.sound is set", () => {
-    getTransition({ type: "fade", sound: "test.mp3" } as Transition)
+    getTransition({ animation: "fade", sound: "test.mp3" } as TransitionType)
     expect(addSound).toHaveBeenCalledWith("fade", "/static/sound/test.mp3")
   })
 
   it("uses default direction for slide/flip/wipe", () => {
-    getTransition({ type: "slide" } as Transition)
+    getTransition({ animation: "slide" } as TransitionType)
     expect(slide).toHaveBeenCalledWith({ direction: "from-left" })
-    getTransition({ type: "flip" } as Transition)
+    getTransition({ animation: "flip" } as TransitionType)
     expect(flip).toHaveBeenCalledWith({ direction: "from-left" })
-    getTransition({ type: "wipe" } as Transition)
+    getTransition({ animation: "wipe" } as TransitionType)
     expect(wipe).toHaveBeenCalledWith({ direction: "from-left" })
   })
 })

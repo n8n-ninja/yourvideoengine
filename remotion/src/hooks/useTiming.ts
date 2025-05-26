@@ -1,6 +1,6 @@
 import { useCurrentFrame, useVideoConfig } from "remotion"
 import { getTiming } from "@/utils/getTiming"
-import { Timing } from "@/schemas/index_2"
+import type { Timing } from "@/schemas/project"
 
 /**
  * React hook to compute timing information for an animation segment at the current video frame.

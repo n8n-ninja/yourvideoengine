@@ -1,9 +1,9 @@
-import { TitleLayerType } from "../schemas/project"
+import { TitleBlockType } from "../schemas/project"
 import { v4 as uuidv4 } from "uuid"
 
 export const createTitleLayer = (
-  overrides: Partial<TitleLayerType> = {},
-): TitleLayerType => {
+  overrides: Partial<TitleBlockType> = {},
+): TitleBlockType => {
   return {
     type: "title",
     id: uuidv4(),

@@ -5,7 +5,8 @@ import { flip } from "@remotion/transitions/flip"
 import { clockWipe } from "@remotion/transitions/clock-wipe"
 import { TransitionPresentation } from "@remotion/transitions"
 import { addSound } from "./addSound"
-import { Transition } from "@/schemas/index_2"
+import { getAudio } from "./getFile"
+import type { TransitionType } from "@/schemas/project"
 
 /**
  * Returns a Remotion transition presentation based on the given transition config.
@@ -17,26 +18,26 @@ import { Transition } from "@/schemas/index_2"
  * @returns A TransitionPresentation object for Remotion transitions.
  */
 export const getTransition = (
-  transition: Transition,
+  transition: TransitionType,
   width = 1080,
   height = 1920,
 ): TransitionPresentation<Record<string, unknown>> => {
   let presentation
 
-  if (transition.type == "wipe")
+  if (transition.animation == "wipe")
     presentation = wipe({
       direction:
         transition.wipeDirection || transition.direction || "from-left",
     })
-  else if (transition.type == "slide")
+  else if (transition.animation == "slide")
     presentation = slide({
       direction: transition.direction || "from-left",
     })
-  else if (transition.type == "flip")
+  else if (transition.animation == "flip")
     presentation = flip({
       direction: transition.direction || "from-left",
     })
-  else if (transition.type == "clockWipe")
+  else if (transition.animation == "clockWipe")
     presentation = clockWipe({
       width: width,
       height: height,
@@ -46,7 +47,7 @@ export const getTransition = (
   if (transition.sound) {
     presentation = addSound(
       presentation as TransitionPresentation<Record<string, unknown>>,
-      transition.sound,
+      getAudio(transition.sound),
     )
   }
 

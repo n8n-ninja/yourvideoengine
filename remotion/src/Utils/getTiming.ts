@@ -19,7 +19,12 @@ export function getTiming(
 ) {
   // Convertit start/end relatifs (négatifs) en absolus (secondes)
   const totalDurationSec = durationInFrames / fps
-  const startSec = start < 0 ? totalDurationSec + start : start
+  const startSec =
+    typeof start === "number"
+      ? start < 0
+        ? totalDurationSec + start
+        : start
+      : 0
   let endSec: number
   if (typeof duration === "number") {
     endSec = startSec + duration

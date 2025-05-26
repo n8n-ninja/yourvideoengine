@@ -1,9 +1,9 @@
-import { CaptionLayerType } from "@/schemas/project"
+import { CaptionBlockType } from "@/schemas/project"
 import { v4 as uuidv4 } from "uuid"
 
 export const createCaptionLayer = (
-  overrides: Partial<CaptionLayerType> = {},
-): CaptionLayerType => {
+  overrides: Partial<CaptionBlockType> = {},
+): CaptionBlockType => {
   return {
     type: "caption",
     id: uuidv4(),

@@ -1,6 +1,6 @@
 import { useCurrentFrame, useVideoConfig } from "remotion"
 import { getKeyframeValue } from "@/utils/getKeyframes"
-import { Keyframe } from "@/schemas/index_2"
+import type { Keyframe } from "@/schemas/project"
 
 /**
  * React hook to get the interpolated value from a list of keyframes at the current video time.

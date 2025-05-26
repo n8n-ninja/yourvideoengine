@@ -1,4 +1,4 @@
-import { TransitionReveal } from "@/schemas/index_2"
+import type { TransitionReveal } from "@/schemas/project"
 import { clamp } from "./math"
 
 /**

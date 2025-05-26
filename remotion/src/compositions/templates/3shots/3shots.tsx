@@ -1,17 +1,12 @@
 import { z } from "zod"
 import { Composition } from "remotion"
-import {
-  CaptionBlockType,
-  TitleBlockType,
-  Word,
-  TrackType,
-} from "@/schemas/project"
+import { CaptionBlockType, Word, TrackType } from "@/schemas/project"
 import { createCamera } from "@/factories/camera"
 import { createTransition } from "@/factories/transition"
 import { createEmoji } from "@/factories/emoji"
 import { createAudio } from "@/factories/audio"
 import { createScene } from "@/factories/scene"
-import { words, urls } from "./3shots-basic-defaultProps"
+import { defaultProps } from "./3shots-props"
 import { createCaptionLayer } from "@/factories/caption"
 import { createTitleLayer } from "@/factories/title"
 import { createTrack } from "@/factories/track"
@@ -246,15 +241,7 @@ export const Template3shots = () => {
       height={1920}
       calculateMetadata={calculateMetadata}
       defaultProps={{
-        visualHook: "Basic editing + caption template",
-        introUrl: urls.intro,
-        introCaptions: words[0].response.words,
-        bodyUrl: urls.body,
-        bodyCaptions: words[2].response.words,
-        outroUrl: urls.outro,
-        outroCaptions: words[1].response.words,
-        musicUrl:
-          "https://diwa7aolcke5u.cloudfront.net/uploads/1748099564616-mbgrk0.mp3",
+        ...defaultProps,
       }}
     />
   )

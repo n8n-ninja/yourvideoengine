@@ -8,6 +8,7 @@ export const createEmoji = (
     type: "emoji",
     id: uuidv4(),
     emoji: "smile",
+    containerStyle: "overflow: visible",
     ...overrides,
   }
 }
