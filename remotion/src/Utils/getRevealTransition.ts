@@ -1,45 +1,12 @@
 import type { TransitionReveal } from "@/schemas/project"
-import { clamp } from "./math"
 
-/**
- * Returns a CSS blur filter string if the type is 'blur', otherwise undefined.
- * @param type The transition type.
- * @param progress The progress value (0 to 1).
- * @returns A CSS blur string or undefined.
- */
-function getBlur(type: string, progress: number) {
-  if (type !== "blur") return undefined
-  progress = clamp(progress, 0, 1)
-  return `blur(${20 * (1 - progress)}px)`
-}
-
-/**
- * Returns a CSS transform string for the given transition type and progress.
- * @param type The transition type.
- * @param progress The progress value (0 to 1).
- * @returns A CSS transform string or undefined.
- */
-function getTransform(type: string, progress: number) {
-  progress = clamp(progress, 0, 1)
-  switch (type) {
-    case "slide-up":
-      return `translateY(${clamp((1 - progress) * 40, -100, 100)}%)`
-    case "slide-down":
-      return `translateY(${clamp((progress - 1) * 40, -100, 100)}%)`
-    case "slide-left":
-      return `translateX(${clamp((1 - progress) * 40, -100, 100)}%)`
-    case "slide-right":
-      return `translateX(${clamp((progress - 1) * 40, -100, 100)}%)`
-    case "zoom-in":
-      return `scale(${clamp(0.5 + 0.5 * progress, 0.01, 5)})`
-    case "zoom-out":
-      return `scale(${clamp(0.5 + (1 - 0.5 * progress), 0.01, 5)})`
-    case "blur":
-      return undefined
-    default:
-      return undefined
-  }
-}
+import {
+  interpolateStyles,
+  makeTransform,
+  translateY,
+  translateX,
+  scale,
+} from "@remotion/animation-utils"
 
 /**
  * Computes the CSS style for a reveal transition based on the phase and progress.
@@ -64,13 +31,162 @@ export const getRevealTransitionStyle = ({
   const outType = transition.outType ?? transition.type ?? "fade"
   const style: React.CSSProperties = {}
   if (phase === "in") {
-    style.opacity = progressIn
-    style.transform = getTransform(inType, progressIn)
-    style.filter = getBlur(inType, progressIn)
+    if (inType === "blur") {
+      return interpolateStyles(
+        progressIn,
+        [0, 1],
+        [
+          { opacity: 0, filter: "blur(20px)" },
+          { opacity: 1, filter: "blur(0px)" },
+        ],
+      )
+    }
+    if (inType === "fade") {
+      return interpolateStyles(
+        progressIn,
+        [0, 1],
+        [{ opacity: 0 }, { opacity: 1 }],
+      )
+    }
+    if (inType === "slide-up") {
+      return interpolateStyles(
+        progressIn,
+        [0, 1],
+        [
+          { opacity: 0, transform: makeTransform([translateY(40)]) },
+          { opacity: 1, transform: makeTransform([translateY(0)]) },
+        ],
+      )
+    }
+    if (inType === "slide-down") {
+      return interpolateStyles(
+        progressIn,
+        [0, 1],
+        [
+          { opacity: 0, transform: makeTransform([translateY(-40)]) },
+          { opacity: 1, transform: makeTransform([translateY(0)]) },
+        ],
+      )
+    }
+    if (inType === "slide-left") {
+      return interpolateStyles(
+        progressIn,
+        [0, 1],
+        [
+          { opacity: 0, transform: makeTransform([translateX(40)]) },
+          { opacity: 1, transform: makeTransform([translateX(0)]) },
+        ],
+      )
+    }
+    if (inType === "slide-right") {
+      return interpolateStyles(
+        progressIn,
+        [0, 1],
+        [
+          { opacity: 0, transform: makeTransform([translateX(-40)]) },
+          { opacity: 1, transform: makeTransform([translateX(0)]) },
+        ],
+      )
+    }
+    if (inType === "zoom-in") {
+      return interpolateStyles(
+        progressIn,
+        [0, 1],
+        [
+          { opacity: 0, transform: makeTransform([scale(0.5)]) },
+          { opacity: 1, transform: makeTransform([scale(1)]) },
+        ],
+      )
+    }
+    if (inType === "zoom-out") {
+      return interpolateStyles(
+        progressIn,
+        [0, 1],
+        [
+          { opacity: 0, transform: makeTransform([scale(1.5)]) },
+          { opacity: 1, transform: makeTransform([scale(1)]) },
+        ],
+      )
+    }
   } else if (phase === "out") {
+    if (outType === "blur") {
+      return interpolateStyles(
+        1 - progressOut,
+        [0, 1],
+        [
+          { opacity: 1, filter: "blur(0px)" },
+          { opacity: 0, filter: "blur(20px)" },
+        ],
+      )
+    }
+    if (outType === "fade") {
+      return interpolateStyles(
+        1 - progressOut,
+        [0, 1],
+        [{ opacity: 1 }, { opacity: 0 }],
+      )
+    }
+    if (outType === "slide-up") {
+      return interpolateStyles(
+        1 - progressOut,
+        [0, 1],
+        [
+          { opacity: 1, transform: makeTransform([translateY(0)]) },
+          { opacity: 0, transform: makeTransform([translateY(40)]) },
+        ],
+      )
+    }
+    if (outType === "slide-down") {
+      return interpolateStyles(
+        1 - progressOut,
+        [0, 1],
+        [
+          { opacity: 1, transform: makeTransform([translateY(0)]) },
+          { opacity: 0, transform: makeTransform([translateY(-40)]) },
+        ],
+      )
+    }
+    if (outType === "slide-left") {
+      return interpolateStyles(
+        1 - progressOut,
+        [0, 1],
+        [
+          { opacity: 1, transform: makeTransform([translateX(0)]) },
+          { opacity: 0, transform: makeTransform([translateX(40)]) },
+        ],
+      )
+    }
+    if (outType === "slide-right") {
+      return interpolateStyles(
+        1 - progressOut,
+        [0, 1],
+        [
+          { opacity: 1, transform: makeTransform([translateX(0)]) },
+          { opacity: 0, transform: makeTransform([translateX(-40)]) },
+        ],
+      )
+    }
+    if (outType === "zoom-in") {
+      return interpolateStyles(
+        1 - progressOut,
+        [0, 1],
+        [
+          { opacity: 1, transform: makeTransform([scale(1)]) },
+          { opacity: 0, transform: makeTransform([scale(0.5)]) },
+        ],
+      )
+    }
+    if (outType === "zoom-out") {
+      return interpolateStyles(
+        1 - progressOut,
+        [0, 1],
+        [
+          { opacity: 1, transform: makeTransform([scale(1)]) },
+          { opacity: 0, transform: makeTransform([scale(1.5)]) },
+        ],
+      )
+    }
     style.opacity = progressOut
-    style.transform = getTransform(outType, progressOut)
-    style.filter = getBlur(outType, progressOut)
   } else {
     style.opacity = 1
     style.transform = "none"

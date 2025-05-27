@@ -6,7 +6,6 @@ import { z } from "zod"
  */
 export const TimingSchema = z.object({
   start: z.number().optional(),
-  end: z.number().optional(),
   duration: z.number().optional(),
 })
 

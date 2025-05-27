@@ -46,6 +46,7 @@ export const Block: React.FC<{
   const frame = useCurrentFrame()
 
   const timing = useTiming(element.timing)
+
   const { style: transitionStyle, revealProgress } = useElementReveal({
     reveal: element.reveal,
     timing: timing,

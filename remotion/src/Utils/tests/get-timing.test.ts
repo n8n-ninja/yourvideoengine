@@ -6,7 +6,11 @@ describe("getTiming", () => {
   const durationInFrames = 300 // 10s
 
   it("calculates timing with positive start and end", () => {
-    const timing = getTiming(2, fps, durationInFrames, { start: 1, end: 5 })
+    const start = 1
+    const end = 5
+    const duration = end - start
+    const frame = 2 * fps // 2s
+    const timing = getTiming(frame, fps, durationInFrames, start, duration)
     expect(timing.startSec).toBe(1)
     expect(timing.endSec).toBe(5)
     expect(timing.startFrame).toBe(30)
@@ -17,8 +21,21 @@ describe("getTiming", () => {
   })
 
   it("handles negative start and end (relative to total duration)", () => {
-    const timing = getTiming(9, fps, durationInFrames, { start: -5, end: -1 })
     // totalDurationSec = 10, so start = 5, end = 9
+    const start = -5
+    const end = -1
+    const totalDurationSec = durationInFrames / fps
+    const resolvedStart = totalDurationSec + start // 5
+    const resolvedEnd = totalDurationSec + end // 9
+    const duration = resolvedEnd - resolvedStart // 4
+    const frame = 9 * fps // 9s
+    const timing = getTiming(
+      frame,
+      fps,
+      durationInFrames,
+      resolvedStart,
+      duration,
+    )
     expect(timing.startSec).toBe(5)
     expect(timing.endSec).toBe(9)
     expect(timing.startFrame).toBe(150)
@@ -29,10 +46,10 @@ describe("getTiming", () => {
   })
 
   it("handles duration instead of end", () => {
-    const timing = getTiming(3, fps, durationInFrames, {
-      start: 2,
-      duration: 4,
-    })
+    const start = 2
+    const duration = 4
+    const frame = 3 * fps // 3s
+    const timing = getTiming(frame, fps, durationInFrames, start, duration)
     expect(timing.startSec).toBe(2)
     expect(timing.endSec).toBe(6)
     expect(timing.startFrame).toBe(60)
@@ -43,31 +60,72 @@ describe("getTiming", () => {
   })
 
   it("progress is 0 before start, 1 after end", () => {
-    const timing = getTiming(0.5, fps, durationInFrames, { start: 1, end: 3 })
+    const start = 1
+    const end = 3
+    const duration = end - start
+    const frameBefore = 0.5 * fps // 0.5s
+    const frameAfter = 4 * fps // 4s
+    const timing = getTiming(
+      frameBefore,
+      fps,
+      durationInFrames,
+      start,
+      duration,
+    )
     expect(timing.progress).toBe(0)
     expect(timing.visible).toBe(false)
-    const timing2 = getTiming(4, fps, durationInFrames, { start: 1, end: 3 })
+    const timing2 = getTiming(
+      frameAfter,
+      fps,
+      durationInFrames,
+      start,
+      duration,
+    )
     expect(timing2.progress).toBe(1)
     expect(timing2.visible).toBe(false)
   })
 
   it("defaults end to total duration if not provided", () => {
-    const timing = getTiming(5, fps, durationInFrames, { start: 2 })
+    const start = 2
+    const duration = 0
+    const frame = 5 * fps // 5s
+    const timing = getTiming(frame, fps, durationInFrames, start, duration)
     expect(timing.startSec).toBe(2)
     expect(timing.endSec).toBe(10)
     expect(timing.visible).toBe(true)
   })
 
-  it("returns totalFrames as 0 if end <= start", () => {
-    const timing = getTiming(2, fps, durationInFrames, { start: 5, end: 2 })
-    expect(timing.totalFrames).toBe(0)
+  it("returns totalFrames as 1 if end <= start (sécurité)", () => {
+    const start = 5
+    const end = 2
+    const duration = end - start // -3
+    const frame = 2 * fps // 2s
+    const timing = getTiming(frame, fps, durationInFrames, start, duration)
+    expect(timing.totalFrames).toBe(60)
   })
 
   it("handles currentTime exactly at start and end", () => {
-    const timing = getTiming(1, fps, durationInFrames, { start: 1, end: 3 })
+    const start = 1
+    const end = 3
+    const duration = end - start
+    const frameAtStart = 1 * fps // 1s
+    const frameAtEnd = 3 * fps // 3s
+    const timing = getTiming(
+      frameAtStart,
+      fps,
+      durationInFrames,
+      start,
+      duration,
+    )
     expect(timing.progress).toBe(0)
     expect(timing.visible).toBe(true)
-    const timing2 = getTiming(3, fps, durationInFrames, { start: 1, end: 3 })
+    const timing2 = getTiming(
+      frameAtEnd,
+      fps,
+      durationInFrames,
+      start,
+      duration,
+    )
     expect(timing2.progress).toBe(1)
     expect(timing2.visible).toBe(false)
   })

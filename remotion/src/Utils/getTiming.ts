@@ -12,29 +12,31 @@ import { z } from "zod"
  * @returns An object with startFrame, endFrame, totalFrames, startSec, endSec, currentTime, progress, and visible.
  */
 export function getTiming(
-  currentTime: number,
+  frame: number,
   fps: number,
   durationInFrames: number,
-  { start, end, duration }: z.infer<typeof TimingSchema>,
+  start: number,
+  duration: number,
 ) {
-  // Convertit start/end relatifs (négatifs) en absolus (secondes)
-  const totalDurationSec = durationInFrames / fps
-  const startSec =
-    typeof start === "number"
-      ? start < 0
-        ? totalDurationSec + start
-        : start
-      : 0
-  let endSec: number
-  if (typeof duration === "number") {
-    endSec = startSec + duration
-  } else if (typeof end === "number") {
-    endSec = end < 0 ? totalDurationSec + end : end
-  } else {
-    endSec = totalDurationSec
-  }
+  const currentTime = frame / fps
 
-  // Frame de début et de fin
+  const totalDurationSec = durationInFrames / fps
+  let startSec = start >= 0 ? start : totalDurationSec + start
+  let endSec: number
+  if (duration === 0) {
+    endSec = totalDurationSec
+  } else if (duration > 0) {
+    endSec = startSec + duration
+  } else {
+    endSec = totalDurationSec + duration
+  }
+  // Clamp startSec et endSec dans [0, totalDurationSec]
+  startSec = Math.max(0, Math.min(totalDurationSec, startSec))
+  endSec = Math.max(0, Math.min(totalDurationSec, endSec))
+  // startSec ne peut pas être après endSec
+  if (startSec >= endSec) {
+    startSec = Math.max(0, endSec - 1 / fps)
+  }
   const startFrame = Math.round(startSec * fps)
   const endFrame = Math.round(endSec * fps)
   const totalFrames = Math.max(0, endFrame - startFrame)

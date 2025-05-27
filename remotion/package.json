@@ -8,6 +8,7 @@
   "dependencies": {
     "@react-three/fiber": "8.15.17",
     "@remotion/animated-emoji": "4.0.306",
+    "@remotion/animation-utils": "4.0.306",
     "@remotion/captions": "4.0.306",
     "@remotion/cli": "4.0.306",
     "@remotion/eslint-plugin": "4.0.306",

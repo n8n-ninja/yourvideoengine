@@ -14,6 +14,7 @@ import { Folder } from "remotion"
 // import { DemoBackground } from "@/compositions/demo/demo-background"
 import { Template3ShotsBrolls } from "@/compositions/templates/3shots-brolls/3shots-brolls"
 import { Template3shots } from "@/compositions/templates/3shots/3shots"
+import { TemplateTest } from "@/compositions/templates/test/test"
 import "./styles/fonts.css"
 
 export const RemotionRoot: React.FC = () => {
@@ -42,6 +43,7 @@ export const RemotionRoot: React.FC = () => {
       <Folder name="Projects">
         <Template3shots />
         <Template3ShotsBrolls />
+        <TemplateTest />
       </Folder>
 
       {/* <Folder name="ClientDemo"></Folder> */}

@@ -85,10 +85,14 @@ export const getTracks = async (
     position: {
       bottom: 80,
     },
-    reveal: {
-      type: "slide-down",
-      duration: 1,
+    timing: {
+      start: 1,
+      end: -1,
     },
+    // reveal: {
+    //   type: "slide-down",
+    //   duration: 0.4,
+    // },
 
     title: props.visualHook,
   })

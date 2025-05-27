@@ -393,6 +393,9 @@ importers:
       '@remotion/animated-emoji':
         specifier: 4.0.306
         version: 4.0.306(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      '@remotion/animation-utils':
+        specifier: 4.0.306
+        version: 4.0.306(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       '@remotion/captions':
         specifier: 4.0.306
         version: 4.0.306
@@ -3201,6 +3204,12 @@ packages:
 
   '@remotion/animated-emoji@4.0.306':
     resolution: {integrity: sha512-hGPL7nFe1WuOdJGAX2/5GS+6dC2nHJZ1TOYhmAaOV4LjLubnYdUOSOaEUVPxMu+6JVS404p2cTLAYnfcczlYeA==}
+
+  '@remotion/animation-utils@4.0.306':
+    resolution: {integrity: sha512-FBa0tvhb1VB7RFXCwUNsykCOBGsZt0lxhfwNNMjRl66NGQsBfI5Pwfn/4ThtfQgWDDVK90mM832trB4xtOl4jA==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
 
   '@remotion/bundler@4.0.306':
     resolution: {integrity: sha512-XgnlmYeSyQ8lGmMJDp03/IOO5Y8n32+f0aWbBMV3Ky3PrjwVD4dbn9u/yG9X9dozXyNu/NfcZeziGmgtbjOMwg==}
@@ -14519,6 +14528,12 @@ snapshots:
     transitivePeerDependencies:
       - react
       - react-dom
+
+  '@remotion/animation-utils@4.0.306(react-dom@17.0.2(react@17.0.2))(react@17.0.2)':
+    dependencies:
+      react: 17.0.2
+      react-dom: 17.0.2(react@17.0.2)
+      remotion: 4.0.306(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
 
   '@remotion/bundler@4.0.306(react-dom@17.0.2(react@17.0.2))(react@17.0.2)':
     dependencies:

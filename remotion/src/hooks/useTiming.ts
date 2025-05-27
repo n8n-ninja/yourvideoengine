@@ -12,9 +12,9 @@ import type { Timing } from "@/schemas/project"
 export function useTiming(timing?: Partial<Timing>) {
   const frame = useCurrentFrame()
   const { fps, durationInFrames } = useVideoConfig()
-  const currentTime = frame / fps
+
   const start = timing?.start ?? 0
-  const end = timing?.end
-  const duration = timing?.duration ?? durationInFrames / fps
-  return getTiming(currentTime, fps, durationInFrames, { start, end, duration })
+  const duration = timing?.duration ?? 0
+
+  return getTiming(frame, fps, durationInFrames, start, duration)
 }
