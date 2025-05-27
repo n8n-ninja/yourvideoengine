@@ -2,6 +2,9 @@
 
 set -e
 
+# Clean dist directory before building to avoid redeploying old nodes
+rm -rf dist
+
 # 1. Build le projet
 pnpm build
 
@@ -16,6 +19,11 @@ cp -r credentials $DEPLOY_DIR/
 cp package.json $DEPLOY_DIR/
 [ -f README.md ] && cp README.md $DEPLOY_DIR/
 cp nodes/*.svg $DEPLOY_DIR/dist/nodes/ 2>/dev/null || true
+
+# Ajout : copie les nodes principaux et ceux dans renders/
+cp n8n-nodes/yourvideoengine/nodes/*.ts $DEPLOY_DIR/dist/nodes/ 2>/dev/null || true
+cp n8n-nodes/yourvideoengine/nodes/renders/*.ts $DEPLOY_DIR/dist/nodes/ 2>/dev/null || true
+cp n8n-nodes/yourvideoengine/nodes/remotion-nodes.config.ts $DEPLOY_DIR/dist/nodes/ 2>/dev/null || true
 
 # 4. Vide tous les custom nodes du serveur distant
 ssh -i ~/.ssh/id_hetzneraiatelier root@91.107.237.123 "rm -rf /var/lib/docker/volumes/n8ocsk4gococwgso80cgo444_n8n-data/_data/custom-nodes/*"

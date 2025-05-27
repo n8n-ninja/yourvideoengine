@@ -1,0 +1,91 @@
+import {
+  INodeType,
+  INodeTypeDescription,
+  IExecuteFunctions,
+  NodeConnectionType,
+  INodeExecutionData,
+} from "n8n-workflow"
+import { REMOTION_ENDPOINTS } from './remotion-nodes.config';
+
+export class {{NodeClassName}} implements INodeType {
+  description: INodeTypeDescription = {
+    displayName: '{{NodeDisplayName}}',
+    name: '{{NodeName}}',
+    group: ['transform'],
+    version: 1,
+    icon: "file:heygen.svg",
+    description: '{{NodeDescription}}',
+    defaults: {
+      name: '{{NodeDisplayName}}',
+    },
+    inputs: [NodeConnectionType.Main],
+    outputs: [NodeConnectionType.Main],
+    properties: [
+      // Champs dynamiques générés
+      {{properties}}
+      // Champs fixes
+      {
+        displayName: "Resume Url",
+        name: "resumeUrl",
+        type: "string",
+        default: "={{$execution.resumeUrl}}",
+        required: true,
+      },
+      {
+        displayName: "Execution Id",
+        name: "executionId",
+        type: "string",
+        default: "={{$execution.id}}",
+        required: true,
+      },
+      {
+        displayName: "Environment",
+        name: "environment",
+        type: "options",
+        options: [
+          { name: "Production", value: "prod" },
+          { name: "Development", value: "dev" },
+        ],
+        default: "prod",
+        description: "Choose environment (prod/dev)",
+      },
+    ],
+  };
+
+  async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+    const items = this.getInputData();
+    const returnData: INodeExecutionData[] = [];
+    for (let i = 0; i < items.length; i++) {
+      // Récupérer les paramètres du formulaire
+      const params: Record<string, unknown> = {
+        {{params}}
+      };
+      const resumeUrl = this.getNodeParameter('resumeUrl', i) as string;
+      const executionId = this.getNodeParameter('executionId', i) as string;
+      const environment = this.getNodeParameter('environment', i) as 'dev' | 'prod';
+      const projectId = executionId;
+      const callbackUrl = resumeUrl;
+      const payload = {
+        projectId,
+        callbackUrl,
+        params: {
+          composition: '{{CompositionName}}',
+          inputProps: params
+        },
+        queueType: 'remotion',
+      };
+      const { url: endpointUrl, apiKey: xApiKey } = REMOTION_ENDPOINTS[environment];
+      const response = await this.helpers.httpRequest({
+        method: 'POST',
+        url: endpointUrl,
+        body: payload,
+        json: true,
+        headers: {
+          'X-Api-Key': xApiKey,
+        },
+      });
+      returnData.push({ json: response });
+    }
+    return this.prepareOutputData(returnData);
+  }
+} 

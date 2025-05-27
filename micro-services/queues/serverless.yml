@@ -13,6 +13,8 @@ provider:
     QUEUES_TABLE: QueuesTable-${sls:stage}
     HEYGEN_API_KEY: ${env:HEYGEN_API_KEY}
     HEYGEN_MAX_CONCURRENCY: 3
+    REMOTION_RENDER_URL: ${self:custom.remotionRenderUrl.${sls:stage}}
+    REMOTION_STATUS_URL: ${self:custom.remotionStatusUrl.${sls:stage}}
   iam:
     role:
       statements:
@@ -69,6 +71,12 @@ plugins:
   - serverless-esbuild
 
 custom:
+  remotionRenderUrl:
+    dev: "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/render"
+    prod: "https://0lxwxeqkpl.execute-api.us-east-1.amazonaws.com/prod/render"
+  remotionStatusUrl:
+    dev: "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/status"
+    prod: "https://0lxwxeqkpl.execute-api.us-east-1.amazonaws.com/prod/status"
   esbuild:
     bundle: true
     minify: false

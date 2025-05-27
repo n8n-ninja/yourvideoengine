@@ -6,7 +6,6 @@ import {
   UpdateItemCommand,
 } from "@aws-sdk/client-dynamodb"
 import { v4 as uuidv4 } from "uuid"
-import fetch, { RequestInit } from "node-fetch"
 import { handleRemotionJob, pollRemotionHandler } from "./queues/remotion-queue"
 import { handleFluxJob, pollFluxHandler } from "./queues/flux-queue"
 import { handleRunwayJob, pollRunwayHandler } from "./queues/runway-queue"

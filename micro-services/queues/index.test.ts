@@ -1,10 +1,5 @@
 process.env.QUEUES_TABLE = "dummy"
 
-jest.mock("node-fetch", () => ({
-  __esModule: true,
-  default: jest.fn(),
-}))
-
 // @ts-nocheck
 
 import {
@@ -106,8 +101,9 @@ describe("getAvailableSlots", () => {
 describe("fetchWithTimeout", () => {
   it("rejects with Timeout if fetch takes too long", async () => {
     const never = new Promise(() => {})
-    const fetch = require("node-fetch").default
-    fetch.mockImplementation(() => never)
+    global.fetch = jest.fn(
+      () => never as unknown as Promise<Response>,
+    ) as jest.Mock
     await expect(fetchWithTimeout("http://test", {}, 100)).rejects.toThrow(
       "Timeout",
     )

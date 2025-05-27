@@ -7,10 +7,8 @@ import {
 } from "../utils/generic-queue"
 
 const TABLE_NAME = process.env.QUEUES_TABLE
-const REMOTION_RENDER_URL =
-  "https://0lxwxeqkpl.execute-api.us-east-1.amazonaws.com/prod/render"
-const REMOTION_STATUS_URL =
-  "https://0lxwxeqkpl.execute-api.us-east-1.amazonaws.com/prod/status"
+const REMOTION_RENDER_URL = process.env.REMOTION_RENDER_URL ?? ""
+const REMOTION_STATUS_URL = process.env.REMOTION_STATUS_URL ?? ""
 const MAX_RETRIES = parseInt(process.env.HEYGEN_MAX_RETRIES ?? "3", 10)
 
 export const handleRemotionJob = async (

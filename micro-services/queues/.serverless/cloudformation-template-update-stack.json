@@ -74,19 +74,19 @@
     "EnqueueHandlerLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/queues-prod-enqueueHandler"
+        "LogGroupName": "/aws/lambda/queues-dev-enqueueHandler"
       }
     },
     "WorkerLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/queues-prod-worker"
+        "LogGroupName": "/aws/lambda/queues-dev-worker"
       }
     },
     "PollLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/queues-prod-poll"
+        "LogGroupName": "/aws/lambda/queues-dev-poll"
       }
     },
     "IamRoleLambdaExecution": {
@@ -115,7 +115,7 @@
                 "-",
                 [
                   "queues",
-                  "prod",
+                  "dev",
                   "lambda"
                 ]
               ]
@@ -132,7 +132,7 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/queues-prod*:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/queues-dev*:*"
                     }
                   ]
                 },
@@ -143,7 +143,7 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/queues-prod*:*:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/queues-dev*:*:*"
                     }
                   ]
                 },
@@ -156,7 +156,7 @@
                     "dynamodb:Query",
                     "dynamodb:Scan"
                   ],
-                  "Resource": "arn:aws:dynamodb:us-east-1:*:table/QueuesTable-prod"
+                  "Resource": "arn:aws:dynamodb:us-east-1:*:table/QueuesTable-dev"
                 },
                 {
                   "Effect": "Allow",
@@ -181,7 +181,7 @@
             "-",
             [
               "queues",
-              "prod",
+              "dev",
               {
                 "Ref": "AWS::Region"
               },
@@ -198,19 +198,21 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/queues/prod/1747995059450-2025-05-23T10:10:59.450Z/enqueueHandler.zip"
+          "S3Key": "serverless/queues/dev/1748354051623-2025-05-27T13:54:11.623Z/enqueueHandler.zip"
         },
         "Handler": "index.enqueueHandler",
         "Runtime": "nodejs18.x",
-        "FunctionName": "queues-prod-enqueueHandler",
+        "FunctionName": "queues-dev-enqueueHandler",
         "MemorySize": 256,
         "Timeout": 30,
         "Environment": {
           "Variables": {
             "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
-            "QUEUES_TABLE": "QueuesTable-prod",
+            "QUEUES_TABLE": "QueuesTable-dev",
             "HEYGEN_API_KEY": "NTA1ZDliMjc3OTE5NDFmYmIxMGIzZWI3ZTVkZDg4MjAtMTcxOTU5NzI0Nw==",
-            "HEYGEN_MAX_CONCURRENCY": "3"
+            "HEYGEN_MAX_CONCURRENCY": "3",
+            "REMOTION_RENDER_URL": "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/render",
+            "REMOTION_STATUS_URL": "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/status"
           }
         },
         "Role": {
@@ -231,19 +233,21 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/queues/prod/1747995059450-2025-05-23T10:10:59.450Z/worker.zip"
+          "S3Key": "serverless/queues/dev/1748354051623-2025-05-27T13:54:11.623Z/worker.zip"
         },
         "Handler": "index.workerHttpHandler",
         "Runtime": "nodejs18.x",
-        "FunctionName": "queues-prod-worker",
+        "FunctionName": "queues-dev-worker",
         "MemorySize": 256,
         "Timeout": 30,
         "Environment": {
           "Variables": {
             "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
-            "QUEUES_TABLE": "QueuesTable-prod",
+            "QUEUES_TABLE": "QueuesTable-dev",
             "HEYGEN_API_KEY": "NTA1ZDliMjc3OTE5NDFmYmIxMGIzZWI3ZTVkZDg4MjAtMTcxOTU5NzI0Nw==",
-            "HEYGEN_MAX_CONCURRENCY": "3"
+            "HEYGEN_MAX_CONCURRENCY": "3",
+            "REMOTION_RENDER_URL": "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/render",
+            "REMOTION_STATUS_URL": "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/status"
           }
         },
         "Role": {
@@ -264,19 +268,21 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/queues/prod/1747995059450-2025-05-23T10:10:59.450Z/poll.zip"
+          "S3Key": "serverless/queues/dev/1748354051623-2025-05-27T13:54:11.623Z/poll.zip"
         },
         "Handler": "index.pollHttpHandler",
         "Runtime": "nodejs18.x",
-        "FunctionName": "queues-prod-poll",
+        "FunctionName": "queues-dev-poll",
         "MemorySize": 256,
         "Timeout": 30,
         "Environment": {
           "Variables": {
             "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
-            "QUEUES_TABLE": "QueuesTable-prod",
+            "QUEUES_TABLE": "QueuesTable-dev",
             "HEYGEN_API_KEY": "NTA1ZDliMjc3OTE5NDFmYmIxMGIzZWI3ZTVkZDg4MjAtMTcxOTU5NzI0Nw==",
-            "HEYGEN_MAX_CONCURRENCY": "3"
+            "HEYGEN_MAX_CONCURRENCY": "3",
+            "REMOTION_RENDER_URL": "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/render",
+            "REMOTION_STATUS_URL": "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/status"
           }
         },
         "Role": {
@@ -290,34 +296,34 @@
         "PollLogGroup"
       ]
     },
-    "EnqueueHandlerLambdaVersion9942deb9I4lTi5xAQEJxC0qc1WECxDo0u9VV3qeoTM": {
+    "EnqueueHandlerLambdaVersionlcvQ1u4678uSpIOiehBJp16IV9B5OLB1RgmGaBgab0": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "EnqueueHandlerLambdaFunction"
         },
-        "CodeSha256": "QQNovUJ1cY02y1/gxWZk9reB27FqhLkwtDeTI2LMXZY="
+        "CodeSha256": "Q2ZWfmjyiK+fLH3bvrWbBxppvW+umNxaXaecD3Fup3s="
       }
     },
-    "WorkerLambdaVersionvyxMpggNLViLp3s8RsSfym3SEUDnUrZEgdsX3uVud00": {
+    "WorkerLambdaVersionfj7jIFRFphQBC5MX5fJz5Wmc4OgjlL53LeR2Kz4XM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "WorkerLambdaFunction"
         },
-        "CodeSha256": "QQNovUJ1cY02y1/gxWZk9reB27FqhLkwtDeTI2LMXZY="
+        "CodeSha256": "Q2ZWfmjyiK+fLH3bvrWbBxppvW+umNxaXaecD3Fup3s="
       }
     },
-    "PollLambdaVersionWd66hMBnVmg0Vi0R4eyj9Rc2eovUpSGyzgWTEilgRo": {
+    "PollLambdaVersionn59fJK7spOyLYswTtNfQ8GxIMncbiatbO3oKRdSET5E": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "PollLambdaFunction"
         },
-        "CodeSha256": "QQNovUJ1cY02y1/gxWZk9reB27FqhLkwtDeTI2LMXZY="
+        "CodeSha256": "Q2ZWfmjyiK+fLH3bvrWbBxppvW+umNxaXaecD3Fup3s="
       }
     },
     "WorkerEventsRuleSchedule1": {
@@ -397,7 +403,7 @@
     "ApiGatewayRestApi": {
       "Type": "AWS::ApiGateway::RestApi",
       "Properties": {
-        "Name": "prod-queues",
+        "Name": "dev-queues",
         "EndpointConfiguration": {
           "Types": [
             "EDGE"
@@ -512,13 +518,13 @@
         "EnqueueHandlerLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1747995058570": {
+    "ApiGatewayDeployment1748354050663": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         },
-        "StageName": "prod"
+        "StageName": "dev"
       },
       "DependsOn": [
         "ApiGatewayMethodEnqueueOptions",
@@ -529,32 +535,32 @@
       "Type": "AWS::ApiGateway::ApiKey",
       "Properties": {
         "Enabled": true,
-        "Name": "queue-prod-key",
+        "Name": "queue-dev-key",
         "StageKeys": [
           {
             "RestApiId": {
               "Ref": "ApiGatewayRestApi"
             },
-            "StageName": "prod"
+            "StageName": "dev"
           }
         ]
       },
-      "DependsOn": "ApiGatewayDeployment1747995058570"
+      "DependsOn": "ApiGatewayDeployment1748354050663"
     },
     "ApiGatewayUsagePlan": {
       "Type": "AWS::ApiGateway::UsagePlan",
-      "DependsOn": "ApiGatewayDeployment1747995058570",
+      "DependsOn": "ApiGatewayDeployment1748354050663",
       "Properties": {
         "ApiStages": [
           {
             "ApiId": {
               "Ref": "ApiGatewayRestApi"
             },
-            "Stage": "prod"
+            "Stage": "dev"
           }
         ],
-        "Description": "Usage plan for queues prod stage",
-        "UsagePlanName": "queues-prod"
+        "Description": "Usage plan for queues dev stage",
+        "UsagePlanName": "queues-dev"
       }
     },
     "ApiGatewayUsagePlanKey1": {
@@ -609,7 +615,7 @@
     "QueuesTable": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
-        "TableName": "QueuesTable-prod",
+        "TableName": "QueuesTable-dev",
         "AttributeDefinitions": [
           {
             "AttributeName": "pk",
@@ -640,34 +646,34 @@
         "Ref": "ServerlessDeploymentBucket"
       },
       "Export": {
-        "Name": "sls-queues-prod-ServerlessDeploymentBucketName"
+        "Name": "sls-queues-dev-ServerlessDeploymentBucketName"
       }
     },
     "EnqueueHandlerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "EnqueueHandlerLambdaVersion9942deb9I4lTi5xAQEJxC0qc1WECxDo0u9VV3qeoTM"
+        "Ref": "EnqueueHandlerLambdaVersionlcvQ1u4678uSpIOiehBJp16IV9B5OLB1RgmGaBgab0"
       },
       "Export": {
-        "Name": "sls-queues-prod-EnqueueHandlerLambdaFunctionQualifiedArn"
+        "Name": "sls-queues-dev-EnqueueHandlerLambdaFunctionQualifiedArn"
       }
     },
     "WorkerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "WorkerLambdaVersionvyxMpggNLViLp3s8RsSfym3SEUDnUrZEgdsX3uVud00"
+        "Ref": "WorkerLambdaVersionfj7jIFRFphQBC5MX5fJz5Wmc4OgjlL53LeR2Kz4XM"
       },
       "Export": {
-        "Name": "sls-queues-prod-WorkerLambdaFunctionQualifiedArn"
+        "Name": "sls-queues-dev-WorkerLambdaFunctionQualifiedArn"
       }
     },
     "PollLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PollLambdaVersionWd66hMBnVmg0Vi0R4eyj9Rc2eovUpSGyzgWTEilgRo"
+        "Ref": "PollLambdaVersionn59fJK7spOyLYswTtNfQ8GxIMncbiatbO3oKRdSET5E"
       },
       "Export": {
-        "Name": "sls-queues-prod-PollLambdaFunctionQualifiedArn"
+        "Name": "sls-queues-dev-PollLambdaFunctionQualifiedArn"
       }
     },
     "ServiceEndpoint": {
@@ -688,12 +694,12 @@
             {
               "Ref": "AWS::URLSuffix"
             },
-            "/prod"
+            "/dev"
           ]
         ]
       },
       "Export": {
-        "Name": "sls-queues-prod-ServiceEndpoint"
+        "Name": "sls-queues-dev-ServiceEndpoint"
       }
     }
   }

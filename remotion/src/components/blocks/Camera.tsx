@@ -84,7 +84,7 @@ const CameraComponent: React.FC<{
           playbackRate={speed}
           volume={(_) => (typeof kfVolume === "number" ? kfVolume : volume)}
           loop={loop}
-          style={videoStyle}
+          // style={videoStyle}
         />
       )}
     </>
