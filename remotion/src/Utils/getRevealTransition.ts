@@ -6,6 +6,12 @@ import {
   translateY,
   translateX,
   scale,
+  rotateY,
+  rotateX,
+  translateZ,
+  perspective,
+  rotate,
+  rotate3d,
 } from "@remotion/animation-utils"
 
 /**
@@ -108,6 +114,32 @@ export const getRevealTransitionStyle = ({
         ],
       )
     }
+    if (inType === "swipe") {
+      return interpolateStyles(
+        progressIn,
+        [0, 1],
+        [
+          {
+            opacity: 0,
+            transform: makeTransform([
+              scale(0.8),
+              translateX(-1040),
+              translateY(200),
+              rotate(-40),
+            ]),
+          },
+          {
+            opacity: 1,
+            transform: makeTransform([
+              scale(1),
+              translateX(0),
+              translateY(0),
+              rotate(0),
+            ]),
+          },
+        ],
+      )
+    }
   } else if (phase === "out") {
     if (outType === "blur") {
       return interpolateStyles(
@@ -183,6 +215,32 @@ export const getRevealTransitionStyle = ({
         [
           { opacity: 1, transform: makeTransform([scale(1)]) },
           { opacity: 0, transform: makeTransform([scale(1.5)]) },
+        ],
+      )
+    }
+    if (outType === "fancy-3d") {
+      return interpolateStyles(
+        1 - progressOut,
+        [0, 1],
+        [
+          {
+            opacity: 1,
+            transform: makeTransform([
+              scale(1),
+              translateX(0),
+              translateY(0),
+              rotate(0),
+            ]),
+          },
+          {
+            opacity: 0,
+            transform: makeTransform([
+              scale(0.8),
+              translateX(1040),
+              translateY(200),
+              rotate(40),
+            ]),
+          },
         ],
       )
     }

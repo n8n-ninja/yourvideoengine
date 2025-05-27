@@ -28,7 +28,7 @@ export const getTracks = async (
       duration: -1,
     },
     reveal: {
-      type: "slide-down",
+      type: "swipe",
       duration: 0.4,
     },
 
