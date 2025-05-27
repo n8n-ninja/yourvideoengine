@@ -47,7 +47,6 @@ const CameraComponent: React.FC<{
 
   const {
     scale = 1,
-    blur = 0,
     rotation = 0,
     left = 0,
     top = 0,
@@ -66,7 +65,7 @@ const CameraComponent: React.FC<{
     transform: hasKeyframes
       ? `translate(${left || offsetX}px, ${top || offsetY}px) scale(${finalScale}) rotate(${rotation}deg)`
       : `translate(${left || offsetX}px, ${top || offsetY}px)`,
-    filter: hasKeyframes ? `${filter} blur(${blur}px)` : undefined,
+    filter: hasKeyframes ? `${filter}` : undefined,
     ...userStyle,
   }
 
