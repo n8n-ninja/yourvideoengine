@@ -1,5 +1,5 @@
 import React from "react"
-import { Layout } from "../Layout"
+import { Layout } from "@/components/Layout"
 import { useCurrentFrame, useVideoConfig } from "remotion"
 import { createTikTokStyleCaptions } from "@remotion/captions"
 import { getStyle } from "@/utils/getStyle"
@@ -244,70 +244,67 @@ export const Caption: React.FC<{
       effects={effects}
       style={layoutStyle}
     >
-      <div>
-        {activePage && (
-          <div style={resolvedBoxStyle}>
-            {/* Background animé du mot actif */}
-            {highlightActiveWordBackground && activeWordRect && (
-              <div
-                style={{
-                  ...resolvedActiveWordBackgroundStyle,
-                  left: activeWordRect.left,
-                  top: activeWordRect.top,
-                  width: activeWordRect.width,
-                  height: activeWordRect.height,
-                }}
-                aria-hidden="true"
-              />
-            )}
-            {activePage.tokens.map((token, i) => {
-              const isActive =
-                currentMs >= token.fromMs && currentMs < token.toMs
+      {activePage && (
+        <div style={resolvedBoxStyle}>
+          {/* Background animé du mot actif */}
+          {highlightActiveWordBackground && activeWordRect && (
+            <div
+              style={{
+                ...resolvedActiveWordBackgroundStyle,
+                left: activeWordRect.left,
+                top: activeWordRect.top,
+                width: activeWordRect.width,
+                height: activeWordRect.height,
+              }}
+              aria-hidden="true"
+            />
+          )}
+          {activePage.tokens.map((token, i) => {
+            const isActive = currentMs >= token.fromMs && currentMs < token.toMs
 
-              const baseStyle = { ...resolvedTextStyle } as React.CSSProperties
-              const activeStyle = isActive
-                ? ({ ...resolvedActiveWordStyle } as React.CSSProperties)
-                : ({} as React.CSSProperties)
+            const baseStyle = { ...resolvedTextStyle } as React.CSSProperties
+            const activeStyle = isActive
+              ? ({ ...resolvedActiveWordStyle } as React.CSSProperties)
+              : ({} as React.CSSProperties)
 
-              if (
-                baseStyle.transform &&
-                activeStyle.transform &&
-                typeof baseStyle.transform === "string" &&
-                typeof activeStyle.transform === "string"
-              ) {
-                activeStyle.transform = `${baseStyle.transform} ${activeStyle.transform}`
-                delete baseStyle.transform
-              }
+            if (
+              baseStyle.transform &&
+              activeStyle.transform &&
+              typeof baseStyle.transform === "string" &&
+              typeof activeStyle.transform === "string"
+            ) {
+              activeStyle.transform = `${baseStyle.transform} ${activeStyle.transform}`
+              delete baseStyle.transform
+            }
 
-              let styleWithFontSize = {
-                ...baseStyle,
-                ...activeStyle,
-                position: "relative",
-              } as React.CSSProperties
-              if (dynamicFontSize) {
-                // Attribution intelligente des tailles sur la page
-                const sizeMap = getWordSizeMap(
-                  activePage.tokens,
-                  activePageIndex + 1,
-                )
-                const sizeIdx = sizeMap[i]
-                const fontSize = fontSizes[sizeIdx]
-                styleWithFontSize.fontSize = `${fontSize}em`
-              }
-
-              return (
-                <span
-                  key={`${activePageIndex}-${i}`}
-                  ref={(el) => (wordRefs.current[i] = el)}
-                  style={styleWithFontSize}
-                >
-                  {token.text}
-                </span>
+            let styleWithFontSize = {
+              ...baseStyle,
+              ...activeStyle,
+              position: "relative",
+            } as React.CSSProperties
+            if (dynamicFontSize) {
+              // Attribution intelligente des tailles sur la page
+              const sizeMap = getWordSizeMap(
+                activePage.tokens,
+                activePageIndex + 1,
               )
-            })}
-          </div>
-        )}
-      </div>
+              const sizeIdx = sizeMap[i]
+              const fontSize = fontSizes[sizeIdx]
+              styleWithFontSize.fontSize = `${fontSize}em`
+            }
+
+            return (
+              <span
+                key={`${activePageIndex}-${i}`}
+                ref={(el) => (wordRefs.current[i] = el)}
+                style={styleWithFontSize}
+              >
+                {token.text}
+              </span>
+            )
+          })}
+        </div>
+      )}
     </Layout>
   )
 }

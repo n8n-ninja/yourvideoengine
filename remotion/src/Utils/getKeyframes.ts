@@ -1,4 +1,4 @@
-import type { Keyframe } from "@/schemas/project"
+import type { Keyframe } from "@/schemas/keyframe"
 import { lerp, interpolateObject } from "./math"
 
 /**
@@ -13,8 +13,8 @@ import { lerp, interpolateObject } from "./math"
  * @param duration The total duration (in seconds or frames).
  * @returns The interpolated value at the given time, or undefined if no keyframes.
  */
-export function getKeyframeValue<T = number | Record<string, unknown>>(
-  keyframes: Keyframe<T>[],
+export function getKeyframeValue<T extends number | object>(
+  keyframes: Keyframe[],
   currentTime: number,
   duration: number,
 ): T | undefined {
@@ -43,7 +43,7 @@ export function getKeyframeValue<T = number | Record<string, unknown>>(
       Math.max((currentTime - prev.time) / (next.time - prev.time), 0),
       1,
     )
-    return lerp(prev.value as number, next.value as number, t) as T
+    return lerp(prev.value, next.value, t) as T
   }
 
   if (

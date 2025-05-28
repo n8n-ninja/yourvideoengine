@@ -1,4 +1,4 @@
-import type { TransitionReveal } from "@/schemas/project"
+import type { Reveal } from "@/schemas/reveal"
 
 import {
   interpolateStyles,
@@ -28,7 +28,7 @@ export const getRevealTransitionStyle = ({
   progressIn,
   progressOut,
 }: {
-  transition?: TransitionReveal
+  transition?: Reveal
   phase: "in" | "steady" | "out"
   progressIn: number
   progressOut: number
@@ -218,7 +218,7 @@ export const getRevealTransitionStyle = ({
         ],
       )
     }
-    if (outType === "fancy-3d") {
+    if (outType === "swipe") {
       return interpolateStyles(
         1 - progressOut,
         [0, 1],

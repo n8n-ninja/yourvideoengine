@@ -1,6 +1,3 @@
-import { TimingSchema } from "@/schemas/timing"
-import { z } from "zod"
-
 /**
  * Computes timing information for an animation segment based on start, end, and duration.
  * Handles negative (relative) start/end values, and returns frame/second boundaries, progress, and visibility.

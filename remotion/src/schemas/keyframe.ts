@@ -1,12 +1,15 @@
+import { z } from "zod"
+
 /**
- * Represents a keyframe for animation.
- * The time can be negative (relative to the end of the animation).
- *
- * @template T The type of the value (number or object).
- * @property time The time of the keyframe (in seconds, can be negative).
- * @property value The value at this keyframe.
+ * Zod schema for a style configuration.
+ * Accepts either a record (object) or a string (CSS style string).
  */
-export type Keyframe<T = number | Record<string, unknown>> = {
-  time: number // in seconds (can be negative)
-  value: T
-}
+export const KeyframeSchema = z.object({
+  time: z.number(),
+  value: z.record(z.string(), z.number()),
+})
+
+/**
+ * Type inferred from StyleSchema.
+ */
+export type Keyframe = z.infer<typeof KeyframeSchema>

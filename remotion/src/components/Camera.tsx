@@ -1,9 +1,15 @@
 import React from "react"
 import { Img, Video } from "remotion"
-import { CameraBlockType } from "@/schemas/project"
+import { Layout } from "@/components/Layout"
+import { Keyframe } from "@/schemas/keyframe"
 import { useKeyframes } from "@/hooks/useKeyframes"
 import { getStyle } from "@/utils/getStyle"
 import { cameraVideoStyle } from "@/styles/default-style"
+import { Reveal } from "@/schemas/reveal"
+import { Timing } from "@/schemas/timing"
+import { Position } from "@/schemas/position"
+import { Style } from "@/schemas/style"
+import { Effects } from "@/schemas/effect"
 
 /**
  * Camera: renders a video with animated camera effects (scale, blur, rotation, filter, volume) using keyframes.
@@ -18,26 +24,46 @@ import { cameraVideoStyle } from "@/styles/default-style"
  * @param volume Optional volume for the video.
  * @param loop Optional loop for the video.
  * @param revealProgress Optional progress for revealing the video.
+ * @param timing Optional timing for the video.
+ * @param reveal Optional reveal for the video.
+ * @param position Optional position for the video.
+ * @param effects Optional effects for the video.
+ * @param layoutStyle Optional layout style for the video.
  * @returns A Video element that fills its parent (object-fit: cover) and animates inside a fixed container.
  */
 const isImage = (url: string) => {
   return /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(url)
 }
 
-const CameraComponent: React.FC<{
-  camera: CameraBlockType
-  revealProgress?: number
-}> = ({ camera, revealProgress = 1 }) => {
-  const {
-    url,
-    keyFrames,
-    offsetX = 0,
-    offsetY = 0,
-    style,
-    speed = 1,
-    volume = 1,
-    loop = false,
-  } = camera
+export const Camera: React.FC<{
+  url: string
+  keyFrames?: Keyframe[]
+  offsetX?: number
+  offsetY?: number
+  style?: Style
+  speed?: number
+  volume?: number
+  loop?: boolean
+  timing?: Timing
+  reveal?: Reveal
+  position?: Position
+  effects?: Effects
+  layoutStyle?: Style
+}> = ({
+  url,
+  keyFrames,
+  offsetX = 0,
+  offsetY = 0,
+  style,
+  speed = 1,
+  volume = 1,
+  loop = false,
+  timing,
+  reveal,
+  position,
+  effects,
+  layoutStyle,
+}) => {
   const userStyle = getStyle(style)
 
   const interpolated =
@@ -52,6 +78,7 @@ const CameraComponent: React.FC<{
     top = 0,
     filter = "",
     volume: kfVolume,
+    blur = 0,
   } = interpolated
   const scaleNum = Number(scale)
   const blurNum = Number(blur)
@@ -70,7 +97,13 @@ const CameraComponent: React.FC<{
   }
 
   return (
-    <>
+    <Layout
+      timing={timing}
+      reveal={reveal}
+      position={position}
+      effects={effects}
+      style={layoutStyle}
+    >
       {isImage(url) ? (
         <Img
           src={url}
@@ -84,11 +117,9 @@ const CameraComponent: React.FC<{
           playbackRate={speed}
           volume={(_) => (typeof kfVolume === "number" ? kfVolume : volume)}
           loop={loop}
-          // style={videoStyle}
+          style={videoStyle}
         />
       )}
-    </>
+    </Layout>
   )
 }
-
-export { CameraComponent as Camera }

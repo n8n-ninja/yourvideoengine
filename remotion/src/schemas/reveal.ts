@@ -12,7 +12,7 @@ export const TRANSITION_REVEAL_TYPES = [
   "zoom-in",
   "zoom-out",
   "blur",
-  "fancy-3d",
+
   "swipe",
 ] as const
 

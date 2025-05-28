@@ -1,6 +1,6 @@
-import { useProgressEasing } from "../hooks/useProgressEasing"
+import { useProgressEasing } from "@/hooks/useProgressEasing"
 import { getRevealTransitionStyle } from "@/utils/getRevealTransition"
-import type { TransitionReveal } from "@/schemas/project"
+import type { Reveal } from "@/schemas/reveal"
 
 /**
  * React hook to compute the CSS style for a reveal transition at the current video frame.
@@ -16,7 +16,7 @@ export function useRevealTransition({
   startFrame = 0,
   endFrame = 1,
 }: {
-  transition?: TransitionReveal
+  transition?: Reveal
   startFrame: number
   endFrame: number
 }) {

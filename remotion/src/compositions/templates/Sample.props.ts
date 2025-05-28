@@ -1,4 +1,4 @@
-import { Word } from "@/schemas/project"
+import { WordSchema } from "@/schemas/word"
 import { z } from "zod"
 
 export const CompositionName = "Sample"
@@ -7,11 +7,12 @@ export const Schema = z.object({
   title: z.string(),
   intro: z.string(),
   introDuration: z.number(),
-  introCaption: z.array(Word),
+  introCaption: z.array(WordSchema),
   body: z.string(),
   bodyDuration: z.number(),
   outro: z.string(),
   outroDuration: z.number(),
+  music: z.string(),
 })
 
 export const defaultProps = {
@@ -110,4 +111,6 @@ export const defaultProps = {
   outro:
     "https://diwa7aolcke5u.cloudfront.net/uploads/ddcc9b95cc87473fa66f9501a44f1907.mp4",
   outroDuration: 3,
+  music:
+    "https://diwa7aolcke5u.cloudfront.net/uploads/1748099564616-mbgrk0.mp3",
 }
