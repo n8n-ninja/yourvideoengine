@@ -35,11 +35,6 @@ interface EnqueueVideoInput {
 }
 
 const TABLE_NAME = process.env.QUEUES_TABLE
-const MAX_CONCURRENCY = parseInt(process.env.HEYGEN_MAX_CONCURRENCY ?? "1", 10)
-const MAX_RETRIES = parseInt(process.env.HEYGEN_MAX_RETRIES ?? "3", 10)
-const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY
-const HEYGEN_API_URL = "https://api.heygen.com/v2/video/generate"
-const HEYGEN_STATUS_URL = "https://api.heygen.com/v1/video_status.get"
 
 // --- Validation stricte d'un input vidéo ---
 export const validateEnqueueVideoInput = (video: any): boolean => {

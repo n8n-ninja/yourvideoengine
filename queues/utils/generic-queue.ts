@@ -116,6 +116,7 @@ export const pollJobGeneric = async ({
     outputData: any
     outputUrl?: string
     duration?: number
+    returnData?: any
   }>
   job: any
   client: any
@@ -135,6 +136,7 @@ export const pollJobGeneric = async ({
   let outputData: any = null
   let outputUrl: string | undefined
   let duration: number | undefined
+  let returnData: any = undefined
   try {
     const res = await pollApi({ externalId, bucketName, job })
     done = res.done
@@ -142,6 +144,7 @@ export const pollJobGeneric = async ({
     outputData = res.outputData
     outputUrl = res.outputUrl
     duration = res.duration
+    returnData = res.returnData
     console.log("[pollJobGeneric] Résultat pollApi:", JSON.stringify(res))
   } catch (err) {
     console.error("[pollJobGeneric] Erreur lors du polling:", err)
@@ -153,12 +156,13 @@ export const pollJobGeneric = async ({
         TableName: tableName,
         Key: { pk: { S: pk }, sk: { S: sk } },
         UpdateExpression:
-          "SET #status = :r, #updatedAt = :u, #outputData = :d" +
+          "SET #status = :r, #updatedAt = :u, #outputData = :d, #returnData = :rd" +
           ", #outputUrl = :v, #duration = :du",
         ExpressionAttributeNames: {
           "#status": "status",
           "#updatedAt": "updatedAt",
           "#outputData": "outputData",
+          "#returnData": "returnData",
           "#outputUrl": "outputUrl",
           "#duration": "duration",
         },
@@ -166,6 +170,7 @@ export const pollJobGeneric = async ({
           ":r": { S: "ready" },
           ":u": { S: now },
           ":d": { S: JSON.stringify(outputData) },
+          ":rd": returnData !== undefined ? { S: JSON.stringify(returnData) } : { NULL: true },
           ":v": outputUrl ? { S: outputUrl } : { NULL: true },
           ":du":
             duration !== undefined && duration !== null
@@ -180,10 +185,12 @@ export const pollJobGeneric = async ({
       client,
     )
     if (allReady && callbackUrl) {
+      // On n'envoie que returnData au callback
+      const jobsReturnData = jobs.map((job: any) => job.returnData ? JSON.parse(job.returnData) : null)
       await fetchWithTimeout(callbackUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectId, jobs }),
+        body: JSON.stringify({ projectId, results: jobsReturnData }),
       })
     }
   } else if (failed) {

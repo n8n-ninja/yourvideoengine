@@ -91,12 +91,23 @@ export const pollRemotionHandler = async (): Promise<void> => {
       `${REMOTION_STATUS_URL}?renderId=${externalId}&bucketName=${bucketName}`,
     )
     const data = await res.json()
+    // Gestion d'erreur spécifique Remotion
+    let failed = false
+    let errorDetails = null
+    if (data.fatalErrorEncountered) {
+      failed = true
+      errorDetails = data.errors || data
+    } else if (Array.isArray(data.errors) && data.errors.some((e: any) => e.isFatal)) {
+      failed = true
+      errorDetails = data.errors
+    }
     return {
       done: data.done,
-      failed: data.fatalErrorEncountered,
-      outputData: data,
+      failed,
+      outputData: failed ? { ...data, remotionError: errorDetails } : data,
       outputUrl: data.outputFile,
       duration: data.duration,
+      returnData: data.outputFile ? { url: data.outputFile } : undefined,
     }
   }
   for (const job of processingJobs) {

@@ -38,5 +38,10 @@ export const checkCompletion = async (
     items.length > 0 && items.every((item) => item.status?.S === "ready")
   const callbackUrl = items[0]?.callbackUrl?.S
   const jobs = items.map(mapDynamoItemToJob)
+  jobs.sort((a, b) => {
+    if (!a.createdAt) return -1;
+    if (!b.createdAt) return 1;
+    return a.createdAt.localeCompare(b.createdAt);
+  })
   return { allReady, callbackUrl, jobs }
 }
