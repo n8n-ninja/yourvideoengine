@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "outDir": "dist-scripts",
+    "strict": true
+  },
+  "include": ["scripts/**/*.ts", "remotion/src/compositions/templates/**/*.ts"]
+}

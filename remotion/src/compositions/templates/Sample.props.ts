@@ -1,4 +1,4 @@
-import { WordSchema } from "@/schemas/word"
+import { WordSchema } from "../../schemas/word"
 import { z } from "zod"
 
 export const CompositionName = "Sample"

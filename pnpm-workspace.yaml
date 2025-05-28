@@ -1,9 +1,11 @@
 packages:
-  - connect
+  - scripts
   - frontend
+  - connect
   - remotion
   - remotion-api
+  - n8n-nodes/
   - studios/*
   - packages/*
-  - n8n-nodes/*
+
   - micro-services/*
