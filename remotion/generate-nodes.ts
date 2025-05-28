@@ -19,7 +19,7 @@ const zodToN8nType = (zodType: any) => {
     case "ZodBoolean":
       return { type: "boolean", n8nType: "boolean" }
     default:
-      return { type: "json", n8nType: "json" } // array, object, etc.
+      return { type: "json", n8nType: "string" } // array, object, etc.
   }
 }
 

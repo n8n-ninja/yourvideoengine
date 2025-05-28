@@ -25,10 +25,10 @@ export const Component = (props: z.infer<typeof Schema>) => {
         >
           <Camera
             url={props.intro}
-            keyFrames={[
-              { time: 0, value: { scale: 1 } },
-              { time: 1, value: { scale: 1.5 } },
-            ]}
+            // keyFrames={[
+            //   { time: 0, value: { scale: 1 } },
+            //   { time: 1, value: { scale: 1.5 } },
+            // ]}
           />
 
           <Title

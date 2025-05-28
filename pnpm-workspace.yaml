@@ -1,11 +1,8 @@
 packages:
   - scripts
   - frontend
-  - connect
   - remotion
   - remotion-api
-  - n8n-nodes/
+  - n8n-nodes
   - queues
-  - studios/*
-  - packages/*
-  - micro-services/*
+  - studio
