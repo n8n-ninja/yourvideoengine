@@ -1,10 +1,18 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
+    "target": "ES2021",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["DOM", "ES2021"],
+    "jsx": "react-jsx",
+    "strict": true,
     "esModuleInterop": true,
-    "outDir": "dist-scripts",
-    "strict": true
-  },
-  "include": ["scripts/**/*.ts", "remotion/src/compositions/templates/**/*.ts"]
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "baseUrl": "."
+  }
 }

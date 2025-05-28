@@ -20,10 +20,10 @@
     "@types/node": "^22.15.23",
     "dotenv": "^16.5.0",
     "ts-node": "^10.9.2",
-    "zod": "^3.24.4",
     "zod-to-json-schema": "^3.24.5"
   },
   "dependencies": {
-    "@remotion/media-parser": "4.0.306"
+    "@remotion/media-parser": "4.0.306",
+    "zod": "^3.25.32"
   }
 }
