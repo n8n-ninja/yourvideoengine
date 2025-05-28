@@ -14,5 +14,6 @@
     "isolatedModules": true,
     "noEmit": true,
     "baseUrl": "."
-  }
+  },
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "node_modules"]
 }

@@ -6,11 +6,13 @@
   "scripts": {
     "p": "./scripts/git-push.js",
     "clean:generatenodes": "rm -rf dist-scripts",
-    "generatenodes": "tsc && node dist-scripts/scripts/generate-nodes.js && pnpm clean:generatenodes",
+    "generatenodes": "tsc -p tsconfig.scripts.json && node dist-scripts/generate-nodes.js ",
     "deploynodes:dev": "pnpm generatenodes && node ./scripts/deploy-nodes.js dev",
     "deploynodes:prod": "pnpm generatenodes && node ./scripts/deploy-nodes.js prod",
     "deployremotion:prod": "node ./scripts/deploy-remotion.js prod",
-    "deployremotion:dev": "node ./scripts/deploy-remotion.js dev"
+    "deployremotion:dev": "node ./scripts/deploy-remotion.js dev",
+    "deployqueues:dev": "pnpm --filter queues d:dev",
+    "deployqueues:prod": "pnpm --filter queues d:prod"
   },
   "keywords": [],
   "author": "",

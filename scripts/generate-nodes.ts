@@ -4,11 +4,14 @@ import fs from "fs"
 import path from "path"
 
 // Répertoires
-const templatesDir = path.join(__dirname, '../remotion/src/compositions/templates')
-const outputDir = path.join(__dirname, "../../n8n-nodes/nodes")
+const templatesDir = path.resolve(
+  process.cwd(),
+  "remotion/src/compositions/templates",
+)
+const outputDir = path.join(__dirname, "../n8n-nodes/nodes")
 const templateFile = path.join(
   __dirname,
-  "../../n8n-nodes/nodes/node-template.ts.template",
+  "../n8n-nodes/nodes/node-template.ts.template",
 )
 
 // Helpers pour le mapping zod -> n8n (simplifié)
@@ -70,7 +73,15 @@ async function main() {
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true })
   }
-  const files = fs.readdirSync(templatesDir).filter(f => f.endsWith('.props.js'))
+  const files = fs
+    .readdirSync(templatesDir)
+    .filter((f) => f.endsWith(".props.ts"))
+
+  console.log("Templates trouvés :", files)
+  if (files.length === 0) {
+    console.log("Aucun template .props.ts trouvé dans", templatesDir)
+    return
+  }
 
   const templateSource = fs.readFileSync(templateFile, "utf8")
 

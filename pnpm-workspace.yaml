@@ -5,7 +5,7 @@ packages:
   - remotion
   - remotion-api
   - n8n-nodes/
+  - queues
   - studios/*
   - packages/*
-
   - micro-services/*

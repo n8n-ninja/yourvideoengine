@@ -4,7 +4,7 @@
   "description": "AWS Lambda queues with esbuild bundling",
   "main": "index.js",
   "scripts": {
-    "d": "dotenv -e .env -- serverless deploy",
+    "d:dev": "dotenv -e .env -- serverless deploy",
     "d:prod": "pnpm test && dotenv -e .env -- serverless deploy --stage prod",
     "test": "npx jest"
   },
