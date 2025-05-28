@@ -152,7 +152,7 @@
               "Properties": {
                 "Code": {
                   "S3Bucket": "manu-remotion-deployments",
-                  "S3Key": "serverless/remotion-api/dev/1748354823513-2025-05-27T14:07:03.513Z/remotion-api.zip"
+                  "S3Key": "serverless/remotion-api/dev/1748370390649-2025-05-27T18:26:30.649Z/remotion-api.zip"
                 },
                 "Handler": "handler.renderVideo",
                 "Runtime": "nodejs18.x",
@@ -180,7 +180,7 @@
               "Properties": {
                 "Code": {
                   "S3Bucket": "manu-remotion-deployments",
-                  "S3Key": "serverless/remotion-api/dev/1748354823513-2025-05-27T14:07:03.513Z/remotion-api.zip"
+                  "S3Key": "serverless/remotion-api/dev/1748370390649-2025-05-27T18:26:30.649Z/remotion-api.zip"
                 },
                 "Handler": "handler.getStatus",
                 "Runtime": "nodejs18.x",
@@ -373,7 +373,7 @@
                 "Name": "remotion-api-dev | Validate request body and querystring parameters"
               }
             },
-            "ApiGatewayDeployment1748354811320": {
+            "ApiGatewayDeployment1748370377746": {
               "Type": "AWS::ApiGateway::Deployment",
               "Properties": {
                 "RestApiId": {
@@ -715,7 +715,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "manu-remotion-deployments",
-                "S3Key": "serverless/remotion-api/dev/1748354823513-2025-05-27T14:07:03.513Z/remotion-api.zip"
+                "S3Key": "serverless/remotion-api/dev/1748370390649-2025-05-27T18:26:30.649Z/remotion-api.zip"
               },
               "Handler": "handler.renderVideo",
               "Runtime": "nodejs18.x",
@@ -743,7 +743,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "manu-remotion-deployments",
-                "S3Key": "serverless/remotion-api/dev/1748354823513-2025-05-27T14:07:03.513Z/remotion-api.zip"
+                "S3Key": "serverless/remotion-api/dev/1748370390649-2025-05-27T18:26:30.649Z/remotion-api.zip"
               },
               "Handler": "handler.getStatus",
               "Runtime": "nodejs18.x",
@@ -936,7 +936,7 @@
               "Name": "remotion-api-dev | Validate request body and querystring parameters"
             }
           },
-          "ApiGatewayDeployment1748354811320": {
+          "ApiGatewayDeployment1748370377746": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -1243,7 +1243,7 @@
           "Properties": {
             "Code": {
               "S3Bucket": "manu-remotion-deployments",
-              "S3Key": "serverless/remotion-api/dev/1748354823513-2025-05-27T14:07:03.513Z/remotion-api.zip"
+              "S3Key": "serverless/remotion-api/dev/1748370390649-2025-05-27T18:26:30.649Z/remotion-api.zip"
             },
             "Handler": "handler.renderVideo",
             "Runtime": "nodejs18.x",
@@ -1271,7 +1271,7 @@
           "Properties": {
             "Code": {
               "S3Bucket": "manu-remotion-deployments",
-              "S3Key": "serverless/remotion-api/dev/1748354823513-2025-05-27T14:07:03.513Z/remotion-api.zip"
+              "S3Key": "serverless/remotion-api/dev/1748370390649-2025-05-27T18:26:30.649Z/remotion-api.zip"
             },
             "Handler": "handler.getStatus",
             "Runtime": "nodejs18.x",
@@ -1464,7 +1464,7 @@
             "Name": "remotion-api-dev | Validate request body and querystring parameters"
           }
         },
-        "ApiGatewayDeployment1748354811320": {
+        "ApiGatewayDeployment1748370377746": {
           "Type": "AWS::ApiGateway::Deployment",
           "Properties": {
             "RestApiId": {

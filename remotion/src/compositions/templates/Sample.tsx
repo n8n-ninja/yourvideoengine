@@ -1,115 +1,104 @@
-import { Composition } from "remotion"
 import { z } from "zod"
-import { CaptionBlockType, TrackType } from "@/schemas/project"
-import { createCamera } from "@/factories/camera"
-import { createTransition } from "@/factories/transition"
-import { createEmoji } from "@/factories/emoji"
-import { createAudio } from "@/factories/audio"
-import { createScene } from "@/factories/scene"
+import { Composition } from "remotion"
+import { AbsoluteFill } from "remotion"
+import { TransitionSeries } from "@remotion/transitions"
 import { defaultProps } from "./Sample.props"
-import { createCaptionLayer } from "@/factories/caption"
-import { createTitleLayer } from "@/factories/title"
-import { createTrack } from "@/factories/track"
-import { RenderTracks } from "@/components/RenderTracks"
-import { createCalculateTracksMetadata } from "@/utils/calculateTracksMetadata"
 import { Schema, CompositionName } from "./Sample.props"
 import { Video } from "remotion"
-
-const captionDefaultProps: Partial<CaptionBlockType> = {
-  position: {
-    top: 50,
-    left: 10,
-    right: 10,
-  },
-  boxStyle: {
-    backgroundColor: "transparent",
-  },
-  containerStyle: {
-    overflow: "visible",
-  },
-  textStyle: {
-    margin: "0 15px",
-    textTransform: "uppercase",
-  },
-  activeWord: {
-    style: {
-      color: "white",
-      transform: "skew(-10deg) scale(1.1)",
-    },
-    background: {
-      style: {
-        backgroundColor: "#0377fc",
-        border: "5px solid #042d5c",
-        borderRadius: 30,
-        transform: "skew(-10deg) scale(1.1)",
-      },
-      padding: {
-        x: 50,
-        y: 10,
-      },
-    },
-  },
-  dynamicFontSize: {
-    min: 4,
-    moy: 5,
-    max: 7,
-  },
-  effects: [
-    {
-      type: "float",
-      options: {
-        speed: 0.1,
-        amplitude: 0.4,
-      },
-    },
-  ],
-}
-
-export const getTracks = async (
-  props: z.infer<typeof Schema>,
-): Promise<TrackType[]> => {
-  const camera = await createCamera({
-    url: props.url,
-  })
-
-  const hook = createTitleLayer({
-    containerStyle: {
-      background: "#042d5c80",
-    },
-    position: {
-      bottom: 80,
-    },
-    timing: {
-      start: 0.2,
-      duration: -0.2,
-    },
-    reveal: {
-      type: "slide-down",
-      duration: 0.4,
-    },
-
-    title: props.title,
-  })
-
-  const mainTrack = createTrack({
-    id: "title",
-    items: [
-      createScene({
-        id: "intro",
-
-        blocks: [camera],
-      }),
-    ],
-  })
-
-  return [mainTrack]
-}
+import { getTransition } from "@/neoutils/getTransition"
+import { Title } from "@/components/blocks/Title"
+import { Caption } from "@/components/blocks/Caption"
 
 export const Component = (props: z.infer<typeof Schema>) => {
-  return <Video src={props.url} />
-  // <RenderTracks getTracks={getTracks} props={props} />
+  const fps = 30
+
+  return (
+    <AbsoluteFill>
+      <TransitionSeries>
+        <TransitionSeries.Sequence
+          key={"intro"}
+          durationInFrames={props.introDuration * fps}
+        >
+          <Video src={props.intro} />
+
+          <Title
+            title={props.title}
+            timing={{
+              start: 1,
+              duration: 3,
+            }}
+            position={{
+              bottom: 60,
+            }}
+            reveal={{
+              type: "fade",
+            }}
+          />
+
+          <Caption
+            words={props.introCaption}
+            position={{
+              top: 60,
+            }}
+            activeWord={{
+              background: {
+                style: "background-color: rgba(200,0,0,0.7)",
+                padding: {
+                  x: 30,
+                  y: 10,
+                },
+              },
+            }}
+            multiColors={["#000000", "#ffffff"]}
+            dynamicFontSize={{
+              min: 1,
+              moy: 1.5,
+              max: 4,
+            }}
+          />
+        </TransitionSeries.Sequence>
+
+        {getTransition({
+          animation: "wipe",
+          direction: "from-bottom",
+          duration: 0.4 * fps,
+        })}
+
+        <TransitionSeries.Sequence
+          key={"body"}
+          durationInFrames={props.bodyDuration * fps}
+        >
+          <Video src={props.body} />
+        </TransitionSeries.Sequence>
+
+        {getTransition({
+          animation: "wipe",
+          direction: "from-top",
+          duration: 0.4 * fps,
+        })}
+
+        <TransitionSeries.Sequence
+          key={"outro"}
+          durationInFrames={props.outroDuration * fps}
+        >
+          <Video src={props.outro} />
+        </TransitionSeries.Sequence>
+      </TransitionSeries>
+    </AbsoluteFill>
+  )
 }
-export const calculateMetadata = createCalculateTracksMetadata(getTracks)
+
+export const calculateMetadata = ({
+  props,
+}: {
+  props: z.infer<typeof Schema>
+}) => {
+  const duration =
+    props.introDuration + props.bodyDuration + props.outroDuration - 0.4 - 0.4
+  return {
+    durationInFrames: Math.round(duration * 30),
+  }
+}
 
 export const TemplateSample = () => {
   return (

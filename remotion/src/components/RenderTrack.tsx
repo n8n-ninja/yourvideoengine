@@ -7,7 +7,7 @@ import type {
   TrackItemType,
   BlockType,
 } from "@/schemas/project"
-import { Block } from "@/components/Block"
+import { Block } from "@/components/Layout"
 import { getTransition } from "@/utils/getTransition"
 import { addSound } from "@/utils/addSound"
 import { AbsoluteFill, useVideoConfig } from "remotion"

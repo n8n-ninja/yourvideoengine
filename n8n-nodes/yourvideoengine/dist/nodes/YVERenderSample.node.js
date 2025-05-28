@@ -26,10 +26,45 @@ class YVERenderSample {
                     required: false,
                 },
                 {
-                    displayName: 'url',
-                    name: 'url',
+                    displayName: 'intro',
+                    name: 'intro',
                     type: 'string',
                     default: "https://diwa7aolcke5u.cloudfront.net/uploads/0d9256b1c3494d71adc592ffebf7ba85.mp4",
+                    required: false,
+                },
+                {
+                    displayName: 'introDuration',
+                    name: 'introDuration',
+                    type: 'number',
+                    default: 5.36,
+                    required: false,
+                },
+                {
+                    displayName: 'body',
+                    name: 'body',
+                    type: 'string',
+                    default: "https://diwa7aolcke5u.cloudfront.net/uploads/9720d87ed3ef47418eaff1bb8b3af4eb.mp4",
+                    required: false,
+                },
+                {
+                    displayName: 'bodyDuration',
+                    name: 'bodyDuration',
+                    type: 'number',
+                    default: 2.8,
+                    required: false,
+                },
+                {
+                    displayName: 'outro',
+                    name: 'outro',
+                    type: 'string',
+                    default: "https://diwa7aolcke5u.cloudfront.net/uploads/ddcc9b95cc87473fa66f9501a44f1907.mp4",
+                    required: false,
+                },
+                {
+                    displayName: 'outroDuration',
+                    name: 'outroDuration',
+                    type: 'number',
+                    default: 3,
                     required: false,
                 },
                 // Champs fixes
@@ -68,7 +103,12 @@ class YVERenderSample {
             // Récupérer les paramètres du formulaire
             const params = {
                 title: this.getNodeParameter('title', i),
-                url: this.getNodeParameter('url', i),
+                intro: this.getNodeParameter('intro', i),
+                introDuration: this.getNodeParameter('introDuration', i),
+                body: this.getNodeParameter('body', i),
+                bodyDuration: this.getNodeParameter('bodyDuration', i),
+                outro: this.getNodeParameter('outro', i),
+                outroDuration: this.getNodeParameter('outroDuration', i),
             };
             const resumeUrl = this.getNodeParameter('resumeUrl', i);
             const executionId = this.getNodeParameter('executionId', i);

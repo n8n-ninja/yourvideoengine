@@ -1,9 +1,14 @@
 import React from "react"
 import { titleThemes } from "../../styles/title-themes"
 import { LetterAnimation } from "../LetterAnimation"
-import { TitleBlockType } from "@/schemas/project"
 import { getStyle } from "@/utils/getStyle"
 import { titleBaseStyle } from "@/styles/default-style"
+import { Layout } from "../Layout"
+import { Effects } from "@/schemas/effect"
+import { Reveal } from "@/schemas/reveal"
+import { Timing } from "@/schemas/timing"
+import { Position } from "@/schemas/position"
+import { Style } from "@/schemas/style"
 
 /**
  * Title: renders a single title with theme and animation.
@@ -13,15 +18,36 @@ import { titleBaseStyle } from "@/styles/default-style"
  * @returns A styled h1 element with optional letter animation.
  */
 export const Title: React.FC<{
-  title: TitleBlockType
-  revealProgress?: number
-}> = ({ title, revealProgress = 1 }) => {
-  const themeStyle =
-    title.theme && titleThemes[title.theme] ? titleThemes[title.theme] : {}
-  const style = getStyle(title.style, { ...titleBaseStyle, ...themeStyle })
+  title: string
+  theme?: string
+  style?: string
+  letterAnimation?: {
+    duration: number
+    easing: string
+    stagger: number
+    translateY: number
+  }
+  timing?: Timing
+  reveal?: Reveal
+  position?: Position
+  effects?: Effects
+  layoutStyle?: Style
+}> = ({
+  title,
+  theme,
+  style,
+  letterAnimation,
+  timing,
+  reveal,
+  position,
+  effects,
+  layoutStyle,
+}) => {
+  const themeStyle = theme && titleThemes[theme] ? titleThemes[theme] : {}
+  const computedStyle = getStyle(style, { ...titleBaseStyle, ...themeStyle })
   let letterAnimationConfig = null
-  if (title.letterAnimation) {
-    const config = title.letterAnimation
+  if (letterAnimation) {
+    const config = letterAnimation
     letterAnimationConfig = {
       duration: config.duration ?? 0.3,
       easing: config.easing ?? "easeOut",
@@ -31,15 +57,20 @@ export const Title: React.FC<{
   }
 
   return (
-    <h1 style={style}>
-      {letterAnimationConfig ? (
-        <LetterAnimation
-          text={title.title || ""}
-          config={letterAnimationConfig}
-        />
-      ) : (
-        title.title
-      )}
-    </h1>
+    <Layout
+      timing={timing}
+      reveal={reveal}
+      position={position}
+      effects={effects}
+      style={layoutStyle}
+    >
+      <h1 style={computedStyle}>
+        {letterAnimationConfig ? (
+          <LetterAnimation text={title || ""} config={letterAnimationConfig} />
+        ) : (
+          title
+        )}
+      </h1>
+    </Layout>
   )
 }

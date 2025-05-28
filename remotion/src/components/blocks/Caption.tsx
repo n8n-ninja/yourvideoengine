@@ -1,58 +1,83 @@
 import React from "react"
+import { Layout } from "../Layout"
 import { useCurrentFrame, useVideoConfig } from "remotion"
 import { createTikTokStyleCaptions } from "@remotion/captions"
 import { getStyle } from "@/utils/getStyle"
-import { CaptionBlockType, Word } from "@/schemas/project"
+import { Word } from "@/schemas/word"
 import {
   captionBoxStyle,
   captionTextStyle,
   captionActiveWordStyle,
 } from "@/styles/default-style"
+import { Reveal } from "@/schemas/reveal"
+import { Timing } from "@/schemas/timing"
+import { Position } from "@/schemas/position"
+import { Style } from "@/schemas/style"
+import { Effects } from "@/schemas/effect"
 
-/**
- * Caption: displays TikTok-style synchronized captions with dynamic styles and active word highlighting.
- *
- * @param captions An object of type CaptionType containing:
- *   - words: Array of word objects with timing and optional confidence.
- *   - boxStyle: (optional) Style for the caption box (object or CSS string).
- *   - textStyle: (optional) Style for the text (object or CSS string).
- *   - activeWordStyle: (optional) Style for the active word (object or CSS string).
- *   - multiColors: (optional) Array of colors for active word cycling.
- *   - combineTokensWithinMilliseconds: (optional) Merge window for tokens (default: 1400ms).
- *
- * @returns An AbsoluteFill with styled captions, or nothing if no active page.
- */
 export const Caption: React.FC<{
-  captions: CaptionBlockType
-  revealProgress?: number
-}> = ({ captions, revealProgress = 1 }) => {
+  words: Word[]
+  activeWord?: {
+    style?: Style
+    background?: {
+      style?: Style
+      padding?: number | { x?: number; y?: number }
+    }
+  }
+  multiColors?: string[]
+  combineTokensWithinMilliseconds?: number
+  dynamicFontSize?: {
+    min: number
+    moy: number
+    max: number
+  }
+  boxStyle?: Style
+  textStyle?: Style
+  timing?: Timing
+  reveal?: Reveal
+  position?: Position
+  effects?: Effects
+  layoutStyle?: Style
+}> = ({
+  words,
+  activeWord,
+  multiColors,
+  combineTokensWithinMilliseconds,
+  dynamicFontSize,
+  boxStyle,
+  textStyle,
+  timing,
+  reveal,
+  position,
+  effects,
+  layoutStyle,
+}) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
   const currentTime = frame / fps
 
   // Récupération des nouvelles options depuis captions
   const highlightActiveWordBackground =
-    !!captions.activeWord?.background?.style ||
-    !!captions.activeWord?.background?.padding
-  const activeWordBackgroundStyle = captions.activeWord?.background?.style
-  const activeWordBackgroundPadding = captions.activeWord?.background?.padding
+    activeWord?.background?.style || !!activeWord?.background?.padding
+  const activeWordBackgroundStyle = activeWord?.background?.style
+  const activeWordBackgroundPadding = activeWord?.background?.padding
 
   // Box (container) style
-  const resolvedBoxStyle = getStyle(captions.boxStyle, {
+  const resolvedBoxStyle = getStyle(boxStyle, {
     ...captionBoxStyle,
     position: "relative" as const, // Pour le background absolu
     display: "inline-block",
   })
 
   // Text style
-  const resolvedTextStyle = getStyle(captions.textStyle, {
+  const resolvedTextStyle = getStyle(textStyle, {
     ...captionTextStyle,
     position: "relative" as const,
     zIndex: 1,
   })
 
   // Active word style
-  let resolvedActiveWordStyle = getStyle(captions.activeWord?.style, {
+  let resolvedActiveWordStyle = getStyle(activeWord?.style, {
     ...captionActiveWordStyle,
     position: "relative" as const,
     zIndex: 2,
@@ -78,7 +103,7 @@ export const Caption: React.FC<{
   }
 
   // Map words to TikTok caption objects
-  const tiktokCaptions = captions.words.map((w) => ({
+  const tiktokCaptions = words.map((w) => ({
     text: " " + w.word,
     startMs: Math.round(w.start * 1000),
     endMs: Math.round(w.end * 1000),
@@ -89,8 +114,7 @@ export const Caption: React.FC<{
   // Split into TikTok-style pages
   const { pages } = createTikTokStyleCaptions({
     captions: tiktokCaptions,
-    combineTokensWithinMilliseconds:
-      captions.combineTokensWithinMilliseconds ?? 1400,
+    combineTokensWithinMilliseconds: combineTokensWithinMilliseconds ?? 1400,
   })
 
   // Find the active page
@@ -101,15 +125,10 @@ export const Caption: React.FC<{
   const activePage = pages[activePageIndex]
 
   // Override active word color if multiColors is provided
-  if (
-    captions.multiColors &&
-    captions.multiColors.length > 0 &&
-    activePageIndex >= 0
-  ) {
+  if (multiColors && multiColors.length > 0 && activePageIndex >= 0) {
     resolvedActiveWordStyle = {
       ...resolvedActiveWordStyle,
-      color:
-        captions.multiColors[activePageIndex % captions.multiColors.length],
+      color: multiColors[activePageIndex % multiColors.length],
     }
   }
 
@@ -144,12 +163,7 @@ export const Caption: React.FC<{
         height: el.offsetHeight + 2 * padY,
       })
     }
-  }, [
-    // activePage,
-    currentMs,
-    // highlightActiveWordBackground,
-    // activeWordBackgroundPadding,
-  ])
+  }, [currentMs])
 
   const getActiveWordPadding = () => {
     if (typeof activeWordBackgroundPadding === "number")
@@ -165,20 +179,16 @@ export const Caption: React.FC<{
     return { padX: 0, padY: 0 }
   }
 
-  // --- Définition des tailles de texte dynamiques ---
-
-  // Tailles en em, centrées sur 1em, amplitude contrôlée
-
   const fontSizes = [
-    captions.dynamicFontSize?.min,
-    captions.dynamicFontSize?.moy,
-    captions.dynamicFontSize?.max,
+    dynamicFontSize?.min,
+    dynamicFontSize?.moy,
+    dynamicFontSize?.max,
   ]
 
   // Attribution intelligente des tailles de mots pour chaque page
   const getWordSizeMap = (tokens: { text: string }[], pageSeed: number) => {
     const n = tokens.length
-    if (!captions.dynamicFontSize) return Array(n).fill(1) // fallback : tout moyen
+    if (!dynamicFontSize) return Array(n).fill(1) // fallback : tout moyen
     if (n === 1) return [2] // un seul mot, il est gros
 
     // Indices des mots courts et longs
@@ -227,68 +237,77 @@ export const Caption: React.FC<{
   }
 
   return (
-    <div>
-      {activePage && (
-        <div style={resolvedBoxStyle}>
-          {/* Background animé du mot actif */}
-          {highlightActiveWordBackground && activeWordRect && (
-            <div
-              style={{
-                ...resolvedActiveWordBackgroundStyle,
-                left: activeWordRect.left,
-                top: activeWordRect.top,
-                width: activeWordRect.width,
-                height: activeWordRect.height,
-              }}
-              aria-hidden="true"
-            />
-          )}
-          {activePage.tokens.map((token, i) => {
-            const isActive = currentMs >= token.fromMs && currentMs < token.toMs
+    <Layout
+      timing={timing}
+      reveal={reveal}
+      position={position}
+      effects={effects}
+      style={layoutStyle}
+    >
+      <div>
+        {activePage && (
+          <div style={resolvedBoxStyle}>
+            {/* Background animé du mot actif */}
+            {highlightActiveWordBackground && activeWordRect && (
+              <div
+                style={{
+                  ...resolvedActiveWordBackgroundStyle,
+                  left: activeWordRect.left,
+                  top: activeWordRect.top,
+                  width: activeWordRect.width,
+                  height: activeWordRect.height,
+                }}
+                aria-hidden="true"
+              />
+            )}
+            {activePage.tokens.map((token, i) => {
+              const isActive =
+                currentMs >= token.fromMs && currentMs < token.toMs
 
-            const baseStyle = { ...resolvedTextStyle } as React.CSSProperties
-            const activeStyle = isActive
-              ? ({ ...resolvedActiveWordStyle } as React.CSSProperties)
-              : ({} as React.CSSProperties)
+              const baseStyle = { ...resolvedTextStyle } as React.CSSProperties
+              const activeStyle = isActive
+                ? ({ ...resolvedActiveWordStyle } as React.CSSProperties)
+                : ({} as React.CSSProperties)
 
-            if (
-              baseStyle.transform &&
-              activeStyle.transform &&
-              typeof baseStyle.transform === "string" &&
-              typeof activeStyle.transform === "string"
-            ) {
-              activeStyle.transform = `${baseStyle.transform} ${activeStyle.transform}`
-              delete baseStyle.transform
-            }
+              if (
+                baseStyle.transform &&
+                activeStyle.transform &&
+                typeof baseStyle.transform === "string" &&
+                typeof activeStyle.transform === "string"
+              ) {
+                activeStyle.transform = `${baseStyle.transform} ${activeStyle.transform}`
+                delete baseStyle.transform
+              }
 
-            let styleWithFontSize = {
-              ...baseStyle,
-              ...activeStyle,
-              position: "relative",
-            } as React.CSSProperties
-            if (captions.dynamicFontSize) {
-              // Attribution intelligente des tailles sur la page
-              const sizeMap = getWordSizeMap(
-                activePage.tokens,
-                activePageIndex + 1,
+              let styleWithFontSize = {
+                ...baseStyle,
+                ...activeStyle,
+                position: "relative",
+              } as React.CSSProperties
+              if (dynamicFontSize) {
+                // Attribution intelligente des tailles sur la page
+                const sizeMap = getWordSizeMap(
+                  activePage.tokens,
+                  activePageIndex + 1,
+                )
+                const sizeIdx = sizeMap[i]
+                const fontSize = fontSizes[sizeIdx]
+                styleWithFontSize.fontSize = `${fontSize}em`
+              }
+
+              return (
+                <span
+                  key={`${activePageIndex}-${i}`}
+                  ref={(el) => (wordRefs.current[i] = el)}
+                  style={styleWithFontSize}
+                >
+                  {token.text}
+                </span>
               )
-              const sizeIdx = sizeMap[i]
-              const fontSize = fontSizes[sizeIdx]
-              styleWithFontSize.fontSize = `${fontSize}em`
-            }
-
-            return (
-              <span
-                key={`${activePageIndex}-${i}`}
-                ref={(el) => (wordRefs.current[i] = el)}
-                style={styleWithFontSize}
-              >
-                {token.text}
-              </span>
-            )
-          })}
-        </div>
-      )}
-    </div>
+            })}
+          </div>
+        )}
+      </div>
+    </Layout>
   )
 }
