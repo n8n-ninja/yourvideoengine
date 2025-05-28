@@ -1,13 +1,8 @@
-/// <reference types="node" />
-// This script is meant to be run with ts-node
 import fs from "fs"
 import path from "path"
 
 // Répertoires
-const templatesDir = path.resolve(
-  process.cwd(),
-  "remotion/src/compositions/templates",
-)
+const templatesDir = path.join(__dirname, "./src/compositions/templates")
 const outputDir = path.join(__dirname, "../n8n-nodes/nodes")
 const templateFile = path.join(
   __dirname,
@@ -77,18 +72,12 @@ async function main() {
     .readdirSync(templatesDir)
     .filter((f) => f.endsWith(".props.ts"))
 
-  console.log("Templates trouvés :", files)
-  if (files.length === 0) {
-    console.log("Aucun template .props.ts trouvé dans", templatesDir)
-    return
-  }
-
   const templateSource = fs.readFileSync(templateFile, "utf8")
 
   for (const file of files) {
     const propsPath = path.join(templatesDir, file)
     // Import dynamique ESM
-    const propsModule = require(propsPath)
+    const propsModule = await import(propsPath)
     const { Schema, CompositionName, defaultProps } = propsModule
     const shape = Schema.shape
 

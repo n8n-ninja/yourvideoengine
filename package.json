@@ -6,7 +6,7 @@
   "scripts": {
     "p": "./scripts/git-push.js",
     "clean:generatenodes": "rm -rf dist-scripts",
-    "generatenodes": "tsc -p tsconfig.scripts.json && node dist-scripts/generate-nodes.js ",
+    "generatenodes": "npx ts-node -r tsconfig-paths/register -P remotion/tsconfig.json remotion/generate-nodes.ts",
     "deploynodes:dev": "pnpm generatenodes && node ./scripts/deploy-nodes.js dev",
     "deploynodes:prod": "pnpm generatenodes && node ./scripts/deploy-nodes.js prod",
     "deployremotion:prod": "node ./scripts/deploy-remotion.js prod",
