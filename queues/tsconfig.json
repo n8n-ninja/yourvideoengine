@@ -10,8 +10,9 @@
     "outDir": "./dist",
     "sourceMap": true,
     "declaration": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["jest"]
   },
-  "include": ["*.ts"],
+  "include": ["*.ts", "tests/**/*.ts", "queues/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

@@ -1,21 +1,7 @@
 import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb"
+import { fromDynamoItem } from "./dynamo-helpers"
 
 const TABLE_NAME = process.env.QUEUES_TABLE
-
-export const mapDynamoItemToJob = (item: any) => ({
-  jobId: item.sk?.S?.replace("VIDEO#", ""),
-  externalId: item.externalId?.S,
-  status: item.status?.S,
-  attempts: parseInt(item.attempts?.N ?? "0", 10),
-  inputData: item.inputData?.S ? JSON.parse(item.inputData.S) : {},
-  outputData: item.outputData?.S ? JSON.parse(item.outputData.S) : {},
-  queueType: item.queueType?.S,
-  callbackUrl: item.callbackUrl?.S,
-  projectId: item.pk?.S?.replace("PROJECT#", ""),
-  createdAt: item.createdAt?.S,
-  updatedAt: item.updatedAt?.S,
-  returnData: item.returnData?.S ? JSON.parse(item.returnData.S) : undefined,
-})
 
 export const checkCompletion = async (
   projectId: string,
@@ -34,7 +20,7 @@ export const checkCompletion = async (
   const allReady =
     items.length > 0 && items.every((item) => item.status?.S === "ready")
   const callbackUrl = items[0]?.callbackUrl?.S
-  const jobs = items.map(mapDynamoItemToJob)
+  const jobs = items.map(fromDynamoItem)
   jobs.sort((a, b) => {
     if (!a.createdAt) return -1;
     if (!b.createdAt) return 1;
@@ -63,7 +49,7 @@ export const checkAllDone = async (
       return s === "ready" || s === "failed"
     })
   const callbackUrl = items[0]?.callbackUrl?.S
-  const jobs = items.map(mapDynamoItemToJob)
+  const jobs = items.map(fromDynamoItem)
   jobs.sort((a, b) => {
     if (!a.createdAt) return -1;
     if (!b.createdAt) return 1;

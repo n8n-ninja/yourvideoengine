@@ -1,22 +1,19 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb"
 import { fetchWithTimeout } from "../index"
-import {
-  startJobGeneric,
-  pollJobGeneric,
-  getProcessingJobs,
-} from "../utils/generic-queue"
+import { startJobGeneric, pollJobGeneric } from "../utils/generic-queue"
+import { scanJobs, Job } from "../utils/dynamo-helpers"
 
 const TABLE_NAME = process.env.QUEUES_TABLE
 const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY
-const HEYGEN_API_URL = "https://api.heygen.com/v2/video/generate"
-const HEYGEN_STATUS_URL = "https://api.heygen.com/v1/video_status.get"
+const HEYGEN_RENDER_URL = process.env.HEYGEN_RENDER_URL
+const HEYGEN_STATUS_URL = process.env.HEYGEN_STATUS_URL
 
 export const handleHeygenJob = async (
-  job: any,
+  job: Job,
   client: DynamoDBClient,
-  tableName: string,
+  tableName: string
 ) => {
-  const { params } = job
+  const { inputData: params } = job
   const apiKey = params.apiKey || HEYGEN_API_KEY
   if (!apiKey) return
   const inputData = {
@@ -41,7 +38,7 @@ export const handleHeygenJob = async (
     },
   }
   const heygenApiCall = async (inputData: any) => {
-    const res = await fetchWithTimeout(HEYGEN_API_URL, {
+    const res = await fetchWithTimeout(HEYGEN_RENDER_URL!, {
       method: "POST",
       headers: {
         "X-Api-Key": apiKey,
@@ -61,18 +58,18 @@ export const handleHeygenJob = async (
     job,
     client,
     tableName,
+    maxRetries: 3,
   })
 }
 
 export const pollHeygenHandler = async (): Promise<void> => {
   if (!TABLE_NAME) throw new Error("QUEUES_TABLE not set")
   const client = new DynamoDBClient({})
-  const processingJobs = await getProcessingJobs({
-    client,
-    tableName: TABLE_NAME,
-    queueType: "heygen",
-  })
-  const heygenPollApi = async ({ externalId }: { externalId: string }) => {
+  const processingJobs = (await scanJobs(client, TABLE_NAME)).filter(
+    (job) => job.status === "processing" && job.queueType === "heygen"
+  )
+  const heygenPollApi = async (job: Job) => {
+    const { externalId } = job
     const res = await fetchWithTimeout(
       `${HEYGEN_STATUS_URL}?video_id=${externalId}`,
       {
@@ -81,15 +78,24 @@ export const pollHeygenHandler = async (): Promise<void> => {
           "X-Api-Key": HEYGEN_API_KEY as string,
           Accept: "application/json",
         } as Record<string, string>,
-      },
+      }
     )
     const data = await res.json()
+    let failed = false
+    let errorDetails = null
+    if (data.data?.status === "failed") {
+      failed = true
+      errorDetails = data.data
+    }
     return {
       done: data.data?.status === "completed",
-      failed: data.data?.status === "failed",
+      failed,
       outputData: data.data,
-      outputUrl: data.data?.video_url,
-      duration: data.data?.duration,
+      returnData: failed
+        ? { errors: errorDetails }
+        : data.data?.video_url
+        ? { url: data.data.video_url }
+        : undefined,
     }
   }
   for (const job of processingJobs) {

@@ -4,12 +4,13 @@
   "description": "AWS Lambda queues with esbuild bundling",
   "main": "index.js",
   "scripts": {
-    "d:dev": "dotenv -e .env -- serverless deploy",
+    "d:dev": "serverless deploy",
     "d:prod": "pnpm test && dotenv -e .env -- serverless deploy --stage prod",
     "test": "npx jest"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.812.0",
+    "jest-mock": "30.0.0-beta.3",
     "uuid": "^11.1.0"
   },
   "devDependencies": {

@@ -1,33 +1,28 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda"
-import {
-  DynamoDBClient,
-  PutItemCommand,
-  ScanCommand,
-
-} from "@aws-sdk/client-dynamodb"
+import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb"
 import { v4 as uuidv4 } from "uuid"
 import { handleRemotionJob, pollRemotionHandler } from "./queues/remotion-queue"
 import { handleFluxJob, pollFluxHandler } from "./queues/flux-queue"
-import { handleRunwayJob, pollRunwayHandler } from "./queues/runway-queue"
-import { handleAppifyJob, pollAppifyHandler } from "./queues/appify-queue"
 import { handleHeygenJob, pollHeygenHandler } from "./queues/heygen-queue"
+import { putJob, fromDynamoItem, Job } from "./utils/dynamo-helpers"
 
 // --- Utilitaire fetch avec timeout ---
 const fetchWithTimeout = async (
   url: string,
   options: RequestInit = {},
-  timeout = 10000,
+  timeout = 10000
 ): Promise<any> => {
   return Promise.race([
     fetch(url, options),
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Timeout")), timeout),
+      setTimeout(() => reject(new Error("Timeout")), timeout)
     ),
   ])
 }
 
 interface EnqueueVideoInput {
   projectId: string
+  clientId: string
   callbackUrl: string
   params: Record<string, unknown>
   slug?: string
@@ -41,33 +36,19 @@ export const validateEnqueueVideoInput = (video: any): boolean => {
   return (
     typeof video === "object" &&
     typeof video.projectId === "string" &&
+    typeof video.clientId === "string" &&
     typeof video.callbackUrl === "string" &&
     typeof video.params === "object" &&
     video.projectId.length > 0 &&
+    video.clientId.length > 0 &&
     video.callbackUrl.length > 0
   )
 }
 
-// --- Mapping DynamoDB -> objet vidéo ---
-export const mapDynamoItemToVideo = (item: any) => ({
-  videoId: item.sk?.S?.replace("VIDEO#", ""),
-  heygenId: item.heygenId?.S,
-  status: item.status?.S,
-  attempts: parseInt(item.attempts?.N ?? "0", 10),
-  params: item.params?.S ? JSON.parse(item.params.S) : {},
-  createdAt: item.createdAt?.S,
-  updatedAt: item.updatedAt?.S,
-  heygenData: item.heygenData?.S ? JSON.parse(item.heygenData.S) : null,
-  video_url: item.video_url?.S,
-  duration: item.duration?.N ? parseFloat(item.duration.N) : undefined,
-  caption_url: item.caption_url?.S,
-  slug: item.slug?.S,
-})
-
 // --- Calcul du nombre de slots disponibles ---
 export const getAvailableSlots = (
   processingCount: number,
-  maxConcurrency: number,
+  maxConcurrency: number
 ): number => {
   return Math.max(0, maxConcurrency - processingCount)
 }
@@ -78,31 +59,24 @@ const queueConfigs = {
     maxConcurrency: 2,
     handler: handleHeygenJob,
     poller: pollHeygenHandler,
+    maxRetries: 3,
   },
   remotion: {
     maxConcurrency: 1,
     handler: handleRemotionJob,
     poller: pollRemotionHandler,
+    maxRetries: 3,
   },
   flux: {
     maxConcurrency: 2,
     handler: handleFluxJob,
     poller: pollFluxHandler,
-  },
-  runway: {
-    maxConcurrency: 2,
-    handler: handleRunwayJob,
-    poller: pollRunwayHandler,
-  },
-  appify: {
-    maxConcurrency: 1,
-    handler: handleAppifyJob,
-    poller: pollAppifyHandler,
+    maxRetries: 3,
   },
 }
 
 export const enqueueHandler = async (
-  event: APIGatewayProxyEvent,
+  event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   if (!event.body) {
     return {
@@ -132,7 +106,7 @@ export const enqueueHandler = async (
           event: "invalid-video-input",
           video,
           timestamp: now,
-        }),
+        })
       )
       return {
         statusCode: 400,
@@ -149,30 +123,28 @@ export const enqueueHandler = async (
     }
     const videoId = uuidv4()
     try {
-      await client.send(
-        new PutItemCommand({
-          TableName: TABLE_NAME,
-          Item: {
-            pk: { S: `PROJECT#${video.projectId}` },
-            sk: { S: `VIDEO#${videoId}` },
-            status: { S: "pending" },
-            attempts: { N: "0" },
-            callbackUrl: { S: video.callbackUrl },
-            params: { S: JSON.stringify(video.params) },
-            createdAt: { S: now },
-            updatedAt: { S: now },
-            ...(video.slug ? { slug: { S: video.slug } } : {}),
-            queueType: { S: video.queueType },
-          },
-        }),
-      )
+      const job: Job = {
+        jobId: videoId,
+        projectId: video.projectId,
+        clientId: video.clientId,
+        status: "pending",
+        attempts: 0,
+        inputData: video.params,
+        outputData: {},
+        returnData: undefined,
+        queueType: video.queueType,
+        callbackUrl: video.callbackUrl,
+        createdAt: now,
+        updatedAt: now,
+      }
+      await putJob(client, TABLE_NAME!, job)
       console.log(
         JSON.stringify({
           event: "video-enqueued",
           projectId: video.projectId,
           videoId,
           timestamp: now,
-        }),
+        })
       )
     } catch (err) {
       console.error(
@@ -182,7 +154,7 @@ export const enqueueHandler = async (
           projectId: video.projectId,
           videoId,
           timestamp: now,
-        }),
+        })
       )
       return {
         statusCode: 500,
@@ -200,7 +172,7 @@ export const enqueueHandler = async (
         event: "worker-trigger-error",
         error: (err as Error).message,
         timestamp: now,
-      }),
+      })
     )
   }
   return {
@@ -229,7 +201,7 @@ export const workerHandler = async (): Promise<void> => {
             ":pending": { S: "pending" },
             ":queueType": { S: queueType },
           },
-        }),
+        })
       )
     } catch (err) {
       continue
@@ -250,7 +222,7 @@ export const workerHandler = async (): Promise<void> => {
             ":processing": { S: "processing" },
             ":queueType": { S: queueType },
           },
-        }),
+        })
       )
     } catch (err) {
       continue
@@ -258,7 +230,7 @@ export const workerHandler = async (): Promise<void> => {
     const processingCount = (processingRes.Items ?? []).length
     const availableSlots = getAvailableSlots(
       processingCount,
-      config.maxConcurrency,
+      config.maxConcurrency
     )
     if (availableSlots === 0) continue
     // 3. Launch up to availableSlots jobs
@@ -271,13 +243,13 @@ export const workerHandler = async (): Promise<void> => {
         sk: item.sk?.S ?? "",
         attempts: parseInt(item.attempts?.N ?? "0", 10),
       }
-      await config.handler(job, client, TABLE_NAME)
+      await config.handler(fromDynamoItem(item), client, TABLE_NAME)
     }
   }
 }
 
 export const workerHttpHandler = async (
-  event: APIGatewayProxyEvent,
+  event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   try {
     await workerHandler()
@@ -297,7 +269,7 @@ export const workerHttpHandler = async (
 
 const checkCompletion = async (
   projectId: string,
-  client: DynamoDBClient,
+  client: DynamoDBClient
 ): Promise<{ allReady: boolean; callbackUrl?: string; videos: any[] }> => {
   if (!TABLE_NAME) throw new Error("QUEUES_TABLE not set")
   const res = await client.send(
@@ -306,14 +278,14 @@ const checkCompletion = async (
       FilterExpression: "#pk = :pk",
       ExpressionAttributeNames: { "#pk": "pk" },
       ExpressionAttributeValues: { ":pk": { S: `PROJECT#${projectId}` } },
-    }),
+    })
   )
   const items = res.Items ?? []
   const allReady =
     items.length > 0 && items.every((item) => item.status?.S === "ready")
   const callbackUrl = items[0]?.callbackUrl?.S
   // Map videos to a clean array
-  const videos = items.map(mapDynamoItemToVideo)
+  const videos = items.map(fromDynamoItem)
   return { allReady, callbackUrl, videos }
 }
 
@@ -324,7 +296,7 @@ export const pollAllQueuesHandler = async (): Promise<void> => {
 }
 
 export const pollHttpHandler = async (
-  event: APIGatewayProxyEvent,
+  event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   try {
     await pollAllQueuesHandler()

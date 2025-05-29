@@ -1,24 +1,25 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb"
 import { fetchWithTimeout } from "../index"
 import {
+  scanJobs,
+  Job,
+} from "../utils/dynamo-helpers"
+import {
   startJobGeneric,
   pollJobGeneric,
-  getProcessingJobs,
 } from "../utils/generic-queue"
 
 const TABLE_NAME = process.env.QUEUES_TABLE
 const REMOTION_RENDER_URL = process.env.REMOTION_RENDER_URL ?? ""
 const REMOTION_STATUS_URL = process.env.REMOTION_STATUS_URL ?? ""
-const MAX_RETRIES = parseInt(process.env.HEYGEN_MAX_RETRIES ?? "3", 10)
 
 export const handleRemotionJob = async (
-  job: any,
+  job: Job,
   client: DynamoDBClient,
   tableName: string,
 ) => {
   console.log("[Remotion][handleRemotionJob] Job reçu:", JSON.stringify(job))
-  const { params } = job
-  const inputData = params
+  const { inputData } = job
   console.log(
     "[Remotion][handleRemotionJob] inputData:",
     JSON.stringify(inputData),
@@ -53,7 +54,6 @@ export const handleRemotionJob = async (
     return {
       externalId: data.renderId ?? "",
       outputData: data,
-      bucketName: data.bucketName ?? "",
     }
   }
   try {
@@ -64,6 +64,7 @@ export const handleRemotionJob = async (
       job,
       client,
       tableName,
+      maxRetries: 3,
     })
     console.log("[Remotion][handleRemotionJob] startJobGeneric terminé")
   } catch (err) {
@@ -75,20 +76,12 @@ export const handleRemotionJob = async (
 export const pollRemotionHandler = async (): Promise<void> => {
   if (!TABLE_NAME) throw new Error("QUEUES_TABLE not set")
   const client = new DynamoDBClient({})
-  const processingJobs = await getProcessingJobs({
-    client,
-    tableName: TABLE_NAME,
-    queueType: "remotion",
-  })
-  const remotionPollApi = async ({
-    externalId,
-    job,
-  }: {
-    externalId: string
-    job: any
-  }) => {
-    const outputData = job.outputData?.S ? JSON.parse(job.outputData.S) : {}
-    const bucketName = outputData.bucketName
+  const processingJobs = (await scanJobs(client, TABLE_NAME)).filter(
+    (job) => job.status === "processing" && job.queueType === "remotion",
+  )
+  const remotionPollApi = async (job: Job) => {
+    const { externalId, outputData } = job
+    const bucketName = outputData?.bucketName
     const res = await fetchWithTimeout(
       `${REMOTION_STATUS_URL}?renderId=${externalId}&bucketName=${bucketName}`,
     )

@@ -1,122 +1,63 @@
-import {
-  DynamoDBClient,
-  UpdateItemCommand,
-  ScanCommand,
-} from "@aws-sdk/client-dynamodb"
-import { checkCompletion } from "../utils/check-completion"
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb"
+import { updateJobStatus, scanJobs, Job } from "../utils/dynamo-helpers"
 
-const MAX_RETRIES = parseInt(process.env.HEYGEN_MAX_RETRIES ?? "3", 10)
+
 const TABLE_NAME = process.env.QUEUES_TABLE
 
 export const handleFluxJob = async (
-  job: any,
+  job: Job,
   client: DynamoDBClient,
   tableName: string,
 ) => {
-  const { params, pk, sk, attempts = 0 } = job
-  const now = new Date().toISOString()
-  const inputData = params
+  const { inputData, attempts = 0 } = job
   // Fake API call
-  await new Promise((resolve) => setTimeout(resolve, 500))
+  let attempt = 0
+  let failed = false
+  while (attempt < 3) {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      failed = false
+      break
+    } catch (err) {
+      failed = true
+    }
+    attempt++
+    if (failed && attempt < 3) {
+      const backoff = 500 * Math.pow(2, attempt - 1)
+      await new Promise((resolve) => setTimeout(resolve, backoff))
+    }
+  }
   // Générer un externalId et outputData fake
   const externalId = `flux-fake-id-${Date.now()}`
   const outputData = { status: "started", externalId }
-  await client.send(
-    new UpdateItemCommand({
-      TableName: tableName,
-      Key: { pk: { S: pk }, sk: { S: sk } },
-      UpdateExpression:
-        "SET #status = :p, #externalId = :e, #inputData = :i, #outputData = :o, #attempts = :a, #updatedAt = :u",
-      ExpressionAttributeNames: {
-        "#status": "status",
-        "#externalId": "externalId",
-        "#inputData": "inputData",
-        "#outputData": "outputData",
-        "#attempts": "attempts",
-        "#updatedAt": "updatedAt",
-      },
-      ExpressionAttributeValues: {
-        ":p": { S: "processing" },
-        ":e": { S: externalId },
-        ":i": { S: JSON.stringify(inputData) },
-        ":o": { S: JSON.stringify(outputData) },
-        ":a": { N: (attempts + 1).toString() },
-        ":u": { S: now },
-      },
-    }),
-  )
+  await updateJobStatus(client, tableName, job, "processing", {
+    externalId,
+    inputData,
+    outputData,
+    attempts: attempts + 1,
+  })
 }
 
 export const pollFluxHandler = async (): Promise<void> => {
   if (!TABLE_NAME) throw new Error("QUEUES_TABLE not set")
   const client = new DynamoDBClient({})
-  // 1. Get all jobs with status = 'processing' and queueType = 'flux'
-  const processingRes = await client.send(
-    new ScanCommand({
-      TableName: TABLE_NAME,
-      FilterExpression: "#status = :processing AND #queueType = :queueType",
-      ExpressionAttributeNames: {
-        "#status": "status",
-        "#queueType": "queueType",
-      },
-      ExpressionAttributeValues: {
-        ":processing": { S: "processing" },
-        ":queueType": { S: "flux" },
-      },
-    }),
+  const processingJobs = (await scanJobs(client, TABLE_NAME)).filter(
+    (job) => job.status === "processing" && job.queueType === "flux",
   )
-  const processingJobs = processingRes.Items ?? []
-  const now = new Date().toISOString()
-  for (const item of processingJobs) {
-    const pk = item.pk?.S ?? ""
-    const sk = item.sk?.S ?? ""
-    const externalId = item.externalId?.S
-    const attempts = parseInt(item.attempts?.N ?? "0", 10)
-    const projectId = pk.replace("PROJECT#", "")
-    if (!externalId || !pk || !sk) continue
+  for (const job of processingJobs) {
     // Fake polling: après 500ms, on passe en ready
     await new Promise((resolve) => setTimeout(resolve, 500))
-    // Générer un outputData/outputUrl/duration fake
+    // Générer un outputData fake
     const outputData = {
       status: "done",
-      externalId,
-      url: `https://fake.flux/${externalId}`,
+      externalId: job.externalId,
+      url: `https://fake.flux/${job.externalId}`,
     }
-    const outputUrl = outputData.url
-    const duration = 42
-    await client.send(
-      new UpdateItemCommand({
-        TableName: TABLE_NAME,
-        Key: { pk: { S: pk }, sk: { S: sk } },
-        UpdateExpression:
-          "SET #status = :r, #updatedAt = :u, #outputData = :d, #outputUrl = :v, #duration = :du",
-        ExpressionAttributeNames: {
-          "#status": "status",
-          "#updatedAt": "updatedAt",
-          "#outputData": "outputData",
-          "#outputUrl": "outputUrl",
-          "#duration": "duration",
-        },
-        ExpressionAttributeValues: {
-          ":r": { S: "ready" },
-          ":u": { S: now },
-          ":d": { S: JSON.stringify(outputData) },
-          ":v": outputUrl ? { S: outputUrl } : { NULL: true },
-          ":du": { N: duration.toString() },
-        },
-      }),
-    )
-    // --- Ajout logique callback groupé ---
-    const { allReady, callbackUrl, jobs } = await checkCompletion(
-      projectId,
-      client,
-    )
-    if (allReady && callbackUrl) {
-      await fetch(callbackUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectId, jobs }),
-      })
-    }
+    const returnData = outputData.url ? { url: outputData.url } : undefined
+    await updateJobStatus(client, TABLE_NAME, job, "ready", {
+      outputData,
+      returnData,
+    })
+    // Le callback groupé est géré par pollJobGeneric dans la logique générique
   }
 }
