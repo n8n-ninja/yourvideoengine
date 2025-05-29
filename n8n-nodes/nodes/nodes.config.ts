@@ -1,4 +1,4 @@
-export const REMOTION_ENDPOINTS = {
+export const QUEUES_ENDPOINTS = {
   dev: {
     url: "https://yxtfn5gmm9.execute-api.us-east-1.amazonaws.com/dev/enqueue",
     apiKey: "qopmdRGiCu1Jj2jhDYNyA9p90j4yfkOC825qlgQx",

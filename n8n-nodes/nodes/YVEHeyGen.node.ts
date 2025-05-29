@@ -6,6 +6,8 @@ import {
   INodeExecutionData,
 } from "n8n-workflow"
 
+import { QUEUES_ENDPOINTS } from "./nodes.config"
+
 export class YVEHeyGen implements INodeType {
   description: INodeTypeDescription = {
     displayName: "YVE HeyGen",
@@ -85,39 +87,40 @@ export class YVEHeyGen implements INodeType {
         description: "HeyGen slug (optional)",
       },
       {
-        displayName: "Additional Options",
-        name: "options",
-        type: "collection",
-        placeholder: "Add Option",
-        default: {},
+        displayName: "Speed",
+        name: "speed",
+        type: "number",
+        default: 1.0,
+        required: false,
+        description: "Speech speed (optional)",
+      },
+      {
+        displayName: "Custom HeyGen API Key",
+        name: "apiKey",
+        type: "string",
+        default: "",
+        required: false,
+        description: "Custom HeyGen API Key (optional)",
+      },
+      {
+        displayName: "Client ID",
+        name: "clientId",
+        type: "string",
+        default: "client0",
+        required: false,
+        description: "Client ID (optionnel)",
+      },
+      {
+        displayName: "Environment",
+        name: "environment",
+        type: "options",
         options: [
-          {
-            displayName: "Speed",
-            name: "speed",
-            type: "number",
-            default: 1.0,
-            description: "Speech speed (optional)",
-          },
-          {
-            displayName: "Custom HeyGen API Key",
-            name: "apiKey",
-            type: "string",
-            default: "",
-            description: "Custom HeyGen API Key (optional)",
-          },
-          {
-            displayName: "Environment",
-            name: "environment",
-            type: "options",
-            options: [
-              { name: "Production", value: "prod" },
-              { name: "Development", value: "dev" },
-            ],
-            default: "prod",
-            description: "Choose environment (prod/dev)",
-          },
+          { name: "Production", value: "prod" },
+          { name: "Development", value: "dev" },
         ],
-        description: "Optional advanced options for video generation.",
+        default: "prod",
+        required: false,
+        description: "Choose environment (prod/dev)",
       },
     ],
   }
@@ -129,17 +132,17 @@ export class YVEHeyGen implements INodeType {
       const avatar_id = this.getNodeParameter("avatar_id", i) as string
       const input_text = this.getNodeParameter("input_text", i) as string
       const voice_id = this.getNodeParameter("voice_id", i) as string
-      const options = this.getNodeParameter("options", i, {}) as Record<
-        string,
-        unknown
-      >
-      const speed = (options.speed as number) ?? 1.0
-      let projectId = (options.projectId as string) ?? ""
-      const apiKey = (options.apiKey as string) ?? ""
-      const environment = (options.environment as string) ?? "prod"
+      const speed = this.getNodeParameter("speed", i, 1.0) as number
+      let projectId = this.getNodeParameter("projectId", i, "") as string
+      const apiKey = this.getNodeParameter("apiKey", i, "") as string
+      const environment = this.getNodeParameter(
+        "environment",
+        i,
+        "prod"
+      ) as string
       const resumeUrl = this.getNodeParameter("resumeUrl", i) as string
       const executionId = this.getNodeParameter("executionId", i) as string
-      let callbackUrl = (options.callbackUrl as string) ?? ""
+      let callbackUrl = this.getNodeParameter("callbackUrl", i, "") as string
       if (!callbackUrl) {
         callbackUrl = resumeUrl
       }
@@ -147,6 +150,7 @@ export class YVEHeyGen implements INodeType {
       if (!projectId) {
         projectId = executionId
       }
+      const clientId = this.getNodeParameter("clientId", i, "") as string
 
       const params: Record<string, unknown> = {
         avatar_id,
@@ -159,23 +163,19 @@ export class YVEHeyGen implements INodeType {
       if (apiKey) {
         params.apiKey = apiKey
       }
-      const payload = {
+      const payload: Record<string, unknown> = {
         projectId,
         callbackUrl,
         params,
         queueType: "heygen",
       }
-      let endpointUrl = ""
-      let xApiKey = ""
-      if (environment === "dev") {
-        endpointUrl =
-          "https://yxtfn5gmm9.execute-api.us-east-1.amazonaws.com/dev/enqueue"
-        xApiKey = "qopmdRGiCu1Jj2jhDYNyA9p90j4yfkOC825qlgQx"
-      } else {
-        endpointUrl =
-          "https://r2ds9ljpij.execute-api.us-east-1.amazonaws.com/prod/enqueue"
-        xApiKey = "ErQ9qRJaTb1FgvdwbYXMo8Jm4j8dd1nY1f2cD1GY"
+      if (clientId) {
+        payload.clientId = clientId
       }
+
+      const { url: endpointUrl, apiKey: xApiKey } =
+        QUEUES_ENDPOINTS[environment as "dev" | "prod"]
+
       const response = await this.helpers.httpRequest({
         method: "POST",
         url: endpointUrl,

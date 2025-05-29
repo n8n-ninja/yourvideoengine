@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.REMOTION_ENDPOINTS = void 0;
-exports.REMOTION_ENDPOINTS = {
+exports.QUEUES_ENDPOINTS = void 0;
+exports.QUEUES_ENDPOINTS = {
     dev: {
         url: "https://yxtfn5gmm9.execute-api.us-east-1.amazonaws.com/dev/enqueue",
         apiKey: "qopmdRGiCu1Jj2jhDYNyA9p90j4yfkOC825qlgQx",

@@ -1,4 +1,4 @@
-export declare const REMOTION_ENDPOINTS: {
+export declare const QUEUES_ENDPOINTS: {
     dev: {
         url: string;
         apiKey: string;

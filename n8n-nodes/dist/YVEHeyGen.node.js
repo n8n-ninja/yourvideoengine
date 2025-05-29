@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.YVEHeyGen = void 0;
+const nodes_config_1 = require("./nodes.config");
 class YVEHeyGen {
     constructor() {
         this.description = {
@@ -79,39 +80,40 @@ class YVEHeyGen {
                     description: "HeyGen slug (optional)",
                 },
                 {
-                    displayName: "Additional Options",
-                    name: "options",
-                    type: "collection",
-                    placeholder: "Add Option",
-                    default: {},
+                    displayName: "Speed",
+                    name: "speed",
+                    type: "number",
+                    default: 1.0,
+                    required: false,
+                    description: "Speech speed (optional)",
+                },
+                {
+                    displayName: "Custom HeyGen API Key",
+                    name: "apiKey",
+                    type: "string",
+                    default: "",
+                    required: false,
+                    description: "Custom HeyGen API Key (optional)",
+                },
+                {
+                    displayName: "Client ID",
+                    name: "clientId",
+                    type: "string",
+                    default: "client0",
+                    required: false,
+                    description: "Client ID (optionnel)",
+                },
+                {
+                    displayName: "Environment",
+                    name: "environment",
+                    type: "options",
                     options: [
-                        {
-                            displayName: "Speed",
-                            name: "speed",
-                            type: "number",
-                            default: 1.0,
-                            description: "Speech speed (optional)",
-                        },
-                        {
-                            displayName: "Custom HeyGen API Key",
-                            name: "apiKey",
-                            type: "string",
-                            default: "",
-                            description: "Custom HeyGen API Key (optional)",
-                        },
-                        {
-                            displayName: "Environment",
-                            name: "environment",
-                            type: "options",
-                            options: [
-                                { name: "Production", value: "prod" },
-                                { name: "Development", value: "dev" },
-                            ],
-                            default: "prod",
-                            description: "Choose environment (prod/dev)",
-                        },
+                        { name: "Production", value: "prod" },
+                        { name: "Development", value: "dev" },
                     ],
-                    description: "Optional advanced options for video generation.",
+                    default: "prod",
+                    required: false,
+                    description: "Choose environment (prod/dev)",
                 },
             ],
         };
@@ -123,14 +125,13 @@ class YVEHeyGen {
             const avatar_id = this.getNodeParameter("avatar_id", i);
             const input_text = this.getNodeParameter("input_text", i);
             const voice_id = this.getNodeParameter("voice_id", i);
-            const options = this.getNodeParameter("options", i, {});
-            const speed = options.speed ?? 1.0;
-            let projectId = options.projectId ?? "";
-            const apiKey = options.apiKey ?? "";
-            const environment = options.environment ?? "prod";
+            const speed = this.getNodeParameter("speed", i, 1.0);
+            let projectId = this.getNodeParameter("projectId", i, "");
+            const apiKey = this.getNodeParameter("apiKey", i, "");
+            const environment = this.getNodeParameter("environment", i, "prod");
             const resumeUrl = this.getNodeParameter("resumeUrl", i);
             const executionId = this.getNodeParameter("executionId", i);
-            let callbackUrl = options.callbackUrl ?? "";
+            let callbackUrl = this.getNodeParameter("callbackUrl", i, "");
             if (!callbackUrl) {
                 callbackUrl = resumeUrl;
             }
@@ -138,6 +139,7 @@ class YVEHeyGen {
             if (!projectId) {
                 projectId = executionId;
             }
+            const clientId = this.getNodeParameter("clientId", i, "");
             const params = {
                 avatar_id,
                 input_text,
@@ -155,18 +157,10 @@ class YVEHeyGen {
                 params,
                 queueType: "heygen",
             };
-            let endpointUrl = "";
-            let xApiKey = "";
-            if (environment === "dev") {
-                endpointUrl =
-                    "https://yxtfn5gmm9.execute-api.us-east-1.amazonaws.com/dev/enqueue";
-                xApiKey = "qopmdRGiCu1Jj2jhDYNyA9p90j4yfkOC825qlgQx";
+            if (clientId) {
+                payload.clientId = clientId;
             }
-            else {
-                endpointUrl =
-                    "https://r2ds9ljpij.execute-api.us-east-1.amazonaws.com/prod/enqueue";
-                xApiKey = "ErQ9qRJaTb1FgvdwbYXMo8Jm4j8dd1nY1f2cD1GY";
-            }
+            const { url: endpointUrl, apiKey: xApiKey } = nodes_config_1.QUEUES_ENDPOINTS[environment];
             const response = await this.helpers.httpRequest({
                 method: "POST",
                 url: endpointUrl,

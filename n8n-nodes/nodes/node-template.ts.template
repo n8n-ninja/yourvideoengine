@@ -5,7 +5,7 @@ import {
   NodeConnectionType,
   INodeExecutionData,
 } from "n8n-workflow"
-import { REMOTION_ENDPOINTS } from './remotion-nodes.config';
+import { QUEUES_ENDPOINTS } from './nodes.config';
 
 export class {{NodeClassName}} implements INodeType {
   description: INodeTypeDescription = {
@@ -38,6 +38,14 @@ export class {{NodeClassName}} implements INodeType {
         default: "={{$execution.id}}",
         required: true,
       },
+       {
+        displayName: "Client ID",
+        name: "clientId",
+        type: "string",
+        default: "client0",
+        required: false,
+        description: "Client ID (optionnel)",
+      },
       {
         displayName: "Environment",
         name: "environment",
@@ -65,7 +73,8 @@ export class {{NodeClassName}} implements INodeType {
       const environment = this.getNodeParameter('environment', i) as 'dev' | 'prod';
       const projectId = executionId;
       const callbackUrl = resumeUrl;
-      const payload = {
+      const clientId = this.getNodeParameter('clientId', i) as string;
+      const payload: Record<string, unknown> = {
         projectId,
         callbackUrl,
         params: {
@@ -74,7 +83,11 @@ export class {{NodeClassName}} implements INodeType {
         },
         queueType: 'remotion',
       };
-      const { url: endpointUrl, apiKey: xApiKey } = REMOTION_ENDPOINTS[environment];
+      if (clientId) {
+        payload.clientId = clientId;
+      }
+        const { url: endpointUrl, apiKey: xApiKey } =
+        QUEUES_ENDPOINTS[environment as "dev" | "prod"]
       const response = await this.helpers.httpRequest({
         method: 'POST',
         url: endpointUrl,
