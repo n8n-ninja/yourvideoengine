@@ -3,7 +3,7 @@ import {
   DynamoDBClient,
   PutItemCommand,
   ScanCommand,
-  UpdateItemCommand,
+
 } from "@aws-sdk/client-dynamodb"
 import { v4 as uuidv4 } from "uuid"
 import { handleRemotionJob, pollRemotionHandler } from "./queues/remotion-queue"

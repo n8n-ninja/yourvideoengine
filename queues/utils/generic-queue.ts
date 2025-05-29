@@ -1,5 +1,5 @@
 import { UpdateItemCommand, ScanCommand } from "@aws-sdk/client-dynamodb"
-import { checkCompletion } from "./check-completion"
+import { checkCompletion, checkAllDone } from "./check-completion"
 import { fetchWithTimeout } from "../index"
 
 const MAX_RETRIES = parseInt(process.env.HEYGEN_MAX_RETRIES ?? "3", 10)
@@ -108,7 +108,6 @@ export const pollJobGeneric = async ({
   job,
   client,
   tableName,
-  queueType,
 }: {
   pollApi: (job: any) => Promise<{
     done: boolean
@@ -127,7 +126,6 @@ export const pollJobGeneric = async ({
   const sk = job.sk?.S ?? ""
   const externalId = job.externalId?.S
   const bucketName = job.bucketName?.S
-  const attempts = parseInt(job.attempts?.N ?? "0", 10)
   const projectId = pk.replace("PROJECT#", "")
   if (!externalId || !pk || !sk) return
   const now = new Date().toISOString()
@@ -135,7 +133,6 @@ export const pollJobGeneric = async ({
   let failed = false
   let outputData: any = null
   let outputUrl: string | undefined
-  let duration: number | undefined
   let returnData: any = undefined
   try {
     const res = await pollApi({ externalId, bucketName, job })
@@ -143,7 +140,6 @@ export const pollJobGeneric = async ({
     failed = res.failed
     outputData = res.outputData
     outputUrl = res.outputUrl
-    duration = res.duration
     returnData = res.returnData
     console.log("[pollJobGeneric] Résultat pollApi:", JSON.stringify(res))
   } catch (err) {
@@ -156,75 +152,101 @@ export const pollJobGeneric = async ({
         TableName: tableName,
         Key: { pk: { S: pk }, sk: { S: sk } },
         UpdateExpression:
-          "SET #status = :r, #updatedAt = :u, #outputData = :d, #returnData = :rd" +
-          ", #outputUrl = :v, #duration = :du",
+          "SET #status = :r, #updatedAt = :u, #outputData = :d, #returnData = :rd",
         ExpressionAttributeNames: {
           "#status": "status",
           "#updatedAt": "updatedAt",
           "#outputData": "outputData",
           "#returnData": "returnData",
-          "#outputUrl": "outputUrl",
-          "#duration": "duration",
         },
         ExpressionAttributeValues: {
           ":r": { S: "ready" },
           ":u": { S: now },
           ":d": { S: JSON.stringify(outputData) },
           ":rd": returnData !== undefined ? { S: JSON.stringify(returnData) } : { NULL: true },
-          ":v": outputUrl ? { S: outputUrl } : { NULL: true },
-          ":du":
-            duration !== undefined && duration !== null
-              ? { N: duration.toString() }
-              : { NULL: true },
         },
       }),
     )
-    // Callback groupé
-    const { allReady, callbackUrl, jobs } = await checkCompletion(
-      projectId,
-      client,
-    )
-    if (allReady && callbackUrl) {
-      // On n'envoie que returnData au callback
-      const jobsReturnData = jobs.map((job: any) => job.returnData ? JSON.parse(job.returnData) : null)
+    // Callback si tous les jobs sont terminés (ready ou failed)
+    const { allDone, callbackUrl, jobs } = await checkAllDone(projectId, client)
+    if (allDone && callbackUrl) {
+      const jobsReturnData = jobs.map((job: any) => {
+        // Si succès, returnData contient l'url
+        if (job.status === "ready" && job.returnData) {
+          return JSON.parse(job.returnData)
+        }
+        // Si échec, returnData contient juste les erreurs (error ou errors)
+        if (job.status === "failed" && job.outputData) {
+          let errors = null
+          if (job.outputData.error) {
+            errors = job.outputData.error
+          } else if (job.outputData.errors) {
+            errors = job.outputData.errors
+          }
+          return { errors }
+        }
+        return null
+      })
+      // Statut global: success (booléen)
+      const success = jobs.every((job: any) => job.status === "ready")
       await fetchWithTimeout(callbackUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectId, results: jobsReturnData }),
+        body: JSON.stringify({ projectId, success, results: jobsReturnData }),
       })
     }
   } else if (failed) {
-    const newAttempts = attempts + 1
     console.error(
-      "[pollJobGeneric] Job failed, attempts:",
-      newAttempts,
-      "pk:",
-      pk,
-      "sk:",
-      sk,
-      "outputData:",
-      JSON.stringify(outputData),
-    )
+      "[pollJobGeneric] Job failed, pk:", pk, "sk:", sk, "outputData:", JSON.stringify(outputData),
+    );
     await client.send(
       new UpdateItemCommand({
         TableName: tableName,
         Key: { pk: { S: pk }, sk: { S: sk } },
         UpdateExpression:
-          "SET #attempts = :a, #updatedAt = :u" +
-          (newAttempts >= MAX_RETRIES ? ", #status = :f" : ", #status = :p"),
+          "SET #status = :f, #updatedAt = :u, #outputData = :d, #returnData = :rd",
         ExpressionAttributeNames: {
-          "#attempts": "attempts",
-          "#updatedAt": "updatedAt",
           "#status": "status",
+          "#updatedAt": "updatedAt",
+          "#outputData": "outputData",
+          "#returnData": "returnData",
         },
         ExpressionAttributeValues: {
-          ":a": { N: newAttempts.toString() },
-          ":u": { S: now },
           ":f": { S: "failed" },
-          ":p": { S: "pending" },
+          ":u": { S: now },
+          ":d": { S: JSON.stringify(outputData) },
+          ":rd": returnData !== undefined ? { S: JSON.stringify(returnData) } : { NULL: true },
         },
       }),
-    )
+    );
+    // Callback si tous les jobs sont terminés (ready ou failed)
+    const { allDone, callbackUrl, jobs } = await checkAllDone(projectId, client)
+    if (allDone && callbackUrl) {
+      const jobsReturnData = jobs.map((job: any) => {
+        // Si succès, returnData contient l'url
+        if (job.status === "ready" && job.returnData) {
+          return JSON.parse(job.returnData)
+        }
+        // Si échec, returnData contient juste les erreurs (error ou errors)
+        if (job.status === "failed" && job.outputData) {
+          let errors = null
+          if (job.outputData.error) {
+            errors = job.outputData.error
+          } else if (job.outputData.errors) {
+            errors = job.outputData.errors
+          }
+          return { errors }
+        }
+        return null
+      })
+      // Statut global: success (booléen)
+      const success = jobs.every((job: any) => job.status === "ready")
+      await fetchWithTimeout(callbackUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projectId, success, results: jobsReturnData }),
+      })
+    }
   }
   // else: still processing, do nothing
 }

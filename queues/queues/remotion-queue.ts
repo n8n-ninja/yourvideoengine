@@ -82,32 +82,28 @@ export const pollRemotionHandler = async (): Promise<void> => {
   })
   const remotionPollApi = async ({
     externalId,
-    bucketName,
+    job,
   }: {
     externalId: string
-    bucketName: string
+    job: any
   }) => {
+    const outputData = job.outputData?.S ? JSON.parse(job.outputData.S) : {}
+    const bucketName = outputData.bucketName
     const res = await fetchWithTimeout(
       `${REMOTION_STATUS_URL}?renderId=${externalId}&bucketName=${bucketName}`,
     )
     const data = await res.json()
-    // Gestion d'erreur spécifique Remotion
     let failed = false
     let errorDetails = null
-    if (data.fatalErrorEncountered) {
+    if (Array.isArray(data.errors) && data.errors.some((e: any) => e.isFatal)) {
       failed = true
-      errorDetails = data.errors || data
-    } else if (Array.isArray(data.errors) && data.errors.some((e: any) => e.isFatal)) {
-      failed = true
-      errorDetails = data.errors
+      errorDetails = data.errors.filter((e: any) => e.isFatal)
     }
     return {
       done: data.done,
       failed,
-      outputData: failed ? { ...data, remotionError: errorDetails } : data,
-      outputUrl: data.outputFile,
-      duration: data.duration,
-      returnData: data.outputFile ? { url: data.outputFile } : undefined,
+      outputData: failed ? { ...data, error: errorDetails } : data,
+      returnData: failed ? { errors: errorDetails } : (data.outputFile ? { url: data.outputFile } : undefined),
     }
   }
   for (const job of processingJobs) {
