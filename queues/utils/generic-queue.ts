@@ -1,7 +1,17 @@
-import { UpdateItemCommand, ScanCommand, DynamoDBClient } from "@aws-sdk/client-dynamodb"
+import {
+  UpdateItemCommand,
+  ScanCommand,
+  DynamoDBClient,
+} from "@aws-sdk/client-dynamodb"
 import { checkCompletion, checkAllDone } from "./check-completion"
 import { fetchWithTimeout } from "../index"
-import { fromDynamoItem, updateJobStatus, putJob, scanJobs, Job } from "./dynamo-helpers"
+import {
+  fromDynamoItem,
+  updateJobStatus,
+  putJob,
+  scanJobs,
+  Job,
+} from "./dynamo-helpers"
 
 const MAX_RETRIES = parseInt(process.env.HEYGEN_MAX_RETRIES ?? "3", 10)
 
@@ -14,9 +24,7 @@ export const startJobGeneric = async ({
   maxRetries = 3,
 }: {
   inputData: any
-  apiCall: (
-    inputData: any,
-  ) => Promise<{ externalId: string; outputData: any }>
+  apiCall: (inputData: any) => Promise<{ externalId: string; outputData: any }>
   job: Job
   client: DynamoDBClient
   tableName: string
@@ -36,8 +44,10 @@ export const startJobGeneric = async ({
       if (!externalId) {
         failed = true
         console.error(
-          `[startJobGeneric] Pas de externalId dans la réponse API (tentative ${attempt + 1}):`,
-          JSON.stringify(res),
+          `[startJobGeneric] Pas de externalId dans la réponse API (tentative ${
+            attempt + 1
+          }):`,
+          JSON.stringify(res)
         )
         lastError = new Error("No externalId returned")
       } else {
@@ -47,7 +57,12 @@ export const startJobGeneric = async ({
     } catch (err) {
       failed = true
       lastError = err
-      console.error(`[startJobGeneric] Erreur lors de l'appel API (tentative ${attempt + 1}):`, err)
+      console.error(
+        `[startJobGeneric] Erreur lors de l'appel API (tentative ${
+          attempt + 1
+        }):`,
+        err
+      )
     }
     attempt++
     if (failed && attempt < maxRetries) {
@@ -60,14 +75,23 @@ export const startJobGeneric = async ({
     console.error(
       `[startJobGeneric] Job échoué après ${attempt} tentatives, attempts:`,
       newAttempts,
-      "jobId:", job.jobId,
-      lastError,
+      "jobId:",
+      job.jobId,
+      lastError
     )
-    await updateJobStatus(client, tableName, job, newAttempts >= maxRetries ? "failed" : job.status, {
-      attempts: newAttempts,
-      outputData: outputData ?? undefined,
-      returnData: lastError ? { error: lastError.message ?? String(lastError) } : undefined,
-    })
+    await updateJobStatus(
+      client,
+      tableName,
+      job,
+      newAttempts >= maxRetries ? "failed" : job.status,
+      {
+        attempts: newAttempts,
+        outputData: outputData ?? undefined,
+        returnData: lastError
+          ? { error: lastError.message ?? String(lastError) }
+          : undefined,
+      }
+    )
     return
   }
   // Success: set to processing, store inputData, externalId, outputData
@@ -160,7 +184,13 @@ export const pollJobGeneric = async ({
       await fetchWithTimeout(callbackUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectId, success, results: jobsReturnData }),
+        body: JSON.stringify({
+          projectId,
+          success,
+          queueType,
+          clientId: job.clientId,
+          results: jobsReturnData,
+        }),
       })
     }
   }

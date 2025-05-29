@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid"
 import { handleRemotionJob, pollRemotionHandler } from "./queues/remotion-queue"
 import { handleFluxJob, pollFluxHandler } from "./queues/flux-queue"
 import { handleHeygenJob, pollHeygenHandler } from "./queues/heygen-queue"
+import { handleDeepgramJob, pollDeepgramHandler } from "./queues/deepgram-queue"
 import { putJob, fromDynamoItem, Job } from "./utils/dynamo-helpers"
 
 // --- Utilitaire fetch avec timeout ---
@@ -71,6 +72,12 @@ const queueConfigs = {
     maxConcurrency: 2,
     handler: handleFluxJob,
     poller: pollFluxHandler,
+    maxRetries: 3,
+  },
+  deepgram: {
+    maxConcurrency: 2,
+    handler: handleDeepgramJob,
+    poller: pollDeepgramHandler,
     maxRetries: 3,
   },
 }
