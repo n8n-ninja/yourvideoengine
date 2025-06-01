@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.YVEVideoCaptions = void 0;
-const nodes_config_1 = require("./nodes.config");
 class YVEVideoCaptions {
     constructor() {
         this.description = {
@@ -99,20 +98,6 @@ class YVEVideoCaptions {
                     required: false,
                 },
                 {
-                    displayName: "Resume Url",
-                    name: "resumeUrl",
-                    type: "string",
-                    default: "={{$execution.resumeUrl}}",
-                    required: true,
-                },
-                {
-                    displayName: "Execution Id",
-                    name: "executionId",
-                    type: "string",
-                    default: "={{$execution.id}}",
-                    required: true,
-                },
-                {
                     displayName: "Client ID",
                     name: "clientId",
                     type: "string",
@@ -120,34 +105,22 @@ class YVEVideoCaptions {
                     required: false,
                     description: "Client ID (optionnel)",
                 },
-                {
-                    displayName: "Environment",
-                    name: "environment",
-                    type: "options",
-                    options: [
-                        { name: "Production", value: "prod" },
-                        { name: "Development", value: "dev" },
-                    ],
-                    default: "prod",
-                    required: false,
-                    description: "Choose environment (prod/dev)",
-                },
             ],
         };
     }
     async execute() {
         const items = this.getInputData();
-        const returnData = [];
+        const timestamp = Date.now();
+        const jobs = [];
         for (let i = 0; i < items.length; i++) {
             const videoUrl = this.getNodeParameter("videoUrl", i);
             const language = this.getNodeParameter("language", i, "en");
             const model = this.getNodeParameter("model", i, "nova-3");
             const punctuation = this.getNodeParameter("punctuation", i, false);
             const keywords = this.getNodeParameter("keywords", i, "");
-            const resumeUrl = this.getNodeParameter("resumeUrl", i);
-            const executionId = this.getNodeParameter("executionId", i);
             const clientId = this.getNodeParameter("clientId", i, "");
-            const environment = this.getNodeParameter("environment", i, "prod");
+            const executionId = this.evaluateExpression("{{$execution.id}}", i);
+            const callbackUrl = this.evaluateExpression("{{$execution.resumeUrl}}", i);
             const keywordsArr = keywords
                 .split(",")
                 .map((k) => k.trim())
@@ -160,27 +133,26 @@ class YVEVideoCaptions {
                 keywords: keywordsArr,
             };
             const payload = {
-                projectId: executionId,
-                callbackUrl: resumeUrl,
+                projectId: executionId + "_" + timestamp,
+                callbackUrl,
                 params,
                 queueType: "deepgram",
             };
             if (clientId) {
                 payload.clientId = clientId;
             }
-            const { url: endpointUrl, apiKey: xApiKey } = nodes_config_1.QUEUES_ENDPOINTS[environment];
-            this.helpers.httpRequest({
-                method: "POST",
-                url: endpointUrl,
-                body: payload,
-                json: true,
-                headers: {
-                    "X-Api-Key": xApiKey,
-                },
-            });
-            returnData.push({ json: {} });
+            jobs.push(payload);
         }
-        return this.prepareOutputData(returnData);
+        await this.helpers.httpRequest({
+            method: "POST",
+            url: process.env.QUEUES_URL,
+            body: jobs,
+            json: true,
+            headers: {
+                "X-Api-Key": process.env.QUEUES_APIKEY,
+            },
+        });
+        return this.prepareOutputData([{ json: { message: "Job enqueued" } }]);
     }
 }
 exports.YVEVideoCaptions = YVEVideoCaptions;

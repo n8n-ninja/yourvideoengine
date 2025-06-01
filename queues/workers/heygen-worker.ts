@@ -29,6 +29,11 @@ export const heygenWorker = async (job: Job): Promise<WorkerResult> => {
     },
   }
   try {
+    console.log(
+      "[heygenWorker] Calling Heygen API",
+      HEYGEN_RENDER_URL,
+      inputData
+    )
     const res = await fetch(HEYGEN_RENDER_URL, {
       method: "POST",
       headers: {
@@ -38,19 +43,21 @@ export const heygenWorker = async (job: Job): Promise<WorkerResult> => {
       body: JSON.stringify(inputData),
     })
     const data: any = await res.json()
+    console.log("[heygenWorker] API response", data)
     if (!data.data?.video_id) {
+      console.log("[heygenWorker] No video_id returned", data)
       return {
         status: "failed",
         outputData: data,
         returnData: { error: "No video_id returned" },
       }
     }
+    console.log("[heygenWorker] Job launched, video_id:", data.data.video_id)
     return {
-      status: "ready", // ou 'processing' si tu veux gérer du polling
+      status: "processing",
       outputData: data,
-      returnData: data.data?.video_url
-        ? { url: data.data.video_url }
-        : undefined,
+      returnData: undefined,
+      externalId: data.data.video_id,
     }
   } catch (error) {
     return {

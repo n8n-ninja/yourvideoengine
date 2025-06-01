@@ -4,6 +4,7 @@ import {
   UpdateItemCommand,
   GetItemCommand,
   ScanCommand,
+  QueryCommand,
 } from "@aws-sdk/client-dynamodb"
 import { Job, JobStatus } from "../models/job"
 
@@ -27,6 +28,9 @@ function toDynamoItem(job: Job) {
     createdAt: { S: job.createdAt },
     updatedAt: { S: job.updatedAt },
     ...(job.externalId ? { externalId: { S: job.externalId } } : {}),
+    ...(job.callbackSent !== undefined
+      ? { callbackSent: { BOOL: job.callbackSent } }
+      : {}),
   }
 }
 
@@ -37,48 +41,85 @@ function fromDynamoItem(item: any): Job {
     clientId: item.clientId?.S,
     status: item.status?.S as JobStatus,
     attempts: parseInt(item.attempts?.N ?? "0", 10),
-    inputData: item.inputData?.S ? JSON.parse(item.inputData.S) : {},
-    outputData: item.outputData?.S ? JSON.parse(item.outputData.S) : {},
-    returnData: item.returnData?.S ? JSON.parse(item.returnData.S) : undefined,
+    inputData:
+      item.inputData?.S && item.inputData.S !== "undefined"
+        ? JSON.parse(item.inputData.S)
+        : {},
+    outputData:
+      item.outputData?.S && item.outputData.S !== "undefined"
+        ? JSON.parse(item.outputData.S)
+        : {},
+    returnData:
+      item.returnData?.S && item.returnData.S !== "undefined"
+        ? JSON.parse(item.returnData.S)
+        : undefined,
     queueType: item.queueType?.S,
     callbackUrl: item.callbackUrl?.S,
     createdAt: item.createdAt?.S,
     updatedAt: item.updatedAt?.S,
     externalId: item.externalId?.S,
+    callbackSent: item.callbackSent?.BOOL,
   }
 }
 
 export class JobRepository {
   static async addJob(job: Job) {
+    const item = toDynamoItem(job)
     await dynamoClient.send(
-      new PutItemCommand({
-        TableName: TABLE_NAME,
-        Item: toDynamoItem(job),
-      })
+      new PutItemCommand({ TableName: TABLE_NAME, Item: item })
     )
   }
 
   static async updateJob(
     jobId: string,
     projectId: string,
-    patch: Partial<Job>
+    updates: Partial<Job>
   ) {
-    const now = new Date().toISOString()
-    const updateFields = { ...patch, updatedAt: now }
-    const updateExpr =
-      "SET " +
-      Object.keys(updateFields)
-        .map((k) => `#${k} = :${k}`)
-        .join(", ")
-    const exprAttrNames = Object.fromEntries(
-      Object.keys(updateFields).map((k) => [`#${k}`, k])
-    )
-    const exprAttrValues = Object.fromEntries(
-      Object.entries(updateFields).map(([k, v]) => [
-        `:${k}`,
-        typeof v === "object" ? { S: JSON.stringify(v) } : { S: String(v) },
-      ])
-    )
+    const updateExpressions = []
+    const expressionAttributeNames: Record<string, string> = {}
+    const expressionAttributeValues: Record<string, any> = {}
+    if (updates.status) {
+      updateExpressions.push("#status = :status")
+      expressionAttributeNames["#status"] = "status"
+      expressionAttributeValues[":status"] = { S: updates.status }
+    }
+    if (updates.outputData) {
+      updateExpressions.push("#outputData = :outputData")
+      expressionAttributeNames["#outputData"] = "outputData"
+      expressionAttributeValues[":outputData"] = {
+        S: JSON.stringify(updates.outputData),
+      }
+    }
+    if (updates.returnData !== undefined) {
+      updateExpressions.push("#returnData = :returnData")
+      expressionAttributeNames["#returnData"] = "returnData"
+      expressionAttributeValues[":returnData"] = {
+        S: JSON.stringify(updates.returnData),
+      }
+    }
+    if (updates.attempts !== undefined) {
+      updateExpressions.push("#attempts = :attempts")
+      expressionAttributeNames["#attempts"] = "attempts"
+      expressionAttributeValues[":attempts"] = {
+        N: updates.attempts.toString(),
+      }
+    }
+    if (updates.externalId) {
+      updateExpressions.push("#externalId = :externalId")
+      expressionAttributeNames["#externalId"] = "externalId"
+      expressionAttributeValues[":externalId"] = { S: updates.externalId }
+    }
+    if (updates.callbackSent !== undefined) {
+      updateExpressions.push("#callbackSent = :callbackSent")
+      expressionAttributeNames["#callbackSent"] = "callbackSent"
+      expressionAttributeValues[":callbackSent"] = {
+        BOOL: updates.callbackSent,
+      }
+    }
+    updateExpressions.push("#updatedAt = :updatedAt")
+    expressionAttributeNames["#updatedAt"] = "updatedAt"
+    expressionAttributeValues[":updatedAt"] = { S: new Date().toISOString() }
+    const UpdateExpression = "SET " + updateExpressions.join(", ")
     await dynamoClient.send(
       new UpdateItemCommand({
         TableName: TABLE_NAME,
@@ -86,9 +127,9 @@ export class JobRepository {
           pk: { S: `PROJECT#${projectId}` },
           sk: { S: `VIDEO#${jobId}` },
         },
-        UpdateExpression: updateExpr,
-        ExpressionAttributeNames: exprAttrNames,
-        ExpressionAttributeValues: exprAttrValues,
+        UpdateExpression,
+        ExpressionAttributeNames: expressionAttributeNames,
+        ExpressionAttributeValues: expressionAttributeValues,
       })
     )
   }
@@ -130,6 +171,25 @@ export class JobRepository {
         ExpressionAttributeNames: { "#pk": "pk", "#status": "status" },
         ExpressionAttributeValues: {
           ":pk": { S: `PROJECT#${projectId}` },
+          ":status": { S: status },
+        },
+      })
+    )
+    return (res.Items ?? []).map(fromDynamoItem)
+  }
+
+  static async listJobsByQueueTypeAndStatus(
+    queueType: string,
+    status: JobStatus
+  ): Promise<Job[]> {
+    const res = await dynamoClient.send(
+      new QueryCommand({
+        TableName: TABLE_NAME,
+        IndexName: "QueueTypeStatusIndex",
+        KeyConditionExpression: "queueType = :queueType AND #status = :status",
+        ExpressionAttributeNames: { "#status": "status" },
+        ExpressionAttributeValues: {
+          ":queueType": { S: queueType },
           ":status": { S: status },
         },
       })

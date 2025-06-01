@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.YVEHeyGen = void 0;
-const nodes_config_1 = require("./nodes.config");
 class YVEHeyGen {
     constructor() {
         this.description = {
@@ -18,20 +17,20 @@ class YVEHeyGen {
             outputs: ["main" /* NodeConnectionType.Main */],
             properties: [
                 {
-                    displayName: "Avatar ID",
-                    name: "avatar_id",
-                    type: "string",
-                    default: "8438bf0d9f6d447b91b9151d5f6b752b",
-                    required: true,
-                    description: "HeyGen avatar_id",
-                },
-                {
                     displayName: "Input Text",
                     name: "input_text",
                     type: "string",
                     default: "Hello, how are you?",
                     required: true,
                     description: "Text to be spoken by the avatar",
+                },
+                {
+                    displayName: "Avatar ID",
+                    name: "avatar_id",
+                    type: "string",
+                    default: "8438bf0d9f6d447b91b9151d5f6b752b",
+                    required: true,
+                    description: "HeyGen avatar_id",
                 },
                 {
                     displayName: "Voice ID",
@@ -58,28 +57,6 @@ class YVEHeyGen {
                     description: "Video height (optional)",
                 },
                 {
-                    displayName: "Resume Url",
-                    name: "resumeUrl",
-                    type: "string",
-                    default: "={{$execution.resumeUrl}}",
-                    required: true,
-                },
-                {
-                    displayName: "Execution Id",
-                    name: "executionId",
-                    type: "string",
-                    default: "={{$execution.id}}",
-                    required: true,
-                },
-                {
-                    displayName: "Slug",
-                    name: "slug",
-                    type: "string",
-                    default: "={{'shot_' + ($itemIndex + 1)}}",
-                    required: false,
-                    description: "HeyGen slug (optional)",
-                },
-                {
                     displayName: "Speed",
                     name: "speed",
                     type: "number",
@@ -103,43 +80,22 @@ class YVEHeyGen {
                     required: false,
                     description: "Client ID (optionnel)",
                 },
-                {
-                    displayName: "Environment",
-                    name: "environment",
-                    type: "options",
-                    options: [
-                        { name: "Production", value: "prod" },
-                        { name: "Development", value: "dev" },
-                    ],
-                    default: "prod",
-                    required: false,
-                    description: "Choose environment (prod/dev)",
-                },
             ],
         };
     }
     async execute() {
         const items = this.getInputData();
-        const returnData = [];
+        const timestamp = Date.now();
+        const jobs = [];
         for (let i = 0; i < items.length; i++) {
             const avatar_id = this.getNodeParameter("avatar_id", i);
             const input_text = this.getNodeParameter("input_text", i);
             const voice_id = this.getNodeParameter("voice_id", i);
             const speed = this.getNodeParameter("speed", i, 1.0);
-            let projectId = this.getNodeParameter("projectId", i, "");
             const apiKey = this.getNodeParameter("apiKey", i, "");
-            const environment = this.getNodeParameter("environment", i, "prod");
-            const resumeUrl = this.getNodeParameter("resumeUrl", i);
-            const executionId = this.getNodeParameter("executionId", i);
-            let callbackUrl = this.getNodeParameter("callbackUrl", i, "");
-            if (!callbackUrl) {
-                callbackUrl = resumeUrl;
-            }
-            // Use executionId if projectId not provided
-            if (!projectId) {
-                projectId = executionId;
-            }
             const clientId = this.getNodeParameter("clientId", i, "");
+            const callbackUrl = this.evaluateExpression("{{$execution.resumeUrl}}", i);
+            const executionId = this.evaluateExpression("{{$execution.id}}", i);
             const params = {
                 avatar_id,
                 input_text,
@@ -152,7 +108,7 @@ class YVEHeyGen {
                 params.apiKey = apiKey;
             }
             const payload = {
-                projectId,
+                projectId: executionId + "_" + timestamp,
                 callbackUrl,
                 params,
                 queueType: "heygen",
@@ -160,18 +116,18 @@ class YVEHeyGen {
             if (clientId) {
                 payload.clientId = clientId;
             }
-            const { url: endpointUrl, apiKey: xApiKey } = nodes_config_1.QUEUES_ENDPOINTS[environment];
-            this.helpers.httpRequest({
-                method: "POST",
-                url: endpointUrl,
-                body: payload,
-                json: true,
-                headers: {
-                    "X-Api-Key": xApiKey,
-                },
-            });
+            jobs.push(payload);
         }
-        return this.prepareOutputData(returnData);
+        await this.helpers.httpRequest({
+            method: "POST",
+            url: process.env.QUEUES_URL,
+            body: jobs,
+            json: true,
+            headers: {
+                "X-Api-Key": process.env.QUEUES_APIKEY,
+            },
+        });
+        return this.prepareOutputData([{ json: { message: "Job enqueued" } }]);
     }
 }
 exports.YVEHeyGen = YVEHeyGen;

@@ -30,6 +30,7 @@ provider:
             - dynamodb:Scan
           Resource:
             - arn:aws:dynamodb:${self:provider.region}:*:table/QueuesTable-${sls:stage}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/QueuesTable-${sls:stage}/index/QueueTypeStatusIndex
         - Effect: Allow
           Action:
             - events:PutRule
@@ -58,12 +59,6 @@ functions:
           private: true
   worker:
     handler: index.workerHttpHandler
-    events:
-      - schedule:
-          rate: rate(1 minute)
-          enabled: true
-  poll:
-    handler: index.pollHttpHandler
     events:
       - schedule:
           rate: rate(1 minute)
@@ -99,9 +94,22 @@ resources:
             AttributeType: S
           - AttributeName: sk
             AttributeType: S
+          - AttributeName: queueType
+            AttributeType: S
+          - AttributeName: status
+            AttributeType: S
         KeySchema:
           - AttributeName: pk
             KeyType: HASH
           - AttributeName: sk
             KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: QueueTypeStatusIndex
+            KeySchema:
+              - AttributeName: queueType
+                KeyType: HASH
+              - AttributeName: status
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST

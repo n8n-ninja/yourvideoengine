@@ -29,7 +29,9 @@ export const validateEnqueueVideoInput = (video: any): boolean => {
 export const enqueueHandler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
+  console.log("[enqueueHandler] called")
   if (!event.body) {
+    console.log("[enqueueHandler] Missing body")
     return {
       statusCode: 400,
       headers: { "Content-Type": "application/json" },
@@ -39,8 +41,17 @@ export const enqueueHandler = async (
   let videos: EnqueueVideoInput[] = []
   try {
     const parsed = JSON.parse(event.body)
-    videos = Array.isArray(parsed) ? parsed : [parsed]
+    if (!Array.isArray(parsed)) {
+      console.log("[enqueueHandler] Body must be an array of jobs")
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: "Body must be an array of jobs" }),
+      }
+    }
+    videos = parsed
   } catch {
+    console.log("[enqueueHandler] Invalid JSON")
     return {
       statusCode: 400,
       headers: { "Content-Type": "application/json" },
@@ -50,6 +61,7 @@ export const enqueueHandler = async (
   const now = new Date().toISOString()
   for (const video of videos) {
     if (!validateEnqueueVideoInput(video)) {
+      console.log("[enqueueHandler] Invalid video input", video)
       return {
         statusCode: 400,
         headers: { "Content-Type": "application/json" },
@@ -57,6 +69,7 @@ export const enqueueHandler = async (
       }
     }
     if (!video.queueType) {
+      console.log("[enqueueHandler] Missing queueType", video)
       return {
         statusCode: 400,
         headers: { "Content-Type": "application/json" },
@@ -78,10 +91,13 @@ export const enqueueHandler = async (
       createdAt: now,
       updatedAt: now,
     }
+    console.log("[enqueueHandler] Adding job", job)
     await JobRepository.addJob(job)
   }
   // Optionnel: trigger immédiat du worker (sinon laisser le cron faire)
-  // await processAllJobs()
+  await processAllJobs()
+
+  console.log("[enqueueHandler] All jobs enqueued", videos.length)
   return {
     statusCode: 200,
     headers: { "Content-Type": "application/json" },
@@ -90,5 +106,7 @@ export const enqueueHandler = async (
 }
 
 export const workerHttpHandler = async (): Promise<void> => {
+  console.log("[workerHttpHandler] called")
   await processAllJobs()
+  console.log("[workerHttpHandler] finished processAllJobs")
 }

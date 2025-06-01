@@ -4,6 +4,7 @@ import type {
   INodeTypeDescription,
   INodeExecutionData,
   IWebhookResponseData,
+  IDataObject,
 } from "n8n-workflow"
 import { NodeConnectionType } from "n8n-workflow"
 
@@ -41,13 +42,25 @@ export class YVEWait {
 
   async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
     const req = this.getRequestObject()
+    const { success, results } = req.body || {}
+
+    if (success === false) {
+      return {
+        workflowData: [
+          [
+            {
+              json: { error: "YVE Wait: success is false", ...req.body },
+            },
+          ],
+        ],
+      }
+    }
+
     return {
       workflowData: [
-        [
-          {
-            json: req.body,
-          },
-        ],
+        (Array.isArray(results) ? results : []).map((item: unknown) => ({
+          json: item as IDataObject,
+        })),
       ],
     }
   }

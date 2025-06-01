@@ -5,7 +5,6 @@ import {
   NodeConnectionType,
   INodeExecutionData,
 } from "n8n-workflow"
-import { QUEUES_ENDPOINTS } from './nodes.config';
 
 export class YVERenderSample implements INodeType {
   description: INodeTypeDescription = {
@@ -86,20 +85,7 @@ export class YVERenderSample implements INodeType {
       required: false,
     },
       // Champs fixes
-      {
-        displayName: "Resume Url",
-        name: "resumeUrl",
-        type: "string",
-        default: "={{$execution.resumeUrl}}",
-        required: true,
-      },
-      {
-        displayName: "Execution Id",
-        name: "executionId",
-        type: "string",
-        default: "={{$execution.id}}",
-        required: true,
-      },
+    
        {
         displayName: "Client ID",
         name: "clientId",
@@ -108,23 +94,14 @@ export class YVERenderSample implements INodeType {
         required: false,
         description: "Client ID (optionnel)",
       },
-      {
-        displayName: "Environment",
-        name: "environment",
-        type: "options",
-        options: [
-          { name: "Production", value: "prod" },
-          { name: "Development", value: "dev" },
-        ],
-        default: "prod",
-        description: "Choose environment (prod/dev)",
-      },
     ],
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     const items = this.getInputData();
-    const returnData: INodeExecutionData[] = [];
+    const timestamp = Date.now()
+    
+    const jobs: Record<string, unknown>[] = [];
     for (let i = 0; i < items.length; i++) {
       // Récupérer les paramètres du formulaire
       const params: Record<string, unknown> = {
@@ -138,14 +115,17 @@ export class YVERenderSample implements INodeType {
         outroDuration: this.getNodeParameter('outroDuration', i),
         music: this.getNodeParameter('music', i),
       };
-      const resumeUrl = this.getNodeParameter('resumeUrl', i) as string;
-      const executionId = this.getNodeParameter('executionId', i) as string;
-      const environment = this.getNodeParameter('environment', i) as 'dev' | 'prod';
-      const projectId = executionId;
-      const callbackUrl = resumeUrl;
+      const executionId = this.evaluateExpression(
+        "{{$execution.id}}",
+        i
+      ) as string
+      const callbackUrl = this.evaluateExpression(
+        "{{$execution.resumeUrl}}",
+        i
+      ) as string
       const clientId = this.getNodeParameter('clientId', i) as string;
       const payload: Record<string, unknown> = {
-        projectId,
+        projectId: executionId + "_" + timestamp,
         callbackUrl,
         params: {
           composition: 'Sample',
@@ -156,19 +136,17 @@ export class YVERenderSample implements INodeType {
       if (clientId) {
         payload.clientId = clientId;
       }
-        const { url: endpointUrl, apiKey: xApiKey } =
-        QUEUES_ENDPOINTS[environment as "dev" | "prod"]
-   this.helpers.httpRequest({
-        method: 'POST',
-        url: endpointUrl,
-        body: payload,
-        json: true,
-        headers: {
-          'X-Api-Key': xApiKey,
-        },
-      });
-    
+      jobs.push(payload);
     }
-    return this.prepareOutputData(returnData);
+    await this.helpers.httpRequest({
+      method: 'POST',
+      url: process.env.QUEUES_URL!,
+      body: jobs,
+      json: true,
+      headers: {
+        'X-Api-Key': process.env.QUEUES_APIKEY!,
+      },
+    });
+    return this.prepareOutputData([{ json: { message: "Job enqueued" } }]);
   }
 } 

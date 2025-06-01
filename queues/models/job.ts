@@ -14,4 +14,5 @@ export interface Job {
   createdAt: string
   updatedAt: string
   externalId?: string
+  callbackSent?: boolean
 }

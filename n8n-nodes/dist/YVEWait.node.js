@@ -34,13 +34,23 @@ class YVEWait {
     }
     async webhook() {
         const req = this.getRequestObject();
+        const { success, results } = req.body || {};
+        if (success === false) {
+            return {
+                workflowData: [
+                    [
+                        {
+                            json: { error: "YVE Wait: success is false", ...req.body },
+                        },
+                    ],
+                ],
+            };
+        }
         return {
             workflowData: [
-                [
-                    {
-                        json: req.body,
-                    },
-                ],
+                (Array.isArray(results) ? results : []).map((item) => ({
+                    json: item,
+                })),
             ],
         };
     }

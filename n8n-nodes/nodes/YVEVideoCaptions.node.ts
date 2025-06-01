@@ -5,7 +5,6 @@ import {
   NodeConnectionType,
   INodeExecutionData,
 } from "n8n-workflow"
-import { QUEUES_ENDPOINTS } from "./nodes.config"
 
 export class YVEVideoCaptions implements INodeType {
   description: INodeTypeDescription = {
@@ -104,20 +103,6 @@ export class YVEVideoCaptions implements INodeType {
         required: false,
       },
       {
-        displayName: "Resume Url",
-        name: "resumeUrl",
-        type: "string",
-        default: "={{$execution.resumeUrl}}",
-        required: true,
-      },
-      {
-        displayName: "Execution Id",
-        name: "executionId",
-        type: "string",
-        default: "={{$execution.id}}",
-        required: true,
-      },
-      {
         displayName: "Client ID",
         name: "clientId",
         type: "string",
@@ -125,24 +110,14 @@ export class YVEVideoCaptions implements INodeType {
         required: false,
         description: "Client ID (optionnel)",
       },
-      {
-        displayName: "Environment",
-        name: "environment",
-        type: "options",
-        options: [
-          { name: "Production", value: "prod" },
-          { name: "Development", value: "dev" },
-        ],
-        default: "prod",
-        required: false,
-        description: "Choose environment (prod/dev)",
-      },
     ],
   }
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     const items = this.getInputData()
-    const returnData: INodeExecutionData[] = []
+    const timestamp = Date.now()
+
+    const jobs: Record<string, unknown>[] = []
     for (let i = 0; i < items.length; i++) {
       const videoUrl = this.getNodeParameter("videoUrl", i) as string
       const language = this.getNodeParameter("language", i, "en") as string
@@ -153,15 +128,17 @@ export class YVEVideoCaptions implements INodeType {
         false
       ) as boolean
       const keywords = this.getNodeParameter("keywords", i, "") as string
-      const resumeUrl = this.getNodeParameter("resumeUrl", i) as string
-      const executionId = this.getNodeParameter("executionId", i) as string
       const clientId = this.getNodeParameter("clientId", i, "") as string
-      const environment = this.getNodeParameter(
-        "environment",
-        i,
-        "prod"
+
+      const executionId = this.evaluateExpression(
+        "{{$execution.id}}",
+        i
       ) as string
 
+      const callbackUrl = this.evaluateExpression(
+        "{{$execution.resumeUrl}}",
+        i
+      ) as string
       const keywordsArr = keywords
         .split(",")
         .map((k) => k.trim())
@@ -176,8 +153,8 @@ export class YVEVideoCaptions implements INodeType {
       }
 
       const payload: Record<string, unknown> = {
-        projectId: executionId,
-        callbackUrl: resumeUrl,
+        projectId: executionId + "_" + timestamp,
+        callbackUrl,
         params,
         queueType: "deepgram",
       }
@@ -185,21 +162,17 @@ export class YVEVideoCaptions implements INodeType {
         payload.clientId = clientId
       }
 
-      const { url: endpointUrl, apiKey: xApiKey } =
-        QUEUES_ENDPOINTS[environment as "dev" | "prod"]
-
-      this.helpers.httpRequest({
-        method: "POST",
-        url: endpointUrl,
-        body: payload,
-        json: true,
-        headers: {
-          "X-Api-Key": xApiKey,
-        },
-      })
-
-      returnData.push({ json: {} })
+      jobs.push(payload)
     }
-    return this.prepareOutputData(returnData)
+    await this.helpers.httpRequest({
+      method: "POST",
+      url: process.env.QUEUES_URL!,
+      body: jobs,
+      json: true,
+      headers: {
+        "X-Api-Key": process.env.QUEUES_APIKEY!,
+      },
+    })
+    return this.prepareOutputData([{ json: { message: "Job enqueued" } }])
   }
 }

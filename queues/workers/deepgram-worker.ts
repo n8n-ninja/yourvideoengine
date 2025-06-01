@@ -24,6 +24,11 @@ export const deepgramWorker = async (job: Job): Promise<WorkerResult> => {
     url: params.videoUrl,
   }
   try {
+    console.log(
+      "[deepgramWorker] Calling Deepgram API",
+      url.toString(),
+      inputData
+    )
     const res = await fetch(url.toString(), {
       method: "POST",
       headers: {
@@ -33,12 +38,22 @@ export const deepgramWorker = async (job: Job): Promise<WorkerResult> => {
       body: JSON.stringify(inputData),
     })
     const data: any = await res.json()
+    console.log("[deepgramWorker] API response", data)
+    if (data.error) {
+      console.log("[deepgramWorker] Deepgram error", data.error)
+      return {
+        status: "failed",
+        outputData: data,
+        returnData: { error: data.error },
+      }
+    }
     return {
       status: "ready",
       outputData: data,
       returnData: data?.results?.channels?.[0]?.alternatives?.[0] ?? undefined,
     }
   } catch (error) {
+    console.log("[deepgramWorker] Exception", error)
     return {
       status: "failed",
       outputData: {},

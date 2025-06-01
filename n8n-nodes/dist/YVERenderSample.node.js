@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.YVERenderSample = void 0;
-const nodes_config_1 = require("./nodes.config");
 class YVERenderSample {
     constructor() {
         this.description = {
@@ -83,20 +82,6 @@ class YVERenderSample {
                 },
                 // Champs fixes
                 {
-                    displayName: "Resume Url",
-                    name: "resumeUrl",
-                    type: "string",
-                    default: "={{$execution.resumeUrl}}",
-                    required: true,
-                },
-                {
-                    displayName: "Execution Id",
-                    name: "executionId",
-                    type: "string",
-                    default: "={{$execution.id}}",
-                    required: true,
-                },
-                {
                     displayName: "Client ID",
                     name: "clientId",
                     type: "string",
@@ -104,23 +89,13 @@ class YVERenderSample {
                     required: false,
                     description: "Client ID (optionnel)",
                 },
-                {
-                    displayName: "Environment",
-                    name: "environment",
-                    type: "options",
-                    options: [
-                        { name: "Production", value: "prod" },
-                        { name: "Development", value: "dev" },
-                    ],
-                    default: "prod",
-                    description: "Choose environment (prod/dev)",
-                },
             ],
         };
     }
     async execute() {
         const items = this.getInputData();
-        const returnData = [];
+        const timestamp = Date.now();
+        const jobs = [];
         for (let i = 0; i < items.length; i++) {
             // Récupérer les paramètres du formulaire
             const params = {
@@ -134,14 +109,11 @@ class YVERenderSample {
                 outroDuration: this.getNodeParameter('outroDuration', i),
                 music: this.getNodeParameter('music', i),
             };
-            const resumeUrl = this.getNodeParameter('resumeUrl', i);
-            const executionId = this.getNodeParameter('executionId', i);
-            const environment = this.getNodeParameter('environment', i);
-            const projectId = executionId;
-            const callbackUrl = resumeUrl;
+            const executionId = this.evaluateExpression("{{$execution.id}}", i);
+            const callbackUrl = this.evaluateExpression("{{$execution.resumeUrl}}", i);
             const clientId = this.getNodeParameter('clientId', i);
             const payload = {
-                projectId,
+                projectId: executionId + "_" + timestamp,
                 callbackUrl,
                 params: {
                     composition: 'Sample',
@@ -152,18 +124,18 @@ class YVERenderSample {
             if (clientId) {
                 payload.clientId = clientId;
             }
-            const { url: endpointUrl, apiKey: xApiKey } = nodes_config_1.QUEUES_ENDPOINTS[environment];
-            this.helpers.httpRequest({
-                method: 'POST',
-                url: endpointUrl,
-                body: payload,
-                json: true,
-                headers: {
-                    'X-Api-Key': xApiKey,
-                },
-            });
+            jobs.push(payload);
         }
-        return this.prepareOutputData(returnData);
+        await this.helpers.httpRequest({
+            method: 'POST',
+            url: process.env.QUEUES_URL,
+            body: jobs,
+            json: true,
+            headers: {
+                'X-Api-Key': process.env.QUEUES_APIKEY,
+            },
+        });
+        return this.prepareOutputData([{ json: { message: "Job enqueued" } }]);
     }
 }
 exports.YVERenderSample = YVERenderSample;
