@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid"
 import { processAllJobs } from "./handlers/process-all-jobs"
 import { JobRepository } from "./repository/job-repository"
 import { Job } from "./models/job"
+import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs"
 
 interface EnqueueVideoInput {
   projectId: string
@@ -25,6 +26,9 @@ export const validateEnqueueVideoInput = (video: any): boolean => {
     video.callbackUrl.length > 0
   )
 }
+
+const SQS_QUEUE_URL = process.env.SQS_QUEUE_URL!
+const sqsClient = new SQSClient({})
 
 export const enqueueHandler = async (
   event: APIGatewayProxyEvent
@@ -59,7 +63,8 @@ export const enqueueHandler = async (
     }
   }
   const now = new Date().toISOString()
-  for (const video of videos) {
+  let enqueued = 0
+  for (const [i, video] of videos.entries()) {
     if (!validateEnqueueVideoInput(video)) {
       console.log("[enqueueHandler] Invalid video input", video)
       return {
@@ -76,37 +81,56 @@ export const enqueueHandler = async (
         body: JSON.stringify({ error: "Missing queueType in job" }),
       }
     }
-    const videoId = uuidv4()
-    const job: Job = {
-      jobId: videoId,
-      projectId: video.projectId,
-      clientId: video.clientId,
-      status: "pending",
-      attempts: 0,
-      inputData: video.params,
-      outputData: {},
-      returnData: undefined,
-      queueType: video.queueType,
-      callbackUrl: video.callbackUrl,
+    // Envoie le job dans la SQS
+    const jobPayload = {
+      ...video,
       createdAt: now,
       updatedAt: now,
+      batchIndex: i,
     }
-    console.log("[enqueueHandler] Adding job", job)
-    await JobRepository.addJob(job)
+    await sqsClient.send(
+      new SendMessageCommand({
+        QueueUrl: SQS_QUEUE_URL,
+        MessageBody: JSON.stringify(jobPayload),
+      })
+    )
+    enqueued++
   }
-  // Optionnel: trigger immédiat du worker (sinon laisser le cron faire)
-  await processAllJobs()
-
-  console.log("[enqueueHandler] All jobs enqueued", videos.length)
+  console.log(`[enqueueHandler] All jobs enqueued in SQS: ${enqueued}`)
   return {
     statusCode: 200,
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: "Enqueued!", count: videos.length }),
+    body: JSON.stringify({ message: "Enqueued!", count: enqueued }),
   }
 }
 
-export const workerHttpHandler = async (): Promise<void> => {
-  console.log("[workerHttpHandler] called")
-  await processAllJobs()
-  console.log("[workerHttpHandler] finished processAllJobs")
+// Nouveau handler Lambda pour SQS
+export const jobWorker = async (event: any) => {
+  for (const [i, record] of event.Records.entries()) {
+    const jobData = JSON.parse(record.body)
+    // Création du job complet (avec jobId, status, etc)
+    const videoId = uuidv4()
+    const now = new Date().toISOString()
+    const job: Job = {
+      jobId: videoId,
+      projectId: jobData.projectId,
+      clientId: jobData.clientId,
+      status: "pending",
+      attempts: 0,
+      inputData: jobData.params,
+      outputData: {},
+      returnData: undefined,
+      queueType: jobData.queueType,
+      callbackUrl: jobData.callbackUrl,
+      createdAt: now,
+      updatedAt: now,
+      batchIndex: jobData.batchIndex ?? i,
+    }
+    console.log("[jobWorker] Adding job to DB", job)
+    await JobRepository.addJob(job)
+    // Lance le traitement (option: processAllJobs ou processJob direct)
+    await processAllJobs()
+  }
 }
+
+export { processAllJobs } from "./handlers/process-all-jobs"

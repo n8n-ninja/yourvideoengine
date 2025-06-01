@@ -143,6 +143,7 @@ class YVEVideoCaptions {
             }
             jobs.push(payload);
         }
+        console.log("[YVEVideoCaptions] Enqueuing jobs", jobs);
         await this.helpers.httpRequest({
             method: "POST",
             url: process.env.QUEUES_URL,

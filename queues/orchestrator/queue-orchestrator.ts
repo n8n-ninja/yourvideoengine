@@ -4,7 +4,7 @@ import { processAllJobs } from "../handlers/process-all-jobs"
 
 export type WorkerResult = {
   status: JobStatus
-  outputData: Record<string, any>
+  outputData?: Record<string, any>
   returnData?: any
   error?: any
   externalId?: string
@@ -20,6 +20,12 @@ export class QueueOrchestrator {
     ) {
       console.log(
         `[QueueOrchestrator] Skip processing job ${job.jobId} (already ${job.status} or max retries)`
+      )
+      return
+    }
+    if (job.status !== "processing") {
+      console.log(
+        `[QueueOrchestrator] Job ${job.jobId} is not in processing status, skipping`
       )
       return
     }
@@ -45,16 +51,18 @@ export class QueueOrchestrator {
     }
 
     // 2. Met à jour le job dans la base
-    const update: any = {
-      status: result.status,
-      outputData: result.outputData,
-      returnData: result.returnData,
-      ...(result.externalId ? { externalId: result.externalId } : {}),
+    if (result.outputData) {
+      const update: any = {
+        status: result.status,
+        outputData: result.outputData,
+        returnData: result.returnData,
+        ...(result.externalId ? { externalId: result.externalId } : {}),
+      }
+      if (isLaunchOrRetry) {
+        update.attempts = (job.attempts ?? 0) + 1
+      }
+      await JobRepository.updateJob(job.jobId, job.projectId, update)
     }
-    if (isLaunchOrRetry) {
-      update.attempts = (job.attempts ?? 0) + 1
-    }
-    await JobRepository.updateJob(job.jobId, job.projectId, update)
 
     // 3. Si failed et attempts < 3, repasse en pending pour retry
     if (
@@ -87,14 +95,40 @@ export class QueueOrchestrator {
       callbackAlreadySent
     )
     if (allDone && job.callbackUrl && !callbackAlreadySent) {
+      // Tente de prendre le lock sur le job batchIndex=0
+      const lockAcquired = await JobRepository.tryAcquireCallbackLock(
+        job.projectId
+      )
+      if (!lockAcquired) {
+        console.log(
+          "[QueueOrchestrator] Callback lock not acquired, skipping callback."
+        )
+        return
+      }
       // 5. Déclenche le callback projet (POST)
       try {
-        // Trie les jobs par createdAt (ordre croissant)
+        // Trie les jobs par batchIndex (ordre d'origine du batch)
         const jobsSorted = [...jobs].sort((a, b) => {
+          if (a.batchIndex !== undefined && b.batchIndex !== undefined) {
+            return a.batchIndex - b.batchIndex
+          }
+          if (a.batchIndex !== undefined) return -1
+          if (b.batchIndex !== undefined) return 1
+          // fallback createdAt
           if (!a.createdAt) return -1
           if (!b.createdAt) return 1
           return a.createdAt.localeCompare(b.createdAt)
         })
+
+        const callbackBody = {
+          projectId: job.projectId,
+          success: jobsSorted.every((j) => j.status === "ready"),
+          results: jobsSorted.map((j) => j.returnData ?? null),
+        }
+        console.log(
+          "[QueueOrchestrator] Callback body",
+          JSON.stringify(callbackBody)
+        )
 
         console.log(
           "[QueueOrchestrator] Calling callback",
@@ -105,11 +139,7 @@ export class QueueOrchestrator {
         await fetch(job.callbackUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            projectId: job.projectId,
-            success: jobsSorted.every((j) => j.status === "ready"),
-            results: jobsSorted.map((j) => j.returnData ?? null),
-          }),
+          body: JSON.stringify(callbackBody),
         })
         // Marque tous les jobs du projet comme callbackSent: true
         await Promise.all(

@@ -77,10 +77,16 @@
         "LogGroupName": "/aws/lambda/queues-dev-enqueueHandler"
       }
     },
-    "WorkerLogGroup": {
+    "JobWorkerLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/queues-dev-worker"
+        "LogGroupName": "/aws/lambda/queues-dev-jobWorker"
+      }
+    },
+    "JobPollerLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/queues-dev-jobPoller"
       }
     },
     "IamRoleLambdaExecution": {
@@ -167,6 +173,39 @@
                     "events:ListTargetsByRule"
                   ],
                   "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "sqs:SendMessage",
+                    "sqs:ReceiveMessage",
+                    "sqs:DeleteMessage",
+                    "sqs:GetQueueAttributes"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "MyJobQueue",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "sqs:ReceiveMessage",
+                    "sqs:DeleteMessage",
+                    "sqs:GetQueueAttributes"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "MyJobQueue",
+                        "Arn"
+                      ]
+                    }
+                  ]
                 }
               ]
             }
@@ -195,7 +234,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/queues/dev/1748775305960-2025-06-01T10:55:05.960Z/enqueueHandler.zip"
+          "S3Key": "serverless/queues/dev/1748801485387-2025-06-01T18:11:25.387Z/enqueueHandler.zip"
         },
         "Handler": "index.enqueueHandler",
         "Runtime": "nodejs18.x",
@@ -212,7 +251,10 @@
             "REMOTION_RENDER_URL": "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/render",
             "REMOTION_STATUS_URL": "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/status",
             "DEEPGRAM_URL": "https://api.deepgram.com/v1/listen",
-            "DEEPGRAM_API_KEY": "41c7a04040a50fa21f6267d0647dc0603ace9325"
+            "DEEPGRAM_API_KEY": "41c7a04040a50fa21f6267d0647dc0603ace9325",
+            "SQS_QUEUE_URL": {
+              "Ref": "MyJobQueue"
+            }
           }
         },
         "Role": {
@@ -226,18 +268,18 @@
         "EnqueueHandlerLogGroup"
       ]
     },
-    "WorkerLambdaFunction": {
+    "JobWorkerLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/queues/dev/1748775305960-2025-06-01T10:55:05.960Z/worker.zip"
+          "S3Key": "serverless/queues/dev/1748801485387-2025-06-01T18:11:25.387Z/jobWorker.zip"
         },
-        "Handler": "index.workerHttpHandler",
+        "Handler": "index.jobWorker",
         "Runtime": "nodejs18.x",
-        "FunctionName": "queues-dev-worker",
+        "FunctionName": "queues-dev-jobWorker",
         "MemorySize": 256,
         "Timeout": 30,
         "Environment": {
@@ -250,7 +292,10 @@
             "REMOTION_RENDER_URL": "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/render",
             "REMOTION_STATUS_URL": "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/status",
             "DEEPGRAM_URL": "https://api.deepgram.com/v1/listen",
-            "DEEPGRAM_API_KEY": "41c7a04040a50fa21f6267d0647dc0603ace9325"
+            "DEEPGRAM_API_KEY": "41c7a04040a50fa21f6267d0647dc0603ace9325",
+            "SQS_QUEUE_URL": {
+              "Ref": "MyJobQueue"
+            }
           }
         },
         "Role": {
@@ -261,30 +306,81 @@
         }
       },
       "DependsOn": [
-        "WorkerLogGroup"
+        "JobWorkerLogGroup"
       ]
     },
-    "EnqueueHandlerLambdaVersionTcmtGkt6o5cO4PJsId71TY1lnrtp9cnEyxfBIc8U": {
+    "JobPollerLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/queues/dev/1748801485387-2025-06-01T18:11:25.387Z/jobPoller.zip"
+        },
+        "Handler": "index.processAllJobs",
+        "Runtime": "nodejs18.x",
+        "FunctionName": "queues-dev-jobPoller",
+        "MemorySize": 256,
+        "Timeout": 30,
+        "Environment": {
+          "Variables": {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "QUEUES_TABLE": "QueuesTable-dev",
+            "HEYGEN_RENDER_URL": "https://api.heygen.com/v2/video/generate",
+            "HEYGEN_STATUS_URL": "https://api.heygen.com/v1/video_status.get",
+            "HEYGEN_API_KEY": "NTA1ZDliMjc3OTE5NDFmYmIxMGIzZWI3ZTVkZDg4MjAtMTcxOTU5NzI0Nw==",
+            "REMOTION_RENDER_URL": "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/render",
+            "REMOTION_STATUS_URL": "https://ezh73b8y6l.execute-api.us-east-1.amazonaws.com/dev/status",
+            "DEEPGRAM_URL": "https://api.deepgram.com/v1/listen",
+            "DEEPGRAM_API_KEY": "41c7a04040a50fa21f6267d0647dc0603ace9325",
+            "SQS_QUEUE_URL": {
+              "Ref": "MyJobQueue"
+            }
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "JobPollerLogGroup"
+      ]
+    },
+    "EnqueueHandlerLambdaVersion4xJgdl0oM7g4A3gZxfSpox1V33tkTUJZDKjsnjac": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "EnqueueHandlerLambdaFunction"
         },
-        "CodeSha256": "s16paBZgfySWSNkJBJxUCBVtYI12NQaBEMo3SO7pRJc="
+        "CodeSha256": "woD/Xw8RepO2VCbyiaWH+0gTklA/BpU0yZqsERa1Di4="
       }
     },
-    "WorkerLambdaVersion42GZlq6a5Or7eSReCboCMboj8d6wQb23LwBwuF3HQ": {
+    "JobWorkerLambdaVersionrTPitbdINmBbPpajeWTciZyjVec4eM603ogBbIsji0": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
-          "Ref": "WorkerLambdaFunction"
+          "Ref": "JobWorkerLambdaFunction"
         },
-        "CodeSha256": "s16paBZgfySWSNkJBJxUCBVtYI12NQaBEMo3SO7pRJc="
+        "CodeSha256": "woD/Xw8RepO2VCbyiaWH+0gTklA/BpU0yZqsERa1Di4="
       }
     },
-    "WorkerEventsRuleSchedule1": {
+    "JobPollerLambdaVersionmE7eFF1nevloExDZSfuwthctfUjb6EhzipuFBA0eA": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "JobPollerLambdaFunction"
+        },
+        "CodeSha256": "woD/Xw8RepO2VCbyiaWH+0gTklA/BpU0yZqsERa1Di4="
+      }
+    },
+    "JobPollerEventsRuleSchedule1": {
       "Type": "AWS::Events::Rule",
       "Properties": {
         "ScheduleExpression": "rate(1 minute)",
@@ -293,21 +389,21 @@
           {
             "Arn": {
               "Fn::GetAtt": [
-                "WorkerLambdaFunction",
+                "JobPollerLambdaFunction",
                 "Arn"
               ]
             },
-            "Id": "workerSchedule"
+            "Id": "jobPollerSchedule"
           }
         ]
       }
     },
-    "WorkerLambdaPermissionEventsRuleSchedule1": {
+    "JobPollerLambdaPermissionEventsRuleSchedule1": {
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
           "Fn::GetAtt": [
-            "WorkerLambdaFunction",
+            "JobPollerLambdaFunction",
             "Arn"
           ]
         },
@@ -315,7 +411,7 @@
         "Principal": "events.amazonaws.com",
         "SourceArn": {
           "Fn::GetAtt": [
-            "WorkerEventsRuleSchedule1",
+            "JobPollerEventsRuleSchedule1",
             "Arn"
           ]
         }
@@ -439,7 +535,7 @@
         "EnqueueHandlerLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1748775304830": {
+    "ApiGatewayDeployment1748801484317": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -466,11 +562,11 @@
           }
         ]
       },
-      "DependsOn": "ApiGatewayDeployment1748775304830"
+      "DependsOn": "ApiGatewayDeployment1748801484317"
     },
     "ApiGatewayUsagePlan": {
       "Type": "AWS::ApiGateway::UsagePlan",
-      "DependsOn": "ApiGatewayDeployment1748775304830",
+      "DependsOn": "ApiGatewayDeployment1748801484317",
       "Properties": {
         "ApiStages": [
           {
@@ -533,6 +629,28 @@
         }
       }
     },
+    "JobWorkerEventSourceMappingSQSMyJobQueue": {
+      "Type": "AWS::Lambda::EventSourceMapping",
+      "DependsOn": [
+        "IamRoleLambdaExecution"
+      ],
+      "Properties": {
+        "BatchSize": 1,
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "MyJobQueue",
+            "Arn"
+          ]
+        },
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "JobWorkerLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Enabled": true
+      }
+    },
     "QueuesTable": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
@@ -585,6 +703,12 @@
         ],
         "BillingMode": "PAY_PER_REQUEST"
       }
+    },
+    "MyJobQueue": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "QueueName": "my-job-queue-dev"
+      }
     }
   },
   "Outputs": {
@@ -599,19 +723,28 @@
     "EnqueueHandlerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "EnqueueHandlerLambdaVersionTcmtGkt6o5cO4PJsId71TY1lnrtp9cnEyxfBIc8U"
+        "Ref": "EnqueueHandlerLambdaVersion4xJgdl0oM7g4A3gZxfSpox1V33tkTUJZDKjsnjac"
       },
       "Export": {
         "Name": "sls-queues-dev-EnqueueHandlerLambdaFunctionQualifiedArn"
       }
     },
-    "WorkerLambdaFunctionQualifiedArn": {
+    "JobWorkerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "WorkerLambdaVersion42GZlq6a5Or7eSReCboCMboj8d6wQb23LwBwuF3HQ"
+        "Ref": "JobWorkerLambdaVersionrTPitbdINmBbPpajeWTciZyjVec4eM603ogBbIsji0"
       },
       "Export": {
-        "Name": "sls-queues-dev-WorkerLambdaFunctionQualifiedArn"
+        "Name": "sls-queues-dev-JobWorkerLambdaFunctionQualifiedArn"
+      }
+    },
+    "JobPollerLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "JobPollerLambdaVersionmE7eFF1nevloExDZSfuwthctfUjb6EhzipuFBA0eA"
+      },
+      "Export": {
+        "Name": "sls-queues-dev-JobPollerLambdaFunctionQualifiedArn"
       }
     },
     "ServiceEndpoint": {

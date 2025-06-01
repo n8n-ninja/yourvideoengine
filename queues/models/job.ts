@@ -15,4 +15,5 @@ export interface Job {
   updatedAt: string
   externalId?: string
   callbackSent?: boolean
+  batchIndex?: number
 }

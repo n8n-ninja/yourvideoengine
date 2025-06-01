@@ -1,10 +1,14 @@
 import { heygenWorker, heygenPollWorker } from "../workers/heygen-worker"
 import { deepgramWorker } from "../workers/deepgram-worker"
 import { WorkerFn } from "../orchestrator/queue-orchestrator"
+import { remotionPollWorker, remotionWorker } from "../workers/remotion-worker"
 
 export type ServiceConfig = {
   startWorker: WorkerFn
-  pollWorker?: (externalId: string) => Promise<ReturnType<WorkerFn>>
+  pollWorker?: (
+    externalId: string,
+    outputData?: any
+  ) => Promise<ReturnType<WorkerFn>>
   async: boolean
   maxConcurrency: number
 }
@@ -19,6 +23,12 @@ export const services: Record<string, ServiceConfig> = {
   deepgram: {
     startWorker: deepgramWorker,
     async: false,
+    maxConcurrency: 4,
+  },
+  remotion: {
+    startWorker: remotionWorker,
+    pollWorker: remotionPollWorker,
+    async: true,
     maxConcurrency: 4,
   },
   // Ajoute ici tes nouveaux services

@@ -85,7 +85,7 @@ export const heygenPollWorker = async (
         status: "ready",
         outputData: data,
         returnData: data.data?.video_url
-          ? { url: data.data.video_url }
+          ? { url: data.data.video_url, duration: data.data.duration }
           : undefined,
       }
     } else if (data.data.status === "failed") {
