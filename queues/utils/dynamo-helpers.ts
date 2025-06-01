@@ -6,6 +6,8 @@ import {
   ScanCommand,
 } from "@aws-sdk/client-dynamodb"
 
+const TABLE_NAME = process.env.QUEUES_TABLE!
+
 export type Job = {
   jobId: string
   projectId: string
@@ -60,22 +62,18 @@ export function fromDynamoItem(item: any): Job {
   }
 }
 
-export async function putJob(
-  client: DynamoDBClient,
-  tableName: string,
-  job: Job
-) {
-  await client.send(
+export const dynamoClient = new DynamoDBClient({})
+
+export async function putJob(job: Job) {
+  await dynamoClient.send(
     new PutItemCommand({
-      TableName: tableName,
+      TableName: TABLE_NAME,
       Item: toDynamoItem(job),
     })
   )
 }
 
 export async function updateJobStatus(
-  client: DynamoDBClient,
-  tableName: string,
   job: Job,
   status: string,
   patch: Partial<Job> = {}
@@ -100,9 +98,9 @@ export async function updateJobStatus(
       typeof v === "object" ? { S: JSON.stringify(v) } : { S: String(v) },
     ])
   )
-  await client.send(
+  await dynamoClient.send(
     new UpdateItemCommand({
-      TableName: tableName,
+      TableName: TABLE_NAME,
       Key: {
         pk: { S: `PROJECT#${job.projectId}` },
         sk: { S: `VIDEO#${job.jobId}` },
@@ -115,14 +113,12 @@ export async function updateJobStatus(
 }
 
 export async function getJob(
-  client: DynamoDBClient,
-  tableName: string,
   projectId: string,
   jobId: string
 ): Promise<Job | null> {
-  const res = await client.send(
+  const res = await dynamoClient.send(
     new GetItemCommand({
-      TableName: tableName,
+      TableName: TABLE_NAME,
       Key: {
         pk: { S: `PROJECT#${projectId}` },
         sk: { S: `VIDEO#${jobId}` },
@@ -133,14 +129,10 @@ export async function getJob(
   return fromDynamoItem(res.Item)
 }
 
-export async function scanJobs(
-  client: DynamoDBClient,
-  tableName: string,
-  filter?: { [k: string]: any }
-): Promise<Job[]> {
-  const res = await client.send(
+export async function scanJobs(filter?: { [k: string]: any }): Promise<Job[]> {
+  const res = await dynamoClient.send(
     new ScanCommand({
-      TableName: tableName,
+      TableName: TABLE_NAME,
       // Ajoute un filter si besoin
     })
   )

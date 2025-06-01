@@ -161,7 +161,7 @@ class YVEHeyGen {
                 payload.clientId = clientId;
             }
             const { url: endpointUrl, apiKey: xApiKey } = nodes_config_1.QUEUES_ENDPOINTS[environment];
-            const response = await this.helpers.httpRequest({
+            this.helpers.httpRequest({
                 method: "POST",
                 url: endpointUrl,
                 body: payload,
@@ -170,7 +170,6 @@ class YVEHeyGen {
                     "X-Api-Key": xApiKey,
                 },
             });
-            returnData.push({ json: response });
         }
         return this.prepareOutputData(returnData);
     }

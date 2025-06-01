@@ -5,22 +5,7 @@ import {
   NodeConnectionType,
   INodeExecutionData,
 } from "n8n-workflow"
-
-interface DeepgramWord {
-  word: string
-  start: number
-  end: number
-  confidence: number
-  punctuated_word?: string
-}
-
-interface DeepgramResponse {
-  words: DeepgramWord[]
-  transcript: string
-  [key: string]: unknown
-}
-
-const DEEPGRAM_API_KEY = "41c7a04040a50fa21f6267d0647dc0603ace9325"
+import { QUEUES_ENDPOINTS } from "./nodes.config"
 
 export class YVEVideoCaptions implements INodeType {
   description: INodeTypeDescription = {
@@ -118,6 +103,40 @@ export class YVEVideoCaptions implements INodeType {
           "Comma-separated list of keywords or keyterms to boost in the transcript.",
         required: false,
       },
+      {
+        displayName: "Resume Url",
+        name: "resumeUrl",
+        type: "string",
+        default: "={{$execution.resumeUrl}}",
+        required: true,
+      },
+      {
+        displayName: "Execution Id",
+        name: "executionId",
+        type: "string",
+        default: "={{$execution.id}}",
+        required: true,
+      },
+      {
+        displayName: "Client ID",
+        name: "clientId",
+        type: "string",
+        default: "client0",
+        required: false,
+        description: "Client ID (optionnel)",
+      },
+      {
+        displayName: "Environment",
+        name: "environment",
+        type: "options",
+        options: [
+          { name: "Production", value: "prod" },
+          { name: "Development", value: "dev" },
+        ],
+        default: "prod",
+        required: false,
+        description: "Choose environment (prod/dev)",
+      },
     ],
   }
 
@@ -131,80 +150,56 @@ export class YVEVideoCaptions implements INodeType {
       const punctuation = this.getNodeParameter(
         "punctuation",
         i,
-        false,
+        false
       ) as boolean
       const keywords = this.getNodeParameter("keywords", i, "") as string
+      const resumeUrl = this.getNodeParameter("resumeUrl", i) as string
+      const executionId = this.getNodeParameter("executionId", i) as string
+      const clientId = this.getNodeParameter("clientId", i, "") as string
+      const environment = this.getNodeParameter(
+        "environment",
+        i,
+        "prod"
+      ) as string
 
       const keywordsArr = keywords
         .split(",")
         .map((k) => k.trim())
         .filter(Boolean)
 
-      const response = await callDeepgramWordByWord({
+      const params: Record<string, unknown> = {
         videoUrl,
-        model,
         language,
-        keywordsArr,
+        model,
         punctuation,
-        helpers: this.helpers,
-        apiKey: DEEPGRAM_API_KEY,
+        keywords: keywordsArr,
+      }
+
+      const payload: Record<string, unknown> = {
+        projectId: executionId,
+        callbackUrl: resumeUrl,
+        params,
+        queueType: "deepgram",
+      }
+      if (clientId) {
+        payload.clientId = clientId
+      }
+
+      const { url: endpointUrl, apiKey: xApiKey } =
+        QUEUES_ENDPOINTS[environment as "dev" | "prod"]
+
+      this.helpers.httpRequest({
+        method: "POST",
+        url: endpointUrl,
+        body: payload,
+        json: true,
+        headers: {
+          "X-Api-Key": xApiKey,
+        },
       })
-      returnData.push({ json: { response } })
+
+      returnData.push({ json: {} })
     }
     return this.prepareOutputData(returnData)
   }
-}
-
-interface CallDeepgramParams {
-  videoUrl: string
-  model: string
-  language: string
-  keywordsArr: string[]
-  punctuation: boolean
-  helpers: IExecuteFunctions["helpers"]
-  apiKey: string
-}
-
-async function callDeepgramWordByWord({
-  videoUrl,
-  model,
-  language,
-  keywordsArr,
-  punctuation,
-  helpers,
-  apiKey,
-}: CallDeepgramParams): Promise<DeepgramResponse> {
-  const url = new URL("https://api.deepgram.com/v1/listen")
-  url.searchParams.set("model", model)
-  url.searchParams.set("language", language)
-  if (punctuation) {
-    url.searchParams.set("punctuate", "true")
-  }
-  if (model === "nova-3" && keywordsArr.length > 0) {
-    keywordsArr.forEach((k) => url.searchParams.append("keyterm", k))
-  } else if (model !== "nova-3" && keywordsArr.length > 0) {
-    keywordsArr.forEach((k) => url.searchParams.append("keywords", k))
-  }
-  const response = await helpers.httpRequest({
-    method: "POST",
-    url: url.toString(),
-    headers: {
-      Authorization: `Token ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: {
-      url: videoUrl,
-    },
-    json: true,
-  })
-  if (
-    !response.results ||
-    !response.results.channels ||
-    !response.results.channels[0] ||
-    !response.results.channels[0].alternatives ||
-    !response.results.channels[0].alternatives[0]
-  ) {
-    throw new Error("Unexpected Deepgram response structure")
-  }
-  return response.results.channels[0].alternatives[0] as DeepgramResponse
 }

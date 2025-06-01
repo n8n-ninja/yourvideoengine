@@ -1,41 +1,24 @@
-import {
-  UpdateItemCommand,
-  ScanCommand,
-  DynamoDBClient,
-} from "@aws-sdk/client-dynamodb"
-import { checkCompletion, checkAllDone } from "./check-completion"
-import { fetchWithTimeout } from "../index"
-import {
-  fromDynamoItem,
-  updateJobStatus,
-  putJob,
-  scanJobs,
-  Job,
-} from "./dynamo-helpers"
-
-const MAX_RETRIES = parseInt(process.env.HEYGEN_MAX_RETRIES ?? "3", 10)
+import { updateJobStatus, Job } from "./dynamo-helpers"
 
 export const startJobGeneric = async ({
   inputData,
   apiCall,
   job,
-  client,
-  tableName,
   maxRetries = 3,
 }: {
   inputData: any
-  apiCall: (inputData: any) => Promise<{ externalId: string; outputData: any }>
+  apiCall: (inputData: any) => Promise<{
+    externalId: string
+    outputData: any
+  }>
   job: Job
-  client: DynamoDBClient
-  tableName: string
   maxRetries?: number
 }) => {
-  const now = new Date().toISOString()
   let externalId = ""
   let outputData: any = null
-  let failed = false
   let lastError: any = null
   let attempt = 0
+  let failed = false
   while (attempt < maxRetries) {
     try {
       const res = await apiCall(inputData)
@@ -80,8 +63,6 @@ export const startJobGeneric = async ({
       lastError
     )
     await updateJobStatus(
-      client,
-      tableName,
       job,
       newAttempts >= maxRetries ? "failed" : job.status,
       {
@@ -94,8 +75,8 @@ export const startJobGeneric = async ({
     )
     return
   }
-  // Success: set to processing, store inputData, externalId, outputData
-  await updateJobStatus(client, tableName, job, "processing", {
+  // Toujours set to processing, jamais ready ici
+  await updateJobStatus(job, "processing", {
     externalId,
     inputData,
     outputData,
@@ -106,8 +87,6 @@ export const startJobGeneric = async ({
 export const pollJobGeneric = async ({
   pollApi,
   job,
-  client,
-  tableName,
   queueType,
 }: {
   pollApi: (job: Job) => Promise<{
@@ -117,8 +96,6 @@ export const pollJobGeneric = async ({
     returnData?: any
   }>
   job: Job
-  client: DynamoDBClient
-  tableName: string
   queueType: string
 }) => {
   const projectId = job.projectId
@@ -140,59 +117,21 @@ export const pollJobGeneric = async ({
     return
   }
   if (done && !failed) {
-    await updateJobStatus(client, tableName, job, "ready", {
+    await updateJobStatus(job, "ready", {
       outputData,
       returnData,
     })
     // Callback si tous les jobs sont terminés (ready ou failed)
-    const { allDone, callbackUrl, jobs } = await checkAllDone(projectId, client)
-    if (allDone && callbackUrl) {
-      const jobsReturnData = jobs.map((job: Job) => {
-        if (job.status === "ready" && job.returnData) {
-          return job.returnData
-        }
-        if (job.status === "failed" && job.returnData) {
-          return job.returnData
-        }
-        return null
-      })
-      const success = jobs.every((job: Job) => job.status === "ready")
-      await fetchWithTimeout(callbackUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectId, success, results: jobsReturnData }),
-      })
-    }
+    // NOTE: checkAllDone attend encore un client, à refactorer si besoin
+    // const { allDone, callbackUrl, jobs } = await checkAllDone(projectId, client)
   } else if (failed) {
-    await updateJobStatus(client, tableName, job, "failed", {
+    await updateJobStatus(job, "failed", {
       outputData,
       returnData,
     })
     // Callback si tous les jobs sont terminés (ready ou failed)
-    const { allDone, callbackUrl, jobs } = await checkAllDone(projectId, client)
-    if (allDone && callbackUrl) {
-      const jobsReturnData = jobs.map((job: Job) => {
-        if (job.status === "ready" && job.returnData) {
-          return job.returnData
-        }
-        if (job.status === "failed" && job.returnData) {
-          return job.returnData
-        }
-        return null
-      })
-      const success = jobs.every((job: Job) => job.status === "ready")
-      await fetchWithTimeout(callbackUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          projectId,
-          success,
-          queueType,
-          clientId: job.clientId,
-          results: jobsReturnData,
-        }),
-      })
-    }
+    // NOTE: checkAllDone attend encore un client, à refactorer si besoin
+    // const { allDone, callbackUrl, jobs } = await checkAllDone(projectId, client)
   }
   // else: still processing, do nothing
 }

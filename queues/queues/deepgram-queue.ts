@@ -1,17 +1,11 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb"
 import { fetchWithTimeout } from "../index"
 import { startJobGeneric, pollJobGeneric } from "../utils/generic-queue"
 import { scanJobs, Job } from "../utils/dynamo-helpers"
 
-const TABLE_NAME = process.env.QUEUES_TABLE
 const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY
 const DEEPGRAM_URL = process.env.DEEPGRAM_URL
 
-export const handleDeepgramJob = async (
-  job: Job,
-  client: DynamoDBClient,
-  tableName: string
-) => {
+export const handleDeepgramJob = (job: Job) => {
   const { inputData: params } = job
   const apiKey = params.apiKey || DEEPGRAM_API_KEY
   if (!apiKey) return
@@ -42,46 +36,44 @@ export const handleDeepgramJob = async (
       body: JSON.stringify(inputData),
     })
     const data = await res.json()
-    // On stocke tout le retour dans outputData, et le transcript dans returnData si dispo
     return {
       externalId: data.request_id ?? job.jobId,
       outputData: data,
-      returnData: data.results?.channels?.[0]?.alternatives?.[0] ?? undefined,
     }
   }
-  await startJobGeneric({
+  // Fire-and-forget
+  startJobGeneric({
     inputData,
     apiCall: deepgramApiCall,
     job,
-    client,
-    tableName,
+
     maxRetries: 3,
   })
+    .then(() => pollDeepgramHandler())
+    .catch((err) => {
+      console.error("[handleDeepgramJob] Erreur async:", err)
+    })
+  // Retour immédiat
 }
 
 export const pollDeepgramHandler = async (): Promise<void> => {
-  if (!TABLE_NAME) throw new Error("QUEUES_TABLE not set")
-  const client = new DynamoDBClient({})
-  const processingJobs = (await scanJobs(client, TABLE_NAME)).filter(
+  const processingJobs = (await scanJobs()).filter(
     (job) => job.status === "processing" && job.queueType === "deepgram"
   )
   const deepgramPollApi = async (job: Job) => {
-    // Pas de polling API, juste un buffer pour éviter la surcharge
     await new Promise((resolve) => setTimeout(resolve, 2000))
-    // On considère le job comme done après le buffer
+    const data = job.outputData
     return {
       done: true,
       failed: false,
-      outputData: job.outputData,
-      returnData: job.returnData,
+      outputData: data,
+      returnData: data?.results?.channels?.[0]?.alternatives?.[0] ?? undefined,
     }
   }
   for (const job of processingJobs) {
     await pollJobGeneric({
       pollApi: deepgramPollApi,
       job,
-      client,
-      tableName: TABLE_NAME,
       queueType: "deepgram",
     })
   }

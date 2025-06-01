@@ -11,7 +11,7 @@
     "sourceMap": true,
     "declaration": true,
     "resolveJsonModule": true,
-    "types": ["jest"]
+    "types": ["node", "jest"]
   },
   "include": ["*.ts", "tests/**/*.ts", "queues/**/*.ts"],
   "exclude": ["node_modules", "dist"]

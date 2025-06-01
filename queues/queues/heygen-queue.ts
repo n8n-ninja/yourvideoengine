@@ -1,18 +1,12 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb"
 import { fetchWithTimeout } from "../index"
 import { startJobGeneric, pollJobGeneric } from "../utils/generic-queue"
 import { scanJobs, Job } from "../utils/dynamo-helpers"
 
-const TABLE_NAME = process.env.QUEUES_TABLE
 const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY
 const HEYGEN_RENDER_URL = process.env.HEYGEN_RENDER_URL
 const HEYGEN_STATUS_URL = process.env.HEYGEN_STATUS_URL
 
-export const handleHeygenJob = async (
-  job: Job,
-  client: DynamoDBClient,
-  tableName: string
-) => {
+export const handleHeygenJob = (job: Job) => {
   const { inputData: params } = job
   const apiKey = params.apiKey || HEYGEN_API_KEY
   if (!apiKey) return
@@ -52,20 +46,20 @@ export const handleHeygenJob = async (
       outputData: data,
     }
   }
-  await startJobGeneric({
+  // Fire-and-forget
+  startJobGeneric({
     inputData,
     apiCall: heygenApiCall,
     job,
-    client,
-    tableName,
     maxRetries: 3,
+  }).catch((err) => {
+    console.error("[handleHeygenJob] Erreur async:", err)
   })
+  // Retour immédiat
 }
 
 export const pollHeygenHandler = async (): Promise<void> => {
-  if (!TABLE_NAME) throw new Error("QUEUES_TABLE not set")
-  const client = new DynamoDBClient({})
-  const processingJobs = (await scanJobs(client, TABLE_NAME)).filter(
+  const processingJobs = (await scanJobs()).filter(
     (job) => job.status === "processing" && job.queueType === "heygen"
   )
   const heygenPollApi = async (job: Job) => {
@@ -102,8 +96,6 @@ export const pollHeygenHandler = async (): Promise<void> => {
     await pollJobGeneric({
       pollApi: heygenPollApi,
       job,
-      client,
-      tableName: TABLE_NAME,
       queueType: "heygen",
     })
   }

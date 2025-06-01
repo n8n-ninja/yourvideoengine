@@ -176,7 +176,7 @@ export class YVEHeyGen implements INodeType {
       const { url: endpointUrl, apiKey: xApiKey } =
         QUEUES_ENDPOINTS[environment as "dev" | "prod"]
 
-      const response = await this.helpers.httpRequest({
+      this.helpers.httpRequest({
         method: "POST",
         url: endpointUrl,
         body: payload,
@@ -185,7 +185,6 @@ export class YVEHeyGen implements INodeType {
           "X-Api-Key": xApiKey,
         },
       })
-      returnData.push({ json: response })
     }
     return this.prepareOutputData(returnData)
   }
