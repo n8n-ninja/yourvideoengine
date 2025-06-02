@@ -18,6 +18,8 @@ provider:
     REMOTION_STATUS_URL: ${self:custom.remotionStatusUrl.${sls:stage}}
     DEEPGRAM_URL: https://api.deepgram.com/v1/listen
     DEEPGRAM_API_KEY: 41c7a04040a50fa21f6267d0647dc0603ace9325
+    FLUX_API_KEY: ec7636bcaff069219237586e6ad48702aa591cf70d1f45e18cc271f3ca45e7a3
+    RUNWAYML_API_KEY: key_04add8ffe1a38f2f9998f19d04050a1d8b25183a61ef4ec7237b10f7aa1ad9aef7decd21b71b80abd8cc986f7c114d92e2ed03a8ab9adaecc048cad8915fa69b
     SQS_QUEUE_URL:
       Ref: MyJobQueue
   iam:
