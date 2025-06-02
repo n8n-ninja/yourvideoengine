@@ -1,6 +1,7 @@
 import { JobRepository } from "../repository/job-repository"
 import { QueueOrchestrator } from "../orchestrator/queue-orchestrator"
 import { services } from "../config/services"
+import { Lambda } from "@aws-sdk/client-lambda"
 
 let isProcessing = false
 
@@ -17,27 +18,27 @@ export const processAllJobs = async () => {
       // --- Traitement des jobs pending (lancement) ---
       const pendingJobs = await JobRepository.listJobsByQueueTypeAndStatus(
         queueType,
-        "pending"
+        "pending",
       )
       console.log(
-        `[processAllJobs] Found ${pendingJobs.length} pending jobs for ${queueType}`
+        `[processAllJobs] Found ${pendingJobs.length} pending jobs for ${queueType}`,
       )
       // Respecte le maxConcurrency pour le lancement
       let processingCount = (
         await JobRepository.listJobsByQueueTypeAndStatus(
           queueType,
-          "processing"
+          "processing",
         )
       ).length
       const availableSlots = Math.max(
         0,
-        config.maxConcurrency - processingCount
+        config.maxConcurrency - processingCount,
       )
       const toLaunch = pendingJobs
         .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
         .slice(0, availableSlots)
       console.log(
-        `[processAllJobs] Launching ${toLaunch.length} jobs for ${queueType}`
+        `[processAllJobs] Launching ${toLaunch.length} jobs for ${queueType}`,
       )
       if (!config.async) {
         // SYNC: on traite les jobs un par un avec un buffer
@@ -55,7 +56,7 @@ export const processAllJobs = async () => {
           await QueueOrchestrator.processJob(
             processingJob,
             config.startWorker,
-            false
+            false,
           )
           // Buffer de 1 seconde
           await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -77,29 +78,29 @@ export const processAllJobs = async () => {
             return QueueOrchestrator.processJob(
               processingJob,
               config.startWorker,
-              false
+              false,
             )
-          })
+          }),
         )
       }
       // --- Traitement des jobs processing (polling, si async) ---
       if (config.async && config.pollWorker) {
         const processingJobs = await JobRepository.listJobsByQueueTypeAndStatus(
           queueType,
-          "processing"
+          "processing",
         )
         console.log(
-          `[processAllJobs] Found ${processingJobs.length} processing jobs for ${queueType}`
+          `[processAllJobs] Found ${processingJobs.length} processing jobs for ${queueType}`,
         )
         for (const job of processingJobs) {
           if (job.externalId) {
             console.log(
-              `[processAllJobs] Polling job ${job.jobId} (externalId: ${job.externalId})`
+              `[processAllJobs] Polling job ${job.jobId} (externalId: ${job.externalId})`,
             )
             await QueueOrchestrator.processJob(
               job,
               async () => config.pollWorker!(job.externalId!, job.outputData),
-              false
+              false,
             )
           }
         }
@@ -108,5 +109,30 @@ export const processAllJobs = async () => {
     console.log("[processAllJobs] finished")
   } finally {
     isProcessing = false
+  }
+
+  // --- Auto-invocation si jobs à repoller ---
+  try {
+    let jobsToPoll: any[] = []
+    for (const queueType of Object.keys(services)) {
+      const jobs = await JobRepository.listJobsByQueueTypeAndStatus(
+        queueType,
+        "processing",
+      )
+      jobsToPoll = jobsToPoll.concat(jobs)
+    }
+    if (jobsToPoll.length > 0 && process.env.AWS_LAMBDA_FUNCTION_NAME) {
+      console.log(
+        `[processAllJobs] ${jobsToPoll.length} jobs still processing, auto-invoking in 10s`,
+      )
+      await new Promise((r) => setTimeout(r, 10000))
+      const lambda = new Lambda()
+      await lambda.invoke({
+        FunctionName: process.env.AWS_LAMBDA_FUNCTION_NAME!,
+        InvocationType: "Event",
+      })
+    }
+  } catch (err) {
+    console.log("[processAllJobs] auto-invoke error", err)
   }
 }

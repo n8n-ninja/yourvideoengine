@@ -15,7 +15,7 @@ export class YVERunway implements INodeType {
     version: 2,
     description: "Create videos from images with Runway",
     defaults: {
-      name: "YVE Flux",
+      name: "YVE Runway",
     },
     inputs: [NodeConnectionType.Main],
     outputs: [NodeConnectionType.Main],
