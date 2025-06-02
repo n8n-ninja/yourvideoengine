@@ -12,6 +12,7 @@ export const handler = async (event: any) => {
   const body =
     typeof event.body === "string" ? JSON.parse(event.body) : event.body
   const inputUrl = body.inputUrl
+  const chromakeyFilter = body.chromakeyFilter
   if (!inputUrl) {
     return {
       statusCode: 400,
@@ -36,7 +37,7 @@ export const handler = async (event: any) => {
   await sqs.send(
     new SendMessageCommand({
       QueueUrl: QUEUE_URL,
-      MessageBody: JSON.stringify({ jobId, inputUrl }),
+      MessageBody: JSON.stringify({ jobId, inputUrl, chromakeyFilter }),
     }),
   )
   return {

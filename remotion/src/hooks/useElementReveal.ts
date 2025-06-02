@@ -9,10 +9,48 @@ export const getSafeRevealTransition = (
   if (
     reveal &&
     typeof reveal === "object" &&
-    "type" in (reveal as any) &&
-    allowedTypes.includes((reveal as any).type)
+    ("type" in (reveal as any) ||
+      "inType" in (reveal as any) ||
+      "outType" in (reveal as any))
   ) {
-    return reveal as Record<string, unknown>
+    const r = reveal as Record<string, any>
+    return {
+      inType: allowedTypes.includes(r.inType)
+        ? r.inType
+        : allowedTypes.includes(r.type)
+          ? r.type
+          : undefined,
+      outType: allowedTypes.includes(r.outType)
+        ? r.outType
+        : allowedTypes.includes(r.type)
+          ? r.type
+          : undefined,
+      inDuration: r.inDuration ?? r.duration,
+      outDuration: r.outDuration ?? r.duration,
+      inEasing: r.inEasing ?? r.easing,
+      outEasing: r.outEasing ?? r.easing,
+      // On garde aussi les props globales si jamais utilisées ailleurs
+      type: allowedTypes.includes(r.type) ? r.type : undefined,
+      duration: r.duration,
+      easing: r.easing,
+      // Ajoute les autres props éventuelles du reveal
+      ...Object.fromEntries(
+        Object.entries(r).filter(
+          ([k]) =>
+            ![
+              "inType",
+              "outType",
+              "inDuration",
+              "outDuration",
+              "inEasing",
+              "outEasing",
+              "type",
+              "duration",
+              "easing",
+            ].includes(k),
+        ),
+      ),
+    }
   }
   return {}
 }

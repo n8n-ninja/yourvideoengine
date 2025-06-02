@@ -25,6 +25,14 @@ class YVEBackgroundRemover {
                     description: "Video URL to remove background from",
                 },
                 {
+                    displayName: "Chroma Key Filter",
+                    name: "chromakeyFilter",
+                    type: "string",
+                    default: "chromakey=0x00FF00:0.39:0.25",
+                    required: false,
+                    description: "Chroma key filter to use",
+                },
+                {
                     displayName: "Client ID",
                     name: "clientId",
                     type: "string",
@@ -42,22 +50,25 @@ class YVEBackgroundRemover {
         for (let i = 0; i < items.length; i++) {
             const videoUrl = this.getNodeParameter("videoUrl", i);
             const clientId = this.getNodeParameter("clientId", i, "");
+            const chromakeyFilter = this.getNodeParameter("chromakeyFilter", i, "");
             const callbackUrl = this.evaluateExpression("{{$execution.resumeUrl}}", i);
             const executionId = this.evaluateExpression("{{$execution.id}}", i);
             const params = {
                 inputUrl: videoUrl,
+                chromakeyFilter,
             };
             const payload = {
                 projectId: executionId + "_" + timestamp,
                 callbackUrl,
                 params,
-                queueType: "background-remover",
+                queueType: "backgroundremover",
             };
             if (clientId) {
                 payload.clientId = clientId;
             }
             jobs.push(payload);
         }
+        console.log("jobs", jobs);
         await this.helpers.httpRequest({
             method: "POST",
             url: process.env.QUEUES_URL,

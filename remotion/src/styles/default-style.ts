@@ -25,6 +25,18 @@ export const titleBaseStyle: CSSProperties = {
   lineHeight: 1.1,
 }
 
+export const titleWordStyle: CSSProperties = {
+  color: "#fff",
+  fontFamily: "Montserrat, sans-serif",
+  fontSize: 90,
+  textAlign: "center",
+  fontWeight: 900,
+  margin: 50,
+  textWrap: "balance",
+  textShadow: "0 2px 30px #000, 0 1px 10px #000",
+  lineHeight: 1.1,
+}
+
 export const captionBoxStyle: CSSProperties = {
   backgroundColor: "rgba(0,0,0,0.7)",
   borderRadius: 18,

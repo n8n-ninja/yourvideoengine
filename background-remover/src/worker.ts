@@ -9,17 +9,25 @@ const s3 = new S3Client({})
 const ddb = new DynamoDBClient({})
 const OUTPUT_BUCKET = process.env.OUTPUT_BUCKET!
 const JOBS_TABLE = process.env.JOBS_TABLE!
+const CHROMAKEY_FILTER =
+  process.env.CHROMAKEY_FILTER || "chromakey=0x00FF00:0.39:0.25"
 
-async function runFfmpeg(inputPath: string, outputPath: string) {
+async function runFfmpeg(
+  inputPath: string,
+  outputPath: string,
+  chromakeyFilter?: string,
+) {
+  console.log(`[runFfmpeg DEBUG] ${chromakeyFilter}`)
+  const filter = (chromakeyFilter || CHROMAKEY_FILTER) + ",format=yuva420p"
   console.log(
-    `[runFfmpeg] Start: inputPath=${inputPath}, outputPath=${outputPath}`,
+    `[runFfmpeg] Start: inputPath=${inputPath}, outputPath=${outputPath}, filter=${filter}`,
   )
   return new Promise((resolve, reject) => {
     const ffmpeg = spawn("/opt/bin/ffmpeg", [
       "-i",
       inputPath,
       "-vf",
-      "chromakey=0x00FF00:0.4:0.3,format=yuva420p",
+      filter,
       "-c:v",
       "libvpx",
       "-auto-alt-ref",
@@ -34,6 +42,8 @@ async function runFfmpeg(inputPath: string, outputPath: string) {
       "best",
       "-crf",
       "10",
+      "-pix_fmt",
+      "yuva420p",
       outputPath,
     ])
     let stderr = ""
@@ -58,7 +68,7 @@ async function runFfmpeg(inputPath: string, outputPath: string) {
 export const handler = async (event: any) => {
   console.log(`[worker] Event received`, JSON.stringify(event))
   for (const record of event.Records) {
-    const { jobId, inputUrl } = JSON.parse(record.body)
+    const { jobId, inputUrl, chromakeyFilter } = JSON.parse(record.body)
     console.log(`[worker] Processing jobId=${jobId}, inputUrl=${inputUrl}`)
     const inputPath = `/tmp/${jobId}.mp4`
     const outputPath = `/tmp/${jobId}.webm`
@@ -69,7 +79,7 @@ export const handler = async (event: any) => {
       await fs.writeFile(inputPath, Buffer.from(res.data))
       console.log(`[worker] Input video saved to ${inputPath}`)
       // Run ffmpeg
-      await runFfmpeg(inputPath, outputPath)
+      await runFfmpeg(inputPath, outputPath, chromakeyFilter)
       console.log(`[worker] ffmpeg finished, output at ${outputPath}`)
       // Upload to S3
       const s3Key = `jobs/${jobId}.webm`
@@ -85,7 +95,7 @@ export const handler = async (event: any) => {
           ContentType: "video/webm",
         }),
       )
-      const outputUrl = `https://${OUTPUT_BUCKET}.s3.amazonaws.com/${s3Key}`
+      const outputUrl = `https://diwa7aolcke5u.cloudfront.net/${s3Key}`
       console.log(`[worker] Uploaded to S3, outputUrl=${outputUrl}`)
       // Update DynamoDB
       console.log(`[worker] Updating DynamoDB: jobId=${jobId}, status=DONE`)

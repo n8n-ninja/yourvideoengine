@@ -13,7 +13,7 @@ export const backgroundRemoverWorker = async (
     const submitRes = await fetch(SUBMIT_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ inputUrl: params.inputUrl }),
+      body: JSON.stringify(params),
     })
     const submitData: any = await submitRes.json()
     if (!submitRes.ok || !submitData.jobId) {

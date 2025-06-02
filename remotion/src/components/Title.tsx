@@ -20,7 +20,9 @@ import { Style } from "@/schemas/style"
 export const Title: React.FC<{
   title: string
   theme?: string
-  style?: Style
+  boxStyle?: React.CSSProperties
+  textStyle?: React.CSSProperties
+  perWord?: boolean
   letterAnimation?: {
     duration: number
     easing: string
@@ -35,7 +37,9 @@ export const Title: React.FC<{
 }> = ({
   title,
   theme,
-  style,
+  boxStyle,
+  textStyle,
+  perWord = false,
   letterAnimation,
   timing,
   reveal,
@@ -44,17 +48,11 @@ export const Title: React.FC<{
   layoutStyle,
 }) => {
   const themeStyle = theme && titleThemes[theme] ? titleThemes[theme] : {}
-  const computedStyle = getStyle(style, { ...titleBaseStyle, ...themeStyle })
-  let letterAnimationConfig = null
-  if (letterAnimation) {
-    const config = letterAnimation
-    letterAnimationConfig = {
-      duration: config.duration ?? 0.3,
-      easing: config.easing ?? "easeOut",
-      stagger: config.stagger ?? 0.05,
-      translateY: config.translateY ?? 20,
-    }
-  }
+  const computedStyle = getStyle(undefined, {
+    ...titleBaseStyle,
+    ...themeStyle,
+    ...boxStyle,
+  })
 
   return (
     <Layout
@@ -65,10 +63,28 @@ export const Title: React.FC<{
       style={layoutStyle}
     >
       <h1 style={computedStyle}>
-        {letterAnimationConfig ? (
-          <LetterAnimation text={title || ""} config={letterAnimationConfig} />
+        {letterAnimation ? (
+          <LetterAnimation text={title || ""} config={letterAnimation} />
+        ) : perWord ? (
+          title.split(" ").map((word, idx) => (
+            <span
+              key={idx}
+              style={{
+                ...textStyle,
+                marginRight: "0.25em",
+              }}
+            >
+              {word}
+            </span>
+          ))
         ) : (
-          title
+          <span
+            style={{
+              ...textStyle,
+            }}
+          >
+            {title}
+          </span>
         )}
       </h1>
     </Layout>

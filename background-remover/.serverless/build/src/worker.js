@@ -14982,16 +14982,19 @@ var s3 = new import_client_s3.S3Client({});
 var ddb = new import_client_dynamodb.DynamoDBClient({});
 var OUTPUT_BUCKET = process.env.OUTPUT_BUCKET;
 var JOBS_TABLE = process.env.JOBS_TABLE;
-async function runFfmpeg(inputPath, outputPath) {
+var CHROMAKEY_FILTER = process.env.CHROMAKEY_FILTER || "chromakey=0x00FF00:0.39:0.25";
+async function runFfmpeg(inputPath, outputPath, chromakeyFilter) {
+  console.log(`[runFfmpeg DEBUG] ${chromakeyFilter}`);
+  const filter2 = (chromakeyFilter || CHROMAKEY_FILTER) + ",format=yuva420p";
   console.log(
-    `[runFfmpeg] Start: inputPath=${inputPath}, outputPath=${outputPath}`
+    `[runFfmpeg] Start: inputPath=${inputPath}, outputPath=${outputPath}, filter=${filter2}`
   );
   return new Promise((resolve, reject) => {
     const ffmpeg = (0, import_child_process.spawn)("/opt/bin/ffmpeg", [
       "-i",
       inputPath,
       "-vf",
-      "chromakey=0x00FF00:0.4:0.3,format=yuva420p",
+      filter2,
       "-c:v",
       "libvpx",
       "-auto-alt-ref",
@@ -15006,6 +15009,8 @@ async function runFfmpeg(inputPath, outputPath) {
       "best",
       "-crf",
       "10",
+      "-pix_fmt",
+      "yuva420p",
       outputPath
     ]);
     let stderr = "";
@@ -15029,7 +15034,7 @@ async function runFfmpeg(inputPath, outputPath) {
 var handler = async (event) => {
   console.log(`[worker] Event received`, JSON.stringify(event));
   for (const record of event.Records) {
-    const { jobId, inputUrl } = JSON.parse(record.body);
+    const { jobId, inputUrl, chromakeyFilter } = JSON.parse(record.body);
     console.log(`[worker] Processing jobId=${jobId}, inputUrl=${inputUrl}`);
     const inputPath = `/tmp/${jobId}.mp4`;
     const outputPath = `/tmp/${jobId}.webm`;
@@ -15038,7 +15043,7 @@ var handler = async (event) => {
       const res = await axios_default.get(inputUrl, { responseType: "arraybuffer" });
       await fs.writeFile(inputPath, Buffer.from(res.data));
       console.log(`[worker] Input video saved to ${inputPath}`);
-      await runFfmpeg(inputPath, outputPath);
+      await runFfmpeg(inputPath, outputPath, chromakeyFilter);
       console.log(`[worker] ffmpeg finished, output at ${outputPath}`);
       const s3Key = `jobs/${jobId}.webm`;
       const fileData = await fs.readFile(outputPath);
@@ -15053,7 +15058,7 @@ var handler = async (event) => {
           ContentType: "video/webm"
         })
       );
-      const outputUrl = `https://${OUTPUT_BUCKET}.s3.amazonaws.com/${s3Key}`;
+      const outputUrl = `https://diwa7aolcke5u.cloudfront.net/${s3Key}`;
       console.log(`[worker] Uploaded to S3, outputUrl=${outputUrl}`);
       console.log(`[worker] Updating DynamoDB: jobId=${jobId}, status=DONE`);
       await ddb.send(

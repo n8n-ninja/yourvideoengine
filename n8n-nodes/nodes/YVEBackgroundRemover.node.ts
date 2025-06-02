@@ -29,6 +29,14 @@ export class YVEBackgroundRemover implements INodeType {
         description: "Video URL to remove background from",
       },
       {
+        displayName: "Chroma Key Filter",
+        name: "chromakeyFilter",
+        type: "string",
+        default: "chromakey=0x00FF00:0.39:0.25",
+        required: false,
+        description: "Chroma key filter to use",
+      },
+      {
         displayName: "Client ID",
         name: "clientId",
         type: "string",
@@ -47,7 +55,11 @@ export class YVEBackgroundRemover implements INodeType {
     for (let i = 0; i < items.length; i++) {
       const videoUrl = this.getNodeParameter("videoUrl", i) as string
       const clientId = this.getNodeParameter("clientId", i, "") as string
-
+      const chromakeyFilter = this.getNodeParameter(
+        "chromakeyFilter",
+        i,
+        "",
+      ) as string
       const callbackUrl = this.evaluateExpression(
         "{{$execution.resumeUrl}}",
         i,
@@ -60,19 +72,22 @@ export class YVEBackgroundRemover implements INodeType {
 
       const params: Record<string, unknown> = {
         inputUrl: videoUrl,
+        chromakeyFilter,
       }
 
       const payload: Record<string, unknown> = {
         projectId: executionId + "_" + timestamp,
         callbackUrl,
         params,
-        queueType: "background-remover",
+        queueType: "backgroundremover",
       }
       if (clientId) {
         payload.clientId = clientId
       }
       jobs.push(payload)
     }
+
+    console.log("jobs", jobs)
     await this.helpers.httpRequest({
       method: "POST",
       url: process.env.QUEUES_URL!,
