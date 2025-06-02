@@ -4,18 +4,18 @@
     "description": "Streamline your video production with a custom AI-powered video engine."
   },
   "hero": {
-    "title": "Tailored AI Video Automation System",
-    "subtitle": "Streamline your video production with a custom AI-powered engine.",
+    "title": "Video creation does not have to take your time",
+    "subtitle": "Get a custom AI video engine that delivers video for you so you can focus on what truly matters.",
     "primaryCta": {
-      "text": "Tell us about your project",
+      "text": "Start Automating Now",
       "href": "/contact"
     }
   },
   "whatWeOffer": {
     "title": "What We Offer",
     "paragraphs": [
-      "Each system we build is designed **specifically for you**, based on your goals, content style, and existing workflows.",
-      "We craft robust, **intelligent engines** that automate what can be automated so you can focus on where your creativity brings the most value."
+      "We build intelligent video automation systems designed around **your brand, your process, and your goals.**",
+      "You get a custom engine that turns ideas into content, fast. Freeing your time and amplifying your creative impact."
     ]
   },
   "stats": [
@@ -28,30 +28,31 @@
   "videoAutomation": {
     "title": "Video Automation Matters",
     "paragraphs": [
-      "Video is the core of communication.",
-      "But producing high-quality, frequent content is **time-consuming,** expensive, and operationally heavy. Thanks to recent advances in AI (video generation, voice cloning, script writing, sound design, image creation...), it's now possible to **automate much of the heavy lifting**.",
-      "At the same time, **human creativity remains irreplaceable** to create content that truly connects and stands out."
+      "Video isn't optional — it's how the world communicates. But creating high-quality, frequent content is time-consuming, expensive, and operationally heavy.",
+      "Today, with **AI-powered tools** like video generation, voice cloning, script writing, sound design, and image creation, much of that weight can be automated.",
+      "**But we go further.**",
+      "We don't just automate what's repetitive — we enhance your creative process and **free you and your team to focus on what truly moves the needle.** That means less burnout and more impact."
     ],
-    "highlight": "Our systems automate repetitive tasks and streamline production, **so you save time.**"
+    "highlight": "Our systems **save time, expand your creative capacity, and support smarter, faster execution.** You get more than content. You get presence, consistency, and space to grow what matters most."
   },
   "whatWeCanBuild": {
     "title": "What We Can Build For You",
-    "description": "We design tailored production engines by assembling the right building blocks.",
+    "description": "We don't just offer services — we build intelligent video systems tailored to your goals, your voice, and your workflow. Using the right building blocks, we create a seamless, end-to-end production engine that automates where it makes sense — and keeps you in control where it matters most.",
     "categories": [
       {
         "title": "Automated Research & Scriptwriting",
         "services": [
           {
-            "title": "Trending topic discovery",
-            "description": "Identify trending themes and conversations inside your industry to generate relevant, high-performing ideas."
+            "title": "Trend mining & content ideation",
+            "description": "Tap into real-time industry trends to generate relevant, high-performing content ideas — consistently."
           },
           {
-            "title": "Information research",
-            "description": "Use AI-driven and human-validated methods to gather key insights and data for your content."
+            "title": "AI-assisted research",
+            "description": "Blend AI and expert-curated sources to surface valuable insights, data, and narratives your audience cares about."
           },
           {
-            "title": "Script generation",
-            "description": "Automatically draft and refine scripts for different formats — short videos, educational pieces, promotional content..."
+            "title": "Scriptwriting at scale",
+            "description": "Instantly generate and refine scripts for reels, explainers, ads, or thought-leadership — always aligned with your tone and audience."
           }
         ]
       },
@@ -67,7 +68,7 @@
             "description": "Produce supporting visuals using advanced AI models (images, B-roll, dynamic elements)."
           },
           {
-            "title": "Automated B-roll",
+            "title": "Automated B-roll matching and generation",
             "description": "Automatically find, match, or generate complementary footage to enrich your video production."
           },
           {
@@ -85,7 +86,7 @@
         ]
       },
       {
-        "title": "Automated Publishing & Scaling",
+        "title": "Publishing & Scaling",
         "services": [
           {
             "title": "Automated video editing",
@@ -96,30 +97,27 @@
             "description": "Distribute content automatically across platforms like YouTube, TikTok, Instagram, LinkedIn, and more — formatted for each."
           },
           {
-            "title": "Content repurposing",
+            "title": "Content repurposing (video to text/blog)",
             "description": "Extract blog posts, social media snippets, or newsletters from video content to maximize impact."
           },
           {
-            "title": "Analytics tracking",
-            "description": "Monitor performance metrics, engagement data, and audience insights across all platforms to optimize your content strategy."
-          },
-          {
-            "title": "Traduction",
-            "description": "Automatically translate your video content into multiple languages to reach global audiences."
+            "title": "Analytics and performance tracking",
+            "description": "Monitor content performance across platforms with centralized dashboards and actionable insights."
           }
         ]
       }
-    ]
+    ],
+    "footer": "Custom-built to save your time, multiply your output, and keep your brand visible — every single day."
   },
   "useCases": {
     "title": "Use Cases",
-    "description": "From real estate to education, AI powered video automation is transforming content creation.",
+    "description": "We design flexible, tailored systems for different industries and goals. Here are a few examples of how custom video automation can be applied — and how it can radically transform content production.",
     "items": [
       {
         "number": 1,
         "name": "Real Estate Video Engine",
         "title": "Turn listings into high-conversion video tours.",
-        "intro": "Instantly transform property details into branded video showcases.",
+        "intro": "The real estate market moves fast. With our system, you can instantly transform new listings into personalized, high-conversion video tours — ready to publish across platforms without human bottlenecks.",
         "bullets": [
           { "text": "Automated video creation from listing data and photos." },
           { "text": "Dynamic voiceovers or avatar-driven presentations." },
@@ -381,7 +379,7 @@
   },
   "pricing": {
     "title": "Pricing",
-    "description": "Every system we build is unique and so is its investment.",
+    "description": "Every system we build is unique and so is its investment. We work with a setup fee to design and build your custom engine, plus a monthly plan for hosting, updates, and hands-on support.",
     "ctaLabel": "Tell us about your project",
     "ctaHref": "/contact",
     "setupFee": {
@@ -404,7 +402,7 @@
         "Minor updates and improvements"
       ]
     },
-    "footerText": "Our solutions are crafted for serious businesses and creators ready to invest in high-quality, time-saving automation."
+    "footerText": "Our solutions are crafted for serious businesses and creators ready to invest in high-quality, time-saving automation – Without scaling their workload."
   },
   "testimonials": {
     "title": "What Our Clients Say",
@@ -432,7 +430,7 @@
   },
   "technologyExpertise": {
     "title": "Technology & Expertise",
-    "description": "Each system is crafted using the right tools for your needs.",
+    "description": "We work with a curated selection of the best technologies in AI, video production, automation, and scalable infrastructure. Each system is crafted using the right tools for your needs.",
     "customDevelopment": {
       "title": "Custom Development",
       "description": "We build **tailored solutions** that perfectly fit your workflow. From specialized APIs to intuitive interfaces, we create exactly what you need.",
@@ -470,7 +468,7 @@
       },
       {
         "title": "Seamless Integrations",
-        "description": "We build systems that fit into your existing workflows and connect with your favorite tools.",
+        "description": "We build systems that fit into your existing workflows. Whether you work with project management tools, CRM platforms, content bases, or marketing ecosystems, we can integrate directly with your stack.",
         "items": [
           { "name": "Trello" },
           { "name": "Google Workspace" },
@@ -502,7 +500,7 @@
   },
   "whoWeAre": {
     "title": "Who We Are",
-    "description": "A team of senior professionals combining technical expertise, creative strategy, and AI innovation.",
+    "description": "We are a team of senior professionals combining technical expertise, creative strategy, and AI innovation to build tailored video automation systems. Our approach is pragmatic, flexible, and fully dedicated to amplifying your content production while preserving your unique voice.",
     "team": [
       {
         "name": "Manu",
@@ -553,7 +551,7 @@
     ]
   },
   "finalCta": {
-    "title": "Ready to transform your content creation?",
+    "title": "Ready to build your custom video system?",
     "ctaText": "Tell us about your project",
     "ctaHref": "/contact"
   }

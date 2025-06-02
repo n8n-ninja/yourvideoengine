@@ -6,6 +6,7 @@ export interface UseCaseCardProps {
   number: number
   name: string
   title: string
+  intro: string
   bullets: UseCaseBullet[]
 }
 
@@ -13,6 +14,7 @@ export function UseCaseCard({
   number,
   name,
   title,
+  intro,
   bullets,
 }: UseCaseCardProps) {
   return (

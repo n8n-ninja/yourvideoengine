@@ -38,7 +38,7 @@ const projects = homeContent.selectedProjects.projects.map(
   (project): Project => ({
     ...project,
     videoOrientation: project.videoOrientation as "vertical" | "horizontal",
-  })
+  }),
 )
 
 export default function Index() {
@@ -164,6 +164,7 @@ export default function Index() {
         title={homeContent.whatWeCanBuild.title}
         description={homeContent.whatWeCanBuild.description}
         categories={homeContent.whatWeCanBuild.categories}
+        footer={homeContent.whatWeCanBuild.footer}
       />
 
       <div className="absolute -mt-[600px]" ref={section4Ref}></div>

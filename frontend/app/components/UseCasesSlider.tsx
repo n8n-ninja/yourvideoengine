@@ -97,7 +97,7 @@ export function UseCasesSlider({
         // Calculer l'index maximum pour que le dernier élément soit aligné avec la fin
         const calculatedMaxIndex = Math.max(
           0,
-          useCases.length - Math.ceil(isMobile ? 1 : visibleCards) // Sur mobile, une seule carte visible
+          useCases.length - Math.ceil(isMobile ? 1 : visibleCards), // Sur mobile, une seule carte visible
         )
 
         // Calculer l'offset final pour aligner le dernier élément avec la fin du conteneur
@@ -269,7 +269,7 @@ export function UseCasesSlider({
         // Calculer l'index approximatif pendant le glissement
         const estimatedIndex = Math.max(
           0,
-          Math.min(maxIndex, -newPosition / slideWidth)
+          Math.min(maxIndex, -newPosition / slideWidth),
         )
         // Utiliser la même logique que updateGlowPosition
         const startPosition = 15
@@ -470,6 +470,7 @@ export function UseCasesSlider({
                     number={useCase.number}
                     name={useCase.name}
                     title={useCase.title}
+                    intro={useCase.intro}
                     bullets={useCase.bullets}
                   />
                 </div>
