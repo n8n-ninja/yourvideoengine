@@ -22,6 +22,8 @@ provider:
     RUNWAYML_API_KEY: key_04add8ffe1a38f2f9998f19d04050a1d8b25183a61ef4ec7237b10f7aa1ad9aef7decd21b71b80abd8cc986f7c114d92e2ed03a8ab9adaecc048cad8915fa69b
     SQS_QUEUE_URL:
       Ref: MyJobQueue
+    BACKGROUNDREMOVER_SUBMIT_URL: https://nazsdz25z5.execute-api.us-east-1.amazonaws.com/dev/submit
+    BACKGROUNDREMOVER_STATUS_URL: https://nazsdz25z5.execute-api.us-east-1.amazonaws.com/dev/status
   iam:
     role:
       statements:

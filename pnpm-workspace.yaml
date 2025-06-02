@@ -6,3 +6,4 @@ packages:
   - n8n-nodes
   - queues
   - studio
+  - background-remover

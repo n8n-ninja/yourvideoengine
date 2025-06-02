@@ -4,6 +4,10 @@ import { WorkerFn } from "../orchestrator/queue-orchestrator"
 import { remotionPollWorker, remotionWorker } from "../workers/remotion-worker"
 import { fluxWorker, fluxPollWorker } from "../workers/flux-worker"
 import { runwayWorker, runwayPollWorker } from "../workers/runway-worker"
+import {
+  backgroundRemoverWorker,
+  backgroundRemoverPollWorker,
+} from "../workers/backgroundremover-worker"
 
 export type ServiceConfig = {
   startWorker: WorkerFn
@@ -42,6 +46,12 @@ export const services: Record<string, ServiceConfig> = {
   runway: {
     startWorker: runwayWorker,
     pollWorker: runwayPollWorker,
+    async: true,
+    maxConcurrency: 3,
+  },
+  backgroundremover: {
+    startWorker: backgroundRemoverWorker,
+    pollWorker: backgroundRemoverPollWorker,
     async: true,
     maxConcurrency: 3,
   },

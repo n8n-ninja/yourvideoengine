@@ -13,21 +13,22 @@ export const deepgramWorker = async (job: Job): Promise<WorkerResult> => {
   if (params.punctuate) url.searchParams.set("punctuate", "true")
   if (params.model === "nova-3" && Array.isArray(params.keywords)) {
     params.keywords.forEach((k: string) =>
-      url.searchParams.append("keyterm", k)
+      url.searchParams.append("keyterm", k),
     )
   } else if (params.keywords && Array.isArray(params.keywords)) {
     params.keywords.forEach((k: string) =>
-      url.searchParams.append("keywords", k)
+      url.searchParams.append("keywords", k),
     )
   }
   const inputData = {
     url: params.videoUrl,
   }
+
   try {
     console.log(
       "[deepgramWorker] Calling Deepgram API",
       url.toString(),
-      inputData
+      inputData,
     )
     const res = await fetch(url.toString(), {
       method: "POST",
