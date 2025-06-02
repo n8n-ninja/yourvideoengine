@@ -98,7 +98,9 @@ export const fluxPollWorker = async (
       return {
         status: "ready",
         outputData: data,
-        returnData: data.data?.output || undefined,
+        returnData: data.data?.output?.image_url
+          ? { url: data.data.output.image_url }
+          : undefined,
       }
     } else if (status === "failed") {
       return {

@@ -11,7 +11,7 @@ class YVERunway {
             version: 2,
             description: "Create videos from images with Runway",
             defaults: {
-                name: "YVE Flux",
+                name: "YVE Runway",
             },
             inputs: ["main" /* NodeConnectionType.Main */],
             outputs: ["main" /* NodeConnectionType.Main */],
@@ -106,7 +106,7 @@ class YVERunway {
             const clientId = this.getNodeParameter("clientId", i, "");
             const callbackUrl = this.evaluateExpression("{{$execution.resumeUrl}}", i);
             const executionId = this.evaluateExpression("{{$execution.id}}", i);
-            const inputData = {
+            const params = {
                 prompt,
                 imageUrl,
                 ratio,
@@ -115,7 +115,7 @@ class YVERunway {
             const payload = {
                 projectId: executionId + "_" + timestamp,
                 callbackUrl,
-                inputData,
+                params,
                 queueType: "runway",
             };
             if (clientId) {

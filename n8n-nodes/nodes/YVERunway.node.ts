@@ -121,7 +121,7 @@ export class YVERunway implements INodeType {
         i,
       ) as string
 
-      const inputData: Record<string, unknown> = {
+      const params: Record<string, unknown> = {
         prompt,
         imageUrl,
         ratio,
@@ -131,7 +131,7 @@ export class YVERunway implements INodeType {
       const payload: Record<string, unknown> = {
         projectId: executionId + "_" + timestamp,
         callbackUrl,
-        inputData,
+        params,
         queueType: "runway",
       }
       if (clientId) {

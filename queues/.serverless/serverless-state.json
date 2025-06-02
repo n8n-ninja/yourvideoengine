@@ -284,7 +284,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/queues/dev/1748851437478-2025-06-02T08:03:57.478Z/enqueueHandler.zip"
+                "S3Key": "serverless/queues/dev/1748857301563-2025-06-02T09:41:41.563Z/enqueueHandler.zip"
               },
               "Handler": "index.enqueueHandler",
               "Runtime": "nodejs18.x",
@@ -327,7 +327,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/queues/dev/1748851437478-2025-06-02T08:03:57.478Z/jobWorker.zip"
+                "S3Key": "serverless/queues/dev/1748857301563-2025-06-02T09:41:41.563Z/jobWorker.zip"
               },
               "Handler": "index.jobWorker",
               "Runtime": "nodejs18.x",
@@ -370,7 +370,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/queues/dev/1748851437478-2025-06-02T08:03:57.478Z/jobPoller.zip"
+                "S3Key": "serverless/queues/dev/1748857301563-2025-06-02T09:41:41.563Z/jobPoller.zip"
               },
               "Handler": "index.processAllJobs",
               "Runtime": "nodejs18.x",
@@ -406,34 +406,34 @@
               "JobPollerLogGroup"
             ]
           },
-          "EnqueueHandlerLambdaVersionH0WYBAJHrctD9WAMLQp1WjstPIskrdRbOSfOuWk02uA": {
+          "EnqueueHandlerLambdaVersionRJnDIphUVapNlgBnNyN2zjjZACnaPDsZL1kRe8Q9iI4": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "EnqueueHandlerLambdaFunction"
               },
-              "CodeSha256": "xLUGmGYnpoXZtwtE2E7bUpQCb4wbEABPyP/dKjABE+M="
+              "CodeSha256": "FJaa+mcguO8NqWsBEoiMExSNSS4V8X3FN2XcWriEVYE="
             }
           },
-          "JobWorkerLambdaVersion8DqthoBkmQlEX7PFJxzGP5IcLlnZkjeZWYKn3N9x6Q": {
+          "JobWorkerLambdaVersionIvVfFk4JhCcfMH22CvmfSWHDFUrw07MDTVqF6KMnKYs": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "JobWorkerLambdaFunction"
               },
-              "CodeSha256": "xLUGmGYnpoXZtwtE2E7bUpQCb4wbEABPyP/dKjABE+M="
+              "CodeSha256": "FJaa+mcguO8NqWsBEoiMExSNSS4V8X3FN2XcWriEVYE="
             }
           },
-          "JobPollerLambdaVersionEW93tIeozayBITRhg9VYAryYQ33XtvdgqkmrBXw4yM": {
+          "JobPollerLambdaVersion6TRxzX4Ls8YjqlfdHDv1vc7BgTcacWkZx3REWDnKE": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "JobPollerLambdaFunction"
               },
-              "CodeSha256": "xLUGmGYnpoXZtwtE2E7bUpQCb4wbEABPyP/dKjABE+M="
+              "CodeSha256": "FJaa+mcguO8NqWsBEoiMExSNSS4V8X3FN2XcWriEVYE="
             }
           },
           "JobPollerEventsRuleSchedule1": {
@@ -591,7 +591,7 @@
               "EnqueueHandlerLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1748851436353": {
+          "ApiGatewayDeployment1748857300179": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -618,11 +618,11 @@
                 }
               ]
             },
-            "DependsOn": "ApiGatewayDeployment1748851436353"
+            "DependsOn": "ApiGatewayDeployment1748857300179"
           },
           "ApiGatewayUsagePlan": {
             "Type": "AWS::ApiGateway::UsagePlan",
-            "DependsOn": "ApiGatewayDeployment1748851436353",
+            "DependsOn": "ApiGatewayDeployment1748857300179",
             "Properties": {
               "ApiStages": [
                 {
@@ -779,7 +779,7 @@
           "EnqueueHandlerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "EnqueueHandlerLambdaVersionH0WYBAJHrctD9WAMLQp1WjstPIskrdRbOSfOuWk02uA"
+              "Ref": "EnqueueHandlerLambdaVersionRJnDIphUVapNlgBnNyN2zjjZACnaPDsZL1kRe8Q9iI4"
             },
             "Export": {
               "Name": "sls-queues-dev-EnqueueHandlerLambdaFunctionQualifiedArn"
@@ -788,7 +788,7 @@
           "JobWorkerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "JobWorkerLambdaVersion8DqthoBkmQlEX7PFJxzGP5IcLlnZkjeZWYKn3N9x6Q"
+              "Ref": "JobWorkerLambdaVersionIvVfFk4JhCcfMH22CvmfSWHDFUrw07MDTVqF6KMnKYs"
             },
             "Export": {
               "Name": "sls-queues-dev-JobWorkerLambdaFunctionQualifiedArn"
@@ -797,7 +797,7 @@
           "JobPollerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "JobPollerLambdaVersionEW93tIeozayBITRhg9VYAryYQ33XtvdgqkmrBXw4yM"
+              "Ref": "JobPollerLambdaVersion6TRxzX4Ls8YjqlfdHDv1vc7BgTcacWkZx3REWDnKE"
             },
             "Export": {
               "Name": "sls-queues-dev-JobPollerLambdaFunctionQualifiedArn"
@@ -976,7 +976,7 @@
         "timeout": 30,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "EnqueueHandlerLambdaVersionH0WYBAJHrctD9WAMLQp1WjstPIskrdRbOSfOuWk02uA"
+        "versionLogicalId": "EnqueueHandlerLambdaVersionRJnDIphUVapNlgBnNyN2zjjZACnaPDsZL1kRe8Q9iI4"
       },
       "jobWorker": {
         "handler": "index.jobWorker",
@@ -998,7 +998,7 @@
         "timeout": 30,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "JobWorkerLambdaVersion8DqthoBkmQlEX7PFJxzGP5IcLlnZkjeZWYKn3N9x6Q"
+        "versionLogicalId": "JobWorkerLambdaVersionIvVfFk4JhCcfMH22CvmfSWHDFUrw07MDTVqF6KMnKYs"
       },
       "jobPoller": {
         "handler": "index.processAllJobs",
@@ -1019,7 +1019,7 @@
         "timeout": 30,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "JobPollerLambdaVersionEW93tIeozayBITRhg9VYAryYQ33XtvdgqkmrBXw4yM"
+        "versionLogicalId": "JobPollerLambdaVersion6TRxzX4Ls8YjqlfdHDv1vc7BgTcacWkZx3REWDnKE"
       }
     },
     "resources": {
@@ -1116,7 +1116,7 @@
   },
   "package": {
     "individually": true,
-    "artifactDirectoryName": "serverless/queues/dev/1748851437478-2025-06-02T08:03:57.478Z",
+    "artifactDirectoryName": "serverless/queues/dev/1748857301563-2025-06-02T09:41:41.563Z",
     "artifact": ""
   }
 }
