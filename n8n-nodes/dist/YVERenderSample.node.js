@@ -60,6 +60,13 @@ class YVERenderSample {
                     required: false,
                 },
                 {
+                    displayName: 'bodyCaption',
+                    name: 'bodyCaption',
+                    type: 'string',
+                    default: [{ "word": "the", "start": 0.16, "end": 0.48, "confidence": 0.9627397 }, { "word": "most", "start": 0.48, "end": 0.71999997, "confidence": 0.9995771 }, { "word": "powerful", "start": 0.71999997, "end": 1.04, "confidence": 0.99909914 }, { "word": "solution", "start": 1.04, "end": 1.4399999, "confidence": 0.9988889 }, { "word": "to", "start": 1.4399999, "end": 1.68, "confidence": 0.9996848 }, { "word": "automate", "start": 1.68, "end": 2, "confidence": 0.9996444 }, { "word": "your", "start": 2, "end": 2.24, "confidence": 0.99906975 }, { "word": "video", "start": 2.24, "end": 2.56, "confidence": 0.9994635 }, { "word": "production", "start": 2.56, "end": 2.96, "confidence": 0.9990239 }, { "word": "using", "start": 2.96, "end": 3.28, "confidence": 0.99762136 }, { "word": "the", "start": 3.28, "end": 3.4399998, "confidence": 0.9985489 }, { "word": "latest", "start": 3.4399998, "end": 3.76, "confidence": 0.9998343 }, { "word": "ai", "start": 3.76, "end": 4.16, "confidence": 0.9933907 }, { "word": "technology", "start": 4.16, "end": 4.64, "confidence": 0.9472135 }],
+                    required: false,
+                },
+                {
                     displayName: 'outro',
                     name: 'outro',
                     type: 'string',
@@ -74,10 +81,24 @@ class YVERenderSample {
                     required: false,
                 },
                 {
+                    displayName: 'outroCaption',
+                    name: 'outroCaption',
+                    type: 'string',
+                    default: [{ "word": "the", "start": 0.16, "end": 0.48, "confidence": 0.9627397 }, { "word": "most", "start": 0.48, "end": 0.71999997, "confidence": 0.9995771 }, { "word": "powerful", "start": 0.71999997, "end": 1.04, "confidence": 0.99909914 }, { "word": "solution", "start": 1.04, "end": 1.4399999, "confidence": 0.9988889 }, { "word": "to", "start": 1.4399999, "end": 1.68, "confidence": 0.9996848 }, { "word": "automate", "start": 1.68, "end": 2, "confidence": 0.9996444 }, { "word": "your", "start": 2, "end": 2.24, "confidence": 0.99906975 }, { "word": "video", "start": 2.24, "end": 2.56, "confidence": 0.9994635 }, { "word": "production", "start": 2.56, "end": 2.96, "confidence": 0.9990239 }, { "word": "using", "start": 2.96, "end": 3.28, "confidence": 0.99762136 }, { "word": "the", "start": 3.28, "end": 3.4399998, "confidence": 0.9985489 }, { "word": "latest", "start": 3.4399998, "end": 3.76, "confidence": 0.9998343 }, { "word": "ai", "start": 3.76, "end": 4.16, "confidence": 0.9933907 }, { "word": "technology", "start": 4.16, "end": 4.64, "confidence": 0.9472135 }],
+                    required: false,
+                },
+                {
                     displayName: 'music',
                     name: 'music',
                     type: 'string',
                     default: "https://diwa7aolcke5u.cloudfront.net/uploads/1748099564616-mbgrk0.mp3",
+                    required: false,
+                },
+                {
+                    displayName: 'emoji',
+                    name: 'emoji',
+                    type: 'string',
+                    default: "100",
                     required: false,
                 },
                 // Champs fixes
@@ -105,9 +126,12 @@ class YVERenderSample {
                 introCaption: this.getNodeParameter('introCaption', i),
                 body: this.getNodeParameter('body', i),
                 bodyDuration: this.getNodeParameter('bodyDuration', i),
+                bodyCaption: this.getNodeParameter('bodyCaption', i),
                 outro: this.getNodeParameter('outro', i),
                 outroDuration: this.getNodeParameter('outroDuration', i),
+                outroCaption: this.getNodeParameter('outroCaption', i),
                 music: this.getNodeParameter('music', i),
+                emoji: this.getNodeParameter('emoji', i),
             };
             const executionId = this.evaluateExpression("{{$execution.id}}", i);
             const callbackUrl = this.evaluateExpression("{{$execution.resumeUrl}}", i);

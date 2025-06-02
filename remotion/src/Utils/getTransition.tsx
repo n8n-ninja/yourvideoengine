@@ -5,6 +5,7 @@ import { slide } from "@remotion/transitions/slide"
 import { flip } from "@remotion/transitions/flip"
 import { clockWipe } from "@remotion/transitions/clock-wipe"
 import type { TransitionPresentation } from "@remotion/transitions"
+import { addSound } from "@/utils/addSound"
 
 export type AnimationType = "wipe" | "slide" | "flip" | "clockWipe"
 export type DirectionType =
@@ -21,6 +22,7 @@ interface TransitionProps {
   width?: number
   height?: number
   idx?: number | string
+  audio?: string
 }
 
 export const getTransition = ({
@@ -31,6 +33,7 @@ export const getTransition = ({
   width = 1080,
   height = 1920,
   idx,
+  audio,
 }: TransitionProps = {}) => {
   let presentation: TransitionPresentation<any>
 
@@ -47,6 +50,10 @@ export const getTransition = ({
   }
 
   const durationInFrames = Math.round(duration ?? 1)
+
+  if (audio) {
+    presentation = addSound(presentation, audio)
+  }
 
   return (
     <TransitionSeries.Transition

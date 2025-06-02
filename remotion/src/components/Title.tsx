@@ -20,7 +20,7 @@ import { Style } from "@/schemas/style"
 export const Title: React.FC<{
   title: string
   theme?: string
-  style?: string
+  style?: Style
   letterAnimation?: {
     duration: number
     easing: string

@@ -111,7 +111,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "manu-remotion-deployments",
-          "S3Key": "serverless/remotion-api/dev/1748454502805-2025-05-28T17:48:22.805Z/remotion-api.zip"
+          "S3Key": "serverless/remotion-api/dev/1748804272598-2025-06-01T18:57:52.598Z/remotion-api.zip"
         },
         "Handler": "handler.renderVideo",
         "Runtime": "nodejs18.x",
@@ -139,7 +139,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "manu-remotion-deployments",
-          "S3Key": "serverless/remotion-api/dev/1748454502805-2025-05-28T17:48:22.805Z/remotion-api.zip"
+          "S3Key": "serverless/remotion-api/dev/1748804272598-2025-06-01T18:57:52.598Z/remotion-api.zip"
         },
         "Handler": "handler.getStatus",
         "Runtime": "nodejs18.x",
@@ -162,24 +162,24 @@
         "GetStatusLogGroup"
       ]
     },
-    "RenderVideoLambdaVersionvdZhbxZdgz0MRSwZqESLy2UsfsZqalHmrt41ZjcHNc": {
+    "RenderVideoLambdaVersionncbq5Gu33mvMGlUsN5sKqSHLHCGCoxKE2OO5dPn58cE": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "RenderVideoLambdaFunction"
         },
-        "CodeSha256": "1YX4yrtLKDmtIh4X0s0/wwxiWuOH0CNj6HvRAj7o4IE="
+        "CodeSha256": "mvjEUmeybRHqGo4y88IMXCLxXc01W754OHhz/Tac3+A="
       }
     },
-    "GetStatusLambdaVersionPVxsb0VPW4IfXIApgBQRWj7HCRhphvPNMxYYV8A": {
+    "GetStatusLambdaVersionkZb0GMJHQMDBJ8e9BubdtyV2dBXGNa8fx0hpoyH1u0": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetStatusLambdaFunction"
         },
-        "CodeSha256": "1YX4yrtLKDmtIh4X0s0/wwxiWuOH0CNj6HvRAj7o4IE="
+        "CodeSha256": "mvjEUmeybRHqGo4y88IMXCLxXc01W754OHhz/Tac3+A="
       }
     },
     "ApiGatewayRestApi": {
@@ -332,7 +332,7 @@
         "Name": "remotion-api-dev | Validate request body and querystring parameters"
       }
     },
-    "ApiGatewayDeployment1748454494660": {
+    "ApiGatewayDeployment1748804261099": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -430,7 +430,7 @@
     "RenderVideoLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "RenderVideoLambdaVersionvdZhbxZdgz0MRSwZqESLy2UsfsZqalHmrt41ZjcHNc"
+        "Ref": "RenderVideoLambdaVersionncbq5Gu33mvMGlUsN5sKqSHLHCGCoxKE2OO5dPn58cE"
       },
       "Export": {
         "Name": "sls-remotion-api-dev-RenderVideoLambdaFunctionQualifiedArn"
@@ -439,7 +439,7 @@
     "GetStatusLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetStatusLambdaVersionPVxsb0VPW4IfXIApgBQRWj7HCRhphvPNMxYYV8A"
+        "Ref": "GetStatusLambdaVersionkZb0GMJHQMDBJ8e9BubdtyV2dBXGNa8fx0hpoyH1u0"
       },
       "Export": {
         "Name": "sls-remotion-api-dev-GetStatusLambdaFunctionQualifiedArn"
