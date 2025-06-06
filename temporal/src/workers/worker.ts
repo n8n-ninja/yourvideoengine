@@ -1,15 +1,15 @@
-import "dotenv/config"
-import { Worker } from "@temporalio/worker"
+import 'dotenv/config';
+import { Worker } from '@temporalio/worker';
 
 async function run() {
   const worker = await Worker.create({
-    workflowsPath: new URL("../workflows/index.ts", import.meta.url).pathname,
-    taskQueue: "main",
-  })
+    workflowsPath: require.resolve('../workflows'),
+    taskQueue: 'main',
+  });
 
-  await worker.run()
+  await worker.run();
 }
 
 run().catch((err) => {
-  process.exit(1)
-})
+  process.exit(1);
+});

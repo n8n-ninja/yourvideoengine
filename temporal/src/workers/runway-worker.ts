@@ -1,23 +1,23 @@
-import "dotenv/config"
-import { Worker } from "@temporalio/worker"
-import { startRunway, checkRunwayStatus } from "../activities/runway-activity"
+import 'dotenv/config';
+import { Worker } from '@temporalio/worker';
+import { startRunway, checkRunwayStatus } from '../activities/runway-activity';
 
 async function run() {
   const worker = await Worker.create({
-    workflowsPath: new URL("../workflows/index.ts", import.meta.url).pathname,
+    workflowsPath: require.resolve('../workflows'),
     activities: {
       startRunway,
       checkRunwayStatus,
     },
-    taskQueue: "runway-queue",
+    taskQueue: 'runway-queue',
     maxConcurrentActivityTaskExecutions: 1,
-  })
+  });
 
-  console.log("🚀 Worker Runway lancé ")
-  await worker.run()
+  console.log('🚀 Worker Runway lancé ');
+  await worker.run();
 }
 
 run().catch((err) => {
-  console.error("❌ Erreur dans le worker Runway", err)
-  process.exit(1)
-})
+  console.error('❌ Erreur dans le worker Runway', err);
+  process.exit(1);
+});

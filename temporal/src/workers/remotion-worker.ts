@@ -1,26 +1,23 @@
-import "dotenv/config"
-import { Worker } from "@temporalio/worker"
-import {
-  startRemotion,
-  checkRemotionStatus,
-} from "../activities/remotion-activity"
+import 'dotenv/config';
+import { Worker } from '@temporalio/worker';
+import { startRemotion, checkRemotionStatus } from '../activities/remotion-activity';
 
 async function run() {
   const worker = await Worker.create({
-    workflowsPath: new URL("../workflows/index.ts", import.meta.url).pathname,
+    workflowsPath: require.resolve('../workflows'),
     activities: {
       startRemotion,
       checkRemotionStatus,
     },
-    taskQueue: "remotion-queue",
+    taskQueue: 'remotion-queue',
     maxConcurrentActivityTaskExecutions: 1,
-  })
+  });
 
-  console.log("🚀 Worker Remotion lancé ")
-  await worker.run()
+  console.log('🚀 Worker Remotion lancé ');
+  await worker.run();
 }
 
 run().catch((err) => {
-  console.error("❌ Erreur dans le worker Remotion", err)
-  process.exit(1)
-})
+  console.error('❌ Erreur dans le worker Remotion', err);
+  process.exit(1);
+});

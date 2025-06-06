@@ -1,0 +1,76 @@
+import RunwayML from "@runwayml/sdk"
+
+export type RunwayParams = {
+  prompt: string
+  imageUrl: string
+  duration?: number
+  ratio?: string
+  model?: string
+}
+
+const RUNWAYML_API_KEY = process.env.RUNWAYML_API_KEY!
+
+const client = new RunwayML({
+  apiKey: RUNWAYML_API_KEY,
+})
+
+export async function startRunway(
+  params: RunwayParams,
+): Promise<{ externalId: string }> {
+  const {
+    prompt,
+    imageUrl,
+    duration = 5,
+    ratio = "720:1280",
+    model = "gen4_turbo",
+  } = params
+  if (!prompt || !imageUrl) {
+    throw new Error("Missing prompt or imageUrl")
+  }
+  const task = await client.imageToVideo.create({
+    model: (model as "gen4_turbo" | "gen3a_turbo") || "gen4_turbo",
+    promptImage: imageUrl,
+    promptText: prompt,
+    ratio:
+      (ratio as
+        | "720:1280"
+        | "1280:720"
+        | "1104:832"
+        | "832:1104"
+        | "960:960"
+        | "1584:672"
+        | "1280:768"
+        | "768:1280") || "720:1280",
+    duration: (duration as 5 | 10) || 5,
+  })
+  if (!task.id) {
+    throw new Error("No task id returned")
+  }
+  return { externalId: task.id }
+}
+
+export async function checkRunwayStatus(externalId: string): Promise<{
+  status: "processing" | "ready" | "failed"
+  outputData?: any
+  returnData?: any
+}> {
+  const task = await client.tasks.retrieve(externalId)
+  if (task.status === "SUCCEEDED") {
+    return {
+      status: "ready",
+      outputData: task,
+      returnData: { url: task.output?.[0] },
+    }
+  } else if (task.status === "FAILED") {
+    return {
+      status: "failed",
+      outputData: task,
+      returnData: { error: "Runway processing failed" },
+    }
+  } else {
+    return {
+      status: "processing",
+      outputData: task,
+    }
+  }
+}

@@ -1,20 +1,20 @@
-import "dotenv/config"
-import { Worker } from "@temporalio/worker"
-import { runDeepgram } from "../activities/deepgram-activity"
+import 'dotenv/config';
+import { Worker } from '@temporalio/worker';
+import { runDeepgram } from '../activities/deepgram-activity';
 
 async function run() {
   const worker = await Worker.create({
-    workflowsPath: new URL("../workflows/index.ts", import.meta.url).pathname,
+    workflowsPath: require.resolve('../workflows'),
     activities: {
       runDeepgram,
     },
-    taskQueue: "deepgram-queue",
+    taskQueue: 'deepgram-queue',
     maxConcurrentActivityTaskExecutions: 3,
-  })
+  });
 
-  await worker.run()
+  await worker.run();
 }
 
 run().catch((err) => {
-  process.exit(1)
-})
+  process.exit(1);
+});

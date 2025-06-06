@@ -1,67 +1,61 @@
-import { ApplicationFailure } from "@temporalio/common"
+import { ApplicationFailure } from '@temporalio/common';
 
 export type DeepgramParams = {
-  videoUrl: string
-  language?: string
-  model?: string
-  punctuate?: boolean
-  keywords?: string[]
-}
+  videoUrl: string;
+  language?: string;
+  model?: string;
+  punctuate?: boolean;
+  keywords?: string[];
+};
 
 export async function runDeepgram(params: DeepgramParams): Promise<{
   captions: {
-    transcript: string
+    transcript: string;
     words: {
-      word: string
-      start: number
-      end: number
-    }[]
-  }
+      word: string;
+      start: number;
+      end: number;
+    }[];
+  };
 }> {
-  const { DEEPGRAM_URL, DEEPGRAM_API_KEY } = process.env
+  const { DEEPGRAM_URL, DEEPGRAM_API_KEY } = process.env;
 
   if (!DEEPGRAM_URL || !DEEPGRAM_API_KEY) {
-    throw new Error("Deepgram config missing")
+    throw new Error('Deepgram config missing');
   }
 
-  const {
-    videoUrl,
-    language = "en",
-    model = "nova-3",
-    punctuate = false,
-    keywords = [],
-  } = params
+  const { videoUrl, language = 'en', model = 'nova-3', punctuate = false, keywords = [] } = params;
 
-  const url = new URL(DEEPGRAM_URL)
-  url.searchParams.set("model", model)
-  url.searchParams.set("language", language)
-  url.searchParams.set("punctuate", punctuate.toString())
+  const url = new URL(DEEPGRAM_URL);
+  url.searchParams.set('model', model);
+  url.searchParams.set('language', language);
+  url.searchParams.set('punctuate', punctuate.toString());
 
-  if (model === "nova-3" && Array.isArray(keywords)) {
-    keywords.forEach((k: string) => url.searchParams.append("keyterm", k))
+  if (model === 'nova-3' && Array.isArray(keywords)) {
+    keywords.forEach((k: string) => url.searchParams.append('keyterm', k));
   } else if (keywords && Array.isArray(keywords)) {
-    keywords.forEach((k: string) => url.searchParams.append("keywords", k))
+    keywords.forEach((k: string) => url.searchParams.append('keywords', k));
   }
 
   const res = await fetch(url, {
-    method: "POST",
+    method: 'POST',
     headers: {
       Authorization: `Token ${DEEPGRAM_API_KEY}`,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       url: videoUrl,
     }),
-  })
+  });
 
-  const data = await res.json()
+  const data = (await res.json()) as {
+    results: {
+      channels: { alternatives: { transcript: string; words: { word: string; start: number; end: number }[] }[] }[];
+    };
+  };
   if (!res.ok) {
-    console.error("❌ Erreur API Deepgram:", data)
-    throw ApplicationFailure.nonRetryable(
-      `Deepgram API error: ${res.status}`,
-      "DeepgramAPIError",
-      [data],
-    )
+    console.error('❌ Erreur API Deepgram:', data);
+    throw ApplicationFailure.nonRetryable(`Deepgram API error: ${res.status}`, 'DeepgramAPIError', [data]);
   }
 
   return {
@@ -69,5 +63,5 @@ export async function runDeepgram(params: DeepgramParams): Promise<{
       transcript: data?.results?.channels?.[0]?.alternatives?.[0]?.transcript,
       words: data?.results?.channels?.[0]?.alternatives?.[0]?.words,
     },
-  }
+  };
 }

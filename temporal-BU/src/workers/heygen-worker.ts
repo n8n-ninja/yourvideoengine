@@ -1,0 +1,21 @@
+import "dotenv/config"
+import { Worker } from "@temporalio/worker"
+import { startHeygen, checkHeygenStatus } from "../activities/heygen-activity"
+
+async function run() {
+  const worker = await Worker.create({
+    workflowsPath: new URL("../workflows", import.meta.url).pathname,
+    activities: {
+      startHeygen,
+      checkHeygenStatus,
+    },
+    taskQueue: "heygen-queue",
+    maxConcurrentActivityTaskExecutions: 3,
+  })
+
+  await worker.run()
+}
+
+run().catch((err) => {
+  process.exit(1)
+})
