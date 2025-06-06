@@ -1,0 +1,8 @@
+{
+  "build": {
+    "root": "temporal-worker"
+  },
+  "deploy": {
+    "startCommand": "pnpm start"
+  }
+}
