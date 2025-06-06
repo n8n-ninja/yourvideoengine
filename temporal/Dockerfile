@@ -1,6 +1,11 @@
 FROM node:20
 
-RUN apk add --no-cache netcat-openbsd
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+  && apt-get install -y netcat \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
