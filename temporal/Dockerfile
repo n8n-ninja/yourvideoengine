@@ -9,4 +9,6 @@ COPY . .
 
 RUN npm run build
 
+COPY config/dynamicconfig /etc/temporal/config/dynamicconfig
+
 CMD ["sh", "-c", "npm run start:workers & npm run start:api"]
