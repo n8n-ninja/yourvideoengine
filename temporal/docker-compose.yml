@@ -77,6 +77,17 @@ services:
       - temporal-network
     ports:
       - 8080:8080
+  app:
+    build: .
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - NODE_ENV=production
+    depends_on:
+      - temporal
+    ports:
+      - "3000:3000"
+    command: >
+      sh -c "npm run build && concurrently 'npm:dev' 'npm:api'"
 networks:
   temporal-network:
     driver: bridge
