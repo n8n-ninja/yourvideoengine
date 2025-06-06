@@ -50,11 +50,6 @@ services:
       - temporal-network
     ports:
       - 7233:7233
-    healthcheck:
-      test: ['CMD', 'nc', '-z', 'localhost', '7233']
-      interval: 5s
-      timeout: 5s
-      retries: 60
   temporal-admin-tools:
     container_name: temporal-admin-tools
     depends_on:
