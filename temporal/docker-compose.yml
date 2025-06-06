@@ -53,6 +53,11 @@ services:
       - 7233:7233
     volumes:
       - ./config/dynamicconfig:/etc/temporal/config/dynamicconfig
+    healthcheck:
+      test: ['CMD', 'nc', '-z', 'localhost', '7233']
+      interval: 5s
+      timeout: 5s
+      retries: 20
   temporal-admin-tools:
     container_name: temporal-admin-tools
     depends_on:
@@ -84,10 +89,13 @@ services:
       - NODE_ENV=production
     depends_on:
       - temporal
+      - temporal:
+        condition: service_healthy
     ports:
       - '3000:3000'
     command: >
       sh -c "npm run build && npm run start:workers & npm run start:api"
+    restart: always
 networks:
   temporal-network:
     driver: bridge
