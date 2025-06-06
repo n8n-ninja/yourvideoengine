@@ -10,17 +10,8 @@ export const Schema = z.object({
   duration: z.number(),
   captions: z.array(WordSchema),
   color: z.string(),
-  position: z
-    .enum([
-      "bottom-left",
-      "bottom-right",
-      "bottom-center",
-      "middle-left",
-      "middle-right",
-    ])
-    .default("bottom-right"),
+  position: z.enum(["left", "right", "center"]).default("right"),
   size: z.enum(["small", "medium", "large"]).default("medium"),
-  rotation: z.enum(["none", "left", "right"]).default("none"),
 })
 
 const sampleCaptions = [
@@ -170,16 +161,15 @@ const sampleCaptions = [
   },
 ]
 
-export const defaultProps = {
-  hook: "You will be amazed!",
+export const defaultProps: z.infer<typeof Schema> = {
+  hook: "This guy is a genuis!",
   backgroundUrl:
-    "https://diwa7aolcke5u.cloudfront.net/uploads/1748873029073-te%CC%81le%CC%81chargement.mp4",
+    "https://fynsadrjafvxmynpmexz.supabase.co/storage/v1/object/public/yourvideoengines-upload/thais-id/1749056669793-WhatsApp_Video_2025-05-29_at_20.47.28.mp4",
   overlayUrl:
-    "https://diwa7aolcke5u.cloudfront.net/jobs/7130ac64-20e9-47e6-8f23-a2b5c9af26d6.webm",
+    "https://diwa7aolcke5u.cloudfront.net/jobs/b2ddc2dc-44a5-4790-aff9-33c7b06b0b5f.webm",
   duration: 9.057,
   captions: sampleCaptions,
   color: "#F92F63",
-  position: "bottom-right",
-  size: "small",
-  rotation: "none",
+  position: "right",
+  size: "large",
 }

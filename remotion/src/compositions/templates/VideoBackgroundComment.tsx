@@ -10,71 +10,44 @@ import { Caption } from "@/components/Caption"
 const FPS = 30
 
 const getOverlayCamera = (props: z.infer<typeof Schema>) => {
-  const position = props.position || "bottom-right"
+  const position = props.position || "right"
   const size = props.size || "medium"
 
   const scale = size === "small" ? 50 : size === "medium" ? 40 : 30
 
-  const rotation =
-    props.rotation === "left" ? 10 : props.rotation === "right" ? -10 : 0
-
   const positions = {
-    "bottom-center": {
+    center: {
       top: scale,
       left: scale / 2,
       bottom: 0,
       right: scale / 2,
     },
-    "bottom-left": {
+    left: {
       top: scale,
       left: 0,
       bottom: 0,
       right: scale,
     },
-    "bottom-right": {
+    right: {
       top: scale,
       left: scale,
       bottom: 0,
-      right: 0,
-    },
-    "middle-left": {
-      top: scale - 10,
-      left: 0,
-      bottom: 10,
-      right: scale,
-    },
-    "middle-right": {
-      top: scale - 10,
-      left: scale,
-      bottom: 10,
       right: 0,
     },
   }
 
   return (
     <>
+      <Camera url={props.overlayUrl} position={positions[position]} />
       <Camera
         url={props.overlayUrl}
         position={positions[position]}
-        style={{
-          transform: `rotate(${rotation}deg)`,
-        }}
+        volume={0}
       />
       <Camera
         url={props.overlayUrl}
         position={positions[position]}
         volume={0}
-        style={{
-          transform: `rotate(${rotation}deg)`,
-        }}
-      />
-      <Camera
-        url={props.overlayUrl}
-        position={positions[position]}
-        volume={0}
-        style={{
-          transform: `rotate(${rotation}deg)`,
-        }}
       />
     </>
   )
@@ -93,6 +66,7 @@ export const Component = (props: z.infer<typeof Schema>) => {
           letterSpacing: "0.05em",
           color: props.color,
           textShadow: "none",
+          lineHeight: "1.2",
         }}
         timing={{
           start: 0,
@@ -105,9 +79,9 @@ export const Component = (props: z.infer<typeof Schema>) => {
         textStyle={{
           backgroundColor: "white",
           display: "inline",
-          lineHeight: "1.2",
+          lineHeight: "1.5",
           borderRadius: "0.25em",
-          padding: "0.1em 0.3em",
+          padding: "0.2em 0.5em",
           boxDecorationBreak: "clone",
           WebkitBoxDecorationBreak: "clone",
           textShadow: "0 0 10px rgba(100, 10, 10, 0.5)",

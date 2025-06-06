@@ -22,10 +22,14 @@
     "@types/node": "^22.15.23",
     "dotenv": "^16.5.0",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.4",
     "zod-to-json-schema": "^3.24.5"
   },
   "dependencies": {
     "@remotion/media-parser": "4.0.306",
+    "@temporalio/client": "^1.11.8",
+    "@temporalio/worker": "^1.11.8",
+    "@temporalio/workflow": "^1.11.8",
     "zod": "^3.25.32"
   }
 }

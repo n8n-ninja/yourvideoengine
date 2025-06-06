@@ -11,7 +11,14 @@ const templateFile = path.join(
 
 // Helpers pour le mapping zod -> n8n (simplifié)
 const zodToN8nType = (zodType: any) => {
-  switch (zodType._def.typeName) {
+  const typeName = zodType._def.typeName
+  if (typeName === "ZodEnum") {
+    return { type: "enum", n8nType: "options", options: zodType._def.values }
+  }
+  if (typeName === "ZodArray" || typeName === "ZodObject") {
+    return { type: "json", n8nType: "string" }
+  }
+  switch (typeName) {
     case "ZodString":
       return { type: "string", n8nType: "string" }
     case "ZodNumber":
@@ -19,8 +26,19 @@ const zodToN8nType = (zodType: any) => {
     case "ZodBoolean":
       return { type: "boolean", n8nType: "boolean" }
     default:
-      return { type: "json", n8nType: "string" } // array, object, etc.
+      return { type: "json", n8nType: "string" } // fallback
   }
+}
+
+// Helper to escape special chars for single-quoted JS strings
+function escapeForSingleQuotedString(str: string) {
+  return str
+    .replace(/\\/g, "\\\\") // backslash
+    .replace(/'/g, "\\'") // single quote
+    .replace(/\"/g, '\\"') // double quote
+    .replace(/\n/g, "\\n") // newline
+    .replace(/\r/g, "\\r") // carriage return
+    .replace(/\t/g, "\\t") // tab
 }
 
 // Génère la section properties du node n8n
@@ -30,23 +48,54 @@ const generateProperties = (
 ) => {
   return Object.entries(shape)
     .map(([key, zodType]) => {
-      const { n8nType } = zodToN8nType(zodType)
+      const zodInfo = zodToN8nType(zodType)
       let defaultValue = defaultProps?.[key]
-      if (n8nType === "json") {
-        defaultValue =
-          defaultValue === undefined || defaultValue === null
-            ? "''"
-            : `'${JSON.stringify(defaultValue)}'`
-      } else if (defaultValue !== undefined) {
-        defaultValue = JSON.stringify(defaultValue)
-      } else {
-        defaultValue = ""
+      let defaultString
+
+      if (zodInfo.type === "enum") {
+        const optionsArr = zodInfo.options
+          .map((v: string) => `          { name: '${v}', value: '${v}' }`)
+          .join(",\n")
+        defaultString =
+          defaultValue !== undefined
+            ? `'${escapeForSingleQuotedString(String(defaultValue))}'`
+            : "''"
+        return `{
+      displayName: '${key}',
+      name: '${key}',
+      type: 'options',
+      options: [
+${optionsArr}
+      ],
+      default: ${defaultString},
+      required: false,
+    },`
       }
+
+      if (zodInfo.type === "json") {
+        defaultString =
+          defaultValue !== undefined
+            ? `'${escapeForSingleQuotedString(JSON.stringify(defaultValue))}'`
+            : "''"
+      } else if (zodInfo.n8nType === "string") {
+        defaultString =
+          defaultValue !== undefined
+            ? `'${escapeForSingleQuotedString(String(defaultValue))}'`
+            : "''"
+      } else if (
+        zodInfo.n8nType === "number" ||
+        zodInfo.n8nType === "boolean"
+      ) {
+        defaultString = defaultValue !== undefined ? String(defaultValue) : ""
+      } else {
+        defaultString = "''"
+      }
+
       return `{
       displayName: '${key}',
       name: '${key}',
-      type: '${n8nType}',
-      default: ${defaultValue},
+      type: '${zodInfo.type}',
+      default: ${defaultString},
       required: false,
     },`
     })
@@ -95,7 +144,6 @@ async function main() {
       .replace(/\{\{CompositionName\}\}/g, CompositionName)
     const outFile = path.join(outputDir, `${nodeName}.node.ts`)
     fs.writeFileSync(outFile, nodeSource, "utf8")
-    console.log("Node généré :", outFile)
   }
 }
 

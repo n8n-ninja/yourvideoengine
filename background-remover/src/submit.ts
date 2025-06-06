@@ -9,11 +9,14 @@ const JOBS_TABLE = process.env.JOBS_TABLE!
 const QUEUE_URL = process.env.JOB_QUEUE_URL!
 
 export const handler = async (event: any) => {
+  console.log("submit event", JSON.stringify(event))
   const body =
     typeof event.body === "string" ? JSON.parse(event.body) : event.body
+  console.log("submit body", JSON.stringify(body))
   const inputUrl = body.inputUrl
   const chromakeyFilter = body.chromakeyFilter
   if (!inputUrl) {
+    console.log("Missing inputUrl", body)
     return {
       statusCode: 400,
       body: JSON.stringify({ error: "Missing inputUrl" }),
@@ -21,6 +24,7 @@ export const handler = async (event: any) => {
   }
   const jobId = uuidv4()
   const createdAt = new Date().toISOString()
+  console.log("putItem", jobId, inputUrl)
   // Save job in DynamoDB
   await ddb.send(
     new PutItemCommand({
@@ -33,6 +37,7 @@ export const handler = async (event: any) => {
       },
     }),
   )
+  console.log("putItem done", jobId)
   // Push job to SQS
   await sqs.send(
     new SendMessageCommand({
@@ -40,6 +45,7 @@ export const handler = async (event: any) => {
       MessageBody: JSON.stringify({ jobId, inputUrl, chromakeyFilter }),
     }),
   )
+  console.log("sendMessage SQS done", jobId)
   return {
     statusCode: 200,
     body: JSON.stringify({ jobId, status: "PENDING" }),

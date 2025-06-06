@@ -118,6 +118,7 @@ export const Camera: React.FC<{
           volume={(_) => (typeof kfVolume === "number" ? kfVolume : volume)}
           loop={loop}
           style={videoStyle}
+          preload="true"
         />
       )}
     </Layout>

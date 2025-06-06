@@ -89,10 +89,13 @@ var sqs = new import_client_sqs.SQSClient({});
 var JOBS_TABLE = process.env.JOBS_TABLE;
 var QUEUE_URL = process.env.JOB_QUEUE_URL;
 var handler = async (event) => {
+  console.log("submit event", JSON.stringify(event));
   const body = typeof event.body === "string" ? JSON.parse(event.body) : event.body;
+  console.log("submit body", JSON.stringify(body));
   const inputUrl = body.inputUrl;
   const chromakeyFilter = body.chromakeyFilter;
   if (!inputUrl) {
+    console.log("Missing inputUrl", body);
     return {
       statusCode: 400,
       body: JSON.stringify({ error: "Missing inputUrl" })
@@ -100,6 +103,7 @@ var handler = async (event) => {
   }
   const jobId = v4_default();
   const createdAt = (/* @__PURE__ */ new Date()).toISOString();
+  console.log("putItem", jobId, inputUrl);
   await ddb.send(
     new import_client_dynamodb.PutItemCommand({
       TableName: JOBS_TABLE,
@@ -111,12 +115,14 @@ var handler = async (event) => {
       }
     })
   );
+  console.log("putItem done", jobId);
   await sqs.send(
     new import_client_sqs.SendMessageCommand({
       QueueUrl: QUEUE_URL,
       MessageBody: JSON.stringify({ jobId, inputUrl, chromakeyFilter })
     })
   );
+  console.log("sendMessage SQS done", jobId);
   return {
     statusCode: 200,
     body: JSON.stringify({ jobId, status: "PENDING" })

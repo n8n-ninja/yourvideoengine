@@ -42,8 +42,15 @@ async function runFfmpeg(
       "best",
       "-crf",
       "10",
+      "-g",
+      "25",
+      "-keyint_min",
+      "25",
       "-pix_fmt",
       "yuva420p",
+      "-c:a",
+      "libopus",
+      "-shortest",
       outputPath,
     ])
     let stderr = ""

@@ -147,7 +147,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-us-east-1-abe88c38-3b47",
-          "S3Key": "serverless/green-screen-remover/dev/1748891813741-2025-06-02T19:16:53.741Z/green-screen-remover.zip"
+          "S3Key": "serverless/green-screen-remover/dev/1749110425255-2025-06-05T08:00:25.255Z/green-screen-remover.zip"
         },
         "Handler": "src/submit.handler",
         "Runtime": "nodejs20.x",
@@ -180,7 +180,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-us-east-1-abe88c38-3b47",
-          "S3Key": "serverless/green-screen-remover/dev/1748891813741-2025-06-02T19:16:53.741Z/green-screen-remover.zip"
+          "S3Key": "serverless/green-screen-remover/dev/1749110425255-2025-06-05T08:00:25.255Z/green-screen-remover.zip"
         },
         "Handler": "src/status.handler",
         "Runtime": "nodejs20.x",
@@ -213,7 +213,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-us-east-1-abe88c38-3b47",
-          "S3Key": "serverless/green-screen-remover/dev/1748891813741-2025-06-02T19:16:53.741Z/green-screen-remover.zip"
+          "S3Key": "serverless/green-screen-remover/dev/1749110425255-2025-06-05T08:00:25.255Z/green-screen-remover.zip"
         },
         "Handler": "src/worker.handler",
         "Runtime": "nodejs20.x",
@@ -244,34 +244,34 @@
         "WorkerLogGroup"
       ]
     },
-    "SubmitLambdaVersionmQFooZJ1unwYsFT5FIXFQdYLPerk3f3CkKGadOohlc": {
+    "SubmitLambdaVersionajcJUsmmO7Yd3Orn9ckeOYB0lYkRysGhUXPLLI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SubmitLambdaFunction"
         },
-        "CodeSha256": "SwGLOxFiL2gJCQHEt9JNLVV/rEujK4rb2zHr7SWCyUM="
+        "CodeSha256": "qw3p1DbmVwcRmTm49iEuQcyFkiVILycKnsnlZp1csZ0="
       }
     },
-    "StatusLambdaVersions2CZH6b8IgkfKEUMPjYSb5LgqSQNMOpCdFAt3IBUee0": {
+    "StatusLambdaVersioneorfrf5xdHCmPhkrDUFVOjErpNaNQh8ZZkgvcc2I": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "StatusLambdaFunction"
         },
-        "CodeSha256": "SwGLOxFiL2gJCQHEt9JNLVV/rEujK4rb2zHr7SWCyUM="
+        "CodeSha256": "qw3p1DbmVwcRmTm49iEuQcyFkiVILycKnsnlZp1csZ0="
       }
     },
-    "WorkerLambdaVersionz45l8AN2DJstm4JbwkfXUve2YjyYAmwC2jiIU9Jk": {
+    "WorkerLambdaVersionJMRQFesnW7R01FH3Ii8h9NEmeBdkuBIjvM0dvZ7U": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "WorkerLambdaFunction"
         },
-        "CodeSha256": "SwGLOxFiL2gJCQHEt9JNLVV/rEujK4rb2zHr7SWCyUM="
+        "CodeSha256": "qw3p1DbmVwcRmTm49iEuQcyFkiVILycKnsnlZp1csZ0="
       }
     },
     "ApiGatewayRestApi": {
@@ -420,7 +420,7 @@
         "StatusLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1748891807616": {
+    "ApiGatewayDeployment1749110418012": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -566,7 +566,7 @@
     "SubmitLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SubmitLambdaVersionmQFooZJ1unwYsFT5FIXFQdYLPerk3f3CkKGadOohlc"
+        "Ref": "SubmitLambdaVersionajcJUsmmO7Yd3Orn9ckeOYB0lYkRysGhUXPLLI"
       },
       "Export": {
         "Name": "sls-green-screen-remover-dev-SubmitLambdaFunctionQualifiedArn"
@@ -575,7 +575,7 @@
     "StatusLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "StatusLambdaVersions2CZH6b8IgkfKEUMPjYSb5LgqSQNMOpCdFAt3IBUee0"
+        "Ref": "StatusLambdaVersioneorfrf5xdHCmPhkrDUFVOjErpNaNQh8ZZkgvcc2I"
       },
       "Export": {
         "Name": "sls-green-screen-remover-dev-StatusLambdaFunctionQualifiedArn"
@@ -584,7 +584,7 @@
     "WorkerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "WorkerLambdaVersionz45l8AN2DJstm4JbwkfXUve2YjyYAmwC2jiIU9Jk"
+        "Ref": "WorkerLambdaVersionJMRQFesnW7R01FH3Ii8h9NEmeBdkuBIjvM0dvZ7U"
       },
       "Export": {
         "Name": "sls-green-screen-remover-dev-WorkerLambdaFunctionQualifiedArn"

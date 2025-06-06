@@ -7,3 +7,4 @@ packages:
   - queues
   - studio
   - background-remover
+  - temporal
