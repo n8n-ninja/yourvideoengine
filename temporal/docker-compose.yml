@@ -80,8 +80,7 @@ services:
       - TEMPORAL_ADDRESS=temporal:7233
       - NODE_ENV=production
     depends_on:
-      temporal:
-        condition: service_healthy
+      - temporal
     ports:
       - '3000:3000'
     command: >
