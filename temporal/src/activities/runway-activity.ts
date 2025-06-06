@@ -28,11 +28,20 @@ export async function startRunway(
     throw new Error("Missing prompt or imageUrl")
   }
   const task = await client.imageToVideo.create({
-    model,
+    model: (model as "gen4_turbo" | "gen3a_turbo") || "gen4_turbo",
     promptImage: imageUrl,
     promptText: prompt,
-    ratio,
-    duration,
+    ratio:
+      (ratio as
+        | "720:1280"
+        | "1280:720"
+        | "1104:832"
+        | "832:1104"
+        | "960:960"
+        | "1584:672"
+        | "1280:768"
+        | "768:1280") || "720:1280",
+    duration: (duration as 5 | 10) || 5,
   })
   if (!task.id) {
     throw new Error("No task id returned")

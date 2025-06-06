@@ -1,11 +1,12 @@
 import express from "express"
 import { Connection, Client } from "@temporalio/client"
 import { commentVideoWorkflow } from "./workflows/comment-video-workflow"
+import { Request, Response } from "express"
 
 const app = express()
 app.use(express.json())
 
-app.post("/api/comment-video", async (req, res) => {
+app.post("/api/comment-video", async (req: Request, res: Response) => {
   try {
     const connection = await Connection.connect()
     const client = new Client({ connection })
@@ -26,17 +27,20 @@ app.post("/api/comment-video", async (req, res) => {
 })
 
 // Optionnel : endpoint pour récupérer le résultat
-app.get("/api/comment-video/:workflowId", async (req, res) => {
-  try {
-    const connection = await Connection.connect()
-    const client = new Client({ connection })
-    const handle = client.workflow.getHandle(req.params.workflowId)
-    const result = await handle.result()
-    res.json(result)
-  } catch (err) {
-    res.status(500).json({ error: (err as Error).message })
-  }
-})
+app.get(
+  "/api/comment-video/:workflowId",
+  async (req: Request, res: Response) => {
+    try {
+      const connection = await Connection.connect()
+      const client = new Client({ connection })
+      const handle = client.workflow.getHandle(req.params.workflowId)
+      const result = await handle.result()
+      res.json(result)
+    } catch (err) {
+      res.status(500).json({ error: (err as Error).message })
+    }
+  },
+)
 
 const port = process.env.PORT || 3000
 app.listen(port, () => {
