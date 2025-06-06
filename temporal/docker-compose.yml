@@ -88,8 +88,7 @@ services:
       - TEMPORAL_ADDRESS=temporal:7233
       - NODE_ENV=production
     depends_on:
-      - temporal
-      - temporal:
+      temporal:
         condition: service_healthy
     ports:
       - '3000:3000'
