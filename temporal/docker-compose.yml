@@ -84,7 +84,7 @@ services:
     ports:
       - '3000:3000'
     command: >
-      sh -c "npm run build && npm run start:workers & npm run start:api"
+      sh -c "npm run build && until nc -z temporal 7233; do sleep 2; done; npm run start:workers & npm run start:api"
     restart: always
 networks:
   temporal-network:
