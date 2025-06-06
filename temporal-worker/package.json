@@ -10,7 +10,8 @@
     "lint": "eslint src",
     "test": "mocha --exit --require ts-node/register --require source-map-support/register src/mocha/*.test.ts",
     "worker": "ts-node src/worker.ts",
-    "worker.watch": "nodemon src/worker.ts"
+    "worker.watch": "nodemon src/worker.ts",
+    "start": "node dist/index.js"
   },
   "nodemonConfig": {
     "execMap": {
