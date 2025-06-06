@@ -9,6 +9,8 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "start": "ts-node src/workers/all-workers.ts",
+    "start:workers": "ts-node src/workers/all-workers.ts",
+    "start:api": "ts-node src/api.ts",
     "start.watch": "nodemon src/worker.ts",
     "workflow": "ts-node src/client.ts",
     "test": "mocha --exit --require ts-node/register --require source-map-support/register src/mocha/*.test.ts",

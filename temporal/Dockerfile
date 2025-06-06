@@ -9,4 +9,4 @@ COPY . .
 
 RUN npm run build
 
-CMD ["npx", "concurrently", "npm:start:workers", "npm:start:api"]
+CMD ["sh", "-c", "npm run start:workers & npm run start:api"]

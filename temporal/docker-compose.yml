@@ -87,7 +87,7 @@ services:
     ports:
       - '3000:3000'
     command: >
-      sh -c "npm run build && npx concurrently 'npm:start:workers' 'npm:start:api'"
+      sh -c "npm run build && npm run start:workers & npm run start:api"
 networks:
   temporal-network:
     driver: bridge
