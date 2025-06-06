@@ -8,3 +8,4 @@ packages:
   - studio
   - background-remover
   - temporal
+  - temporal-worker

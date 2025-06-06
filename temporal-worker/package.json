@@ -6,7 +6,7 @@
     "start": "ts-node src/worker.ts"
   },
   "dependencies": {
-    "@temporalio/worker": "^1.15.0",
+    "@temporalio/worker": "^1.11.0",
     "ts-node": "^10.9.1"
   },
   "devDependencies": {
