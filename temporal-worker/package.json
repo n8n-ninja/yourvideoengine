@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "src/worker.ts",
   "scripts": {
-    "start": "ts-node src/worker.ts"
+    "start": "ts-node src/worker.ts",
+    "client": "ts-node src/client.ts"
   },
   "dependencies": {
     "@temporalio/worker": "^1.11.0",
