@@ -510,6 +510,22 @@ importers:
         specifier: ^5.6.3
         version: 5.8.3
 
+  temporal-worker:
+    dependencies:
+      '@temporalio/common':
+        specifier: ^1.11.0
+        version: 1.11.8
+      '@temporalio/worker':
+        specifier: ^1.11.0
+        version: 1.11.8(@swc/helpers@0.5.17)
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.2(@swc/core@1.11.31(@swc/helpers@0.5.17))(@types/node@22.15.23)(typescript@5.8.3)
+    devDependencies:
+      typescript:
+        specifier: ^5.2.2
+        version: 5.8.3
+
 packages:
 
   2-thenable@1.0.0:

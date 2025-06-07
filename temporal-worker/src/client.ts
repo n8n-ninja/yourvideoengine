@@ -31,7 +31,7 @@ async function main() {
     namespace: TEMPORAL_NAMESPACE,
   })
 
-  const handle = await client.workflow.start("helloWorkflow", {
+  const handle = await client.workflow.start("commentVideoWorkflow", {
     args: ["John"],
     taskQueue: TEMPORAL_TASK_QUEUE,
     workflowId: `wf-${Date.now()}`,
